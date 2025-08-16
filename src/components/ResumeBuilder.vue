@@ -118,6 +118,7 @@ import ContentEditor from './ContentEditor.vue'
 // 导入模板组件
 import ModernTemplate from './templates/ModernTemplate.vue'
 import ClassicTemplate from './templates/ClassicTemplate.vue'
+import MinimalTemplate from './templates/MinimalTemplate.vue'
 
 // 导入章节排序组件
 import SectionOrderManager from './SectionOrderManager.vue'

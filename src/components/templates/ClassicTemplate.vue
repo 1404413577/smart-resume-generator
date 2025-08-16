@@ -55,121 +55,120 @@
       </div>
     </header>
 
-    <!-- 个人简介 -->
-    <section v-if="resumeData.summary" class="section">
-      <h2 class="section-title" :style="sectionTitleStyle">个人简介</h2>
-      <div class="section-content">
-        <p class="summary-text">{{ resumeData.summary }}</p>
-      </div>
-    </section>
-
-    <!-- 工作经历 -->
-    <section v-if="resumeData.workExperience.length > 0" class="section">
-      <h2 class="section-title" :style="sectionTitleStyle">工作经历</h2>
-      <div class="section-content">
-        <div v-for="work in resumeData.workExperience" :key="work.id" class="work-item">
-          <div class="work-header">
-            <div class="work-left">
-              <h3 class="job-title">{{ work.jobTitle }}</h3>
-              <h4 class="company">{{ work.company }}</h4>
-            </div>
-            <div class="work-right">
-              <span class="work-period">{{ work.startDate }} - {{ work.current ? '至今' : work.endDate }}</span>
-              <span v-if="work.location" class="work-location">{{ work.location }}</span>
-            </div>
-          </div>
-          <ul class="work-responsibilities">
-            <li v-for="(responsibility, index) in work.responsibilities" :key="index">
-              {{ responsibility }}
-            </li>
-          </ul>
+    <!-- 动态章节排序 -->
+    <template v-for="section in orderedSections" :key="section.key">
+      <!-- 个人简介 -->
+      <section v-if="section.key === 'summary' && resumeData.summary" class="section">
+        <h2 class="section-title" :style="sectionTitleStyle">个人简介</h2>
+        <div class="section-content">
+          <p class="summary-text">{{ resumeData.summary }}</p>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 教育背景 -->
-    <section v-if="resumeData.education.length > 0" class="section">
-      <h2 class="section-title" :style="sectionTitleStyle">教育背景</h2>
-      <div class="section-content">
-        <div v-for="edu in resumeData.education" :key="edu.id" class="education-item">
-          <div class="education-header">
-            <div class="education-left">
-              <span class="institution-name">{{ edu.institution }}</span>
+      <!-- 工作经历 -->
+      <section v-if="section.key === 'workExperience' && resumeData.workExperience.length > 0" class="section">
+        <h2 class="section-title" :style="sectionTitleStyle">工作经历</h2>
+        <div class="section-content">
+          <div v-for="work in resumeData.workExperience" :key="work.id" class="work-item">
+            <div class="work-header">
+              <div class="work-left">
+                <h3 class="job-title">{{ work.jobTitle }}</h3>
+                <h4 class="company">{{ work.company }}</h4>
+              </div>
+              <div class="work-right">
+                <span class="work-period">{{ work.startDate }} - {{ work.current ? '至今' : work.endDate }}</span>
+                <span v-if="work.location" class="work-location">{{ work.location }}</span>
+              </div>
             </div>
-            <div class="education-right">
-              <span class="graduation-date">{{ formatEducationDate(edu.startDate, edu.graduationDate) }}</span>
-            </div>
-          </div>
-
-          <!-- 学位信息 - 居左对齐，不缩进 -->
-          <div class="degree-info">{{ edu.major }} | {{ getDegreeType(edu.degree) }} | {{ edu.degree }}</div>
-
-          <div class="education-details">
-            <!-- 主修课程 -->
-            <div v-if="edu.relevantCourses" class="relevant-courses">
-              主修课程：{{ edu.relevantCourses }}
-            </div>
-
-            <!-- 荣誉奖项 -->
-            <div v-if="edu.honors" class="honors-info">
-              {{ edu.honors }}
-            </div>
-
-            <!-- GPA信息 -->
-            <div v-if="edu.gpa" class="gpa-info">
-              GPA: {{ edu.gpa }}
-            </div>
+            <ul class="work-responsibilities">
+              <li v-for="(responsibility, index) in work.responsibilities" :key="index">
+                {{ responsibility }}
+              </li>
+            </ul>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 技能特长 -->
-    <section v-if="resumeData.skills.length > 0" class="section">
-      <h2 class="section-title" :style="sectionTitleStyle">技能特长</h2>
-      <div class="section-content">
-        <div v-for="category in skillCategories" :key="category.key" class="skill-category">
-          <div v-if="getSkillsByCategory(category.key).length > 0">
-            <h3 class="skill-category-title">{{ category.name }}：</h3>
-            <div class="skills-text">
-              <span 
-                v-for="(skill, index) in getSkillsByCategory(category.key)" 
-                :key="skill.id"
-              >
-                {{ skill.name }}{{ index < getSkillsByCategory(category.key).length - 1 ? '、' : '' }}
-              </span>
+      <!-- 教育背景 -->
+      <section v-if="section.key === 'education' && resumeData.education.length > 0" class="section">
+        <h2 class="section-title" :style="sectionTitleStyle">教育背景</h2>
+        <div class="section-content">
+          <div v-for="edu in resumeData.education" :key="edu.id" class="education-item">
+            <div class="education-header">
+              <div class="education-left">
+                <span class="institution-name">{{ edu.institution }}</span>
+              </div>
+              <div class="education-right">
+                <span class="graduation-date">{{ formatEducationDate(edu.startDate, edu.graduationDate) }}</span>
+              </div>
+            </div>
+
+            <!-- 学位信息 - 居左对齐，不缩进 -->
+            <div class="degree-info">{{ edu.major }} | {{ getDegreeType(edu.degree) }} | {{ edu.degree }}</div>
+
+            <div class="education-details">
+              <!-- 主修课程 -->
+              <div v-if="edu.relevantCourses" class="relevant-courses">
+                主修课程：{{ edu.relevantCourses }}
+              </div>
+
+              <!-- 荣誉奖项 -->
+              <div v-if="edu.honors" class="honors-info">
+                {{ edu.honors }}
+              </div>
+
+              <!-- GPA信息 -->
+              <div v-if="edu.gpa" class="gpa-info">
+                GPA: {{ edu.gpa }}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 项目经历 -->
-    <section v-if="resumeData.projects.length > 0" class="section">
-      <h2 class="section-title" :style="sectionTitleStyle">项目经历</h2>
-      <div class="section-content">
-        <div v-for="project in resumeData.projects" :key="project.id" class="project-item">
-          <div class="project-header">
-            <div class="project-left">
-              <h3 class="project-name">{{ project.name }}</h3>
-              <span v-if="project.url" class="project-url">项目链接：{{ project.url }}</span>
-            </div>
-            <div class="project-right">
-              <span class="project-period">{{ project.startDate }} - {{ project.endDate }}</span>
+      <!-- 技能特长 -->
+      <section v-if="section.key === 'skills' && resumeData.skills.length > 0" class="section">
+        <h2 class="section-title" :style="sectionTitleStyle">技能特长</h2>
+        <div class="section-content">
+          <div class="skills">
+            <div
+              v-for="skill in resumeData.skills"
+              :key="skill.id"
+              class="skill-item"
+            >
+              {{ skill.name }}
             </div>
           </div>
-          <div v-if="project.technologies.length > 0" class="project-technologies">
-            技术栈：{{ project.technologies.join('、') }}
-          </div>
-          <div class="project-description">{{ project.description }}</div>
-          <ul v-if="project.highlights && project.highlights.length > 0" class="project-highlights">
-            <li v-for="(highlight, index) in project.highlights" :key="index">
-              {{ highlight }}
-            </li>
-          </ul>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- 项目经历 -->
+      <section v-if="section.key === 'projects' && resumeData.projects.length > 0" class="section">
+        <h2 class="section-title" :style="sectionTitleStyle">项目经历</h2>
+        <div class="section-content">
+          <div v-for="project in resumeData.projects" :key="project.id" class="project-item">
+            <div class="project-header">
+              <div class="project-left">
+                <h3 class="project-name">{{ project.name }}</h3>
+                <span v-if="project.url" class="project-url">项目链接：{{ project.url }}</span>
+              </div>
+              <div class="project-right">
+                <span class="project-period">{{ project.startDate }} - {{ project.endDate }}</span>
+              </div>
+            </div>
+            <div v-if="project.technologies.length > 0" class="project-technologies">
+              技术栈：{{ project.technologies.join('、') }}
+            </div>
+            <div class="project-description">{{ project.description }}</div>
+            <ul v-if="project.highlights && project.highlights.length > 0" class="project-highlights">
+              <li v-for="(highlight, index) in project.highlights" :key="index">
+                {{ highlight }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </template>
 
     <!-- 证书认证 -->
     <section v-if="resumeData.certifications.length > 0" class="section">
@@ -219,12 +218,7 @@ const props = defineProps({
 
 const resumeStore = useResumeStore()
 
-// 技能分类
-const skillCategories = [
-  { key: 'technical', name: '技术技能' },
-  { key: 'soft', name: '软技能' },
-  { key: 'language', name: '语言技能' }
-]
+
 
 // 计算属性
 const hasLinks = computed(() => {
@@ -240,6 +234,9 @@ const hasOnlineInfo = computed(() => {
   return website || linkedin || github || (customFields && customFields.length > 0)
 })
 
+// 获取排序后的章节
+const orderedSections = computed(() => resumeStore.getOrderedSections)
+
 // 标题对齐样式
 const sectionTitleStyle = computed(() => {
   return {
@@ -247,10 +244,7 @@ const sectionTitleStyle = computed(() => {
   }
 })
 
-// 根据分类获取技能
-const getSkillsByCategory = (category) => {
-  return props.resumeData.skills.filter(skill => skill.category === category)
-}
+
 
 // 获取语言水平文本
 const getLanguageLevelText = (level) => {
@@ -605,20 +599,14 @@ const getDegreeType = (degree) => {
 }
 
 /* 技能特长 */
-.skill-category {
-  margin-bottom: 6pt;
-}
-
-.skill-category-title {
-  font-weight: bold;
-  margin: 0;
-  display: inline;
-  color: #333;
-}
-
-.skills-text {
-  display: inline;
+.skills {
   line-height: 1.6;
+}
+
+.skill-item {
+  margin-bottom: 6pt;
+  color: #333;
+  text-align: justify;
 }
 
 /* 项目经历 */

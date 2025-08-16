@@ -36,6 +36,24 @@ export const useResumeStore = defineStore('resume', () => {
     sectionTitleAlignment: 'left' // 'left' | 'center'
   })
 
+  // 章节排序设置
+  const sectionOrder = ref([
+    'summary',        // 个人简介
+    'education',      // 教育背景
+    'workExperience', // 工作经历
+    'skills',         // 技能特长
+    'projects'        // 项目经历
+  ])
+
+  // 章节配置信息
+  const sectionConfig = {
+    summary: { name: '个人简介', icon: '📝' },
+    education: { name: '教育背景', icon: '🎓' },
+    workExperience: { name: '工作经历', icon: '💼' },
+    skills: { name: '技能特长', icon: '⚡' },
+    projects: { name: '项目经历', icon: '🚀' }
+  }
+
   // 计算属性
   const isResumeComplete = computed(() => {
     const { personalInfo, workExperience, education } = resumeData.value
@@ -284,6 +302,16 @@ export const useResumeStore = defineStore('resume', () => {
         console.error('加载模板设置失败:', error)
       }
     }
+
+    // 加载章节排序设置
+    const savedSectionOrder = localStorage.getItem('sectionOrder')
+    if (savedSectionOrder) {
+      try {
+        sectionOrder.value = JSON.parse(savedSectionOrder)
+      } catch (error) {
+        console.error('加载章节排序设置失败:', error)
+      }
+    }
   }
 
   // 简历管理
@@ -351,6 +379,58 @@ export const useResumeStore = defineStore('resume', () => {
     }
   }
 
+  // 章节排序方法
+  const updateSectionOrder = (newOrder) => {
+    sectionOrder.value = [...newOrder]
+    localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder.value))
+  }
+
+  const moveSectionUp = (index) => {
+    if (index > 0) {
+      const newOrder = [...sectionOrder.value]
+      const temp = newOrder[index]
+      newOrder[index] = newOrder[index - 1]
+      newOrder[index - 1] = temp
+      updateSectionOrder(newOrder)
+    }
+  }
+
+  const moveSectionDown = (index) => {
+    if (index < sectionOrder.value.length - 1) {
+      const newOrder = [...sectionOrder.value]
+      const temp = newOrder[index]
+      newOrder[index] = newOrder[index + 1]
+      newOrder[index + 1] = temp
+      updateSectionOrder(newOrder)
+    }
+  }
+
+  const resetSectionOrder = () => {
+    const defaultOrder = [
+      'summary',
+      'education',
+      'workExperience',
+      'skills',
+      'projects'
+    ]
+    updateSectionOrder(defaultOrder)
+  }
+
+  // 获取排序后的章节数据
+  const getOrderedSections = computed(() => {
+    return sectionOrder.value.map(sectionKey => ({
+      key: sectionKey,
+      name: sectionConfig[sectionKey].name,
+      icon: sectionConfig[sectionKey].icon,
+      data: resumeData.value[sectionKey],
+      hasData: sectionKey === 'summary'
+        ? !!resumeData.value[sectionKey]
+        : Array.isArray(resumeData.value[sectionKey])
+          ? resumeData.value[sectionKey].length > 0
+          : !!resumeData.value[sectionKey]
+    }))
+  })
+
   // 初始化
   const init = () => {
     loadFromLocalStorage()
@@ -381,9 +461,12 @@ export const useResumeStore = defineStore('resume', () => {
     lastSaveTime,
     isAutoSaveEnabled,
     templateSettings,
-    
+    sectionOrder,
+    sectionConfig,
+
     // 计算属性
     isResumeComplete,
+    getOrderedSections,
     
     // 方法
     updatePersonalInfo,
@@ -419,6 +502,12 @@ export const useResumeStore = defineStore('resume', () => {
     resetResumeData,
     startAutoSave,
     stopAutoSave,
-    init
+    init,
+
+    // 章节排序方法
+    updateSectionOrder,
+    moveSectionUp,
+    moveSectionDown,
+    resetSectionOrder
   }
 })

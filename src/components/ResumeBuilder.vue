@@ -1,8 +1,8 @@
 <template>
   <div class="resume-builder">
-    <el-row :gutter="20">
+    <el-row :gutter="32" class="builder-row">
       <!-- 左侧编辑区域 -->
-      <el-col :span="resumeStore.isPreviewMode ? 0 : 12" class="edit-section">
+      <el-col :span="resumeStore.isPreviewMode ? 0 : 10" class="edit-section">
         <div v-show="!resumeStore.isPreviewMode" class="form-container">
           <el-card class="section-card">
             <template #header>
@@ -67,7 +67,7 @@
       </el-col>
 
       <!-- 右侧预览区域 -->
-      <el-col :span="resumeStore.isPreviewMode ? 24 : 12" class="preview-section">
+      <el-col :span="resumeStore.isPreviewMode ? 24 : 14" class="preview-section">
         <div class="preview-container">
           <div class="preview-header">
             <h3>简历预览</h3>
@@ -109,6 +109,12 @@
                 </template>
               </el-dropdown>
 
+              <!-- 章节排序 -->
+              <el-button size="small" @click="showSectionOrder = true">
+                <el-icon><Sort /></el-icon>
+                章节排序
+              </el-button>
+
               <el-button type="success" @click="downloadPDF">
                 <el-icon><Download /></el-icon>
                 下载PDF
@@ -125,11 +131,24 @@
         </div>
       </el-col>
     </el-row>
+
+    <!-- 章节排序对话框 -->
+    <el-dialog
+      v-model="showSectionOrder"
+      title="章节排序"
+      width="500px"
+      :before-close="handleSectionOrderClose"
+    >
+      <SectionOrderManager />
+      <template #footer>
+        <el-button @click="showSectionOrder = false">关闭</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useResumeStore } from '../stores/resume'
 import { generatePDF } from '../utils/pdfGenerator'
 
@@ -146,7 +165,13 @@ import ModernTemplate from './templates/ModernTemplate.vue'
 import ClassicTemplate from './templates/ClassicTemplate.vue'
 import MinimalTemplate from './templates/MinimalTemplate.vue'
 
+// 导入章节排序组件
+import SectionOrderManager from './SectionOrderManager.vue'
+
 const resumeStore = useResumeStore()
+
+// 章节排序对话框状态
+const showSectionOrder = ref(false)
 
 // 可用模板
 const templates = [
@@ -180,24 +205,50 @@ const downloadPDF = async () => {
 const updateTitleAlignment = (alignment) => {
   resumeStore.updateTemplateSetting('sectionTitleAlignment', alignment)
 }
+
+// 关闭章节排序对话框
+const handleSectionOrderClose = () => {
+  showSectionOrder.value = false
+}
 </script>
 
 <style scoped>
 .resume-builder {
   width: 100%;
+  max-width: 100%;
+}
+
+.builder-row {
+  margin: 0 !important;
+  width: 100%;
+}
+
+.edit-section {
+  padding: 0 !important;
+}
+
+.preview-section {
+  padding: 0 !important;
 }
 
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  padding: 0;
 }
 
 .section-card {
-  margin-bottom: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   border: none;
+  transition: all 0.3s ease;
+}
+
+.section-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .card-header {
@@ -210,18 +261,21 @@ const updateTitleAlignment = (alignment) => {
 
 .preview-container {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  height: fit-content;
 }
 
 .preview-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 24px 28px;
   background: #f8f9fa;
   border-bottom: 1px solid #e9ecef;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .preview-header h3 {
@@ -236,7 +290,7 @@ const updateTitleAlignment = (alignment) => {
 }
 
 .resume-preview {
-  padding: 20px;
+  padding: 32px;
   min-height: 800px;
   background: white;
 }
@@ -255,16 +309,97 @@ const updateTitleAlignment = (alignment) => {
   min-width: 60px;
 }
 
+/* 大屏幕优化 */
+@media (min-width: 1400px) {
+  .form-container {
+    gap: 28px;
+  }
+
+  .section-card {
+    margin-bottom: 28px;
+  }
+
+  .preview-header {
+    padding: 28px 32px;
+  }
+
+  .resume-preview {
+    padding: 40px;
+  }
+}
+
+/* 中等屏幕优化 */
+@media (max-width: 1200px) {
+  .builder-row {
+    --el-row-gutter: 24px;
+  }
+
+  .preview-header {
+    padding: 20px 24px;
+  }
+
+  .resume-preview {
+    padding: 24px;
+  }
+}
+
+/* 平板设备优化 */
 @media (max-width: 768px) {
+  .builder-row {
+    --el-row-gutter: 16px;
+  }
+
+  .form-container {
+    gap: 16px;
+  }
+
+  .section-card {
+    margin-bottom: 16px;
+    border-radius: 12px;
+  }
+
+  .preview-container {
+    border-radius: 12px;
+  }
+
   .preview-header {
     flex-direction: column;
     gap: 15px;
     align-items: stretch;
+    padding: 16px 20px;
   }
 
   .preview-actions {
     justify-content: center;
     flex-wrap: wrap;
+  }
+
+  .resume-preview {
+    padding: 20px;
+  }
+}
+
+/* 手机设备优化 */
+@media (max-width: 480px) {
+  .form-container {
+    gap: 12px;
+  }
+
+  .section-card {
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+
+  .preview-container {
+    border-radius: 8px;
+  }
+
+  .preview-header {
+    padding: 12px 16px;
+  }
+
+  .resume-preview {
+    padding: 16px;
   }
 }
 </style>

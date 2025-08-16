@@ -86,9 +86,9 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   height: 100%;
 }
 
@@ -103,9 +103,10 @@ onMounted(() => {
 }
 
 .app-main {
-  padding: 20px;
-  max-width: 1200px;
+  padding: 24px;
+  max-width: 1600px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .header-actions {
@@ -138,5 +139,59 @@ onMounted(() => {
   0% { opacity: 1; }
   50% { opacity: 0.6; }
   100% { opacity: 1; }
+}
+
+/* 响应式设计优化 */
+@media (max-width: 1400px) {
+  .header-content {
+    max-width: 1200px;
+    padding: 0 20px;
+  }
+
+  .app-main {
+    max-width: 1200px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 16px;
+  }
+
+  .app-title {
+    font-size: 20px;
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .app-main {
+    padding: 16px;
+  }
+
+  .auto-save-status {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 18px;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .app-main {
+    padding: 12px;
+  }
 }
 </style>

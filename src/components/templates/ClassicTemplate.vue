@@ -69,22 +69,21 @@
       <section v-if="section.key === 'workExperience' && resumeData.workExperience.length > 0" class="section">
         <h2 class="section-title" :style="sectionTitleStyle">工作经历</h2>
         <div class="section-content">
-          <div v-for="work in resumeData.workExperience" :key="work.id" class="work-item">
-            <div class="work-header">
-              <div class="work-left">
-                <h3 class="job-title">{{ work.jobTitle }}</h3>
-                <h4 class="company">{{ work.company }}</h4>
-              </div>
-              <div class="work-right">
-                <span class="work-period">{{ work.startDate }} - {{ work.current ? '至今' : work.endDate }}</span>
-                <span v-if="work.location" class="work-location">{{ work.location }}</span>
-              </div>
+          <div v-for="work in resumeData.workExperience" :key="work.id" class="entry">
+            <div class="entry-header">
+              <span>{{ work.company }} | {{ work.jobTitle }}</span>
+              <span>{{ work.startDate }} - {{ work.current ? '至今' : work.endDate }}</span>
             </div>
-            <ul class="work-responsibilities">
-              <li v-for="(responsibility, index) in work.responsibilities" :key="index">
-                {{ responsibility }}
-              </li>
-            </ul>
+            <div class="entry-content">
+              <div v-if="work.location || work.description">
+                {{ work.location }}{{ work.location && work.description ? ' | ' : '' }}{{ work.description }}
+              </div>
+              <ul v-if="work.responsibilities && work.responsibilities.length > 0">
+                <li v-for="(responsibility, index) in work.responsibilities" :key="index">
+                  {{ responsibility }}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -146,25 +145,28 @@
       <section v-if="section.key === 'projects' && resumeData.projects.length > 0" class="section">
         <h2 class="section-title" :style="sectionTitleStyle">项目经历</h2>
         <div class="section-content">
-          <div v-for="project in resumeData.projects" :key="project.id" class="project-item">
-            <div class="project-header">
-              <div class="project-left">
-                <h3 class="project-name">{{ project.name }}</h3>
-                <span v-if="project.url" class="project-url">项目链接：{{ project.url }}</span>
-              </div>
-              <div class="project-right">
-                <span class="project-period">{{ project.startDate }} - {{ project.endDate }}</span>
-              </div>
+          <div v-for="project in resumeData.projects" :key="project.id" class="entry">
+            <div class="entry-header">
+              <span>{{ project.name }}</span>
+              <span>{{ project.startDate }} - {{ project.endDate }}</span>
             </div>
-            <div v-if="project.technologies.length > 0" class="project-technologies">
-              技术栈：{{ project.technologies.join('、') }}
+            <div class="entry-content">
+              <span v-if="project.role" class="project-role">项目角色：{{ project.role }}</span>
+              <span v-if="project.technologies.length > 0" class="project-tech">
+                技术栈：{{ project.technologies.join(' + ') }}
+              </span>
+              <span v-if="project.url" class="project-url">项目链接：{{ project.url }}</span>
+              <ul v-if="project.description">
+                <li v-for="(item, index) in project.description.split('\n').filter(line => line.trim())" :key="index">
+                  {{ item.trim() }}
+                </li>
+              </ul>
+              <ul v-if="project.highlights && project.highlights.length > 0">
+                <li v-for="(highlight, index) in project.highlights" :key="index">
+                  {{ highlight }}
+                </li>
+              </ul>
             </div>
-            <div class="project-description">{{ project.description }}</div>
-            <ul v-if="project.highlights && project.highlights.length > 0" class="project-highlights">
-              <li v-for="(highlight, index) in project.highlights" :key="index">
-                {{ highlight }}
-              </li>
-            </ul>
           </div>
         </div>
       </section>
@@ -243,6 +245,8 @@ const sectionTitleStyle = computed(() => {
     textAlign: resumeStore.templateSettings.sectionTitleAlignment || 'left'
   }
 })
+
+
 
 
 
@@ -466,62 +470,29 @@ const getDegreeType = (degree) => {
 }
 
 /* 工作经历 */
-.work-item {
+.entry {
   margin-bottom: 10pt;
   page-break-inside: avoid;
 }
 
-.work-header {
+.entry-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
   font-weight: bold;
   margin-bottom: 3pt;
 }
 
-.work-left {
-  flex: 1;
+.entry-content {
+  padding-left: 10pt;
+  text-align: justify;
 }
 
-.work-right {
-  text-align: right;
-  min-width: 150px;
-}
-
-.job-title {
-  font-size: inherit;
-  font-weight: bold;
-  margin: 0;
-  color: #333;
-  display: inline;
-}
-
-.company {
-  font-size: inherit;
-  font-weight: bold;
-  margin: 0;
-  color: #333;
-  display: inline;
-}
-
-.work-period {
-  font-weight: bold;
-}
-
-.work-location {
-  font-size: inherit;
-  color: #333;
-  display: block;
-  font-weight: normal;
-  margin-top: 2pt;
-}
-
-.work-responsibilities {
-  margin: 5pt 0;
+.entry-content ul {
   padding-left: 20pt;
+  margin: 5pt 0;
 }
 
-.work-responsibilities li {
+.entry-content li {
   margin-bottom: 5pt;
   line-height: 1.6;
 }
@@ -609,35 +580,18 @@ const getDegreeType = (degree) => {
   text-align: justify;
 }
 
-/* 项目经历 */
-.project-item {
-  margin-bottom: 10pt;
-  page-break-inside: avoid;
-}
-
-.project-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+/* 项目经历 - 使用与工作经历相同的entry样式 */
+.project-role {
   font-weight: bold;
   margin-bottom: 3pt;
+  display: block;
 }
 
-.project-left {
-  flex: 1;
-}
-
-.project-right {
-  text-align: right;
-  min-width: 150px;
-}
-
-.project-name {
-  font-size: inherit;
-  font-weight: bold;
-  margin: 0;
-  color: #333;
-  display: inline;
+.project-tech {
+  color: #7f8c8d;
+  font-style: italic;
+  margin-bottom: 5pt;
+  display: block;
 }
 
 .project-url {
@@ -645,36 +599,7 @@ const getDegreeType = (degree) => {
   font-style: normal;
   display: block;
   font-weight: normal;
-  margin-top: 2pt;
-}
-
-.project-period {
-  font-weight: bold;
-}
-
-.project-description {
-  margin: 5pt 0;
-  line-height: 1.6;
-  text-align: justify;
-  padding-left: 10pt;
-}
-
-.project-technologies {
-  color: #7f8c8d;
-  font-style: italic;
-  margin-bottom: 5pt;
-  display: block;
-  padding-left: 10pt;
-}
-
-.project-highlights {
-  margin: 5pt 0;
-  padding-left: 20pt;
-}
-
-.project-highlights li {
-  margin-bottom: 5pt;
-  line-height: 1.6;
+  margin-bottom: 3pt;
 }
 
 /* 证书认证 */

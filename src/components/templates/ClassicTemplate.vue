@@ -9,46 +9,47 @@
         </div>
 
         <div class="info-container">
-          <h1 class="name">{{ resumeData.personalInfo.name || '姓名' }}</h1>
           <div class="contact-info">
-          <div class="contact-row">
-            <span v-if="resumeData.personalInfo.email" class="contact-item">
-              邮箱：{{ resumeData.personalInfo.email }}
-            </span>
-            <span v-if="resumeData.personalInfo.phone" class="contact-item">
-              电话：{{ resumeData.personalInfo.phone }}
-            </span>
-          </div>
-          <div class="contact-row">
-            <span v-if="resumeData.personalInfo.address" class="contact-item">
-              地址：{{ resumeData.personalInfo.address }}
-            </span>
-          </div>
-          <div v-if="hasLinks" class="contact-row">
-            <span v-if="resumeData.personalInfo.website" class="contact-item link-item">
-              <span class="link-label">个人网站:</span>
-              <span class="link-url">{{ resumeData.personalInfo.website }}</span>
-            </span>
-            <span v-if="resumeData.personalInfo.linkedin" class="contact-item link-item">
-              <span class="link-label">LinkedIn:</span>
-              <span class="link-url">{{ resumeData.personalInfo.linkedin }}</span>
-            </span>
-            <span v-if="resumeData.personalInfo.github" class="contact-item link-item">
-              <span class="link-label">GitHub:</span>
-              <span class="link-url">{{ resumeData.personalInfo.github }}</span>
-            </span>
-          </div>
-          <!-- 自定义字段 -->
-          <div v-if="resumeData.personalInfo.customFields && resumeData.personalInfo.customFields.length > 0" class="contact-row">
-            <span
-              v-for="field in resumeData.personalInfo.customFields"
-              :key="field.id"
-              class="contact-item link-item"
-            >
-              <span class="link-label">{{ field.name }}:</span>
-              <span class="link-url">{{ field.value }}</span>
-            </span>
-          </div>
+            <!-- 第一行：基本信息 -->
+            <div class="contact-row primary-info">
+              <span class="contact-item name-item">
+                姓名：{{ resumeData.personalInfo.name || '姓名' }}
+              </span>
+              <span v-if="resumeData.personalInfo.email" class="contact-item">
+                邮箱：{{ resumeData.personalInfo.email }}
+              </span>
+              <span v-if="resumeData.personalInfo.phone" class="contact-item">
+                电话：{{ resumeData.personalInfo.phone }}
+              </span>
+              <span v-if="resumeData.personalInfo.address" class="contact-item">
+                地址：{{ resumeData.personalInfo.address }}
+              </span>
+            </div>
+
+            <!-- 第二行：在线链接和自定义字段 -->
+            <div v-if="hasOnlineInfo" class="contact-row secondary-info">
+              <span v-if="resumeData.personalInfo.website" class="contact-item">
+                个人网站：{{ resumeData.personalInfo.website }}
+              </span>
+              <span v-if="resumeData.personalInfo.linkedin" class="contact-item">
+                LinkedIn：{{ resumeData.personalInfo.linkedin }}
+              </span>
+              <span v-if="resumeData.personalInfo.github" class="contact-item">
+                GitHub：{{ resumeData.personalInfo.github }}
+              </span>
+
+              <!-- 自定义字段 -->
+              <template v-if="resumeData.personalInfo.customFields && resumeData.personalInfo.customFields.length > 0">
+                <span
+                  v-for="field in resumeData.personalInfo.customFields"
+                  :key="field.id"
+                  v-show="field.value"
+                  class="contact-item"
+                >
+                  {{ field.name }}：{{ field.value }}
+                </span>
+              </template>
+            </div>
           </div>
         </div>
       </div>
@@ -234,6 +235,11 @@ const hasLinks = computed(() => {
 const hasAvatar = computed(() => !!props.resumeData.personalInfo.avatar)
 const avatarPosition = computed(() => props.resumeData.personalInfo.avatarPosition || 'left')
 
+const hasOnlineInfo = computed(() => {
+  const { website, linkedin, github, customFields } = props.resumeData.personalInfo
+  return website || linkedin || github || (customFields && customFields.length > 0)
+})
+
 // 标题对齐样式
 const sectionTitleStyle = computed(() => {
   return {
@@ -377,10 +383,41 @@ const getDegreeType = (degree) => {
 
 .contact-row {
   display: flex;
-  justify-content: center;
-  gap: 15pt;
-  margin: 5pt 0;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 3pt 0;
   flex-wrap: wrap;
+  line-height: 1.5;
+}
+
+.contact-item {
+  position: relative;
+}
+
+/* 使用更美观的分隔符 */
+.contact-item:not(:last-child)::after {
+  content: " • ";
+  margin: 0 6pt;
+  color: #888;
+  font-weight: normal;
+}
+
+/* 基本信息行样式 */
+.primary-info {
+  margin-bottom: 5pt;
+}
+
+/* 在线信息行样式 */
+.secondary-info {
+  margin-top: 2pt;
+  color: #555;
+}
+
+/* 姓名样式保持一致 */
+.name-item {
+  font-weight: inherit;
+  font-size: inherit;
+  color: inherit;
 }
 
 .contact-item {

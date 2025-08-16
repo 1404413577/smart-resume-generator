@@ -18,9 +18,6 @@
           />
         </el-select>
       </div>
-
-      <!-- 高级设置 -->
-      <GlobalSettings />
     </div>
 
     <!-- 模块列表区域 -->
@@ -29,13 +26,13 @@
         <el-icon><List /></el-icon>
         简历模块
       </h3>
-      
+
       <div class="module-items">
         <div
           v-for="module in modules"
           :key="module.id"
           class="module-item"
-          :class="{ 
+          :class="{
             active: activeModule === module.id,
             'has-content': module.hasContent
           }"
@@ -57,6 +54,11 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- 高级设置区域 -->
+    <div class="advanced-settings">
+      <GlobalSettings />
     </div>
 
     <!-- 操作按钮区域 -->
@@ -210,8 +212,12 @@ const handleManageResumes = () => {
 
 
 .module-list {
-  flex: 1;
   padding: 20px 0;
+  border-bottom: 1px solid #e4e7ed;
+}
+
+.advanced-settings {
+  flex: 1;
   overflow-y: auto;
   min-height: 0;
 }

@@ -96,9 +96,9 @@ export const fontFamilyMap = {
   "'Source Han Sans SC', sans-serif": "'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif",
   "'Microsoft YaHei', sans-serif": "'Microsoft YaHei', 'SimHei', sans-serif",
   "'PingFang SC', sans-serif": "'PingFang SC', 'Hiragino Sans GB', sans-serif",
-  'SimSun, serif': 'SimSun, 'NSimSun', serif',
+  'SimSun, serif': 'SimSun, "NSimSun", serif',
   "'Times New Roman', serif": "'Times New Roman', 'Times', serif",
-  'Arial, sans-serif': 'Arial, 'Helvetica Neue', sans-serif'
+  'Arial, sans-serif': 'Arial, "Helvetica Neue", sans-serif'
 }
 
 /**
@@ -116,24 +116,6 @@ export function getFullFontFamily(fontFamily) {
  * @returns {Object} 验证后的设置对象
  */
 export function validateSettings(settings) {
-  const defaultSettings = {
-    typography: {
-      baseFontSize: 14,
-      titleFontSize: 18,
-      subtitleFontSize: 16,
-      fontFamily: 'system-ui'
-    },
-    spacing: {
-      pageMargin: {
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 20
-      },
-      moduleSpacing: 12,
-      lineHeight: 1.5
-    }
-  }
   
   // 验证字体大小范围
   const typography = {

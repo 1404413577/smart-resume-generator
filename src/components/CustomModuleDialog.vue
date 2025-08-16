@@ -201,6 +201,19 @@ const moduleTemplates = {
   }
 }
 
+// 重置表单函数
+const resetForm = () => {
+  formData.value = {
+    name: '',
+    type: '',
+    description: '',
+    fields: [
+      { name: '', type: 'text', required: false }
+    ],
+    template: ''
+  }
+}
+
 // 监听模块变化
 watch(() => props.module, (newModule) => {
   if (newModule) {
@@ -226,18 +239,6 @@ watch(() => formData.value.template, (template) => {
     formData.value.fields = [...templateData.fields]
   }
 })
-
-const resetForm = () => {
-  formData.value = {
-    name: '',
-    type: '',
-    description: '',
-    fields: [
-      { name: '', type: 'text', required: false }
-    ],
-    template: ''
-  }
-}
 
 const addField = () => {
   if (formData.value.fields.length < 10) {

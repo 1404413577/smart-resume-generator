@@ -196,9 +196,9 @@ const getSkillsByCategory = (category) => {
   margin: 0 auto;
   background: white;
   color: #2c3e50;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  font-size: 14px;
+  font-family: var(--resume-font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+  line-height: var(--resume-line-height, 1.6);
+  font-size: var(--resume-base-font-size, 14px);
 }
 
 /* 头部样式 */
@@ -288,12 +288,12 @@ const getSkillsByCategory = (category) => {
 
 /* 章节样式 */
 .section {
-  margin-bottom: 35px;
+  margin-bottom: var(--resume-module-spacing, 35px);
   padding: 0 30px;
 }
 
 .section-title {
-  font-size: 24px;
+  font-size: var(--resume-title-font-size, 24px);
   font-weight: 600;
   color: #667eea;
   margin: 0 0 20px 0;

@@ -116,6 +116,7 @@ import {
   recommendSkills,
   enhanceProjectDescription
 } from '../utils/aiService'
+import { useGlobalStyles } from '../composables/useGlobalStyles'
 
 // 导入新的组件
 import ModuleNavigation from './ModuleNavigation.vue'
@@ -130,6 +131,9 @@ import MinimalTemplate from './templates/MinimalTemplate.vue'
 import SectionOrderManager from './SectionOrderManager.vue'
 
 const resumeStore = useResumeStore()
+
+// 使用全局样式
+useGlobalStyles()
 
 // 当前活跃的模块
 const activeModule = ref('personalInfo')

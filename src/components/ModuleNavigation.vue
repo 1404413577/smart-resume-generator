@@ -6,7 +6,7 @@
         <el-icon><Setting /></el-icon>
         全局设置
       </h3>
-      
+
       <div class="setting-group">
         <label class="setting-label">模板风格</label>
         <el-select v-model="selectedTemplate" @change="handleTemplateChange" size="small">
@@ -19,19 +19,8 @@
         </el-select>
       </div>
 
-      <div class="setting-group">
-        <label class="setting-label">主题色彩</label>
-        <div class="color-picker-group">
-          <div
-            v-for="color in themeColors"
-            :key="color.name"
-            class="color-option"
-            :class="{ active: selectedColor === color.value }"
-            :style="{ backgroundColor: color.value }"
-            @click="handleColorChange(color.value)"
-          />
-        </div>
-      </div>
+      <!-- 高级设置 -->
+      <GlobalSettings />
     </div>
 
     <!-- 模块列表区域 -->
@@ -87,11 +76,12 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { 
-  Setting, List, User, Document, Briefcase, School, 
-  Star, Folder, Download, Rank 
+import {
+  Setting, List, User, Document, Briefcase, School,
+  Star, Folder, Download, Rank
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
+import GlobalSettings from './GlobalSettings.vue'
 
 const props = defineProps({
   activeModule: {
@@ -112,18 +102,7 @@ const templates = [
   { id: 'minimal', name: '简约风格' }
 ]
 
-// 主题色彩选项
-const themeColors = [
-  { name: '蓝色', value: '#409EFF' },
-  { name: '绿色', value: '#67C23A' },
-  { name: '橙色', value: '#E6A23C' },
-  { name: '红色', value: '#F56C6C' },
-  { name: '紫色', value: '#909399' },
-  { name: '深蓝', value: '#304156' }
-]
-
 const selectedTemplate = ref(resumeStore.selectedTemplate)
-const selectedColor = ref('#409EFF')
 
 // 简历模块配置
 const modules = computed(() => [
@@ -175,10 +154,7 @@ const handleTemplateChange = (templateId) => {
   emit('template-change', templateId)
 }
 
-const handleColorChange = (color) => {
-  selectedColor.value = color
-  // 这里可以添加主题色彩变更逻辑
-}
+
 
 const handleExportPDF = () => {
   isExporting.value = true
@@ -231,29 +207,7 @@ const handleManageResumes = () => {
   font-weight: 500;
 }
 
-.color-picker-group {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
 
-.color-option {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.2s;
-}
-
-.color-option:hover {
-  transform: scale(1.1);
-}
-
-.color-option.active {
-  border-color: #303133;
-  transform: scale(1.1);
-}
 
 .module-list {
   flex: 1;

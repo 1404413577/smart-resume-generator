@@ -36,6 +36,30 @@ export const useResumeStore = defineStore('resume', () => {
     sectionTitleAlignment: 'left' // 'left' | 'center'
   })
 
+  // 全局设置配置
+  const globalSettings = ref({
+    // 字体设置
+    typography: {
+      baseFontSize: 14,        // 基础字号 12-16px
+      titleFontSize: 18,       // 模块标题字号 16-24px
+      subtitleFontSize: 16,    // 一级标题字号 14-20px
+      fontFamily: 'system-ui'  // 字体族
+    },
+    // 间距设置
+    spacing: {
+      pageMargin: {
+        top: 20,    // 上边距 10-30mm
+        right: 20,  // 右边距 10-30mm
+        bottom: 20, // 下边距 10-30mm
+        left: 20    // 左边距 10-30mm
+      },
+      moduleSpacing: 12,  // 模块间距 5-20mm
+      lineHeight: 1.5     // 行间距 1.0-2.0
+    },
+    // 自定义模块
+    customModules: []
+  })
+
   // 章节排序设置
   const sectionOrder = ref([
     'summary',        // 个人简介
@@ -244,6 +268,7 @@ export const useResumeStore = defineStore('resume', () => {
     localStorage.setItem('resumeData', JSON.stringify(resumeData.value))
     localStorage.setItem('selectedTemplate', selectedTemplate.value)
     localStorage.setItem('templateSettings', JSON.stringify(templateSettings.value))
+    localStorage.setItem('globalSettings', JSON.stringify(globalSettings.value))
   }
 
   // 自动保存定时器
@@ -315,6 +340,38 @@ export const useResumeStore = defineStore('resume', () => {
         sectionOrder.value = JSON.parse(savedSectionOrder)
       } catch (error) {
         console.error('加载章节排序设置失败:', error)
+      }
+    }
+
+    // 加载全局设置
+    const savedGlobalSettings = localStorage.getItem('globalSettings')
+    if (savedGlobalSettings) {
+      try {
+        const parsed = JSON.parse(savedGlobalSettings)
+        // 合并默认设置和保存的设置，确保新增的配置项有默认值
+        globalSettings.value = {
+          typography: {
+            baseFontSize: 14,
+            titleFontSize: 18,
+            subtitleFontSize: 16,
+            fontFamily: 'system-ui',
+            ...parsed.typography
+          },
+          spacing: {
+            pageMargin: {
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 20,
+              ...parsed.spacing?.pageMargin
+            },
+            moduleSpacing: parsed.spacing?.moduleSpacing || 12,
+            lineHeight: parsed.spacing?.lineHeight || 1.5
+          },
+          customModules: parsed.customModules || []
+        }
+      } catch (error) {
+        console.error('加载全局设置失败:', error)
       }
     }
   }
@@ -426,6 +483,72 @@ export const useResumeStore = defineStore('resume', () => {
     updateSectionOrder(defaultOrder)
   }
 
+  // 全局设置方法
+  const updateTypographySetting = (key, value) => {
+    globalSettings.value.typography[key] = value
+    saveToLocalStorage()
+  }
+
+  const updateSpacingSetting = (key, value) => {
+    if (key === 'pageMargin') {
+      globalSettings.value.spacing.pageMargin = { ...globalSettings.value.spacing.pageMargin, ...value }
+    } else {
+      globalSettings.value.spacing[key] = value
+    }
+    saveToLocalStorage()
+  }
+
+  const addCustomModule = (module) => {
+    const newModule = {
+      ...module,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString()
+    }
+    globalSettings.value.customModules.push(newModule)
+    saveToLocalStorage()
+    return newModule
+  }
+
+  const updateCustomModule = (id, updates) => {
+    const index = globalSettings.value.customModules.findIndex(module => module.id === id)
+    if (index !== -1) {
+      globalSettings.value.customModules[index] = {
+        ...globalSettings.value.customModules[index],
+        ...updates,
+        updatedAt: new Date().toISOString()
+      }
+      saveToLocalStorage()
+    }
+  }
+
+  const removeCustomModule = (id) => {
+    globalSettings.value.customModules = globalSettings.value.customModules.filter(module => module.id !== id)
+    saveToLocalStorage()
+  }
+
+  const resetGlobalSettings = () => {
+    globalSettings.value = {
+      typography: {
+        baseFontSize: 14,
+        titleFontSize: 18,
+        subtitleFontSize: 16,
+        fontFamily: 'system-ui'
+      },
+      spacing: {
+        pageMargin: {
+          top: 20,
+          right: 20,
+          bottom: 20,
+          left: 20
+        },
+        moduleSpacing: 12,
+        lineHeight: 1.5
+      },
+      customModules: []
+    }
+    saveToLocalStorage()
+  }
+
   // 获取排序后的章节数据
   const getOrderedSections = computed(() => {
     return sectionOrder.value.map(sectionKey => ({
@@ -518,6 +641,15 @@ export const useResumeStore = defineStore('resume', () => {
     updateSectionOrder,
     moveSectionUp,
     moveSectionDown,
-    resetSectionOrder
+    resetSectionOrder,
+
+    // 全局设置方法
+    globalSettings,
+    updateTypographySetting,
+    updateSpacingSetting,
+    addCustomModule,
+    updateCustomModule,
+    removeCustomModule,
+    resetGlobalSettings
   }
 })

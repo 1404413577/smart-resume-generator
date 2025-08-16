@@ -3,9 +3,11 @@ import { ref, onMounted } from 'vue'
 import { useResumeStore } from './stores/resume'
 import ResumeBuilder from './components/ResumeBuilder.vue'
 import ResumeManager from './components/ResumeManager.vue'
+import AITestComponent from './components/AITestComponent.vue'
 
 const resumeStore = useResumeStore()
 const showResumeManager = ref(false)
+const showAITest = ref(false)
 
 // 格式化保存时间
 const formatSaveTime = (saveTime) => {
@@ -47,6 +49,10 @@ onMounted(() => {
               <el-icon><Folder /></el-icon>
               简历管理
             </el-button>
+            <el-button @click="showAITest = !showAITest">
+              <el-icon><MagicStick /></el-icon>
+              AI测试
+            </el-button>
             <el-button type="primary" @click="resumeStore.togglePreviewMode()">
               <el-icon><View /></el-icon>
               {{ resumeStore.isPreviewMode ? '编辑模式' : '预览模式' }}
@@ -56,7 +62,8 @@ onMounted(() => {
       </el-header>
 
       <el-main class="app-main">
-        <ResumeBuilder />
+        <AITestComponent v-if="showAITest" />
+        <ResumeBuilder v-else />
       </el-main>
     </el-container>
 

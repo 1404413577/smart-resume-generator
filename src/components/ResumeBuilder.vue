@@ -106,10 +106,16 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElLoading } from 'element-plus'
 import { Setting, Sort, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
 import { generatePDF } from '../utils/pdfGenerator'
+import {
+  generatePersonalSummary,
+  optimizeWorkExperience,
+  recommendSkills,
+  enhanceProjectDescription
+} from '../utils/aiService'
 
 // 导入新的组件
 import ModuleNavigation from './ModuleNavigation.vue'
@@ -162,9 +168,155 @@ const handleTemplateChange = (templateId) => {
 }
 
 // AI生成处理
-const handleAIGenerate = (moduleType) => {
-  ElMessage.info(`正在为${moduleType}模块生成AI内容...`)
-  // 这里可以添加具体的AI生成逻辑
+const handleAIGenerate = async (moduleType) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在生成AI内容...',
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+
+  try {
+    switch (moduleType) {
+      case 'summary':
+        await generateAISummary()
+        break
+      case 'workExperience':
+        await generateAIWorkExperience()
+        break
+      case 'skills':
+        await generateAISkills()
+        break
+      case 'projects':
+        await generateAIProjects()
+        break
+      default:
+        ElMessage.warning('该模块暂不支持AI生成')
+        return
+    }
+
+    ElMessage.success('AI内容生成成功！')
+  } catch (error) {
+    console.error('AI生成失败:', error)
+    ElMessage.error(`AI生成失败: ${error.message}`)
+  } finally {
+    loading.close()
+  }
+}
+
+// 生成AI个人简介
+const generateAISummary = async () => {
+  const personalInfo = resumeStore.resumeData.personalInfo
+  if (!personalInfo.name) {
+    throw new Error('请先填写个人信息')
+  }
+
+  const summary = await generatePersonalSummary(personalInfo)
+  resumeStore.updateSummary(summary)
+}
+
+// 生成AI工作经历
+const generateAIWorkExperience = async () => {
+  const workExperience = resumeStore.resumeData.workExperience
+  if (workExperience.length === 0) {
+    throw new Error('请先添加工作经历')
+  }
+
+  // 优化最新的工作经历
+  const latestWork = workExperience[workExperience.length - 1]
+  if (!latestWork.jobTitle || !latestWork.company) {
+    throw new Error('请先填写工作经历的基本信息')
+  }
+
+  const optimizedResponsibilities = await optimizeWorkExperience(latestWork)
+
+  // 更新工作经历
+  const updatedWork = {
+    ...latestWork,
+    responsibilities: optimizedResponsibilities
+  }
+
+  resumeStore.updateWorkExperience(latestWork.id, updatedWork)
+}
+
+// 生成AI技能推荐
+const generateAISkills = async () => {
+  const personalInfo = resumeStore.resumeData.personalInfo
+  const workExperience = resumeStore.resumeData.workExperience
+  const currentSkills = resumeStore.resumeData.skills
+
+  // 从工作经历推断行业和职位
+  const latestWork = workExperience[workExperience.length - 1]
+  const industry = latestWork?.company || ''
+  const position = latestWork?.jobTitle || personalInfo.name || ''
+
+  const recommendedSkills = await recommendSkills(industry, position, currentSkills)
+
+  // 添加推荐的技能
+  const skillsToAdd = []
+
+  recommendedSkills.technical.forEach(skill => {
+    if (!currentSkills.find(s => s.name === skill)) {
+      skillsToAdd.push({
+        name: skill,
+        level: '熟练',
+        category: '技术技能'
+      })
+    }
+  })
+
+  recommendedSkills.soft.forEach(skill => {
+    if (!currentSkills.find(s => s.name === skill)) {
+      skillsToAdd.push({
+        name: skill,
+        level: '良好',
+        category: '软技能'
+      })
+    }
+  })
+
+  recommendedSkills.language.forEach(skill => {
+    if (!currentSkills.find(s => s.name === skill)) {
+      skillsToAdd.push({
+        name: skill,
+        level: '良好',
+        category: '语言技能'
+      })
+    }
+  })
+
+  // 批量添加技能
+  skillsToAdd.forEach(skill => {
+    resumeStore.addSkill(skill)
+  })
+
+  if (skillsToAdd.length === 0) {
+    throw new Error('没有找到新的技能推荐')
+  }
+}
+
+// 生成AI项目描述
+const generateAIProjects = async () => {
+  const projects = resumeStore.resumeData.projects
+  if (projects.length === 0) {
+    throw new Error('请先添加项目经历')
+  }
+
+  // 优化最新的项目
+  const latestProject = projects[projects.length - 1]
+  if (!latestProject.name) {
+    throw new Error('请先填写项目名称')
+  }
+
+  const enhanced = await enhanceProjectDescription(latestProject)
+
+  // 更新项目信息
+  const updatedProject = {
+    ...latestProject,
+    description: enhanced.description,
+    highlights: enhanced.highlights
+  }
+
+  resumeStore.updateProject(latestProject.id, updatedProject)
 }
 
 // 简历管理处理

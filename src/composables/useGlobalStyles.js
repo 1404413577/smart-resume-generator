@@ -68,6 +68,9 @@ export function useGlobalStyles() {
     }
   }
 
+  // 监听设置变化
+  const stopWatcher = watchGlobalSettings()
+
   // 生命周期钩子
   onMounted(() => {
     // 延迟执行，确保DOM已渲染
@@ -76,10 +79,8 @@ export function useGlobalStyles() {
 
   onUnmounted(() => {
     cleanup()
+    stopWatcher() // 停止监听
   })
-
-  // 监听设置变化
-  const stopWatcher = watchGlobalSettings()
 
   // 返回方法供外部使用
   return {

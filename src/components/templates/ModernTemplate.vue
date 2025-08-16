@@ -199,6 +199,8 @@ const getSkillsByCategory = (category) => {
   font-family: var(--resume-font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
   line-height: var(--resume-line-height, 1.6);
   font-size: var(--resume-base-font-size, 14px);
+  /* 确保页边距也应用 */
+  padding: var(--resume-page-margin-top, 30px) var(--resume-page-margin-right, 30px) var(--resume-page-margin-bottom, 30px) var(--resume-page-margin-left, 30px);
 }
 
 /* 头部样式 */

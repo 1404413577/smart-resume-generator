@@ -302,10 +302,10 @@ const getDegreeType = (degree) => {
   margin: 0 auto;
   background: white;
   color: #333;
-  font-family: 'SimSun', '宋体', 'Times New Roman', serif;
-  line-height: 1.5;
-  font-size: 12pt;
-  padding: 15mm;
+  font-family: var(--resume-font-family, 'SimSun', '宋体', 'Times New Roman', serif);
+  line-height: var(--resume-line-height, 1.5);
+  font-size: var(--resume-base-font-size, 12pt);
+  padding: var(--resume-page-margin-top, 15mm) var(--resume-page-margin-right, 15mm) var(--resume-page-margin-bottom, 15mm) var(--resume-page-margin-left, 15mm);
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   min-height: 297mm;
   position: relative;
@@ -367,7 +367,7 @@ const getDegreeType = (degree) => {
 }
 
 .name {
-  font-size: 18pt;
+  font-size: var(--resume-subtitle-font-size, 18pt);
   font-weight: bold;
   margin: 0 0 10pt 0;
   color: #333;
@@ -443,14 +443,14 @@ const getDegreeType = (degree) => {
 
 /* 章节样式 */
 .section {
-  margin-bottom: 15pt;
+  margin-bottom: var(--resume-module-spacing, 15pt);
 }
 
 .section-title {
-  font-size: 14pt;
+  font-size: var(--resume-title-font-size, 14pt);
   font-weight: bold;
   color: #2c3e50;
-  margin: 15pt 0 10pt 0;
+  margin: var(--resume-module-spacing, 15pt) 0 10pt 0;
   border-bottom: 2px solid #3498db;
   padding-bottom: 3pt;
 }

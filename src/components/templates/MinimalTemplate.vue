@@ -212,10 +212,10 @@ const getLanguageLevelText = (level) => {
   margin: 0 auto;
   background: white;
   color: #333;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  line-height: 1.5;
-  font-size: 14px;
-  padding: 40px;
+  font-family: var(--resume-font-family, 'Helvetica Neue', Arial, sans-serif);
+  line-height: var(--resume-line-height, 1.5);
+  font-size: var(--resume-base-font-size, 14px);
+  padding: var(--resume-page-margin-top, 40px) var(--resume-page-margin-right, 40px) var(--resume-page-margin-bottom, 40px) var(--resume-page-margin-left, 40px);
 }
 
 /* 头部样式 */
@@ -226,7 +226,7 @@ const getLanguageLevelText = (level) => {
 }
 
 .name {
-  font-size: 32px;
+  font-size: var(--resume-subtitle-font-size, 32px);
   font-weight: 300;
   margin: 0 0 10px 0;
   color: #333;
@@ -279,11 +279,11 @@ const getLanguageLevelText = (level) => {
 
 /* 章节样式 */
 .section {
-  margin-bottom: 35px;
+  margin-bottom: var(--resume-module-spacing, 35px);
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: var(--resume-title-font-size, 16px);
   font-weight: 600;
   color: #333;
   margin: 0 0 20px 0;

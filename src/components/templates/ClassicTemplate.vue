@@ -86,17 +86,31 @@
         <div v-for="edu in resumeData.education" :key="edu.id" class="education-item">
           <div class="education-header">
             <div class="education-left">
-              <h3 class="degree">{{ edu.degree }}</h3>
-              <h4 class="institution">{{ edu.institution }} - {{ edu.major }}</h4>
+              <span class="institution-name">{{ edu.institution }}</span>
             </div>
             <div class="education-right">
-              <span class="graduation-date">{{ edu.graduationDate }}</span>
-              <span v-if="edu.location" class="education-location">{{ edu.location }}</span>
+              <span class="graduation-date">{{ formatEducationDate(edu.startDate, edu.graduationDate) }}</span>
             </div>
           </div>
-          <div v-if="edu.gpa || edu.honors" class="education-details">
-            <span v-if="edu.gpa" class="gpa">GPA: {{ edu.gpa }}</span>
-            <span v-if="edu.honors" class="honors">{{ edu.honors }}</span>
+
+          <!-- 学位信息 - 居左对齐，不缩进 -->
+          <div class="degree-info">{{ edu.major }} | {{ getDegreeType(edu.degree) }} | {{ edu.degree }}</div>
+
+          <div class="education-details">
+            <!-- 主修课程 -->
+            <div v-if="edu.relevantCourses" class="relevant-courses">
+              主修课程：{{ edu.relevantCourses }}
+            </div>
+
+            <!-- 荣誉奖项 -->
+            <div v-if="edu.honors" class="honors-info">
+              {{ edu.honors }}
+            </div>
+
+            <!-- GPA信息 -->
+            <div v-if="edu.gpa" class="gpa-info">
+              GPA: {{ edu.gpa }}
+            </div>
           </div>
         </div>
       </div>
@@ -232,6 +246,40 @@ const getLanguageLevelText = (level) => {
   }
   return levelMap[level] || '中等'
 }
+
+// 格式化教育时间
+const formatEducationDate = (startDate, endDate) => {
+  if (!endDate) return ''
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return ''
+    const [year, month] = dateStr.split('-')
+    return `${year}.${month.padStart(2, '0')}`
+  }
+
+  const start = formatDate(startDate)
+  const end = formatDate(endDate)
+
+  if (start && end) {
+    return `${start} - ${end}`
+  } else if (end) {
+    return end
+  }
+  return ''
+}
+
+// 获取学位类型
+const getDegreeType = (degree) => {
+  const degreeTypeMap = {
+    '博士': '博士',
+    '硕士': '硕士',
+    '学士': '本科',
+    '大专': '大专',
+    '高中': '高中',
+    '中专': '中专'
+  }
+  return degreeTypeMap[degree] || '本科'
+}
 </script>
 
 <style scoped>
@@ -315,6 +363,7 @@ const getLanguageLevelText = (level) => {
 
 .section-content {
   margin-left: 0;
+  padding-left: 0;
 }
 
 /* 个人简介 */
@@ -410,42 +459,53 @@ const getLanguageLevelText = (level) => {
   min-width: 120px;
 }
 
-.degree {
-  font-size: inherit;
-  font-weight: bold;
-  margin: 0;
-  color: #333;
-  display: inline;
+.education-left {
+  display: flex;
+  align-items: flex-start;
 }
 
-.institution {
+.institution-name {
   font-size: inherit;
   font-weight: bold;
-  margin: 0;
   color: #333;
-  display: inline;
+  display: block;
+  margin: 0;
+  padding: 0;
 }
 
 .graduation-date {
   font-weight: bold;
+  color: #333;
 }
 
-.education-location {
-  font-size: inherit;
+.degree-info {
   color: #333;
-  display: block;
-  font-weight: normal;
-  margin-top: 2pt;
+  margin-bottom: 5pt;
+  margin-top: 3pt;
+  text-align: left;
 }
 
 .education-details {
-  color: #333;
+  padding-left: 15pt;
   margin-top: 3pt;
-  padding-left: 10pt;
+  line-height: 1.6;
 }
 
-.gpa {
-  margin-right: 15px;
+.relevant-courses {
+  color: #333;
+  margin-bottom: 5pt;
+  text-align: justify;
+}
+
+.honors-info {
+  color: #333;
+  margin-bottom: 5pt;
+  text-align: justify;
+}
+
+.gpa-info {
+  color: #333;
+  margin-bottom: 5pt;
 }
 
 /* 技能特长 */

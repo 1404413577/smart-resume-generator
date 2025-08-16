@@ -171,39 +171,48 @@
           <span class="setting-unit">倍</span>
         </div>
 
-        <div class="setting-group">
-          <label class="setting-label">页数设置</label>
-          <el-select
-            :model-value="resumeStore.globalSettings.pageSettings.pageCount"
-            @update:model-value="(val) => updatePageSetting('pageCount', val)"
-            size="small"
-            style="width: 100%"
-          >
-            <el-option label="1页" :value="1" />
-            <el-option label="2页" :value="2" />
-            <el-option label="3页" :value="3" />
-          </el-select>
-        </div>
+        <!-- 页面设置分组 -->
+        <div class="page-settings-group">
+          <div class="page-settings-header">
+            <h4 class="page-settings-title">页面设置</h4>
+            <p class="page-settings-desc">控制简历的页数和分页方式</p>
+          </div>
 
-        <div class="setting-group">
-          <label class="setting-label">分页模式</label>
-          <el-radio-group
-            :model-value="resumeStore.globalSettings.pageSettings.pagingMode"
-            @update:model-value="(val) => updatePageSetting('pagingMode', val)"
-            size="small"
-          >
-            <el-radio value="auto">自动分页</el-radio>
-            <el-radio value="manual">手动分页</el-radio>
-          </el-radio-group>
-        </div>
+          <div class="setting-group">
+            <label class="setting-label">页数设置</label>
+            <el-select
+              :model-value="resumeStore.globalSettings.pageSettings.pageCount"
+              @update:model-value="(val) => updatePageSetting('pageCount', val)"
+              size="small"
+              style="width: 100%"
+            >
+              <el-option label="1页" :value="1" />
+              <el-option label="2页" :value="2" />
+              <el-option label="3页" :value="3" />
+            </el-select>
+          </div>
 
-        <div class="setting-group">
-          <label class="setting-label">显示页码</label>
-          <el-switch
-            :model-value="resumeStore.globalSettings.pageSettings.showPageNumbers"
-            @update:model-value="(val) => updatePageSetting('showPageNumbers', val)"
-            size="small"
-          />
+          <div class="setting-group">
+            <label class="setting-label">分页模式</label>
+            <el-radio-group
+              :model-value="resumeStore.globalSettings.pageSettings.pagingMode"
+              @update:model-value="(val) => updatePageSetting('pagingMode', val)"
+              size="small"
+              style="width: 100%"
+            >
+              <el-radio value="auto">自动分页</el-radio>
+              <el-radio value="manual">手动分页</el-radio>
+            </el-radio-group>
+          </div>
+
+          <div class="setting-group">
+            <label class="setting-label">显示页码</label>
+            <el-switch
+              :model-value="resumeStore.globalSettings.pageSettings.showPageNumbers"
+              @update:model-value="(val) => updatePageSetting('showPageNumbers', val)"
+              size="small"
+            />
+          </div>
         </div>
       </el-collapse-item>
 
@@ -369,12 +378,11 @@ const resetSettings = async () => {
   padding: 16px;
   padding-right: 12px; /* 为滚动条留出空间 */
   height: 100%; /* 确保占满父容器 */
-  overflow-y: auto; /* 在这里也添加滚动 */
-  overflow-x: hidden;
-  /* 确保滚动功能正常 */
+  /* 移除这里的滚动，让父容器处理滚动 */
+  overflow: visible;
+  /* 确保布局正常 */
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 
 .collapse-title {
@@ -388,6 +396,40 @@ const resetSettings = async () => {
 .setting-group {
   margin-bottom: 20px;
   position: relative;
+}
+
+.page-settings-group {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.page-settings-group .setting-group {
+  margin-bottom: 16px;
+}
+
+.page-settings-group .setting-group:last-child {
+  margin-bottom: 0;
+}
+
+.page-settings-header {
+  margin-bottom: 16px;
+}
+
+.page-settings-title {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #409eff;
+}
+
+.page-settings-desc {
+  margin: 0;
+  font-size: 12px;
+  color: #909399;
+  line-height: 1.4;
 }
 
 .setting-label {
@@ -513,11 +555,6 @@ const resetSettings = async () => {
   overflow: visible;
 }
 
-:deep(.el-collapse-item__content) {
-  overflow: visible;
-  max-height: none;
-}
-
 :deep(.el-slider__input) {
   width: 60px;
 }
@@ -530,21 +567,5 @@ const resetSettings = async () => {
   text-align: center;
 }
 
-/* 滚动条样式 */
-.global-settings::-webkit-scrollbar {
-  width: 4px;
-}
-
-.global-settings::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.global-settings::-webkit-scrollbar-thumb {
-  background: #c0c4cc;
-  border-radius: 2px;
-}
-
-.global-settings::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
+/* 滚动条样式由父容器advanced-settings处理 */
 </style>

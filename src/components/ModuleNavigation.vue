@@ -63,11 +63,6 @@
 
     <!-- 操作按钮区域 -->
     <div class="action-buttons">
-      <el-button type="primary" @click="handleExportPDF" :loading="isExporting">
-        <el-icon><Download /></el-icon>
-        导出PDF
-      </el-button>
-      
       <el-button @click="handleManageResumes">
         <el-icon><Folder /></el-icon>
         简历管理
@@ -80,7 +75,7 @@
 import { computed, ref } from 'vue'
 import {
   Setting, List, User, Document, Briefcase, School,
-  Star, Folder, Download, Rank
+  Star, Folder, Rank
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
 import GlobalSettings from './GlobalSettings.vue'
@@ -92,10 +87,9 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['module-change', 'template-change', 'export-pdf', 'manage-resumes'])
+const emit = defineEmits(['module-change', 'template-change', 'manage-resumes'])
 
 const resumeStore = useResumeStore()
-const isExporting = ref(false)
 
 // 模板选项
 const templates = [
@@ -158,13 +152,7 @@ const handleTemplateChange = (templateId) => {
 
 
 
-const handleExportPDF = () => {
-  isExporting.value = true
-  emit('export-pdf')
-  setTimeout(() => {
-    isExporting.value = false
-  }, 2000)
-}
+
 
 const handleManageResumes = () => {
   emit('manage-resumes')
@@ -217,11 +205,9 @@ const handleManageResumes = () => {
 }
 
 .advanced-settings {
-  flex: 1;
+  height: 400px; /* 设置固定高度 */
   overflow-y: auto;
   overflow-x: hidden;
-  min-height: 0;
-  max-height: calc(100vh - 400px); /* 确保有固定的最大高度 */
   padding: 0;
   /* 平滑滚动 */
   scroll-behavior: smooth;
@@ -354,13 +340,13 @@ const handleManageResumes = () => {
 /* 响应式设计 - 确保在不同屏幕尺寸下滚动正常 */
 @media (max-height: 800px) {
   .advanced-settings {
-    max-height: calc(100vh - 350px);
+    height: 300px;
   }
 }
 
 @media (max-height: 600px) {
   .advanced-settings {
-    max-height: calc(100vh - 300px);
+    height: 200px;
   }
 }
 

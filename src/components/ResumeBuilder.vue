@@ -6,7 +6,6 @@
         :active-module="activeModule"
         @module-change="handleModuleChange"
         @template-change="handleTemplateChange"
-        @export-pdf="handleExportPDF"
         @manage-resumes="handleManageResumes"
       />
     </div>
@@ -357,28 +356,7 @@ const resetZoom = () => {
   previewScale.value = 0.8
 }
 
-// 导出PDF处理
-const handleExportPDF = async () => {
-  try {
-    // 临时重置缩放比例以确保PDF正常生成
-    const originalScale = previewScale.value
-    previewScale.value = 1
 
-    // 等待DOM更新
-    await new Promise(resolve => setTimeout(resolve, 100))
-
-    await generatePDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
-    ElMessage.success('PDF下载成功！')
-
-    // 恢复原始缩放比例
-    previewScale.value = originalScale
-  } catch (error) {
-    console.error('PDF生成失败:', error)
-    ElMessage.error('PDF生成失败，请重试')
-    // 确保恢复缩放比例
-    previewScale.value = originalScale
-  }
-}
 
 // 更新标题对齐方式
 const updateTitleAlignment = (alignment) => {

@@ -328,6 +328,9 @@ const resetSettings = async () => {
 .global-settings {
   padding: 16px;
   padding-right: 12px; /* 为滚动条留出空间 */
+  height: 100%; /* 确保占满父容器 */
+  overflow-y: auto; /* 在这里也添加滚动 */
+  overflow-x: hidden;
 }
 
 .collapse-title {
@@ -460,5 +463,23 @@ const resetSettings = async () => {
 
 :deep(.el-input-number .el-input__inner) {
   text-align: center;
+}
+
+/* 滚动条样式 */
+.global-settings::-webkit-scrollbar {
+  width: 4px;
+}
+
+.global-settings::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.global-settings::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 2px;
+}
+
+.global-settings::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 </style>

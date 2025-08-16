@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Document, CircleCheck, Folder, Download, MagicStick, View } from '@element-plus/icons-vue'
 import { useResumeStore } from './stores/resume'
+import { generatePDF } from './utils/pdfGenerator'
 import ResumeBuilder from './components/ResumeBuilder.vue'
 import ResumeManager from './components/ResumeManager.vue'
 import AITestComponent from './components/AITestComponent.vue'
@@ -8,6 +11,7 @@ import AITestComponent from './components/AITestComponent.vue'
 const resumeStore = useResumeStore()
 const showResumeManager = ref(false)
 const showAITest = ref(false)
+const isExporting = ref(false)
 
 // 格式化保存时间
 const formatSaveTime = (saveTime) => {
@@ -19,6 +23,43 @@ const formatSaveTime = (saveTime) => {
   if (diff < 60) return `${diff}秒前`
   if (diff < 3600) return `${Math.floor(diff / 60)}分钟前`
   return saveTime.toLocaleTimeString()
+}
+
+// 导出PDF处理
+const handleExportPDF = async () => {
+  try {
+    isExporting.value = true
+
+    // 获取预览容器，如果有缩放需要重置
+    const previewElement = document.querySelector('.preview-content')
+    let originalTransform = null
+
+    if (previewElement) {
+      originalTransform = previewElement.style.transform
+      previewElement.style.transform = 'scale(1)'
+      // 等待DOM更新
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+
+    await generatePDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
+    ElMessage.success('PDF下载成功！')
+
+    // 恢复原始缩放
+    if (previewElement && originalTransform) {
+      previewElement.style.transform = originalTransform
+    }
+  } catch (error) {
+    console.error('PDF生成失败:', error)
+    ElMessage.error('PDF生成失败，请重试')
+
+    // 确保恢复缩放
+    const previewElement = document.querySelector('.preview-content')
+    if (previewElement && originalTransform) {
+      previewElement.style.transform = originalTransform
+    }
+  } finally {
+    isExporting.value = false
+  }
 }
 
 onMounted(() => {
@@ -49,11 +90,15 @@ onMounted(() => {
               <el-icon><Folder /></el-icon>
               简历管理
             </el-button>
+            <el-button type="primary" @click="handleExportPDF" :loading="isExporting">
+              <el-icon><Download /></el-icon>
+              导出PDF
+            </el-button>
             <el-button @click="showAITest = !showAITest">
               <el-icon><MagicStick /></el-icon>
               AI测试
             </el-button>
-            <el-button type="primary" @click="resumeStore.togglePreviewMode()">
+            <el-button @click="resumeStore.togglePreviewMode()">
               <el-icon><View /></el-icon>
               {{ resumeStore.isPreviewMode ? '编辑模式' : '预览模式' }}
             </el-button>

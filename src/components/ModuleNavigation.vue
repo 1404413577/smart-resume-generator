@@ -219,7 +219,14 @@ const handleManageResumes = () => {
 .advanced-settings {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 0;
+  max-height: calc(100vh - 400px); /* 确保有固定的最大高度 */
+  padding: 0;
+  /* 平滑滚动 */
+  scroll-behavior: smooth;
+  /* 确保在移动设备上也能滚动 */
+  -webkit-overflow-scrolling: touch;
 }
 
 .module-items {
@@ -324,5 +331,43 @@ const handleManageResumes = () => {
 
 .module-list::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* 高级设置区域滚动条样式 */
+.advanced-settings::-webkit-scrollbar {
+  width: 4px;
+}
+
+.advanced-settings::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.advanced-settings::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 2px;
+}
+
+.advanced-settings::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 响应式设计 - 确保在不同屏幕尺寸下滚动正常 */
+@media (max-height: 800px) {
+  .advanced-settings {
+    max-height: calc(100vh - 350px);
+  }
+}
+
+@media (max-height: 600px) {
+  .advanced-settings {
+    max-height: calc(100vh - 300px);
+  }
+}
+
+/* 确保在小屏幕设备上滚动条可见 */
+@media (max-width: 768px) {
+  .advanced-settings::-webkit-scrollbar {
+    width: 6px;
+  }
 }
 </style>

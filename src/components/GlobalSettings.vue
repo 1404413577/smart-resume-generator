@@ -326,7 +326,8 @@ const resetSettings = async () => {
 
 <style scoped>
 .global-settings {
-  padding: 0;
+  padding: 16px;
+  padding-right: 12px; /* 为滚动条留出空间 */
 }
 
 .collapse-title {

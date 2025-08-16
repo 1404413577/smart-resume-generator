@@ -170,6 +170,41 @@
           />
           <span class="setting-unit">倍</span>
         </div>
+
+        <div class="setting-group">
+          <label class="setting-label">页数设置</label>
+          <el-select
+            :model-value="resumeStore.globalSettings.pageSettings.pageCount"
+            @update:model-value="(val) => updatePageSetting('pageCount', val)"
+            size="small"
+            style="width: 100%"
+          >
+            <el-option label="1页" :value="1" />
+            <el-option label="2页" :value="2" />
+            <el-option label="3页" :value="3" />
+          </el-select>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">分页模式</label>
+          <el-radio-group
+            :model-value="resumeStore.globalSettings.pageSettings.pagingMode"
+            @update:model-value="(val) => updatePageSetting('pagingMode', val)"
+            size="small"
+          >
+            <el-radio value="auto">自动分页</el-radio>
+            <el-radio value="manual">手动分页</el-radio>
+          </el-radio-group>
+        </div>
+
+        <div class="setting-group">
+          <label class="setting-label">显示页码</label>
+          <el-switch
+            :model-value="resumeStore.globalSettings.pageSettings.showPageNumbers"
+            @update:model-value="(val) => updatePageSetting('showPageNumbers', val)"
+            size="small"
+          />
+        </div>
       </el-collapse-item>
 
       <!-- 自定义模块 -->
@@ -264,6 +299,11 @@ const updateSpacing = (key, value) => {
 const updatePageMargin = (side, value) => {
   const newMargin = { [side]: value }
   resumeStore.updateSpacingSetting('pageMargin', newMargin)
+}
+
+// 页面设置更新
+const updatePageSetting = (key, value) => {
+  resumeStore.updatePageSetting(key, value)
 }
 
 // 自定义模块管理

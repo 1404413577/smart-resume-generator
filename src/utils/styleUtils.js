@@ -8,15 +8,15 @@
  * @returns {Object} CSS变量对象
  */
 export function generateCSSVariables(globalSettings) {
-  const { typography, spacing } = globalSettings
-  
+  const { typography, spacing, pageSettings } = globalSettings
+
   return {
     // 字体相关变量
     '--resume-base-font-size': `${typography.baseFontSize}px`,
     '--resume-title-font-size': `${typography.titleFontSize}px`,
     '--resume-subtitle-font-size': `${typography.subtitleFontSize}px`,
     '--resume-font-family': typography.fontFamily,
-    
+
     // 间距相关变量
     '--resume-page-margin-top': `${spacing.pageMargin.top}mm`,
     '--resume-page-margin-right': `${spacing.pageMargin.right}mm`,
@@ -24,7 +24,14 @@ export function generateCSSVariables(globalSettings) {
     '--resume-page-margin-left': `${spacing.pageMargin.left}mm`,
     '--resume-module-spacing': `${spacing.moduleSpacing}mm`,
     '--resume-line-height': spacing.lineHeight,
-    
+
+    // 页面相关变量
+    '--resume-page-count': pageSettings.pageCount,
+    '--resume-page-height': '297mm',
+    '--resume-page-width': '210mm',
+    '--resume-single-page-height': `calc(297mm - ${spacing.pageMargin.top}mm - ${spacing.pageMargin.bottom}mm)`,
+    '--resume-multi-page-height': `calc(${pageSettings.pageCount} * 297mm - ${spacing.pageMargin.top}mm - ${spacing.pageMargin.bottom}mm)`,
+
     // 计算得出的变量
     '--resume-page-margin': `${spacing.pageMargin.top}mm ${spacing.pageMargin.right}mm ${spacing.pageMargin.bottom}mm ${spacing.pageMargin.left}mm`,
     '--resume-content-width': `calc(210mm - ${spacing.pageMargin.left}mm - ${spacing.pageMargin.right}mm)`,

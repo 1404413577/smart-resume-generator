@@ -56,6 +56,13 @@ export const useResumeStore = defineStore('resume', () => {
       moduleSpacing: 12,  // 模块间距 5-20mm
       lineHeight: 1.5     // 行间距 1.0-2.0
     },
+    // 页面设置
+    pageSettings: {
+      pageCount: 1,           // 页数 1-3
+      pagingMode: 'auto',     // 分页模式 'auto' | 'manual'
+      showPageNumbers: true,  // 显示页码
+      pageBreaks: []          // 手动分页位置
+    },
     // 自定义模块
     customModules: []
   })
@@ -368,6 +375,12 @@ export const useResumeStore = defineStore('resume', () => {
             moduleSpacing: parsed.spacing?.moduleSpacing || 12,
             lineHeight: parsed.spacing?.lineHeight || 1.5
           },
+          pageSettings: {
+            pageCount: parsed.pageSettings?.pageCount || 1,
+            pagingMode: parsed.pageSettings?.pagingMode || 'auto',
+            showPageNumbers: parsed.pageSettings?.showPageNumbers !== false,
+            pageBreaks: parsed.pageSettings?.pageBreaks || []
+          },
           customModules: parsed.customModules || []
         }
       } catch (error) {
@@ -498,6 +511,11 @@ export const useResumeStore = defineStore('resume', () => {
     saveToLocalStorage()
   }
 
+  const updatePageSetting = (key, value) => {
+    globalSettings.value.pageSettings[key] = value
+    saveToLocalStorage()
+  }
+
   const addCustomModule = (module) => {
     const newModule = {
       ...module,
@@ -543,6 +561,12 @@ export const useResumeStore = defineStore('resume', () => {
         },
         moduleSpacing: 12,
         lineHeight: 1.5
+      },
+      pageSettings: {
+        pageCount: 1,
+        pagingMode: 'auto',
+        showPageNumbers: true,
+        pageBreaks: []
       },
       customModules: []
     }
@@ -647,6 +671,7 @@ export const useResumeStore = defineStore('resume', () => {
     globalSettings,
     updateTypographySetting,
     updateSpacingSetting,
+    updatePageSetting,
     addCustomModule,
     updateCustomModule,
     removeCustomModule,

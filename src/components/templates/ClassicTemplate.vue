@@ -1,5 +1,5 @@
 <template>
-  <div class="classic-template">
+  <div class="classic-template" :class="{ 'multi-page': pageCount > 1 }">
     <!-- 头部个人信息 -->
     <header class="resume-header">
       <div class="header-content" :class="`avatar-${avatarPosition}`">
@@ -220,6 +220,10 @@ const props = defineProps({
 
 const resumeStore = useResumeStore()
 
+// 页面设置
+const pageCount = computed(() => resumeStore.globalSettings.pageSettings.pageCount)
+const showPageNumbers = computed(() => resumeStore.globalSettings.pageSettings.showPageNumbers)
+
 
 
 // 计算属性
@@ -307,8 +311,12 @@ const getDegreeType = (degree) => {
   font-size: var(--resume-base-font-size, 12pt);
   padding: var(--resume-page-margin-top, 15mm) var(--resume-page-margin-right, 15mm) var(--resume-page-margin-bottom, 15mm) var(--resume-page-margin-left, 15mm);
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  min-height: 297mm;
+  min-height: var(--resume-single-page-height, 297mm);
   position: relative;
+}
+
+.classic-template.multi-page {
+  min-height: var(--resume-multi-page-height, 297mm);
 }
 
 /* 头部样式 */

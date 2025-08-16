@@ -1,5 +1,5 @@
 <template>
-  <div class="modern-template">
+  <div class="modern-template" :class="{ 'multi-page': pageCount > 1 }">
     <!-- 头部个人信息 -->
     <header class="resume-header">
       <div class="header-content">
@@ -163,6 +163,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useResumeStore } from '../../stores/resume'
 
 const props = defineProps({
   resumeData: {
@@ -170,6 +171,12 @@ const props = defineProps({
     required: true
   }
 })
+
+const resumeStore = useResumeStore()
+
+// 页面设置
+const pageCount = computed(() => resumeStore.globalSettings.pageSettings.pageCount)
+const showPageNumbers = computed(() => resumeStore.globalSettings.pageSettings.showPageNumbers)
 
 // 技能分类
 const skillCategories = [
@@ -201,6 +208,11 @@ const getSkillsByCategory = (category) => {
   font-size: var(--resume-base-font-size, 14px);
   /* 确保页边距也应用 */
   padding: var(--resume-page-margin-top, 30px) var(--resume-page-margin-right, 30px) var(--resume-page-margin-bottom, 30px) var(--resume-page-margin-left, 30px);
+  min-height: var(--resume-single-page-height, calc(297mm - 60px));
+}
+
+.modern-template.multi-page {
+  min-height: var(--resume-multi-page-height, calc(297mm - 60px));
 }
 
 /* 头部样式 */

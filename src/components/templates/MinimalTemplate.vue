@@ -169,12 +169,25 @@
         </div>
       </div>
     </section>
+
+    <!-- 自定义模块 -->
+    <section
+      v-for="customModule in customModules"
+      :key="customModule.id"
+      class="section custom-module-section"
+    >
+      <CustomModuleRenderer
+        :module="customModule"
+        :module-data="getCustomModuleData(customModule.id)"
+      />
+    </section>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useResumeStore } from '../../stores/resume'
+import CustomModuleRenderer from '../CustomModuleRenderer.vue'
 
 const props = defineProps({
   resumeData: {
@@ -210,6 +223,15 @@ const getLanguageLevelText = (level) => {
     native: 'Native'
   }
   return levelMap[level] || 'Intermediate'
+}
+
+// 自定义模块相关
+const customModules = computed(() => {
+  return resumeStore.globalSettings.customModules || []
+})
+
+const getCustomModuleData = (moduleId) => {
+  return resumeStore.getCustomModuleData(moduleId)
 }
 </script>
 

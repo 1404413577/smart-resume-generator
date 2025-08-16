@@ -75,7 +75,7 @@
 import { computed, ref } from 'vue'
 import {
   Setting, List, User, Document, Briefcase, School,
-  Star, Folder, Rank
+  Star, Folder, Rank, Plus
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
 import GlobalSettings from './GlobalSettings.vue'
@@ -101,44 +101,74 @@ const templates = [
 const selectedTemplate = ref(resumeStore.selectedTemplate)
 
 // 简历模块配置
-const modules = computed(() => [
-  {
-    id: 'personalInfo',
-    name: '个人信息',
-    icon: User,
-    hasContent: !!resumeStore.resumeData.personalInfo.name
-  },
-  {
-    id: 'summary',
-    name: '个人简介',
-    icon: Document,
-    hasContent: !!resumeStore.resumeData.summary
-  },
-  {
-    id: 'workExperience',
-    name: '工作经历',
-    icon: Briefcase,
-    hasContent: resumeStore.resumeData.workExperience.length > 0
-  },
-  {
-    id: 'education',
-    name: '教育背景',
-    icon: School,
-    hasContent: resumeStore.resumeData.education.length > 0
-  },
-  {
-    id: 'skills',
-    name: '技能特长',
-    icon: Star,
-    hasContent: resumeStore.resumeData.skills.length > 0
-  },
-  {
-    id: 'projects',
-    name: '项目经历',
-    icon: Folder,
-    hasContent: resumeStore.resumeData.projects.length > 0
+const modules = computed(() => {
+  const standardModules = [
+    {
+      id: 'personalInfo',
+      name: '个人信息',
+      icon: User,
+      hasContent: !!resumeStore.resumeData.personalInfo.name
+    },
+    {
+      id: 'summary',
+      name: '个人简介',
+      icon: Document,
+      hasContent: !!resumeStore.resumeData.summary
+    },
+    {
+      id: 'workExperience',
+      name: '工作经历',
+      icon: Briefcase,
+      hasContent: resumeStore.resumeData.workExperience.length > 0
+    },
+    {
+      id: 'education',
+      name: '教育背景',
+      icon: School,
+      hasContent: resumeStore.resumeData.education.length > 0
+    },
+    {
+      id: 'skills',
+      name: '技能特长',
+      icon: Star,
+      hasContent: resumeStore.resumeData.skills.length > 0
+    },
+    {
+      id: 'projects',
+      name: '项目经历',
+      icon: Folder,
+      hasContent: resumeStore.resumeData.projects.length > 0
+    }
+  ]
+
+  // 添加自定义模块
+  const customModules = resumeStore.globalSettings.customModules.map(module => ({
+    id: `custom-${module.id}`,
+    name: module.name,
+    icon: Plus,
+    hasContent: hasCustomModuleContent(module.id),
+    isCustom: true,
+    moduleData: module
+  }))
+
+  return [...standardModules, ...customModules]
+})
+
+// 检查自定义模块是否有内容
+const hasCustomModuleContent = (moduleId) => {
+  const data = resumeStore.getCustomModuleData(moduleId)
+  if (!data) return false
+
+  // 检查是否有任何字段有值
+  for (const key in data) {
+    if (key === 'items') {
+      if (data.items && data.items.length > 0) return true
+    } else {
+      if (data[key] && data[key].toString().trim()) return true
+    }
   }
-])
+  return false
+}
 
 // 事件处理
 const handleModuleClick = (moduleId) => {

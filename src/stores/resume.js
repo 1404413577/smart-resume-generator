@@ -22,7 +22,8 @@ export const useResumeStore = defineStore('resume', () => {
     skills: [],
     projects: [],
     certifications: [],
-    languages: []
+    languages: [],
+    customModulesData: {} // 存储自定义模块的用户数据，key为模块ID
   })
 
   const selectedTemplate = ref('modern')
@@ -309,11 +310,17 @@ export const useResumeStore = defineStore('resume', () => {
     const saved = localStorage.getItem('resumeData')
     if (saved) {
       try {
-        resumeData.value = JSON.parse(saved)
+        const parsedData = JSON.parse(saved)
+        // 确保包含customModulesData字段
+        if (!parsedData.customModulesData) {
+          parsedData.customModulesData = {}
+        }
+        resumeData.value = parsedData
       } catch (error) {
         console.error('加载本地数据失败:', error)
       }
     }
+  }
 
     // 单独加载头像数据（可能很大）
     const savedAvatar = localStorage.getItem('resume_avatar')
@@ -573,6 +580,27 @@ export const useResumeStore = defineStore('resume', () => {
     saveToLocalStorage()
   }
 
+  // 自定义模块数据管理
+  const updateCustomModuleData = (moduleId, data) => {
+    resumeData.value.customModulesData[moduleId] = data
+    saveToLocalStorage()
+  }
+
+  const getCustomModuleData = (moduleId) => {
+    return resumeData.value.customModulesData[moduleId] || {}
+  }
+
+  const initializeCustomModuleData = (moduleId, fields) => {
+    if (!resumeData.value.customModulesData[moduleId]) {
+      const initialData = {}
+      fields.forEach(field => {
+        initialData[field.name] = field.type === 'list' ? [] : ''
+      })
+      resumeData.value.customModulesData[moduleId] = initialData
+      saveToLocalStorage()
+    }
+  }
+
   // 获取排序后的章节数据
   const getOrderedSections = computed(() => {
     return sectionOrder.value.map(sectionKey => ({
@@ -675,6 +703,11 @@ export const useResumeStore = defineStore('resume', () => {
     addCustomModule,
     updateCustomModule,
     removeCustomModule,
-    resetGlobalSettings
+    resetGlobalSettings,
+
+    // 自定义模块数据管理
+    updateCustomModuleData,
+    getCustomModuleData,
+    initializeCustomModuleData
   }
 })

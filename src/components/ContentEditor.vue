@@ -39,7 +39,13 @@
         
         <!-- 项目经历表单 -->
         <ProjectsForm v-if="activeModule === 'projects'" />
-        
+
+        <!-- 自定义模块表单 -->
+        <CustomModuleEditor
+          v-if="isCustomModule && currentCustomModule"
+          :module="currentCustomModule"
+        />
+
         <!-- 默认提示 -->
         <div v-if="!activeModule" class="empty-state">
           <el-icon class="empty-icon"><Document /></el-icon>
@@ -52,9 +58,10 @@
 
 <script setup>
 import { computed } from 'vue'
-import { 
-  User, Document, Briefcase, School, Star, Folder, MagicStick 
+import {
+  User, Document, Briefcase, School, Star, Folder, MagicStick, Plus
 } from '@element-plus/icons-vue'
+import { useResumeStore } from '../stores/resume'
 
 // 导入表单组件
 import PersonalInfoForm from './forms/PersonalInfoForm.vue'
@@ -63,6 +70,7 @@ import WorkExperienceForm from './forms/WorkExperienceForm.vue'
 import EducationForm from './forms/EducationForm.vue'
 import SkillsForm from './forms/SkillsForm.vue'
 import ProjectsForm from './forms/ProjectsForm.vue'
+import CustomModuleEditor from './CustomModuleEditor.vue'
 
 const props = defineProps({
   activeModule: {
@@ -72,6 +80,21 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['ai-generate'])
+
+const resumeStore = useResumeStore()
+
+// 检查是否是自定义模块
+const isCustomModule = computed(() => {
+  return props.activeModule && props.activeModule.startsWith('custom-')
+})
+
+// 获取自定义模块数据
+const currentCustomModule = computed(() => {
+  if (!isCustomModule.value) return null
+
+  const moduleId = props.activeModule.replace('custom-', '')
+  return resumeStore.globalSettings.customModules.find(module => module.id === moduleId)
+})
 
 // 模块配置映射
 const moduleConfig = {
@@ -109,14 +132,23 @@ const moduleConfig = {
 
 // 计算属性
 const currentModuleName = computed(() => {
+  if (isCustomModule.value && currentCustomModule.value) {
+    return currentCustomModule.value.name
+  }
   return moduleConfig[props.activeModule]?.name || '选择模块'
 })
 
 const currentModuleIcon = computed(() => {
+  if (isCustomModule.value) {
+    return Plus
+  }
   return moduleConfig[props.activeModule]?.icon || Document
 })
 
 const showAIButton = computed(() => {
+  if (isCustomModule.value) {
+    return false // 自定义模块暂不支持AI生成
+  }
   return moduleConfig[props.activeModule]?.hasAI || false
 })
 

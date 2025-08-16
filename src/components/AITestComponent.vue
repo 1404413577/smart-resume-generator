@@ -34,15 +34,18 @@
       <template #header>
         <h3>API连接测试</h3>
       </template>
-      
+
       <el-button @click="testAPIConnection" :loading="apiTesting">
         测试API连接
       </el-button>
-      
+
       <div v-if="apiStatus !== null" class="api-status">
-        <el-tag :type="apiStatus ? 'success' : 'danger'">
-          {{ apiStatus ? 'API连接正常' : 'API连接失败' }}
+        <el-tag :type="apiStatus ? 'success' : 'warning'">
+          {{ apiStatus ? 'API连接正常' : 'API连接失败，将使用模拟数据' }}
         </el-tag>
+        <p v-if="!apiStatus" class="api-note">
+          注意：当前使用模拟数据进行演示。如需使用真实AI功能，请检查网络连接和API配置。
+        </p>
       </div>
     </el-card>
 
@@ -190,5 +193,27 @@ const testAPIConnection = async () => {
   text-align: center;
   padding: 20px;
   color: #909399;
+}
+
+.api-note {
+  margin-top: 10px;
+  padding: 10px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 4px;
+  color: #d46b08;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.api-note {
+  margin-top: 10px;
+  padding: 10px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 4px;
+  color: #d46b08;
+  font-size: 13px;
+  line-height: 1.5;
 }
 </style>

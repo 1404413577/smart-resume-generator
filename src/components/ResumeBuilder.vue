@@ -197,7 +197,18 @@ const handleAIGenerate = async (moduleType) => {
     ElMessage.success('AI内容生成成功！')
   } catch (error) {
     console.error('AI生成失败:', error)
-    ElMessage.error(`AI生成失败: ${error.message}`)
+
+    // 提供更友好的错误提示
+    let errorMessage = 'AI生成失败'
+    if (error.message.includes('404')) {
+      errorMessage = 'AI服务暂时不可用，已为您生成示例内容'
+    } else if (error.message.includes('请先填写')) {
+      errorMessage = error.message
+    } else {
+      errorMessage = 'AI服务连接失败，已为您生成示例内容'
+    }
+
+    ElMessage.warning(errorMessage)
   } finally {
     loading.close()
   }

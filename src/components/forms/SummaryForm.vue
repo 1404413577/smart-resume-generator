@@ -9,7 +9,6 @@
           placeholder="请简要描述您的职业背景、核心技能和职业目标。建议控制在100-200字以内。"
           show-word-limit
           maxlength="500"
-          @input="updateSummary"
         />
         <div class="summary-tips">
           <el-alert
@@ -52,13 +51,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useResumeStore } from '../../stores/resume'
 
 const resumeStore = useResumeStore()
 
-// 本地响应式数据
-const summary = ref('')
+// 直接使用store中的数据，确保响应式
+const summary = computed({
+  get: () => resumeStore.resumeData.summary,
+  set: (value) => {
+    resumeStore.updateSummary(value)
+  }
+})
 
 // 快速模板
 const summaryTemplates = [
@@ -82,22 +87,13 @@ const summaryTemplates = [
   }
 ]
 
-// 更新简介
-const updateSummary = () => {
-  resumeStore.updateSummary(summary.value)
-}
-
 // 应用模板
 const applySummaryTemplate = (template) => {
   summary.value = template
-  updateSummary()
   ElMessage.success('模板已应用，请根据个人情况进行修改')
 }
 
-// 组件挂载时同步数据
-onMounted(() => {
-  summary.value = resumeStore.resumeData.summary
-})
+// 数据现在通过computed自动同步，无需手动处理
 </script>
 
 <style scoped>

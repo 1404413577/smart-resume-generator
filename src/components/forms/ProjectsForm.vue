@@ -182,13 +182,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useResumeStore } from '../../stores/resume'
 
 const resumeStore = useResumeStore()
 
-// 本地响应式数据
-const projects = ref([])
+// 直接使用store中的数据，确保响应式
+const projects = computed(() => resumeStore.resumeData.projects)
 const newTechnology = ref('')
 
 // 添加新项目
@@ -203,7 +204,6 @@ const addNewProject = () => {
     highlights: ['']
   }
   resumeStore.addProject(newProject)
-  syncData()
 }
 
 // 更新项目
@@ -219,7 +219,6 @@ const removeProject = (id) => {
     type: 'warning'
   }).then(() => {
     resumeStore.removeProject(id)
-    syncData()
     ElMessage.success('删除成功')
   }).catch(() => {
     // 用户取消删除
@@ -261,15 +260,7 @@ const removeHighlight = (project, index) => {
   }
 }
 
-// 同步数据
-const syncData = () => {
-  projects.value = [...resumeStore.resumeData.projects]
-}
-
-// 组件挂载时同步数据
-onMounted(() => {
-  syncData()
-})
+// 数据现在通过computed自动同步，无需手动处理
 </script>
 
 <style scoped>

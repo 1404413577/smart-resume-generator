@@ -157,14 +157,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { useResumeStore } from '../../stores/resume'
 
 const resumeStore = useResumeStore()
 
-// 本地响应式数据
-const educations = ref([])
+// 直接使用store中的数据，确保响应式
+const educations = computed(() => resumeStore.resumeData.education)
 
 // 添加新的教育经历
 const addNewEducation = () => {
@@ -180,7 +180,6 @@ const addNewEducation = () => {
     relevantCourses: ''
   }
   resumeStore.addEducation(newEducation)
-  syncData()
 }
 
 // 更新教育经历
@@ -196,22 +195,13 @@ const removeEducation = (id) => {
     type: 'warning'
   }).then(() => {
     resumeStore.removeEducation(id)
-    syncData()
     ElMessage.success('删除成功')
   }).catch(() => {
     // 用户取消删除
   })
 }
 
-// 同步数据
-const syncData = () => {
-  educations.value = [...resumeStore.resumeData.education]
-}
-
-// 组件挂载时同步数据
-onMounted(() => {
-  syncData()
-})
+// 数据现在通过computed自动同步，无需手动处理
 </script>
 
 <style scoped>

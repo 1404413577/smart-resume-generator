@@ -143,13 +143,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useResumeStore } from '../../stores/resume'
 
 const resumeStore = useResumeStore()
 
-// 本地响应式数据
-const workExperiences = ref([])
+// 直接使用store中的数据，确保响应式
+const workExperiences = computed(() => resumeStore.resumeData.workExperience)
 
 // 添加新的工作经历
 const addNewExperience = () => {
@@ -163,7 +164,6 @@ const addNewExperience = () => {
     responsibilities: ['']
   }
   resumeStore.addWorkExperience(newExperience)
-  syncData()
 }
 
 // 更新工作经历
@@ -179,7 +179,6 @@ const removeExperience = (id) => {
     type: 'warning'
   }).then(() => {
     resumeStore.removeWorkExperience(id)
-    syncData()
     ElMessage.success('删除成功')
   }).catch(() => {
     // 用户取消删除
@@ -210,15 +209,7 @@ const removeResponsibility = (experience, index) => {
   }
 }
 
-// 同步数据
-const syncData = () => {
-  workExperiences.value = [...resumeStore.resumeData.workExperience]
-}
-
-// 组件挂载时同步数据
-onMounted(() => {
-  syncData()
-})
+// 数据现在通过computed自动同步，无需手动处理
 </script>
 
 <style scoped>

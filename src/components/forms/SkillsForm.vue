@@ -113,13 +113,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { computed, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useResumeStore } from '../../stores/resume'
 
 const resumeStore = useResumeStore()
 
-// 本地响应式数据
-const skills = ref([])
+// 直接使用store中的数据，确保响应式
+const skills = computed(() => resumeStore.resumeData.skills)
 const showAddSkillDialog = ref(false)
 const newSkill = ref({
   name: '',
@@ -248,15 +249,7 @@ const resetSkillForm = () => {
   }
 }
 
-// 同步数据
-const syncData = () => {
-  skills.value = [...resumeStore.resumeData.skills]
-}
-
-// 组件挂载时同步数据
-onMounted(() => {
-  syncData()
-})
+// 数据现在通过computed自动同步，无需手动处理
 </script>
 
 <style scoped>

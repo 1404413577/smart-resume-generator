@@ -12,7 +12,6 @@
             <el-input
               v-model="personalInfo.name"
               placeholder="请输入您的姓名"
-              @input="updateInfo"
             />
           </el-form-item>
         </el-col>
@@ -22,7 +21,6 @@
               v-model="personalInfo.email"
               placeholder="请输入邮箱地址"
               type="email"
-              @input="updateInfo"
             />
           </el-form-item>
         </el-col>
@@ -31,19 +29,17 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="电话" required>
-            <el-input 
-              v-model="personalInfo.phone" 
+            <el-input
+              v-model="personalInfo.phone"
               placeholder="请输入手机号码"
-              @input="updateInfo"
             />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="地址">
-            <el-input 
-              v-model="personalInfo.address" 
+            <el-input
+              v-model="personalInfo.address"
               placeholder="请输入居住地址"
-              @input="updateInfo"
             />
           </el-form-item>
         </el-col>
@@ -52,10 +48,9 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="个人网站">
-            <el-input 
-              v-model="personalInfo.website" 
+            <el-input
+              v-model="personalInfo.website"
               placeholder="https://yourwebsite.com"
-              @input="updateInfo"
             >
               <template #prefix>
                 <el-icon><Link /></el-icon>
@@ -65,10 +60,9 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="LinkedIn">
-            <el-input 
-              v-model="personalInfo.linkedin" 
+            <el-input
+              v-model="personalInfo.linkedin"
               placeholder="LinkedIn个人资料链接"
-              @input="updateInfo"
             >
               <template #prefix>
                 <el-icon><Link /></el-icon>
@@ -84,7 +78,6 @@
             <el-input
               v-model="personalInfo.github"
               placeholder="GitHub个人资料链接"
-              @input="updateInfo"
             >
               <template #prefix>
                 <el-icon><Link /></el-icon>
@@ -231,23 +224,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, ArrowUp, ArrowDown, Delete } from '@element-plus/icons-vue'
 import { useResumeStore } from '../../stores/resume'
 import AvatarUpload from '../AvatarUpload.vue'
 
 const resumeStore = useResumeStore()
 
-// 本地响应式数据
-const personalInfo = ref({
-  name: '',
-  email: '',
-  phone: '',
-  address: '',
-  website: '',
-  linkedin: '',
-  github: '',
-  customFields: []
+// 直接使用store中的数据，确保响应式
+const personalInfo = computed({
+  get: () => resumeStore.resumeData.personalInfo,
+  set: (value) => {
+    resumeStore.updatePersonalInfo(value)
+  }
 })
 
 // 添加字段对话框相关
@@ -264,10 +254,7 @@ const commonFieldOptions = [
   'Behance', 'Dribbble', 'Instagram', 'Twitter'
 ]
 
-// 更新store中的数据
-const updateInfo = () => {
-  resumeStore.updatePersonalInfo(personalInfo.value)
-}
+// 更新个人信息（现在通过computed的setter自动处理）
 
 // 自定义字段操作
 const addField = () => {
@@ -277,7 +264,6 @@ const addField = () => {
   }
 
   resumeStore.addCustomField(newFieldForm.value.name.trim(), newFieldForm.value.value.trim())
-  syncData()
   showAddFieldDialog.value = false
   resetAddFieldForm()
   ElMessage.success('自定义字段添加成功')
@@ -294,7 +280,6 @@ const removeField = (id) => {
     type: 'warning'
   }).then(() => {
     resumeStore.removeCustomField(id)
-    syncData()
     ElMessage.success('字段删除成功')
   }).catch(() => {
     // 用户取消删除
@@ -303,7 +288,6 @@ const removeField = (id) => {
 
 const moveField = (id, direction) => {
   resumeStore.moveCustomField(id, direction)
-  syncData()
 }
 
 const resetAddFieldForm = () => {
@@ -313,15 +297,7 @@ const resetAddFieldForm = () => {
   }
 }
 
-// 同步数据
-const syncData = () => {
-  personalInfo.value = { ...resumeStore.resumeData.personalInfo }
-}
-
-// 组件挂载时同步数据
-onMounted(() => {
-  syncData()
-})
+// 数据现在通过computed自动同步，无需手动处理
 </script>
 
 <style scoped>

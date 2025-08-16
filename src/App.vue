@@ -69,10 +69,36 @@ onMounted(() => {
   </div>
 </template>
 
+<style>
+/* 全局样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+</style>
+
 <style scoped>
 .app-container {
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-header {
@@ -80,15 +106,17 @@ onMounted(() => {
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  height: 64px;
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 24px;
+  width: 100%;
+  margin: 0;
+  padding: 0 20px;
   height: 100%;
 }
 
@@ -103,10 +131,12 @@ onMounted(() => {
 }
 
 .app-main {
-  padding: 24px;
-  max-width: 1600px;
-  margin: 0 auto;
+  flex: 1;
+  padding: 0;
+  margin: 0;
   width: 100%;
+  height: calc(100vh - 64px);
+  overflow: hidden;
 }
 
 .header-actions {
@@ -141,57 +171,5 @@ onMounted(() => {
   100% { opacity: 1; }
 }
 
-/* 响应式设计优化 */
-@media (max-width: 1400px) {
-  .header-content {
-    max-width: 1200px;
-    padding: 0 20px;
-  }
 
-  .app-main {
-    max-width: 1200px;
-    padding: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px 16px;
-  }
-
-  .app-title {
-    font-size: 20px;
-  }
-
-  .header-actions {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .app-main {
-    padding: 16px;
-  }
-
-  .auto-save-status {
-    font-size: 12px;
-    padding: 6px 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .app-title {
-    font-size: 18px;
-  }
-
-  .header-actions {
-    width: 100%;
-  }
-
-  .app-main {
-    padding: 12px;
-  }
-}
 </style>

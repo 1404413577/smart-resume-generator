@@ -291,7 +291,12 @@ export const useResumeStore = defineStore('resume', () => {
 
     const savedTemplate = localStorage.getItem('selectedTemplate')
     if (savedTemplate) {
-      selectedTemplate.value = savedTemplate
+      // 如果保存的模板是已移除的简约风格，则重置为现代风格
+      if (savedTemplate === 'minimal') {
+        selectedTemplate.value = 'modern'
+      } else {
+        selectedTemplate.value = savedTemplate
+      }
     }
 
     const savedSettings = localStorage.getItem('templateSettings')
@@ -332,7 +337,12 @@ export const useResumeStore = defineStore('resume', () => {
     const resume = savedResumes.value.find(r => r.id === id)
     if (resume) {
       resumeData.value = JSON.parse(JSON.stringify(resume.data))
-      selectedTemplate.value = resume.template
+      // 如果简历使用的是已移除的简约风格，则重置为现代风格
+      if (resume.template === 'minimal') {
+        selectedTemplate.value = 'modern'
+      } else {
+        selectedTemplate.value = resume.template
+      }
     }
   }
 

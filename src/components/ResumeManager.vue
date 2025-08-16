@@ -196,8 +196,7 @@ const importFile = ref(null)
 // 模板名称映射
 const templateNames = {
   modern: '现代风格',
-  classic: '经典风格',
-  minimal: '简约风格'
+  classic: '经典风格'
 }
 
 // 保存当前简历

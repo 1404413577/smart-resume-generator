@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>弹框测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        .test-button {
+            background: #409eff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #66b1ff;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .instructions {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>自定义字段弹框测试</h1>
+        
+        <div class="instructions">
+            <h3>测试说明：</h3>
+            <p>1. 请在不同的鼠标位置（屏幕中间、边缘等）点击"添加自定义字段"按钮</p>
+            <p>2. 观察弹框是否会闪烁或出现重复显示</p>
+            <p>3. 测试快速连续点击按钮的情况</p>
+            <p>4. 确认弹框位置是否稳定，不受鼠标位置影响</p>
+        </div>
+
+        <div class="test-section">
+            <h3>测试区域</h3>
+            <p>请在此区域内移动鼠标到不同位置，然后点击下面的按钮：</p>
+            
+            <div style="height: 200px; background: #f9f9f9; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; margin: 20px 0;">
+                <p>鼠标测试区域 - 请在此区域内移动鼠标</p>
+            </div>
+            
+            <button class="test-button" onclick="window.open('http://localhost:5173/', '_blank')">
+                打开简历生成器进行测试
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h3>修复内容总结：</h3>
+            <ul>
+                <li>✅ 添加了事件冒泡阻止 (@click.stop)</li>
+                <li>✅ 实现了统一的弹框打开/关闭方法</li>
+                <li>✅ 添加了防抖机制防止重复点击</li>
+                <li>✅ 优化了弹框配置属性</li>
+                <li>✅ 固定了弹框位置，不受鼠标位置影响</li>
+                <li>✅ 确保了弹框状态的正确管理</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>预期效果：</h3>
+            <ul>
+                <li>🎯 点击按钮后弹框正常显示一次</li>
+                <li>🎯 弹框位置固定在屏幕中央</li>
+                <li>🎯 无闪烁现象</li>
+                <li>🎯 同时只存在一个弹框实例</li>
+                <li>🎯 快速点击不会产生异常</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

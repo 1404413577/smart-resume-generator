@@ -331,6 +331,10 @@ const resetSettings = async () => {
   height: 100%; /* 确保占满父容器 */
   overflow-y: auto; /* 在这里也添加滚动 */
   overflow-x: hidden;
+  /* 确保滚动功能正常 */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .collapse-title {
@@ -451,6 +455,27 @@ const resetSettings = async () => {
 
 :deep(.el-collapse-item__content) {
   padding: 16px 12px;
+  max-height: none; /* 移除高度限制 */
+  overflow: visible; /* 确保内容可见 */
+}
+
+:deep(.el-collapse) {
+  border: none;
+  flex: 1;
+  overflow: visible;
+}
+
+:deep(.el-collapse-item) {
+  margin-bottom: 8px;
+}
+
+:deep(.el-collapse-item__wrap) {
+  overflow: visible;
+}
+
+:deep(.el-collapse-item__content) {
+  overflow: visible;
+  max-height: none;
 }
 
 :deep(.el-slider__input) {

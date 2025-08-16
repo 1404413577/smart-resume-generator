@@ -200,12 +200,20 @@ const handleManageResumes = () => {
 
 
 .module-list {
+  flex: 0 0 auto; /* 不伸缩，根据内容确定高度 */
+  max-height: 300px; /* 设置最大高度 */
+  overflow-y: auto; /* 启用垂直滚动 */
+  overflow-x: hidden;
   padding: 20px 0;
   border-bottom: 1px solid #e4e7ed;
+  /* 平滑滚动 */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .advanced-settings {
-  height: 400px; /* 设置固定高度 */
+  flex: 1; /* 占用剩余空间 */
+  min-height: 0; /* 重要：允许flex子项收缩 */
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0;
@@ -217,6 +225,11 @@ const handleManageResumes = () => {
 
 .module-items {
   padding: 0 8px;
+  /* 确保内容可以正常滚动 */
+  min-height: min-content;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .module-item {
@@ -339,14 +352,14 @@ const handleManageResumes = () => {
 
 /* 响应式设计 - 确保在不同屏幕尺寸下滚动正常 */
 @media (max-height: 800px) {
-  .advanced-settings {
-    height: 300px;
+  .module-list {
+    max-height: 250px;
   }
 }
 
 @media (max-height: 600px) {
-  .advanced-settings {
-    height: 200px;
+  .module-list {
+    max-height: 200px;
   }
 }
 

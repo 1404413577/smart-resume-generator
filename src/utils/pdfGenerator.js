@@ -1,6 +1,5 @@
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-import { saveAs } from 'file-saver'
 
 /**
  * 生成PDF文件
@@ -72,9 +71,18 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
       }
     }
 
-    // 保存PDF
-    pdf.save(filename)
-    
+    // 保存PDF - 使用更可靠的下载方法
+    const pdfBlob = pdf.output('blob')
+    const url = URL.createObjectURL(pdfBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+
     return true
   } catch (error) {
     console.error('PDF生成失败:', error)
@@ -112,10 +120,18 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
     
     pdf.addImage(imgData, 'PNG', 0, 0, imgWidth * ratio, imgHeight * ratio)
     
-    // 转换为Blob并下载
+    // 转换为Blob并下载 - 使用更可靠的下载方法
     const pdfBlob = pdf.output('blob')
-    saveAs(pdfBlob, filename)
-    
+    const url = URL.createObjectURL(pdfBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+
     return true
   } catch (error) {
     console.error('PDF下载失败:', error)

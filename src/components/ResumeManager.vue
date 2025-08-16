@@ -170,6 +170,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useResumeStore } from '../stores/resume'
 import { generatePDF } from '../utils/pdfGenerator'
 

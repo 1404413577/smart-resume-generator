@@ -49,20 +49,20 @@ export const useResumeStore = defineStore('resume', () => {
     // 间距设置
     spacing: {
       pageMargin: {
-        top: 20,    // 上边距 10-30mm
-        right: 20,  // 右边距 10-30mm
-        bottom: 20, // 下边距 10-30mm
-        left: 20    // 左边距 10-30mm
+        top: 20,    // 页面上边距 10-40px
+        right: 20,  // 页面右边距 10-40px
+        bottom: 20, // 页面下边距 10-40px
+        left: 20    // 页面左边距 10-40px
       },
-      moduleSpacing: 12,  // 模块间距 5-20mm
-      lineHeight: 1.5     // 行间距 1.0-2.0
+      moduleSpacing: 12,  // 模块间距 8-20px
+      lineHeight: 1.5     // 行高 1.2-2.0
     },
     // 页面设置
     pageSettings: {
-      pageCount: 1,           // 页数 1-3
-      pagingMode: 'auto',     // 分页模式 'auto' | 'manual'
-      showPageNumbers: true,  // 显示页码
-      pageBreaks: []          // 手动分页位置
+      pageCount: 1,           // 页数限制 1-3
+      pagingMode: 'auto',     // 分页模式: 'auto' | 'manual'
+      showPageNumbers: true,  // 是否显示页码
+      pageBreaks: []          // 手动分页点
     },
     // 自定义模块
     customModules: []
@@ -128,11 +128,10 @@ export const useResumeStore = defineStore('resume', () => {
   }
 
   // 自定义字段操作
-  const addCustomField = (fieldName, fieldValue = '') => {
+  const addCustomField = (field) => {
     const newField = {
-      id: Date.now().toString(),
-      name: fieldName,
-      value: fieldValue
+      ...field,
+      id: Date.now().toString()
     }
     resumeData.value.personalInfo.customFields.push(newField)
   }
@@ -151,22 +150,14 @@ export const useResumeStore = defineStore('resume', () => {
     resumeData.value.personalInfo.customFields = resumeData.value.personalInfo.customFields.filter(field => field.id !== id)
   }
 
-  const moveCustomField = (id, direction) => {
-    const fields = resumeData.value.personalInfo.customFields
-    const index = fields.findIndex(field => field.id === id)
-
-    if (index === -1) return
-
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < fields.length) {
-      // 交换位置
-      const temp = fields[index]
-      fields[index] = fields[newIndex]
-      fields[newIndex] = temp
-    }
+  const moveCustomField = (fromIndex, toIndex) => {
+    const fields = [...resumeData.value.personalInfo.customFields]
+    const [movedField] = fields.splice(fromIndex, 1)
+    fields.splice(toIndex, 0, movedField)
+    resumeData.value.personalInfo.customFields = fields
   }
 
+  // 个人简介操作
   const updateSummary = (summary) => {
     resumeData.value.summary = summary
   }
@@ -180,10 +171,13 @@ export const useResumeStore = defineStore('resume', () => {
     resumeData.value.workExperience.push(newExperience)
   }
 
-  const updateWorkExperience = (id, experience) => {
+  const updateWorkExperience = (id, updates) => {
     const index = resumeData.value.workExperience.findIndex(exp => exp.id === id)
     if (index !== -1) {
-      resumeData.value.workExperience[index] = { ...resumeData.value.workExperience[index], ...experience }
+      resumeData.value.workExperience[index] = {
+        ...resumeData.value.workExperience[index],
+        ...updates
+      }
     }
   }
 
@@ -191,7 +185,7 @@ export const useResumeStore = defineStore('resume', () => {
     resumeData.value.workExperience = resumeData.value.workExperience.filter(exp => exp.id !== id)
   }
 
-  // 教育经历操作
+  // 教育背景操作
   const addEducation = (education) => {
     const newEducation = {
       ...education,
@@ -200,10 +194,13 @@ export const useResumeStore = defineStore('resume', () => {
     resumeData.value.education.push(newEducation)
   }
 
-  const updateEducation = (id, education) => {
+  const updateEducation = (id, updates) => {
     const index = resumeData.value.education.findIndex(edu => edu.id === id)
     if (index !== -1) {
-      resumeData.value.education[index] = { ...resumeData.value.education[index], ...education }
+      resumeData.value.education[index] = {
+        ...resumeData.value.education[index],
+        ...updates
+      }
     }
   }
 
@@ -224,25 +221,27 @@ export const useResumeStore = defineStore('resume', () => {
     resumeData.value.skills = resumeData.value.skills.filter(skill => skill.id !== id)
   }
 
-  // 项目操作
+  // 项目经历操作
   const addProject = (project) => {
     const newProject = {
       ...project,
-      id: Date.now().toString(),
-      highlights: project.highlights || ['']
+      id: Date.now().toString()
     }
     resumeData.value.projects.push(newProject)
   }
 
-  const updateProject = (id, project) => {
+  const updateProject = (id, updates) => {
     const index = resumeData.value.projects.findIndex(proj => proj.id === id)
     if (index !== -1) {
-      resumeData.value.projects[index] = { ...resumeData.value.projects[index], ...project }
+      resumeData.value.projects[index] = {
+        ...resumeData.value.projects[index],
+        ...updates
+      }
     }
   }
 
   const removeProject = (id) => {
-    resumeData.value.projects = resumeData.value.projects.filter(project => project.id !== id)
+    resumeData.value.projects = resumeData.value.projects.filter(proj => proj.id !== id)
   }
 
   // 证书操作
@@ -277,6 +276,7 @@ export const useResumeStore = defineStore('resume', () => {
     localStorage.setItem('selectedTemplate', selectedTemplate.value)
     localStorage.setItem('templateSettings', JSON.stringify(templateSettings.value))
     localStorage.setItem('globalSettings', JSON.stringify(globalSettings.value))
+    lastSaveTime.value = new Date()
   }
 
   // 自动保存定时器
@@ -289,10 +289,8 @@ export const useResumeStore = defineStore('resume', () => {
     }
 
     isAutoSaveEnabled.value = true
-
     autoSaveTimer = setInterval(() => {
       saveToLocalStorage()
-      lastSaveTime.value = new Date()
       console.log('自动保存完成:', new Date().toLocaleTimeString())
     }, 3000) // 每3秒自动保存
   }
@@ -320,7 +318,6 @@ export const useResumeStore = defineStore('resume', () => {
         console.error('加载本地数据失败:', error)
       }
     }
-  }
 
     // 单独加载头像数据（可能很大）
     const savedAvatar = localStorage.getItem('resume_avatar')
@@ -648,11 +645,12 @@ export const useResumeStore = defineStore('resume', () => {
     templateSettings,
     sectionOrder,
     sectionConfig,
+    globalSettings,
 
     // 计算属性
     isResumeComplete,
     getOrderedSections,
-    
+
     // 方法
     updatePersonalInfo,
     updateAvatar,
@@ -688,6 +686,7 @@ export const useResumeStore = defineStore('resume', () => {
     startAutoSave,
     stopAutoSave,
     init,
+    saveToLocalStorage,
 
     // 章节排序方法
     updateSectionOrder,
@@ -696,7 +695,6 @@ export const useResumeStore = defineStore('resume', () => {
     resetSectionOrder,
 
     // 全局设置方法
-    globalSettings,
     updateTypographySetting,
     updateSpacingSetting,
     updatePageSetting,

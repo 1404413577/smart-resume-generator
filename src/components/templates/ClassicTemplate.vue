@@ -19,11 +19,28 @@
             </span>
           </div>
           <div v-if="hasLinks" class="contact-row">
-            <span v-if="resumeData.personalInfo.website" class="contact-item">
-              网站：{{ resumeData.personalInfo.website }}
+            <span v-if="resumeData.personalInfo.website" class="contact-item link-item">
+              <span class="link-label">个人网站:</span>
+              <span class="link-url">{{ resumeData.personalInfo.website }}</span>
             </span>
-            <span v-if="resumeData.personalInfo.linkedin" class="contact-item">
-              LinkedIn：{{ resumeData.personalInfo.linkedin }}
+            <span v-if="resumeData.personalInfo.linkedin" class="contact-item link-item">
+              <span class="link-label">LinkedIn:</span>
+              <span class="link-url">{{ resumeData.personalInfo.linkedin }}</span>
+            </span>
+            <span v-if="resumeData.personalInfo.github" class="contact-item link-item">
+              <span class="link-label">GitHub:</span>
+              <span class="link-url">{{ resumeData.personalInfo.github }}</span>
+            </span>
+          </div>
+          <!-- 自定义字段 -->
+          <div v-if="resumeData.personalInfo.customFields && resumeData.personalInfo.customFields.length > 0" class="contact-row">
+            <span
+              v-for="field in resumeData.personalInfo.customFields"
+              :key="field.id"
+              class="contact-item link-item"
+            >
+              <span class="link-label">{{ field.name }}:</span>
+              <span class="link-url">{{ field.value }}</span>
             </span>
           </div>
         </div>
@@ -187,8 +204,8 @@ const skillCategories = [
 
 // 计算属性
 const hasLinks = computed(() => {
-  const { website, linkedin, github } = props.resumeData.personalInfo
-  return website || linkedin || github
+  const { website, linkedin, github, customFields } = props.resumeData.personalInfo
+  return website || linkedin || github || (customFields && customFields.length > 0)
 })
 
 // 根据分类获取技能
@@ -252,6 +269,25 @@ const getLanguageLevelText = (level) => {
 
 .contact-item:last-child {
   margin-right: 0;
+}
+
+.link-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.link-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.link-url {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #666;
+  word-break: break-all;
 }
 
 /* 章节样式 */
@@ -516,17 +552,28 @@ const getLanguageLevelText = (level) => {
     font-size: 12px;
     padding: 15px;
   }
-  
+
   .name {
     font-size: 24px;
   }
-  
+
   .section-title {
     font-size: 16px;
   }
-  
+
   .section {
     margin-bottom: 20px;
+  }
+
+  .link-url {
+    font-size: 11px !important;
+    color: #333 !important;
+    font-weight: 500 !important;
+  }
+
+  .link-label {
+    color: #000 !important;
+    font-weight: bold !important;
   }
 }
 </style>

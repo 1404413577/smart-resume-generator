@@ -7,7 +7,27 @@
         <span v-if="resumeData.personalInfo.email" class="contact-item">{{ resumeData.personalInfo.email }}</span>
         <span v-if="resumeData.personalInfo.phone" class="contact-item">{{ resumeData.personalInfo.phone }}</span>
         <span v-if="resumeData.personalInfo.address" class="contact-item">{{ resumeData.personalInfo.address }}</span>
-        <span v-if="resumeData.personalInfo.website" class="contact-item">{{ resumeData.personalInfo.website }}</span>
+        <span v-if="resumeData.personalInfo.website" class="contact-item link-item">
+          <span class="link-label">网站:</span>
+          <span class="link-url">{{ resumeData.personalInfo.website }}</span>
+        </span>
+        <span v-if="resumeData.personalInfo.linkedin" class="contact-item link-item">
+          <span class="link-label">LinkedIn:</span>
+          <span class="link-url">{{ resumeData.personalInfo.linkedin }}</span>
+        </span>
+        <span v-if="resumeData.personalInfo.github" class="contact-item link-item">
+          <span class="link-label">GitHub:</span>
+          <span class="link-url">{{ resumeData.personalInfo.github }}</span>
+        </span>
+        <!-- 自定义字段 -->
+        <span
+          v-for="field in resumeData.personalInfo.customFields"
+          :key="field.id"
+          class="contact-item custom-field link-item"
+        >
+          <span class="link-label">{{ field.name }}:</span>
+          <span class="link-url">{{ field.value }}</span>
+        </span>
       </div>
     </header>
 
@@ -230,6 +250,31 @@ const getLanguageLevelText = (level) => {
   position: absolute;
   right: -12px;
   color: #ccc;
+}
+
+.custom-field {
+  font-weight: 500;
+  color: #555;
+}
+
+.link-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.link-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.link-url {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #666;
+  word-break: break-all;
+  font-weight: 400;
 }
 
 /* 章节样式 */
@@ -455,25 +500,36 @@ const getLanguageLevelText = (level) => {
     font-size: 12px;
     padding: 20px;
   }
-  
+
   .name {
     font-size: 26px;
   }
-  
+
   .section-title {
     font-size: 14px;
   }
-  
+
   .section {
     margin-bottom: 25px;
   }
-  
+
   .work-item,
   .education-item,
   .project-item,
   .certification-item {
     margin-bottom: 18px;
     page-break-inside: avoid;
+  }
+
+  .link-url {
+    font-size: 11px !important;
+    color: #333 !important;
+    font-weight: 500 !important;
+  }
+
+  .link-label {
+    color: #000 !important;
+    font-weight: bold !important;
   }
 }
 </style>

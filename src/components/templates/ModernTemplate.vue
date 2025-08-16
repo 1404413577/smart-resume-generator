@@ -20,18 +20,31 @@
             </div>
           </div>
           <div class="links" v-if="hasLinks">
-            <a v-if="resumeData.personalInfo.website" :href="resumeData.personalInfo.website" target="_blank" class="link">
+            <div v-if="resumeData.personalInfo.website" class="link">
               <el-icon><Link /></el-icon>
-              个人网站
-            </a>
-            <a v-if="resumeData.personalInfo.linkedin" :href="resumeData.personalInfo.linkedin" target="_blank" class="link">
+              <span class="link-label">个人网站:</span>
+              <span class="link-url">{{ resumeData.personalInfo.website }}</span>
+            </div>
+            <div v-if="resumeData.personalInfo.linkedin" class="link">
               <el-icon><Link /></el-icon>
-              LinkedIn
-            </a>
-            <a v-if="resumeData.personalInfo.github" :href="resumeData.personalInfo.github" target="_blank" class="link">
+              <span class="link-label">LinkedIn:</span>
+              <span class="link-url">{{ resumeData.personalInfo.linkedin }}</span>
+            </div>
+            <div v-if="resumeData.personalInfo.github" class="link">
               <el-icon><Link /></el-icon>
-              GitHub
-            </a>
+              <span class="link-label">GitHub:</span>
+              <span class="link-url">{{ resumeData.personalInfo.github }}</span>
+            </div>
+            <!-- 自定义字段链接 -->
+            <div
+              v-for="field in resumeData.personalInfo.customFields"
+              :key="field.id"
+              class="link custom-field-link"
+            >
+              <el-icon><Link /></el-icon>
+              <span class="link-label">{{ field.name }}:</span>
+              <span class="link-url">{{ field.value }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -167,8 +180,8 @@ const skillCategories = [
 
 // 计算属性
 const hasLinks = computed(() => {
-  const { website, linkedin, github } = props.resumeData.personalInfo
-  return website || linkedin || github
+  const { website, linkedin, github, customFields } = props.resumeData.personalInfo
+  return website || linkedin || github || (customFields && customFields.length > 0)
 })
 
 // 根据分类获取技能
@@ -233,14 +246,44 @@ const getSkillsByCategory = (category) => {
   gap: 5px;
   color: white;
   text-decoration: none;
-  padding: 5px 10px;
+  padding: 8px 12px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
   transition: all 0.3s ease;
+  cursor: default;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .link:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.link-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.link-url {
+  font-weight: 400;
+  word-break: break-all;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.custom-field-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  color: white;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  cursor: default;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 
 /* 章节样式 */
@@ -500,22 +543,34 @@ const getSkillsByCategory = (category) => {
   .modern-template {
     font-size: 12px;
   }
-  
+
   .resume-header {
     padding: 30px 20px;
   }
-  
+
   .section {
     padding: 0 20px;
     margin-bottom: 25px;
   }
-  
+
   .name {
     font-size: 28px;
   }
-  
+
   .section-title {
     font-size: 18px;
+  }
+
+  .link-url {
+    font-size: 11px !important;
+    color: #333 !important;
+    font-weight: 500 !important;
+  }
+
+  .link {
+    border-color: #333 !important;
+    color: #333 !important;
+    background: white !important;
   }
 }
 </style>

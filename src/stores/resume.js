@@ -11,7 +11,8 @@ export const useResumeStore = defineStore('resume', () => {
       address: '',
       website: '',
       linkedin: '',
-      github: ''
+      github: '',
+      customFields: [] // 自定义字段数组
     },
     summary: '',
     workExperience: [],
@@ -43,6 +44,46 @@ export const useResumeStore = defineStore('resume', () => {
   // 个人信息操作
   const updatePersonalInfo = (info) => {
     resumeData.value.personalInfo = { ...resumeData.value.personalInfo, ...info }
+  }
+
+  // 自定义字段操作
+  const addCustomField = (fieldName, fieldValue = '') => {
+    const newField = {
+      id: Date.now().toString(),
+      name: fieldName,
+      value: fieldValue
+    }
+    resumeData.value.personalInfo.customFields.push(newField)
+  }
+
+  const updateCustomField = (id, updates) => {
+    const index = resumeData.value.personalInfo.customFields.findIndex(field => field.id === id)
+    if (index !== -1) {
+      resumeData.value.personalInfo.customFields[index] = {
+        ...resumeData.value.personalInfo.customFields[index],
+        ...updates
+      }
+    }
+  }
+
+  const removeCustomField = (id) => {
+    resumeData.value.personalInfo.customFields = resumeData.value.personalInfo.customFields.filter(field => field.id !== id)
+  }
+
+  const moveCustomField = (id, direction) => {
+    const fields = resumeData.value.personalInfo.customFields
+    const index = fields.findIndex(field => field.id === id)
+
+    if (index === -1) return
+
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < fields.length) {
+      // 交换位置
+      const temp = fields[index]
+      fields[index] = fields[newIndex]
+      fields[newIndex] = temp
+    }
   }
 
   const updateSummary = (summary) => {
@@ -245,7 +286,8 @@ export const useResumeStore = defineStore('resume', () => {
         address: '',
         website: '',
         linkedin: '',
-        github: ''
+        github: '',
+        customFields: []
       },
       summary: '',
       workExperience: [],
@@ -292,6 +334,10 @@ export const useResumeStore = defineStore('resume', () => {
     
     // 方法
     updatePersonalInfo,
+    addCustomField,
+    updateCustomField,
+    removeCustomField,
+    moveCustomField,
     updateSummary,
     addWorkExperience,
     updateWorkExperience,

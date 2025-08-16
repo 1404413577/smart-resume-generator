@@ -1,11 +1,16 @@
 <template>
   <div class="personal-info-form">
+    <!-- 头像上传区域 -->
+    <div class="avatar-section">
+      <AvatarUpload />
+    </div>
+
     <el-form :model="personalInfo" label-width="80px" label-position="top">
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="姓名" required>
-            <el-input 
-              v-model="personalInfo.name" 
+            <el-input
+              v-model="personalInfo.name"
               placeholder="请输入您的姓名"
               @input="updateInfo"
             />
@@ -13,8 +18,8 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="邮箱" required>
-            <el-input 
-              v-model="personalInfo.email" 
+            <el-input
+              v-model="personalInfo.email"
               placeholder="请输入邮箱地址"
               type="email"
               @input="updateInfo"
@@ -229,6 +234,7 @@
 import { ref, onMounted } from 'vue'
 import { Plus, ArrowUp, ArrowDown, Delete } from '@element-plus/icons-vue'
 import { useResumeStore } from '../../stores/resume'
+import AvatarUpload from '../AvatarUpload.vue'
 
 const resumeStore = useResumeStore()
 
@@ -321,6 +327,14 @@ onMounted(() => {
 <style scoped>
 .personal-info-form {
   padding: 10px 0;
+}
+
+.avatar-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
 }
 
 .el-form-item {

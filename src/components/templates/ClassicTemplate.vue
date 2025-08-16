@@ -2,9 +2,15 @@
   <div class="classic-template">
     <!-- 头部个人信息 -->
     <header class="resume-header">
-      <div class="header-content">
-        <h1 class="name">{{ resumeData.personalInfo.name || '姓名' }}</h1>
-        <div class="contact-info">
+      <div class="header-content" :class="`avatar-${avatarPosition}`">
+        <!-- 头像 -->
+        <div v-if="hasAvatar" class="avatar-container" :class="`avatar-${avatarPosition}`">
+          <img :src="resumeData.personalInfo.avatar" alt="头像" class="avatar-image" />
+        </div>
+
+        <div class="info-container">
+          <h1 class="name">{{ resumeData.personalInfo.name || '姓名' }}</h1>
+          <div class="contact-info">
           <div class="contact-row">
             <span v-if="resumeData.personalInfo.email" class="contact-item">
               邮箱：{{ resumeData.personalInfo.email }}
@@ -42,6 +48,7 @@
               <span class="link-label">{{ field.name }}:</span>
               <span class="link-url">{{ field.value }}</span>
             </span>
+          </div>
           </div>
         </div>
       </div>
@@ -224,6 +231,9 @@ const hasLinks = computed(() => {
   return website || linkedin || github || (customFields && customFields.length > 0)
 })
 
+const hasAvatar = computed(() => !!props.resumeData.personalInfo.avatar)
+const avatarPosition = computed(() => props.resumeData.personalInfo.avatarPosition || 'left')
+
 // 标题对齐样式
 const sectionTitleStyle = computed(() => {
   return {
@@ -299,8 +309,57 @@ const getDegreeType = (degree) => {
 
 /* 头部样式 */
 .resume-header {
-  text-align: center;
   margin-bottom: 15pt;
+}
+
+.header-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 20pt;
+}
+
+/* 头像样式 */
+.avatar-container {
+  flex-shrink: 0;
+}
+
+.avatar-image {
+  width: 80pt;
+  height: 80pt;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2pt solid #333;
+}
+
+.info-container {
+  flex: 1;
+}
+
+/* 头像位置布局 */
+.header-content.avatar-left {
+  flex-direction: row;
+}
+
+.header-content.avatar-right {
+  flex-direction: row-reverse;
+}
+
+.header-content.avatar-center {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.header-content.avatar-center .info-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 无头像时居中显示 */
+.header-content:not(.avatar-left):not(.avatar-right):not(.avatar-center) {
+  justify-content: center;
+  text-align: center;
 }
 
 .name {

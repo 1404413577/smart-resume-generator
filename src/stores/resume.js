@@ -12,6 +12,8 @@ export const useResumeStore = defineStore('resume', () => {
       website: '',
       linkedin: '',
       github: '',
+      avatar: '', // 头像base64数据
+      avatarPosition: 'left', // 头像位置: 'left' | 'right' | 'center'
       customFields: [] // 自定义字段数组
     },
     summary: '',
@@ -49,6 +51,30 @@ export const useResumeStore = defineStore('resume', () => {
   // 个人信息操作
   const updatePersonalInfo = (info) => {
     resumeData.value.personalInfo = { ...resumeData.value.personalInfo, ...info }
+  }
+
+  // 头像操作
+  const updateAvatar = (avatarData) => {
+    resumeData.value.personalInfo.avatar = avatarData
+    // 同时保存到localStorage
+    try {
+      localStorage.setItem('resume_avatar', avatarData)
+    } catch (error) {
+      console.warn('Failed to save avatar to localStorage:', error)
+    }
+  }
+
+  const updateAvatarPosition = (position) => {
+    resumeData.value.personalInfo.avatarPosition = position
+  }
+
+  const removeAvatar = () => {
+    resumeData.value.personalInfo.avatar = ''
+    try {
+      localStorage.removeItem('resume_avatar')
+    } catch (error) {
+      console.warn('Failed to remove avatar from localStorage:', error)
+    }
   }
 
   // 自定义字段操作
@@ -239,6 +265,12 @@ export const useResumeStore = defineStore('resume', () => {
       }
     }
 
+    // 单独加载头像数据（可能很大）
+    const savedAvatar = localStorage.getItem('resume_avatar')
+    if (savedAvatar) {
+      resumeData.value.personalInfo.avatar = savedAvatar
+    }
+
     const savedTemplate = localStorage.getItem('selectedTemplate')
     if (savedTemplate) {
       selectedTemplate.value = savedTemplate
@@ -355,6 +387,9 @@ export const useResumeStore = defineStore('resume', () => {
     
     // 方法
     updatePersonalInfo,
+    updateAvatar,
+    updateAvatarPosition,
+    removeAvatar,
     addCustomField,
     updateCustomField,
     removeCustomField,

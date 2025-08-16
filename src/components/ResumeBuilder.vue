@@ -73,8 +73,8 @@
             <h3>简历预览</h3>
             <div class="preview-actions">
               <el-button-group>
-                <el-button 
-                  v-for="template in templates" 
+                <el-button
+                  v-for="template in templates"
                   :key="template.id"
                   :type="resumeStore.selectedTemplate === template.id ? 'primary' : 'default'"
                   size="small"
@@ -83,6 +83,32 @@
                   {{ template.name }}
                 </el-button>
               </el-button-group>
+
+              <!-- 模板设置 -->
+              <el-dropdown v-if="resumeStore.selectedTemplate === 'classic'" trigger="click">
+                <el-button size="small">
+                  <el-icon><Setting /></el-icon>
+                  模板设置
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>
+                      <div class="template-setting-item">
+                        <span>标题对齐:</span>
+                        <el-radio-group
+                          :model-value="resumeStore.templateSettings.sectionTitleAlignment"
+                          @update:model-value="updateTitleAlignment"
+                          size="small"
+                        >
+                          <el-radio value="left">居左</el-radio>
+                          <el-radio value="center">居中</el-radio>
+                        </el-radio-group>
+                      </div>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+
               <el-button type="success" @click="downloadPDF">
                 <el-icon><Download /></el-icon>
                 下载PDF
@@ -149,6 +175,11 @@ const downloadPDF = async () => {
     ElMessage.error('PDF生成失败，请重试')
   }
 }
+
+// 更新标题对齐方式
+const updateTitleAlignment = (alignment) => {
+  resumeStore.updateTemplateSetting('sectionTitleAlignment', alignment)
+}
 </script>
 
 <style scoped>
@@ -210,15 +241,30 @@ const downloadPDF = async () => {
   background: white;
 }
 
+.template-setting-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  min-width: 200px;
+}
+
+.template-setting-item span {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 60px;
+}
+
 @media (max-width: 768px) {
   .preview-header {
     flex-direction: column;
     gap: 15px;
     align-items: stretch;
   }
-  
+
   .preview-actions {
     justify-content: center;
+    flex-wrap: wrap;
   }
 }
 </style>

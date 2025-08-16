@@ -29,6 +29,11 @@ export const useResumeStore = defineStore('resume', () => {
   const lastSaveTime = ref(null)
   const isAutoSaveEnabled = ref(false)
 
+  // 模板设置
+  const templateSettings = ref({
+    sectionTitleAlignment: 'left' // 'left' | 'center'
+  })
+
   // 计算属性
   const isResumeComplete = computed(() => {
     const { personalInfo, workExperience, education } = resumeData.value
@@ -194,6 +199,7 @@ export const useResumeStore = defineStore('resume', () => {
   const saveToLocalStorage = () => {
     localStorage.setItem('resumeData', JSON.stringify(resumeData.value))
     localStorage.setItem('selectedTemplate', selectedTemplate.value)
+    localStorage.setItem('templateSettings', JSON.stringify(templateSettings.value))
   }
 
   // 自动保存定时器
@@ -237,6 +243,15 @@ export const useResumeStore = defineStore('resume', () => {
     if (savedTemplate) {
       selectedTemplate.value = savedTemplate
     }
+
+    const savedSettings = localStorage.getItem('templateSettings')
+    if (savedSettings) {
+      try {
+        templateSettings.value = JSON.parse(savedSettings)
+      } catch (error) {
+        console.error('加载模板设置失败:', error)
+      }
+    }
   }
 
   // 简历管理
@@ -269,6 +284,11 @@ export const useResumeStore = defineStore('resume', () => {
   // 模板切换
   const setTemplate = (templateId) => {
     selectedTemplate.value = templateId
+  }
+
+  // 模板设置
+  const updateTemplateSetting = (key, value) => {
+    templateSettings.value[key] = value
   }
 
   // 预览模式切换
@@ -328,6 +348,7 @@ export const useResumeStore = defineStore('resume', () => {
     savedResumes,
     lastSaveTime,
     isAutoSaveEnabled,
+    templateSettings,
     
     // 计算属性
     isResumeComplete,
@@ -358,6 +379,7 @@ export const useResumeStore = defineStore('resume', () => {
     loadResume,
     deleteResume,
     setTemplate,
+    updateTemplateSetting,
     togglePreviewMode,
     resetResumeData,
     startAutoSave,

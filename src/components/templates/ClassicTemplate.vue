@@ -49,7 +49,7 @@
 
     <!-- 个人简介 -->
     <section v-if="resumeData.summary" class="section">
-      <h2 class="section-title">个人简介</h2>
+      <h2 class="section-title" :style="sectionTitleStyle">个人简介</h2>
       <div class="section-content">
         <p class="summary-text">{{ resumeData.summary }}</p>
       </div>
@@ -57,7 +57,7 @@
 
     <!-- 工作经历 -->
     <section v-if="resumeData.workExperience.length > 0" class="section">
-      <h2 class="section-title">工作经历</h2>
+      <h2 class="section-title" :style="sectionTitleStyle">工作经历</h2>
       <div class="section-content">
         <div v-for="work in resumeData.workExperience" :key="work.id" class="work-item">
           <div class="work-header">
@@ -81,7 +81,7 @@
 
     <!-- 教育背景 -->
     <section v-if="resumeData.education.length > 0" class="section">
-      <h2 class="section-title">教育背景</h2>
+      <h2 class="section-title" :style="sectionTitleStyle">教育背景</h2>
       <div class="section-content">
         <div v-for="edu in resumeData.education" :key="edu.id" class="education-item">
           <div class="education-header">
@@ -104,7 +104,7 @@
 
     <!-- 技能特长 -->
     <section v-if="resumeData.skills.length > 0" class="section">
-      <h2 class="section-title">技能特长</h2>
+      <h2 class="section-title" :style="sectionTitleStyle">技能特长</h2>
       <div class="section-content">
         <div v-for="category in skillCategories" :key="category.key" class="skill-category">
           <div v-if="getSkillsByCategory(category.key).length > 0">
@@ -124,7 +124,7 @@
 
     <!-- 项目经历 -->
     <section v-if="resumeData.projects.length > 0" class="section">
-      <h2 class="section-title">项目经历</h2>
+      <h2 class="section-title" :style="sectionTitleStyle">项目经历</h2>
       <div class="section-content">
         <div v-for="project in resumeData.projects" :key="project.id" class="project-item">
           <div class="project-header">
@@ -151,7 +151,7 @@
 
     <!-- 证书认证 -->
     <section v-if="resumeData.certifications.length > 0" class="section">
-      <h2 class="section-title">证书认证</h2>
+      <h2 class="section-title" :style="sectionTitleStyle">证书认证</h2>
       <div class="section-content">
         <div v-for="cert in resumeData.certifications" :key="cert.id" class="certification-item">
           <div class="certification-header">
@@ -168,7 +168,7 @@
 
     <!-- 语言能力 -->
     <section v-if="resumeData.languages.length > 0" class="section">
-      <h2 class="section-title">语言能力</h2>
+      <h2 class="section-title" :style="sectionTitleStyle">语言能力</h2>
       <div class="section-content">
         <div class="languages-list">
           <span 
@@ -186,6 +186,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useResumeStore } from '../../stores/resume'
 
 const props = defineProps({
   resumeData: {
@@ -193,6 +194,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const resumeStore = useResumeStore()
 
 // 技能分类
 const skillCategories = [
@@ -205,6 +208,13 @@ const skillCategories = [
 const hasLinks = computed(() => {
   const { website, linkedin, github, customFields } = props.resumeData.personalInfo
   return website || linkedin || github || (customFields && customFields.length > 0)
+})
+
+// 标题对齐样式
+const sectionTitleStyle = computed(() => {
+  return {
+    textAlign: resumeStore.templateSettings.sectionTitleAlignment || 'left'
+  }
 })
 
 // 根据分类获取技能

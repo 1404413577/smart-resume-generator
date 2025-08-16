@@ -162,7 +162,7 @@
         <el-button
           type="primary"
           :icon="Plus"
-          @click="showAddFieldDialog = true"
+          @click.stop="openAddFieldDialog"
           class="add-field-btn"
         >
           添加自定义字段
@@ -175,7 +175,12 @@
       v-model="showAddFieldDialog"
       title="添加自定义字段"
       width="500px"
-      @close="resetAddFieldForm"
+      :modal="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="true"
+      :destroy-on-close="false"
+      :append-to-body="true"
+      @close="closeAddFieldDialog"
     >
       <el-form :model="newFieldForm" label-width="80px" label-position="top">
         <el-form-item label="字段名称" required>
@@ -209,7 +214,7 @@
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="showAddFieldDialog = false">取消</el-button>
+          <el-button @click="closeAddFieldDialog">取消</el-button>
           <el-button
             type="primary"
             @click="addField"
@@ -242,6 +247,7 @@ const personalInfo = computed({
 
 // 添加字段对话框相关
 const showAddFieldDialog = ref(false)
+const isDialogOpening = ref(false)
 const newFieldForm = ref({
   name: '',
   value: ''
@@ -256,6 +262,32 @@ const commonFieldOptions = [
 
 // 更新个人信息（现在通过computed的setter自动处理）
 
+// 打开添加字段对话框
+const openAddFieldDialog = () => {
+  // 防止重复打开
+  if (isDialogOpening.value || showAddFieldDialog.value) {
+    return
+  }
+
+  isDialogOpening.value = true
+
+  // 确保对话框状态重置
+  resetAddFieldForm()
+
+  // 使用nextTick确保DOM更新完成
+  setTimeout(() => {
+    showAddFieldDialog.value = true
+    isDialogOpening.value = false
+  }, 50)
+}
+
+// 关闭添加字段对话框
+const closeAddFieldDialog = () => {
+  showAddFieldDialog.value = false
+  isDialogOpening.value = false
+  resetAddFieldForm()
+}
+
 // 自定义字段操作
 const addField = () => {
   if (!newFieldForm.value.name.trim()) {
@@ -264,8 +296,7 @@ const addField = () => {
   }
 
   resumeStore.addCustomField(newFieldForm.value.name.trim(), newFieldForm.value.value.trim())
-  showAddFieldDialog.value = false
-  resetAddFieldForm()
+  closeAddFieldDialog()
   ElMessage.success('自定义字段添加成功')
 }
 
@@ -402,6 +433,28 @@ const resetAddFieldForm = () => {
 
 :deep(.el-dialog) {
   border-radius: 12px;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+}
+
+:deep(.el-dialog__wrapper) {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 2000 !important;
+}
+
+:deep(.el-overlay) {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 :deep(.el-divider__text) {

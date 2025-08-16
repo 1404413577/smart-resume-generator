@@ -118,7 +118,6 @@ import ContentEditor from './ContentEditor.vue'
 // 导入模板组件
 import ModernTemplate from './templates/ModernTemplate.vue'
 import ClassicTemplate from './templates/ClassicTemplate.vue'
-import MinimalTemplate from './templates/MinimalTemplate.vue'
 
 // 导入章节排序组件
 import SectionOrderManager from './SectionOrderManager.vue'
@@ -133,6 +132,13 @@ const showSectionOrder = ref(false)
 
 // 预览缩放比例
 const previewScale = ref(0.8)
+
+// 可用模板
+const templates = [
+  { id: 'modern', name: '现代风格' },
+  { id: 'classic', name: '经典风格' },
+  { id: 'minimal', name: '简约风格' }
+]
 
 // 当前选中的模板组件
 const currentTemplate = computed(() => {

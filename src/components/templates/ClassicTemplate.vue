@@ -130,22 +130,21 @@
           <div class="project-header">
             <div class="project-left">
               <h3 class="project-name">{{ project.name }}</h3>
-              <span v-if="project.url" class="project-url">{{ project.url }}</span>
+              <span v-if="project.url" class="project-url">项目链接：{{ project.url }}</span>
             </div>
             <div class="project-right">
               <span class="project-period">{{ project.startDate }} - {{ project.endDate }}</span>
             </div>
           </div>
-          <p class="project-description">{{ project.description }}</p>
           <div v-if="project.technologies.length > 0" class="project-technologies">
-            <strong>技术栈：</strong>
-            <span 
-              v-for="(tech, index) in project.technologies" 
-              :key="index"
-            >
-              {{ tech }}{{ index < project.technologies.length - 1 ? '、' : '' }}
-            </span>
+            技术栈：{{ project.technologies.join('、') }}
           </div>
+          <div class="project-description">{{ project.description }}</div>
+          <ul v-if="project.highlights && project.highlights.length > 0" class="project-highlights">
+            <li v-for="(highlight, index) in project.highlights" :key="index">
+              {{ highlight }}
+            </li>
+          </ul>
         </div>
       </div>
     </section>
@@ -231,44 +230,44 @@ const getLanguageLevelText = (level) => {
   margin: 0 auto;
   background: white;
   color: #333;
-  font-family: 'Times New Roman', serif;
-  line-height: 1.6;
-  font-size: 14px;
-  padding: 20px;
+  font-family: 'SimSun', '宋体', 'Times New Roman', serif;
+  line-height: 1.5;
+  font-size: 12pt;
+  padding: 15mm;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  min-height: 297mm;
+  position: relative;
 }
 
 /* 头部样式 */
 .resume-header {
   text-align: center;
-  border-bottom: 2px solid #333;
-  padding-bottom: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 15pt;
 }
 
 .name {
-  font-size: 28px;
+  font-size: 18pt;
   font-weight: bold;
-  margin: 0 0 15px 0;
+  margin: 0 0 10pt 0;
   color: #333;
   letter-spacing: 2px;
-  text-transform: uppercase;
 }
 
 .contact-info {
-  font-size: 14px;
-  line-height: 1.4;
+  color: #333;
+  margin-bottom: 15pt;
 }
 
 .contact-row {
-  margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  gap: 15pt;
+  margin: 5pt 0;
+  flex-wrap: wrap;
 }
 
 .contact-item {
-  margin-right: 30px;
-}
-
-.contact-item:last-child {
-  margin-right: 0;
+  margin: 0;
 }
 
 .link-item {
@@ -292,18 +291,16 @@ const getLanguageLevelText = (level) => {
 
 /* 章节样式 */
 .section {
-  margin-bottom: 30px;
+  margin-bottom: 15pt;
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: 14pt;
   font-weight: bold;
-  color: #333;
-  margin: 0 0 15px 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 5px;
+  color: #2c3e50;
+  margin: 15pt 0 10pt 0;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 3pt;
 }
 
 .section-content {
@@ -321,7 +318,7 @@ const getLanguageLevelText = (level) => {
 
 /* 工作经历 */
 .work-item {
-  margin-bottom: 20px;
+  margin-bottom: 10pt;
   page-break-inside: avoid;
 }
 
@@ -329,7 +326,8 @@ const getLanguageLevelText = (level) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  font-weight: bold;
+  margin-bottom: 3pt;
 }
 
 .work-left {
@@ -342,44 +340,46 @@ const getLanguageLevelText = (level) => {
 }
 
 .job-title {
-  font-size: 16px;
+  font-size: inherit;
   font-weight: bold;
-  margin: 0 0 3px 0;
+  margin: 0;
   color: #333;
+  display: inline;
 }
 
 .company {
-  font-size: 14px;
-  font-weight: normal;
+  font-size: inherit;
+  font-weight: bold;
   margin: 0;
-  font-style: italic;
-  color: #666;
+  color: #333;
+  display: inline;
 }
 
 .work-period {
   font-weight: bold;
-  display: block;
 }
 
 .work-location {
-  font-size: 12px;
-  color: #666;
+  font-size: inherit;
+  color: #333;
   display: block;
+  font-weight: normal;
+  margin-top: 2pt;
 }
 
 .work-responsibilities {
-  margin: 0;
-  padding-left: 20px;
+  margin: 5pt 0;
+  padding-left: 20pt;
 }
 
 .work-responsibilities li {
-  margin-bottom: 3px;
-  line-height: 1.5;
+  margin-bottom: 5pt;
+  line-height: 1.6;
 }
 
 /* 教育背景 */
 .education-item {
-  margin-bottom: 15px;
+  margin-bottom: 10pt;
   page-break-inside: avoid;
 }
 
@@ -387,7 +387,8 @@ const getLanguageLevelText = (level) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 5px;
+  font-weight: bold;
+  margin-bottom: 3pt;
 }
 
 .education-left {
@@ -400,34 +401,37 @@ const getLanguageLevelText = (level) => {
 }
 
 .degree {
-  font-size: 15px;
+  font-size: inherit;
   font-weight: bold;
-  margin: 0 0 3px 0;
+  margin: 0;
   color: #333;
+  display: inline;
 }
 
 .institution {
-  font-size: 14px;
-  font-weight: normal;
+  font-size: inherit;
+  font-weight: bold;
   margin: 0;
-  color: #666;
+  color: #333;
+  display: inline;
 }
 
 .graduation-date {
   font-weight: bold;
-  display: block;
 }
 
 .education-location {
-  font-size: 12px;
-  color: #666;
+  font-size: inherit;
+  color: #333;
   display: block;
+  font-weight: normal;
+  margin-top: 2pt;
 }
 
 .education-details {
-  font-size: 13px;
-  color: #666;
-  margin-top: 3px;
+  color: #333;
+  margin-top: 3pt;
+  padding-left: 10pt;
 }
 
 .gpa {
@@ -436,11 +440,10 @@ const getLanguageLevelText = (level) => {
 
 /* 技能特长 */
 .skill-category {
-  margin-bottom: 10px;
+  margin-bottom: 6pt;
 }
 
 .skill-category-title {
-  font-size: 14px;
   font-weight: bold;
   margin: 0;
   display: inline;
@@ -449,13 +452,12 @@ const getLanguageLevelText = (level) => {
 
 .skills-text {
   display: inline;
-  font-size: 14px;
   line-height: 1.6;
 }
 
 /* 项目经历 */
 .project-item {
-  margin-bottom: 20px;
+  margin-bottom: 10pt;
   page-break-inside: avoid;
 }
 
@@ -463,7 +465,8 @@ const getLanguageLevelText = (level) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  font-weight: bold;
+  margin-bottom: 3pt;
 }
 
 .project-left {
@@ -476,16 +479,19 @@ const getLanguageLevelText = (level) => {
 }
 
 .project-name {
-  font-size: 15px;
+  font-size: inherit;
   font-weight: bold;
-  margin: 0 0 3px 0;
+  margin: 0;
   color: #333;
+  display: inline;
 }
 
 .project-url {
-  font-size: 12px;
-  color: #666;
-  font-style: italic;
+  color: #333;
+  font-style: normal;
+  display: block;
+  font-weight: normal;
+  margin-top: 2pt;
 }
 
 .project-period {
@@ -493,14 +499,28 @@ const getLanguageLevelText = (level) => {
 }
 
 .project-description {
-  margin: 0 0 8px 0;
+  margin: 5pt 0;
   line-height: 1.6;
   text-align: justify;
+  padding-left: 10pt;
 }
 
 .project-technologies {
-  font-size: 13px;
-  color: #666;
+  color: #7f8c8d;
+  font-style: italic;
+  margin-bottom: 5pt;
+  display: block;
+  padding-left: 10pt;
+}
+
+.project-highlights {
+  margin: 5pt 0;
+  padding-left: 20pt;
+}
+
+.project-highlights li {
+  margin-bottom: 5pt;
+  line-height: 1.6;
 }
 
 /* 证书认证 */
@@ -549,24 +569,36 @@ const getLanguageLevelText = (level) => {
 /* 打印样式 */
 @media print {
   .classic-template {
-    font-size: 12px;
-    padding: 15px;
+    width: 210mm;
+    padding: 15mm;
+    margin: 0;
+    background-color: white;
+    box-shadow: none;
+    min-height: 297mm;
+    font-size: 12pt;
   }
 
   .name {
-    font-size: 24px;
+    font-size: 18pt;
   }
 
   .section-title {
-    font-size: 16px;
+    font-size: 14pt;
   }
 
   .section {
-    margin-bottom: 20px;
+    margin-bottom: 15pt;
+  }
+
+  .work-item,
+  .education-item,
+  .project-item {
+    margin-bottom: 10pt;
+    page-break-inside: avoid;
   }
 
   .link-url {
-    font-size: 11px !important;
+    font-size: 11pt !important;
     color: #333 !important;
     font-weight: 500 !important;
   }
@@ -574,6 +606,11 @@ const getLanguageLevelText = (level) => {
   .link-label {
     color: #000 !important;
     font-weight: bold !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
   }
 }
 </style>

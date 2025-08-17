@@ -174,14 +174,15 @@ export function validateSettings(settings) {
  */
 export function generatePrintStyles(globalSettings) {
   const variables = generateCSSVariables(globalSettings)
-  
+  const { pageSettings } = globalSettings
+
   return `
     @media print {
       @page {
         size: A4;
         margin: ${variables['--resume-page-margin']};
       }
-      
+
       .resume-preview {
         font-family: ${variables['--resume-font-family']};
         font-size: ${variables['--resume-base-font-size']};
@@ -190,19 +191,59 @@ export function generatePrintStyles(globalSettings) {
         padding: 0;
         box-shadow: none;
         border-radius: 0;
+        width: 210mm !important;
+        max-width: 210mm !important;
       }
-      
+
       .resume-section {
         margin-bottom: ${variables['--resume-module-spacing']};
+        page-break-inside: avoid;
       }
-      
+
       .resume-section-title {
         font-size: ${variables['--resume-title-font-size']};
+        page-break-after: avoid;
       }
-      
+
       .resume-item-title {
         font-size: ${variables['--resume-subtitle-font-size']};
       }
+
+      /* 分页控制 */
+      .page-break-before {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+
+      .avoid-break {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* 隐藏页码指示器 */
+      .page-numbers {
+        display: none !important;
+      }
+
+      /* 单页模式：限制高度 */
+      ${pageSettings.pageCount === 1 ? `
+      .modern-template,
+      .classic-template,
+      .minimal-template {
+        height: calc(297mm - ${variables['--resume-page-margin-top']} - ${variables['--resume-page-margin-bottom']}) !important;
+        overflow: hidden !important;
+      }
+      ` : ''}
+
+      /* 多页模式：确保分页 */
+      ${pageSettings.pageCount > 1 ? `
+      .modern-template.multi-page,
+      .classic-template.multi-page,
+      .minimal-template.multi-page {
+        height: auto !important;
+        min-height: calc(297mm - ${variables['--resume-page-margin-top']} - ${variables['--resume-page-margin-bottom']}) !important;
+      }
+      ` : ''}
     }
   `
 }

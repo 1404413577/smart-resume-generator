@@ -1,270 +1,203 @@
 <template>
-  <div class="minimal-template" :class="{ 'multi-page': pageCount > 1 }">
-    <!-- 头部个人信息 -->
-    <header class="resume-header">
-      <h1 class="name">{{ resumeData.personalInfo.name || '姓名' }}</h1>
-      <div class="contact-info">
-        <span v-if="resumeData.personalInfo.email" class="contact-item">{{ resumeData.personalInfo.email }}</span>
-        <span v-if="resumeData.personalInfo.phone" class="contact-item">{{ resumeData.personalInfo.phone }}</span>
-        <span v-if="resumeData.personalInfo.address" class="contact-item">{{ resumeData.personalInfo.address }}</span>
-        <span v-if="resumeData.personalInfo.website" class="contact-item link-item">
-          <span class="link-label">网站:</span>
-          <span class="link-url">{{ resumeData.personalInfo.website }}</span>
-        </span>
-        <span v-if="resumeData.personalInfo.linkedin" class="contact-item link-item">
-          <span class="link-label">LinkedIn:</span>
-          <span class="link-url">{{ resumeData.personalInfo.linkedin }}</span>
-        </span>
-        <span v-if="resumeData.personalInfo.github" class="contact-item link-item">
-          <span class="link-label">GitHub:</span>
-          <span class="link-url">{{ resumeData.personalInfo.github }}</span>
-        </span>
-        <!-- 自定义字段 -->
-        <span
-          v-for="field in resumeData.personalInfo.customFields"
-          :key="field.id"
-          class="contact-item custom-field link-item"
-        >
-          <span class="link-label">{{ field.name }}:</span>
-          <span class="link-url">{{ field.value }}</span>
-        </span>
-      </div>
-    </header>
+  <PagedTemplateBase
+    :resume-data="props.resumeData"
+    :page-content="props.pageContent"
+    :page-number="props.pageNumber"
+    :is-single-page="props.isSinglePage"
+    template-class="minimal-template"
+  >
+    <!-- 个人信息插槽 -->
+    <template #personalInfo="{ data }">
+      <header class="resume-header">
+        <h1 class="name">{{ data.name || '姓名' }}</h1>
+        <div class="contact-info">
+          <span v-if="data.email" class="contact-item">{{ data.email }}</span>
+          <span v-if="data.phone" class="contact-item">{{ data.phone }}</span>
+          <span v-if="data.address" class="contact-item">{{ data.address }}</span>
+          <span v-if="data.website" class="contact-item link-item">
+            <span class="link-label">网站:</span>
+            <span class="link-url">{{ data.website }}</span>
+          </span>
+          <span v-if="data.linkedin" class="contact-item link-item">
+            <span class="link-label">LinkedIn:</span>
+            <span class="link-url">{{ data.linkedin }}</span>
+          </span>
+          <span v-if="data.github" class="contact-item link-item">
+            <span class="link-label">GitHub:</span>
+            <span class="link-url">{{ data.github }}</span>
+          </span>
+          <!-- 自定义字段 -->
+          <span
+            v-for="field in data.customFields"
+            :key="field.id"
+            class="contact-item custom-field link-item"
+          >
+            <span class="link-label">{{ field.name }}:</span>
+            <span class="link-url">{{ field.value }}</span>
+          </span>
+        </div>
+      </header>
+    </template>
 
-    <!-- 个人简介 -->
-    <section v-if="resumeData.summary" class="section">
+    <!-- 个人简介插槽 -->
+    <template #summary="{ data }">
       <div class="section-content">
-        <p class="summary-text">{{ resumeData.summary }}</p>
+        <p class="summary-text">{{ data }}</p>
       </div>
-    </section>
+    </template>
 
-    <!-- 工作经历 -->
-    <section v-if="resumeData.workExperience.length > 0" class="section">
-      <h2 class="section-title">Experience</h2>
+    <!-- 工作经历插槽 -->
+    <template #workExperience="{ data, isFirst }">
+      <h2 v-if="isFirst" class="section-title">Experience</h2>
       <div class="section-content">
-        <div v-for="work in resumeData.workExperience" :key="work.id" class="work-item">
+        <div class="item">
           <div class="item-header">
             <div class="item-title">
-              <h3>{{ work.jobTitle }}</h3>
-              <span class="company">{{ work.company }}</span>
+              <h3>{{ data.jobTitle }}</h3>
+              <span class="company">{{ data.company }}</span>
             </div>
             <div class="item-meta">
-              <span class="period">{{ work.startDate }} - {{ work.current ? 'Present' : work.endDate }}</span>
-              <span v-if="work.location" class="location">{{ work.location }}</span>
+              <span class="period">{{ data.startDate }} - {{ data.current ? 'Present' : data.endDate }}</span>
+              <span v-if="data.location" class="location">{{ data.location }}</span>
             </div>
           </div>
-          <ul class="item-details">
-            <li v-for="(responsibility, index) in work.responsibilities" :key="index">
+          <ul v-if="data.responsibilities && data.responsibilities.length > 0" class="responsibilities">
+            <li v-for="(responsibility, index) in data.responsibilities" :key="index">
               {{ responsibility }}
             </li>
           </ul>
         </div>
       </div>
-    </section>
+    </template>
 
-    <!-- 教育背景 -->
-    <section v-if="resumeData.education.length > 0" class="section">
-      <h2 class="section-title">Education</h2>
+    <!-- 教育背景插槽 -->
+    <template #education="{ data, isFirst }">
+      <h2 v-if="isFirst" class="section-title">Education</h2>
       <div class="section-content">
-        <div v-for="edu in resumeData.education" :key="edu.id" class="education-item">
+        <div class="item">
           <div class="item-header">
             <div class="item-title">
-              <h3>{{ edu.degree }}</h3>
-              <span class="institution">{{ edu.institution }} - {{ edu.major }}</span>
+              <h3>{{ data.degree }}</h3>
+              <span class="institution">{{ data.institution }}</span>
             </div>
             <div class="item-meta">
-              <span class="period">{{ edu.graduationDate }}</span>
-              <span v-if="edu.location" class="location">{{ edu.location }}</span>
+              <span class="period">{{ data.graduationDate }}</span>
+              <span v-if="data.location" class="location">{{ data.location }}</span>
             </div>
           </div>
-          <div v-if="edu.gpa || edu.honors" class="item-details">
-            <span v-if="edu.gpa" class="detail-item">GPA: {{ edu.gpa }}</span>
-            <span v-if="edu.honors" class="detail-item">{{ edu.honors }}</span>
+          <div class="item-details">
+            <span v-if="data.major" class="detail-item">专业: {{ data.major }}</span>
+            <span v-if="data.gpa" class="detail-item">GPA: {{ data.gpa }}</span>
+            <span v-if="data.honors" class="detail-item">{{ data.honors }}</span>
           </div>
         </div>
       </div>
-    </section>
+    </template>
 
-    <!-- 技能特长 -->
-    <section v-if="resumeData.skills.length > 0" class="section">
+    <!-- 技能特长插槽 -->
+    <template #skills="{ data }">
       <h2 class="section-title">Skills</h2>
       <div class="section-content">
-        <div class="skills-grid">
-          <div v-for="category in skillCategories" :key="category.key" class="skill-group">
-            <div v-if="getSkillsByCategory(category.key).length > 0">
-              <h4 class="skill-group-title">{{ category.name }}</h4>
-              <div class="skills-list">
-                <span 
-                  v-for="(skill, index) in getSkillsByCategory(category.key)" 
-                  :key="skill.id"
-                  class="skill-item"
-                >
-                  {{ skill.name }}{{ index < getSkillsByCategory(category.key).length - 1 ? ', ' : '' }}
-                </span>
-              </div>
-            </div>
+        <div v-for="category in getSkillCategories(data)" :key="category.key" class="skill-group">
+          <h3 class="skill-group-title">{{ category.name }}</h3>
+          <div class="skills-list">
+            {{ category.skills.map(skill => skill.name).join(', ') }}
           </div>
         </div>
       </div>
-    </section>
+    </template>
 
-    <!-- 项目经历 -->
-    <section v-if="resumeData.projects.length > 0" class="section">
-      <h2 class="section-title">Projects</h2>
+    <!-- 项目经历插槽 -->
+    <template #projects="{ data, isFirst }">
+      <h2 v-if="isFirst" class="section-title">Projects</h2>
       <div class="section-content">
-        <div v-for="project in resumeData.projects" :key="project.id" class="project-item">
+        <div class="item">
           <div class="item-header">
             <div class="item-title">
-              <h3>{{ project.name }}</h3>
-              <span v-if="project.url" class="project-link">{{ project.url }}</span>
+              <h3>{{ data.name }}</h3>
+              <span v-if="data.url" class="project-link">{{ data.url }}</span>
             </div>
             <div class="item-meta">
-              <span class="period">{{ project.startDate }} - {{ project.endDate }}</span>
+              <span class="period">{{ data.startDate }} - {{ data.endDate }}</span>
             </div>
           </div>
-          <p class="project-description">{{ project.description }}</p>
-          <div v-if="project.technologies.length > 0" class="technologies">
-            <span 
-              v-for="(tech, index) in project.technologies" 
-              :key="index"
-              class="tech-item"
-            >
-              {{ tech }}
-            </span>
+          <p v-if="data.description" class="project-description">{{ data.description }}</p>
+          <div v-if="data.technologies && data.technologies.length > 0" class="technologies">
+            <span v-for="tech in data.technologies" :key="tech" class="tech-item">{{ tech }}</span>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- 证书认证 -->
-    <section v-if="resumeData.certifications.length > 0" class="section">
-      <h2 class="section-title">Certifications</h2>
-      <div class="section-content">
-        <div v-for="cert in resumeData.certifications" :key="cert.id" class="certification-item">
-          <div class="item-header">
-            <div class="item-title">
-              <h3>{{ cert.name }}</h3>
-              <span class="issuer">{{ cert.issuer }}</span>
-            </div>
-            <div class="item-meta">
-              <span class="period">{{ cert.date }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 语言能力 -->
-    <section v-if="resumeData.languages.length > 0" class="section">
-      <h2 class="section-title">Languages</h2>
-      <div class="section-content">
-        <div class="languages-list">
-          <span 
-            v-for="(language, index) in resumeData.languages" 
-            :key="language.id"
-            class="language-item"
-          >
-            {{ language.name }} ({{ getLanguageLevelText(language.proficiency) }}){{ index < resumeData.languages.length - 1 ? ', ' : '' }}
-          </span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 自定义模块 -->
-    <section
-      v-for="customModule in customModules"
-      :key="customModule.id"
-      class="section custom-module-section"
-    >
-      <CustomModuleRenderer
-        :module="customModule"
-        :module-data="getCustomModuleData(customModule.id)"
-      />
-    </section>
-  </div>
+    </template>
+  </PagedTemplateBase>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useResumeStore } from '../../stores/resume'
-import CustomModuleRenderer from '../CustomModuleRenderer.vue'
+import PagedTemplateBase from './PagedTemplateBase.vue'
 
 const props = defineProps({
   resumeData: {
     type: Object,
     required: true
+  },
+  pageContent: {
+    type: Array,
+    default: () => []
+  },
+  pageNumber: {
+    type: Number,
+    default: 1
+  },
+  isSinglePage: {
+    type: Boolean,
+    default: true
   }
 })
 
 const resumeStore = useResumeStore()
 
-// 页面设置
-const pageCount = computed(() => resumeStore.globalSettings.pageSettings.pageCount)
-const showPageNumbers = computed(() => resumeStore.globalSettings.pageSettings.showPageNumbers)
-
 // 技能分类
 const skillCategories = [
-  { key: 'technical', name: 'Technical' },
+  { key: 'technical', name: 'Technical Skills' },
   { key: 'soft', name: 'Soft Skills' },
   { key: 'language', name: 'Languages' }
 ]
 
-// 根据分类获取技能
-const getSkillsByCategory = (category) => {
-  return props.resumeData.skills.filter(skill => skill.category === category)
-}
-
-// 获取语言水平文本
-const getLanguageLevelText = (level) => {
-  const levelMap = {
-    basic: 'Basic',
-    conversational: 'Conversational',
-    fluent: 'Fluent',
-    native: 'Native'
-  }
-  return levelMap[level] || 'Intermediate'
-}
-
-// 自定义模块相关
-const customModules = computed(() => {
-  return resumeStore.globalSettings.customModules || []
-})
-
-const getCustomModuleData = (moduleId) => {
-  return resumeStore.getCustomModuleData(moduleId)
+const getSkillCategories = (skills) => {
+  return skillCategories.map(category => ({
+    ...category,
+    skills: skills.filter(skill => skill.category === category.key)
+  })).filter(category => category.skills.length > 0)
 }
 </script>
 
 <style scoped>
 .minimal-template {
+  font-family: var(--resume-font-family, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--resume-base-font-size, 14px);
+  line-height: var(--resume-line-height, 1.6);
+  color: #333;
   max-width: 210mm;
   margin: 0 auto;
+  padding: var(--resume-page-margin-top, 20px) var(--resume-page-margin-right, 20px) var(--resume-page-margin-bottom, 20px) var(--resume-page-margin-left, 20px);
   background: white;
-  color: #333;
-  font-family: var(--resume-font-family, 'Helvetica Neue', Arial, sans-serif);
-  line-height: var(--resume-line-height, 1.5);
-  font-size: var(--resume-base-font-size, 14px);
-  padding: var(--resume-page-margin-top, 40px) var(--resume-page-margin-right, 40px) var(--resume-page-margin-bottom, 40px) var(--resume-page-margin-left, 40px);
-  min-height: var(--resume-single-page-height, calc(297mm - 80px));
-}
-
-.minimal-template.multi-page {
-  min-height: var(--resume-multi-page-height, calc(297mm - 80px));
 }
 
 /* 头部样式 */
 .resume-header {
-  margin-bottom: 40px;
+  text-align: center;
+  margin-bottom: var(--resume-module-spacing, 30px);
   padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid #eee;
 }
 
 .name {
-  font-size: var(--resume-subtitle-font-size, 32px);
+  font-size: var(--resume-name-font-size, 28px);
   font-weight: 300;
-  margin: 0 0 10px 0;
-  color: #333;
-  letter-spacing: -1px;
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  letter-spacing: 1px;
 }
 
 .contact-info {
@@ -273,6 +206,7 @@ const getCustomModuleData = (moduleId) => {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center;
 }
 
 .contact-item {
@@ -313,32 +247,22 @@ const getCustomModuleData = (moduleId) => {
 
 /* 章节样式 */
 .section {
-  margin-bottom: var(--resume-module-spacing, 35px);
+  margin-bottom: var(--resume-module-spacing, 25px);
 }
 
 .section-title {
-  font-size: var(--resume-title-font-size, 16px);
+  font-size: var(--resume-title-font-size, 18px);
   font-weight: 600;
-  color: #333;
-  margin: 0 0 20px 0;
+  color: #2c3e50;
+  margin: 0 0 15px 0;
   text-transform: uppercase;
   letter-spacing: 1px;
-  position: relative;
-  padding-bottom: 8px;
-}
-
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 30px;
-  height: 1px;
-  background: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
 }
 
 .section-content {
-  margin-left: 0;
+  padding-left: 0;
 }
 
 /* 个人简介 */
@@ -351,12 +275,16 @@ const getCustomModuleData = (moduleId) => {
 }
 
 /* 通用项目样式 */
-.work-item,
-.education-item,
-.project-item,
-.certification-item {
+.item {
   margin-bottom: 25px;
-  position: relative;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  page-break-inside: avoid;
+}
+
+.item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .item-header {
@@ -364,6 +292,7 @@ const getCustomModuleData = (moduleId) => {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 8px;
+  gap: 20px;
 }
 
 .item-title {
@@ -411,24 +340,28 @@ const getCustomModuleData = (moduleId) => {
 
 /* 详细信息 */
 .item-details {
-  margin: 0;
-  padding-left: 0;
-  list-style: none;
+  margin: 8px 0;
 }
 
-.item-details li {
-  margin-bottom: 4px;
-  line-height: 1.5;
+.responsibilities {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.responsibilities li {
   position: relative;
   padding-left: 15px;
+  margin-bottom: 4px;
+  line-height: var(--resume-line-height, 1.4);
   color: #555;
 }
 
-.item-details li::before {
-  content: '–';
+.responsibilities li::before {
+  content: '•';
   position: absolute;
   left: 0;
-  color: #ccc;
+  color: #999;
 }
 
 .detail-item {
@@ -439,10 +372,8 @@ const getCustomModuleData = (moduleId) => {
 }
 
 /* 技能样式 */
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+.skill-group {
+  margin-bottom: 15px;
 }
 
 .skill-group-title {
@@ -458,10 +389,6 @@ const getCustomModuleData = (moduleId) => {
   color: #555;
 }
 
-.skill-item {
-  font-weight: 400;
-}
-
 /* 项目描述 */
 .project-description {
   margin: 0 0 10px 0;
@@ -475,6 +402,7 @@ const getCustomModuleData = (moduleId) => {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 8px;
 }
 
 .tech-item {
@@ -486,46 +414,10 @@ const getCustomModuleData = (moduleId) => {
   font-weight: 500;
 }
 
-/* 语言列表 */
-.languages-list {
-  font-size: var(--resume-content-font-size, 14px);
-  line-height: var(--resume-line-height, 1.5);
-  color: #555;
-}
-
-.language-item {
-  font-weight: 400;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .minimal-template {
-    padding: 20px;
-  }
-  
-  .item-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .item-meta {
-    text-align: left;
-    margin-top: 5px;
-    min-width: auto;
-  }
-  
-  .contact-info {
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .contact-item:not(:last-child)::after {
-    display: none;
-  }
-  
-  .skills-grid {
-    grid-template-columns: 1fr;
-  }
+/* 分页断点样式 */
+.page-break-before {
+  page-break-before: always;
+  break-before: page;
 }
 
 /* 打印样式 */
@@ -547,10 +439,7 @@ const getCustomModuleData = (moduleId) => {
     margin-bottom: var(--resume-module-spacing, 25px);
   }
 
-  .work-item,
-  .education-item,
-  .project-item,
-  .certification-item {
+  .item {
     margin-bottom: 18px;
     page-break-inside: avoid;
   }
@@ -561,9 +450,10 @@ const getCustomModuleData = (moduleId) => {
     font-weight: 500 !important;
   }
 
-  .link-label {
-    color: #000 !important;
-    font-weight: bold !important;
+  /* 确保分页断点生效 */
+  .page-break-before {
+    page-break-before: always !important;
+    break-before: page !important;
   }
 }
 </style>

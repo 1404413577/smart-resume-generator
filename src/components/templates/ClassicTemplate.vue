@@ -1,267 +1,227 @@
 <template>
-  <div class="classic-template" :class="{ 'multi-page': pageCount > 1 }">
-    <!-- 头部个人信息 -->
-    <header class="resume-header">
-      <div class="header-content" :class="`avatar-${avatarPosition}`">
-        <!-- 头像 -->
-        <div v-if="hasAvatar" class="avatar-container" :class="`avatar-${avatarPosition}`">
-          <img :src="resumeData.personalInfo.avatar" alt="头像" class="avatar-image" />
-        </div>
+  <PagedTemplateBase
+    :resume-data="props.resumeData"
+    :page-content="props.pageContent"
+    :page-number="props.pageNumber"
+    :is-single-page="props.isSinglePage"
+    template-class="classic-template"
+  >
+    <!-- 个人信息插槽 -->
+    <template #personalInfo="{ data }">
+      <header class="resume-header">
+        <div class="header-content" :class="`avatar-${getAvatarPosition(data)}`">
+          <!-- 头像 -->
+          <div v-if="hasAvatar(data)" class="avatar-container" :class="`avatar-${getAvatarPosition(data)}`">
+            <img :src="data.avatar" alt="头像" class="avatar-image" />
+          </div>
 
-        <div class="info-container">
-          <div class="contact-info">
-            <!-- 第一行：基本信息 -->
-            <div class="contact-row primary-info">
-              <span class="contact-item name-item">
-                姓名：{{ resumeData.personalInfo.name || '姓名' }}
-              </span>
-              <span v-if="resumeData.personalInfo.email" class="contact-item">
-                邮箱：{{ resumeData.personalInfo.email }}
-              </span>
-              <span v-if="resumeData.personalInfo.phone" class="contact-item">
-                电话：{{ resumeData.personalInfo.phone }}
-              </span>
-              <span v-if="resumeData.personalInfo.address" class="contact-item">
-                地址：{{ resumeData.personalInfo.address }}
-              </span>
-            </div>
-
-            <!-- 第二行：在线链接和自定义字段 -->
-            <div v-if="hasOnlineInfo" class="contact-row secondary-info">
-              <span v-if="resumeData.personalInfo.website" class="contact-item">
-                个人网站：{{ resumeData.personalInfo.website }}
-              </span>
-              <span v-if="resumeData.personalInfo.linkedin" class="contact-item">
-                LinkedIn：{{ resumeData.personalInfo.linkedin }}
-              </span>
-              <span v-if="resumeData.personalInfo.github" class="contact-item">
-                GitHub：{{ resumeData.personalInfo.github }}
-              </span>
-
-              <!-- 自定义字段 -->
-              <template v-if="resumeData.personalInfo.customFields && resumeData.personalInfo.customFields.length > 0">
-                <span
-                  v-for="field in resumeData.personalInfo.customFields"
-                  :key="field.id"
-                  v-show="field.value"
-                  class="contact-item"
-                >
-                  {{ field.name }}：{{ field.value }}
+          <div class="info-container">
+            <div class="contact-info">
+              <!-- 第一行：基本信息 -->
+              <div class="contact-row primary-info">
+                <span class="contact-item name-item">
+                  姓名：{{ data.name || '姓名' }}
                 </span>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- 动态章节排序 -->
-    <template v-for="section in orderedSections" :key="section.key">
-      <!-- 个人简介 -->
-      <section v-if="section.key === 'summary' && resumeData.summary" class="section">
-        <h2 class="section-title" :style="sectionTitleStyle">个人简介</h2>
-        <div class="section-content">
-          <p class="summary-text">{{ resumeData.summary }}</p>
-        </div>
-      </section>
-
-      <!-- 工作经历 -->
-      <section v-if="section.key === 'workExperience' && resumeData.workExperience.length > 0" class="section">
-        <h2 class="section-title" :style="sectionTitleStyle">工作经历</h2>
-        <div class="section-content">
-          <div v-for="work in resumeData.workExperience" :key="work.id" class="entry">
-            <div class="entry-header">
-              <span>{{ work.company }} | {{ work.jobTitle }}</span>
-              <span>{{ work.startDate }} - {{ work.current ? '至今' : work.endDate }}</span>
-            </div>
-            <div class="entry-content">
-              <div v-if="work.location || work.description">
-                {{ work.location }}{{ work.location && work.description ? ' | ' : '' }}{{ work.description }}
-              </div>
-              <ul v-if="work.responsibilities && work.responsibilities.length > 0">
-                <li v-for="(responsibility, index) in work.responsibilities" :key="index">
-                  {{ responsibility }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 教育背景 -->
-      <section v-if="section.key === 'education' && resumeData.education.length > 0" class="section">
-        <h2 class="section-title" :style="sectionTitleStyle">教育背景</h2>
-        <div class="section-content">
-          <div v-for="edu in resumeData.education" :key="edu.id" class="education-item">
-            <div class="education-header">
-              <div class="education-left">
-                <span class="institution-name">{{ edu.institution }}</span>
-              </div>
-              <div class="education-right">
-                <span class="graduation-date">{{ formatEducationDate(edu.startDate, edu.graduationDate) }}</span>
-              </div>
-            </div>
-
-            <!-- 学位信息 - 居左对齐，不缩进 -->
-            <div class="degree-info">{{ edu.major }} | {{ getDegreeType(edu.degree) }} | {{ edu.degree }}</div>
-
-            <div class="education-details">
-              <!-- 主修课程 -->
-              <div v-if="edu.relevantCourses" class="relevant-courses">
-                主修课程：{{ edu.relevantCourses }}
+                <span v-if="data.email" class="contact-item">
+                  邮箱：{{ data.email }}
+                </span>
+                <span v-if="data.phone" class="contact-item">
+                  电话：{{ data.phone }}
+                </span>
+                <span v-if="data.address" class="contact-item">
+                  地址：{{ data.address }}
+                </span>
               </div>
 
-              <!-- 荣誉奖项 -->
-              <div v-if="edu.honors" class="honors-info">
-                {{ edu.honors }}
-              </div>
+              <!-- 第二行：在线链接和自定义字段 -->
+              <div v-if="hasOnlineInfo(data)" class="contact-row secondary-info">
+                <span v-if="data.website" class="contact-item">
+                  个人网站：{{ data.website }}
+                </span>
+                <span v-if="data.linkedin" class="contact-item">
+                  LinkedIn：{{ data.linkedin }}
+                </span>
+                <span v-if="data.github" class="contact-item">
+                  GitHub：{{ data.github }}
+                </span>
 
-              <!-- GPA信息 -->
-              <div v-if="edu.gpa" class="gpa-info">
-                GPA: {{ edu.gpa }}
+                <!-- 自定义字段 -->
+                <template v-if="data.customFields && data.customFields.length > 0">
+                  <span
+                    v-for="field in data.customFields"
+                    :key="field.id"
+                    v-show="field.value"
+                    class="contact-item"
+                  >
+                    {{ field.name }}：{{ field.value }}
+                  </span>
+                </template>
               </div>
             </div>
           </div>
         </div>
-      </section>
-
-      <!-- 技能特长 -->
-      <section v-if="section.key === 'skills' && resumeData.skills.length > 0" class="section">
-        <h2 class="section-title" :style="sectionTitleStyle">技能特长</h2>
-        <div class="section-content">
-          <div class="skills">
-            <div
-              v-for="skill in resumeData.skills"
-              :key="skill.id"
-              class="skill-item"
-            >
-              {{ skill.name }}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 项目经历 -->
-      <section v-if="section.key === 'projects' && resumeData.projects.length > 0" class="section">
-        <h2 class="section-title" :style="sectionTitleStyle">项目经历</h2>
-        <div class="section-content">
-          <div v-for="project in resumeData.projects" :key="project.id" class="entry">
-            <div class="entry-header">
-              <span>{{ project.name }}</span>
-              <span>{{ project.startDate }} - {{ project.endDate }}</span>
-            </div>
-            <div class="entry-content">
-              <span v-if="project.role" class="project-role">项目角色：{{ project.role }}</span>
-              <span v-if="project.technologies.length > 0" class="project-tech">
-                技术栈：{{ project.technologies.join(' + ') }}
-              </span>
-              <span v-if="project.url" class="project-url">项目链接：{{ project.url }}</span>
-              <ul v-if="project.description">
-                <li v-for="(item, index) in project.description.split('\n').filter(line => line.trim())" :key="index">
-                  {{ item.trim() }}
-                </li>
-              </ul>
-              <ul v-if="project.highlights && project.highlights.length > 0">
-                <li v-for="(highlight, index) in project.highlights" :key="index">
-                  {{ highlight }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+      </header>
     </template>
 
-    <!-- 证书认证 -->
-    <section v-if="resumeData.certifications.length > 0" class="section">
-      <h2 class="section-title" :style="sectionTitleStyle">证书认证</h2>
+    <!-- 个人简介插槽 -->
+    <template #summary="{ data }">
+      <h2 class="section-title">个人简介</h2>
       <div class="section-content">
-        <div v-for="cert in resumeData.certifications" :key="cert.id" class="certification-item">
-          <div class="certification-header">
-            <h3 class="certification-name">{{ cert.name }}</h3>
-            <span class="certification-date">{{ cert.date }}</span>
+        <p class="summary-text">{{ data }}</p>
+      </div>
+    </template>
+
+    <!-- 工作经历插槽 -->
+    <template #workExperience="{ data, isFirst }">
+      <h2 v-if="isFirst" class="section-title">工作经历</h2>
+      <div class="section-content">
+        <div class="entry">
+          <div class="entry-header">
+            <span>{{ data.company }} | {{ data.jobTitle }}</span>
+            <span>{{ data.startDate }} - {{ data.current ? '至今' : data.endDate }}</span>
           </div>
-          <div class="certification-details">
-            <span class="certification-issuer">颁发机构：{{ cert.issuer }}</span>
-            <span v-if="cert.credentialId" class="credential-id">证书编号：{{ cert.credentialId }}</span>
+          <div class="entry-content">
+            <div v-if="data.location || data.description">
+              {{ data.location }}{{ data.location && data.description ? ' | ' : '' }}{{ data.description }}
+            </div>
+            <ul v-if="data.responsibilities && data.responsibilities.length > 0">
+              <li v-for="(responsibility, index) in data.responsibilities" :key="index">
+                {{ responsibility }}
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-    </section>
+    </template>
 
-    <!-- 语言能力 -->
-    <section v-if="resumeData.languages.length > 0" class="section">
-      <h2 class="section-title" :style="sectionTitleStyle">语言能力</h2>
+    <!-- 教育背景插槽 -->
+    <template #education="{ data, isFirst }">
+      <h2 v-if="isFirst" class="section-title">教育背景</h2>
       <div class="section-content">
-        <div class="languages-list">
-          <span 
-            v-for="(language, index) in resumeData.languages" 
-            :key="language.id"
-            class="language-item"
+        <div class="education-item">
+          <div class="education-header">
+            <div class="education-left">
+              <span class="institution-name">{{ data.institution }}</span>
+            </div>
+            <div class="education-right">
+              <span class="graduation-date">{{ formatEducationDate(data.startDate, data.graduationDate) }}</span>
+            </div>
+          </div>
+
+          <!-- 学位信息 - 居左对齐，不缩进 -->
+          <div class="degree-info">{{ data.major }} | {{ getDegreeType(data.degree) }} | {{ data.degree }}</div>
+
+          <div class="education-details">
+            <!-- 主修课程 -->
+            <div v-if="data.relevantCourses" class="relevant-courses">
+              主修课程：{{ data.relevantCourses }}
+            </div>
+
+            <!-- 荣誉奖项 -->
+            <div v-if="data.honors" class="honors-info">
+              {{ data.honors }}
+            </div>
+
+            <!-- GPA信息 -->
+            <div v-if="data.gpa" class="gpa-info">
+              GPA: {{ data.gpa }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- 技能特长插槽 -->
+    <template #skills="{ data }">
+      <h2 class="section-title">技能特长</h2>
+      <div class="section-content">
+        <div class="skills">
+          <div
+            v-for="skill in data"
+            :key="skill.id"
+            class="skill-item"
           >
-            {{ language.name }}（{{ getLanguageLevelText(language.proficiency) }}）{{ index < resumeData.languages.length - 1 ? '、' : '' }}
-          </span>
+            {{ skill.name }}
+          </div>
         </div>
       </div>
-    </section>
+    </template>
 
-    <!-- 自定义模块 -->
-    <section
-      v-for="customModule in customModules"
-      :key="customModule.id"
-      class="section custom-module-section"
-    >
-      <CustomModuleRenderer
-        :module="customModule"
-        :module-data="getCustomModuleData(customModule.id)"
-      />
-    </section>
-  </div>
+    <!-- 项目经历插槽 -->
+    <template #projects="{ data, isFirst }">
+      <h2 v-if="isFirst" class="section-title">项目经历</h2>
+      <div class="section-content">
+        <div class="entry">
+          <div class="entry-header">
+            <span>{{ data.name }}</span>
+            <span>{{ data.startDate }} - {{ data.endDate }}</span>
+          </div>
+          <div class="entry-content">
+            <span v-if="data.role" class="project-role">项目角色：{{ data.role }}</span>
+            <span v-if="data.technologies && data.technologies.length > 0" class="project-tech">
+              技术栈：{{ data.technologies.join(' + ') }}
+            </span>
+            <span v-if="data.url" class="project-url">项目链接：{{ data.url }}</span>
+            <ul v-if="data.description">
+              <li v-for="(item, index) in data.description.split('\n').filter(line => line.trim())" :key="index">
+                {{ item.trim() }}
+              </li>
+            </ul>
+            <ul v-if="data.highlights && data.highlights.length > 0">
+              <li v-for="(highlight, index) in data.highlights" :key="index">
+                {{ highlight }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </template>
+  </PagedTemplateBase>
+
+
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useResumeStore } from '../../stores/resume'
-import CustomModuleRenderer from '../CustomModuleRenderer.vue'
+import PagedTemplateBase from './PagedTemplateBase.vue'
 
 const props = defineProps({
   resumeData: {
     type: Object,
     required: true
+  },
+  pageContent: {
+    type: Array,
+    default: () => []
+  },
+  pageNumber: {
+    type: Number,
+    default: 1
+  },
+  isSinglePage: {
+    type: Boolean,
+    default: true
   }
 })
 
 const resumeStore = useResumeStore()
 
-// 页面设置
-const pageCount = computed(() => resumeStore.globalSettings.pageSettings.pageCount)
-const showPageNumbers = computed(() => resumeStore.globalSettings.pageSettings.showPageNumbers)
 
 
-
-// 计算属性
-const hasLinks = computed(() => {
-  const { website, linkedin, github, customFields } = props.resumeData.personalInfo
+// 计算属性和方法
+const hasLinks = (personalInfo) => {
+  const { website, linkedin, github, customFields } = personalInfo
   return website || linkedin || github || (customFields && customFields.length > 0)
-})
+}
 
-const hasAvatar = computed(() => !!props.resumeData.personalInfo.avatar)
-const avatarPosition = computed(() => props.resumeData.personalInfo.avatarPosition || 'left')
+const hasAvatar = (personalInfo) => !!personalInfo.avatar
+const getAvatarPosition = (personalInfo) => personalInfo.avatarPosition || 'left'
 
-const hasOnlineInfo = computed(() => {
-  const { website, linkedin, github, customFields } = props.resumeData.personalInfo
+const hasOnlineInfo = (personalInfo) => {
+  const { website, linkedin, github, customFields } = personalInfo
   return website || linkedin || github || (customFields && customFields.length > 0)
-})
-
-// 获取排序后的章节
-const orderedSections = computed(() => resumeStore.getOrderedSections)
-
-// 标题对齐样式
-const sectionTitleStyle = computed(() => {
-  return {
-    textAlign: resumeStore.templateSettings.sectionTitleAlignment || 'left'
-  }
-})
+}
 
 
 
@@ -278,14 +238,7 @@ const getLanguageLevelText = (level) => {
   return levelMap[level] || '中等'
 }
 
-// 自定义模块相关
-const customModules = computed(() => {
-  return resumeStore.globalSettings.customModules || []
-})
 
-const getCustomModuleData = (moduleId) => {
-  return resumeStore.getCustomModuleData(moduleId)
-}
 
 // 格式化教育时间
 const formatEducationDate = (startDate, endDate) => {
@@ -675,6 +628,49 @@ const getDegreeType = (degree) => {
   font-weight: normal;
 }
 
+/* 页码样式 */
+.page-numbers {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.page-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-number:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.page-number.current-page {
+  background: #3498db;
+  border-color: #3498db;
+  color: white;
+}
+
+/* 分页断点样式 */
+.page-break-before {
+  page-break-before: always;
+  break-before: page;
+}
+
 /* 打印样式 */
 @media print {
   .classic-template {
@@ -715,6 +711,17 @@ const getDegreeType = (degree) => {
   .link-label {
     color: #000 !important;
     font-weight: bold !important;
+  }
+
+  /* 打印时隐藏页码 */
+  .page-numbers {
+    display: none !important;
+  }
+
+  /* 确保分页断点生效 */
+  .page-break-before {
+    page-break-before: always !important;
+    break-before: page !important;
   }
 
   @page {

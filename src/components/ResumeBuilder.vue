@@ -79,9 +79,20 @@
             id="resume-preview"
             :style="{ transform: `scale(${previewScale})`, transformOrigin: 'top left' }"
           >
+            <!-- 单页模式 -->
             <component
+              v-if="pageSettings.pageCount === 1"
               :is="currentTemplate"
               :resume-data="resumeStore.resumeData"
+              :is-single-page="true"
+            />
+
+            <!-- 多页模式 -->
+            <MultiPageLayout
+              v-else
+              :template-component="currentTemplate"
+              :resume-data="resumeStore.resumeData"
+              :is-print-mode="false"
             />
           </div>
         </div>
@@ -129,11 +140,11 @@ import ModernTemplate from './templates/ModernTemplate.vue'
 import ClassicTemplate from './templates/ClassicTemplate.vue'
 import MinimalTemplate from './templates/MinimalTemplate.vue'
 
+// 导入分页组件
+import MultiPageLayout from './MultiPageLayout.vue'
+
 // 导入章节排序组件
 import SectionOrderManager from './SectionOrderManager.vue'
-
-// 导入调试组件（已禁用）
-// import DebugCSSVariables from './DebugCSSVariables.vue'
 
 const resumeStore = useResumeStore()
 
@@ -146,11 +157,11 @@ const activeModule = ref('personalInfo')
 // 章节排序对话框状态
 const showSectionOrder = ref(false)
 
-// 调试面板状态
-const showDebugPanel = ref(false) // 调试面板已禁用
-
 // 预览缩放比例
 const previewScale = ref(0.8)
+
+// 页面设置
+const pageSettings = computed(() => resumeStore.globalSettings.pageSettings)
 
 // 可用模板
 const templates = [

@@ -221,153 +221,177 @@ const getCustomModuleData = (moduleId) => {
 
 <style scoped>
 .modern-template {
-  max-width: 210mm;
+  width: 210mm;
   margin: 0 auto;
-  background: white;
-  color: #2c3e50;
-  font-family: var(--resume-font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
-  line-height: var(--resume-line-height, 1.6);
-  font-size: var(--resume-base-font-size, 14px);
-  /* 确保页边距也应用 */
-  padding: var(--resume-page-margin-top, 30px) var(--resume-page-margin-right, 30px) var(--resume-page-margin-bottom, 30px) var(--resume-page-margin-left, 30px);
-  min-height: var(--resume-single-page-height, calc(297mm - 60px));
+  background: #ffffff;
+  color: #1a202c;
+  font-family: var(--resume-font-family, 'Times New Roman', Times, serif);
+  line-height: var(--resume-line-height, 1.4);
+  font-size: var(--resume-base-font-size, 11px);
+  padding: var(--resume-page-margin-top, 15mm) var(--resume-page-margin-right, 15mm) var(--resume-page-margin-bottom, 15mm) var(--resume-page-margin-left, 15mm);
+  min-height: calc(297mm - 30mm);
+  position: relative;
+  page-break-after: auto;
 }
 
 .modern-template.multi-page {
-  min-height: var(--resume-multi-page-height, calc(297mm - 60px));
+  min-height: auto;
 }
 
-/* 头部样式 */
+/* 分页控制 */
+.page-break {
+  page-break-before: always;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.avoid-break {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* 头部样式 - 简洁专业设计 */
 .resume-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #2563eb;
   color: white;
-  padding: 40px 30px;
-  margin-bottom: 30px;
+  padding: 20mm 0 15mm 0;
+  margin: -15mm -15mm 12mm -15mm;
+  position: relative;
+  page-break-inside: avoid;
 }
 
 .header-content {
   max-width: 100%;
+  padding: 0 15mm;
 }
 
 .name {
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 700;
-  margin: 0 0 15px 0;
-  letter-spacing: 1px;
+  margin: 0 0 8mm 0;
+  letter-spacing: 0.5px;
+  color: white;
 }
 
 .contact-info {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 15px;
+  gap: 15px;
+  margin-bottom: 8mm;
+  font-size: 10px;
 }
 
 .contact-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 16px;
+  gap: 4px;
+  font-weight: 500;
+  color: white;
+}
+
+.contact-item .el-icon {
+  font-size: 12px;
 }
 
 .links {
   display: flex;
-  gap: 15px;
+  gap: 8px;
   flex-wrap: wrap;
+  font-size: 9px;
 }
 
 .link {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  align-items: flex-start;
+  gap: 4px;
   color: white;
   text-decoration: none;
-  padding: 8px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  transition: all 0.3s ease;
+  padding: 3px 0;
   cursor: default;
   flex-wrap: wrap;
   max-width: 100%;
-}
-
-.link:hover {
-  background: rgba(255, 255, 255, 0.1);
+  font-weight: 400;
+  line-height: 1.3;
 }
 
 .link-label {
   font-weight: 600;
   white-space: nowrap;
+  min-width: fit-content;
 }
 
 .link-url {
   font-weight: 400;
   word-break: break-all;
   font-family: 'Courier New', monospace;
-  font-size: 13px;
+  opacity: 0.95;
+  flex: 1;
 }
 
 .custom-field-link {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  align-items: flex-start;
+  gap: 4px;
   text-decoration: none;
   color: white;
-  padding: 8px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  transition: all 0.3s ease;
+  padding: 3px 0;
   cursor: default;
   flex-wrap: wrap;
   max-width: 100%;
+  font-weight: 400;
+  line-height: 1.3;
 }
 
-/* 章节样式 */
+/* 章节样式 - 紧凑专业设计 */
 .section {
-  margin-bottom: var(--resume-module-spacing, 35px);
-  padding: 0 30px;
+  margin-bottom: var(--resume-module-spacing, 8mm);
+  padding: 0;
+  position: relative;
+  page-break-inside: avoid;
 }
 
 .section-title {
-  font-size: var(--resume-title-font-size, 24px);
-  font-weight: 600;
-  color: #667eea;
-  margin: 0 0 20px 0;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #667eea;
+  font-size: var(--resume-title-font-size, 14px);
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4mm 0;
+  padding: 2mm 0;
   position: relative;
-}
-
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 50px;
-  height: 2px;
-  background: #764ba2;
+  border-bottom: 1.5pt solid #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .section-content {
-  padding-left: 10px;
+  padding-left: 0;
+  position: relative;
 }
 
-/* 个人简介 */
+/* 个人简介 - 简洁排版 */
 .summary-text {
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: 11px;
+  line-height: 1.5;
   margin: 0;
   text-align: justify;
+  color: #374151;
+  font-weight: 400;
+  padding: 4mm 0;
+  border-left: 2pt solid #2563eb;
+  padding-left: 4mm;
+  position: relative;
 }
 
-/* 工作经历 */
+/* 工作经历 - 紧凑列表设计 */
 .work-item {
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 6mm;
+  padding-bottom: 4mm;
+  border-bottom: 0.5pt solid #e2e8f0;
+  position: relative;
+  page-break-inside: avoid;
 }
 
 .work-item:last-child {
+  margin-bottom: 0;
   border-bottom: none;
 }
 
@@ -375,56 +399,80 @@ const getCustomModuleData = (moduleId) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: 2mm;
+  gap: 10mm;
 }
 
 .work-title h3 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 5px 0;
-  color: #2c3e50;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 1mm 0;
+  color: #1e293b;
+  line-height: 1.3;
 }
 
 .work-title h4 {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   margin: 0;
-  color: #667eea;
+  color: #2563eb;
+  line-height: 1.3;
 }
 
 .work-meta {
   text-align: right;
-  color: #6c757d;
+  color: #64748b;
+  flex-shrink: 0;
+  font-size: 10px;
 }
 
 .work-period {
   display: block;
-  font-weight: 500;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1mm;
+  line-height: 1.2;
 }
 
 .work-location {
   display: block;
-  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 .work-responsibilities {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 4mm;
+  list-style: none;
+  font-size: 10px;
 }
 
 .work-responsibilities li {
-  margin-bottom: 5px;
-  line-height: 1.6;
+  margin-bottom: 1mm;
+  line-height: 1.4;
+  position: relative;
+  color: #374151;
 }
 
-/* 教育背景 */
+.work-responsibilities li::before {
+  content: '•';
+  position: absolute;
+  left: -3mm;
+  color: #2563eb;
+  font-weight: bold;
+}
+
+/* 教育背景 - 简洁列表设计 */
 .education-item {
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 5mm;
+  padding-bottom: 3mm;
+  border-bottom: 0.5pt solid #e2e8f0;
+  position: relative;
+  page-break-inside: avoid;
 }
 
 .education-item:last-child {
+  margin-bottom: 0;
   border-bottom: none;
 }
 
@@ -432,89 +480,125 @@ const getCustomModuleData = (moduleId) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 2mm;
+  gap: 10mm;
 }
 
 .education-title h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 3px 0;
-  color: #2c3e50;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 1mm 0;
+  color: #1e293b;
+  line-height: 1.3;
 }
 
 .education-title h4 {
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   margin: 0;
-  color: #667eea;
+  color: #2563eb;
+  line-height: 1.3;
 }
 
 .education-meta {
   text-align: right;
-  color: #6c757d;
+  color: #64748b;
+  flex-shrink: 0;
+  font-size: 10px;
+}
+
+.education-period {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1mm;
+  line-height: 1.2;
+}
+
+.education-location {
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 .education-details {
   display: flex;
-  gap: 15px;
-  font-size: 13px;
-  color: #6c757d;
+  gap: 8px;
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 500;
+  flex-wrap: wrap;
 }
 
-/* 技能特长 */
+.gpa {
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.honors {
+  color: #92400e;
+  font-weight: 600;
+}
+
+/* 技能特长 - 紧凑标签设计 */
 .skill-category {
-  margin-bottom: 20px;
+  margin-bottom: 5mm;
+  page-break-inside: avoid;
 }
 
 .skill-category-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 10px 0;
-  color: #2c3e50;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 0 0 2mm 0;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .skills-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 2mm;
+  line-height: 1.2;
 }
 
 .skill-item {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-  background: #f8f9fa;
-  color: #495057;
-  border: 1px solid #e9ecef;
+  padding: 1mm 3mm;
+  font-size: 9px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+  border: 0.5pt solid #e2e8f0;
+  display: inline-block;
 }
 
 .skill-expert {
-  background: #667eea;
+  background: #2563eb;
   color: white;
-  border-color: #667eea;
+  border-color: #2563eb;
 }
 
 .skill-advanced {
-  background: #28a745;
+  background: #059669;
   color: white;
-  border-color: #28a745;
+  border-color: #059669;
 }
 
 .skill-intermediate {
-  background: #ffc107;
-  color: #212529;
-  border-color: #ffc107;
+  background: #d97706;
+  color: white;
+  border-color: #d97706;
 }
 
-/* 项目经历 */
+/* 项目经历 - 紧凑列表设计 */
 .project-item {
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 6mm;
+  padding-bottom: 4mm;
+  border-bottom: 0.5pt solid #e2e8f0;
+  position: relative;
+  page-break-inside: avoid;
 }
 
 .project-item:last-child {
+  margin-bottom: 0;
   border-bottom: none;
 }
 
@@ -522,91 +606,284 @@ const getCustomModuleData = (moduleId) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: 2mm;
+  gap: 10mm;
 }
 
 .project-title {
   display: flex;
-  align-items: center;
-  gap: 15px;
+  align-items: flex-start;
+  gap: 4mm;
+  flex: 1;
 }
 
 .project-title h3 {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   margin: 0;
-  color: #2c3e50;
+  color: #1e293b;
+  line-height: 1.3;
 }
 
 .project-link {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #667eea;
+  display: inline;
+  color: #2563eb;
   text-decoration: none;
-  font-size: 14px;
-}
-
-.project-link:hover {
-  text-decoration: underline;
+  font-size: 9px;
+  font-weight: 600;
+  word-break: break-all;
 }
 
 .project-meta {
-  color: #6c757d;
-  font-weight: 500;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 10px;
+  flex-shrink: 0;
+  text-align: right;
 }
 
 .project-description {
-  margin: 0 0 10px 0;
-  line-height: 1.6;
+  margin: 0 0 2mm 0;
+  line-height: 1.4;
+  color: #374151;
+  font-size: 10px;
 }
 
 .project-technologies {
-  font-size: 13px;
-  color: #6c757d;
+  font-size: 9px;
+  color: #64748b;
+  line-height: 1.3;
 }
 
 .tech-label {
-  font-weight: 600;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 .tech-item {
   font-weight: 500;
 }
 
-/* 打印样式 */
+/* 打印样式 - 完美A4打印效果 */
 @media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   .modern-template {
-    font-size: 12px;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    margin: 0 !important;
+    padding: 15mm !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+    background: white !important;
+    box-shadow: none !important;
+    page-break-after: auto;
+  }
+
+  .modern-template.multi-page {
+    min-height: auto !important;
+  }
+
+  .page-break {
+    page-break-before: always !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .resume-header {
-    padding: 30px 20px;
+    background: #2563eb !important;
+    color: white !important;
+    padding: 15mm 0 10mm 0 !important;
+    margin: -15mm -15mm 8mm -15mm !important;
+    page-break-inside: avoid !important;
   }
 
-  .section {
-    padding: 0 20px;
-    margin-bottom: 25px;
+  .header-content {
+    padding: 0 15mm !important;
   }
 
   .name {
-    font-size: 28px;
+    font-size: 24px !important;
+    color: white !important;
+    margin: 0 0 6mm 0 !important;
   }
 
-  .section-title {
-    font-size: 18px;
+  .contact-info {
+    font-size: 9px !important;
+    gap: 10px !important;
+    margin-bottom: 6mm !important;
+  }
+
+  .contact-item {
+    color: white !important;
+    background: none !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .links {
+    font-size: 8px !important;
+    gap: 6px !important;
+  }
+
+  .link,
+  .custom-field-link {
+    color: white !important;
+    background: none !important;
+    padding: 0 !important;
+    border: none !important;
+    line-height: 1.2 !important;
   }
 
   .link-url {
-    font-size: 11px !important;
-    color: #333 !important;
-    font-weight: 500 !important;
+    font-size: 8px !important;
+    color: white !important;
+    opacity: 0.9 !important;
   }
 
-  .link {
-    border-color: #333 !important;
-    color: #333 !important;
-    background: white !important;
+  .section {
+    margin-bottom: 6mm !important;
+    padding: 0 !important;
+    page-break-inside: avoid;
+  }
+
+  .section-title {
+    font-size: 12px !important;
+    margin: 0 0 3mm 0 !important;
+    padding: 1.5mm 0 !important;
+    border-bottom: 1pt solid #2563eb !important;
+    page-break-after: avoid;
+  }
+
+  .section-content {
+    padding-left: 0 !important;
+  }
+
+  .summary-text {
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+    padding: 3mm 0 !important;
+    border-left: 1.5pt solid #2563eb !important;
+    padding-left: 3mm !important;
+    background: none !important;
+  }
+
+  .work-item,
+  .education-item,
+  .project-item {
+    margin-bottom: 4mm !important;
+    padding-bottom: 3mm !important;
+    border-bottom: 0.5pt solid #e2e8f0 !important;
+    page-break-inside: avoid !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .work-header,
+  .education-header,
+  .project-header {
+    margin-bottom: 1.5mm !important;
+    gap: 8mm !important;
+  }
+
+  .work-title h3,
+  .education-title h3,
+  .project-title h3 {
+    font-size: 11px !important;
+    margin: 0 0 0.5mm 0 !important;
+  }
+
+  .work-title h4,
+  .education-title h4 {
+    font-size: 10px !important;
+  }
+
+  .work-meta,
+  .education-meta,
+  .project-meta {
+    font-size: 9px !important;
+  }
+
+  .work-responsibilities {
+    font-size: 9px !important;
+    padding-left: 3mm !important;
+  }
+
+  .work-responsibilities li {
+    margin-bottom: 0.5mm !important;
+    line-height: 1.3 !important;
+  }
+
+  .education-details {
+    font-size: 9px !important;
+    gap: 6px !important;
+  }
+
+  .project-description {
+    font-size: 9px !important;
+    margin: 0 0 1.5mm 0 !important;
+    line-height: 1.3 !important;
+  }
+
+  .project-technologies {
+    font-size: 8px !important;
+  }
+
+  .project-link {
+    font-size: 8px !important;
+    color: #2563eb !important;
+    background: none !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .skill-category {
+    margin-bottom: 4mm !important;
+    page-break-inside: avoid !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  .skill-category-title {
+    font-size: 10px !important;
+    margin: 0 0 1.5mm 0 !important;
+  }
+
+  .skills-list {
+    gap: 1.5mm !important;
+  }
+
+  .skill-item {
+    font-size: 8px !important;
+    padding: 0.5mm 2mm !important;
+    border: 0.5pt solid #e2e8f0 !important;
+  }
+
+  .skill-expert {
+    background: #2563eb !important;
+    color: white !important;
+    border-color: #2563eb !important;
+  }
+
+  .skill-advanced {
+    background: #059669 !important;
+    color: white !important;
+    border-color: #059669 !important;
+  }
+
+  .skill-intermediate {
+    background: #d97706 !important;
+    color: white !important;
+    border-color: #d97706 !important;
   }
 }
 </style>

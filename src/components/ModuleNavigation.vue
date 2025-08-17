@@ -1,69 +1,113 @@
 <template>
   <div class="module-navigation">
-    <!-- 全局设置区域 -->
-    <div class="global-settings">
-      <h3 class="section-title">
-        <el-icon><Setting /></el-icon>
-        全局设置
-      </h3>
-
-      <div class="setting-group">
-        <label class="setting-label">模板风格</label>
-        <el-select v-model="selectedTemplate" @change="handleTemplateChange" size="small">
-          <el-option
-            v-for="template in templates"
-            :key="template.id"
-            :label="template.name"
-            :value="template.id"
-          />
-        </el-select>
-      </div>
-    </div>
-
-    <!-- 模块列表区域 -->
-    <div class="module-list">
-      <h3 class="section-title">
-        <el-icon><List /></el-icon>
-        简历模块
-      </h3>
-
-      <div class="module-items">
+    <!-- 主要导航区域 -->
+    <div class="main-navigation">
+      <!-- 模板选择 -->
+      <div class="nav-section">
         <div
-          v-for="module in modules"
-          :key="module.id"
-          class="module-item"
-          :class="{
-            active: activeModule === module.id,
-            'has-content': module.hasContent
-          }"
-          @click="handleModuleClick(module.id)"
+          class="nav-item"
+          :class="{ active: activeSection === 'template' }"
+          @click="toggleSection('template')"
         >
-          <div class="module-icon">
-            <el-icon>
-              <component :is="module.icon" />
+          <div class="nav-item-header">
+            <el-icon><Setting /></el-icon>
+            <span>模板设置</span>
+            <el-icon class="expand-icon" :class="{ expanded: activeSection === 'template' }">
+              <ArrowRight />
             </el-icon>
           </div>
-          <div class="module-info">
-            <span class="module-name">{{ module.name }}</span>
-            <span class="module-status">
-              {{ module.hasContent ? '已填写' : '未填写' }}
-            </span>
+        </div>
+
+        <!-- 模板选择内容 -->
+        <div v-show="activeSection === 'template'" class="nav-content">
+          <div class="setting-group">
+            <label class="setting-label">模板风格</label>
+            <el-select v-model="selectedTemplate" @change="handleTemplateChange" size="small">
+              <el-option
+                v-for="template in templates"
+                :key="template.id"
+                :label="template.name"
+                :value="template.id"
+              />
+            </el-select>
           </div>
-          <div class="module-actions">
-            <el-icon class="drag-handle"><Rank /></el-icon>
+        </div>
+      </div>
+
+      <!-- 简历模块 -->
+      <div class="nav-section">
+        <div
+          class="nav-item"
+          :class="{ active: activeSection === 'modules' }"
+          @click="toggleSection('modules')"
+        >
+          <div class="nav-item-header">
+            <el-icon><List /></el-icon>
+            <span>简历内容</span>
+            <el-icon class="expand-icon" :class="{ expanded: activeSection === 'modules' }">
+              <ArrowRight />
+            </el-icon>
           </div>
+        </div>
+
+        <!-- 模块列表内容 -->
+        <div v-show="activeSection === 'modules'" class="nav-content">
+          <div class="module-items">
+            <div
+              v-for="module in modules"
+              :key="module.id"
+              class="module-item"
+              :class="{
+                active: activeModule === module.id,
+                'has-content': module.hasContent
+              }"
+              @click="handleModuleClick(module.id)"
+            >
+              <div class="module-icon">
+                <el-icon>
+                  <component :is="module.icon" />
+                </el-icon>
+              </div>
+              <div class="module-info">
+                <span class="module-name">{{ module.name }}</span>
+                <span class="module-status">
+                  {{ module.hasContent ? '已填写' : '未填写' }}
+                </span>
+              </div>
+              <div class="module-actions">
+                <el-icon class="drag-handle"><Rank /></el-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 高级设置 -->
+      <div class="nav-section">
+        <div
+          class="nav-item"
+          :class="{ active: activeSection === 'advanced' }"
+          @click="toggleSection('advanced')"
+        >
+          <div class="nav-item-header">
+            <el-icon><Tools /></el-icon>
+            <span>高级设置</span>
+            <el-icon class="expand-icon" :class="{ expanded: activeSection === 'advanced' }">
+              <ArrowRight />
+            </el-icon>
+          </div>
+        </div>
+
+        <!-- 高级设置内容 -->
+        <div v-show="activeSection === 'advanced'" class="nav-content">
+          <GlobalSettings />
         </div>
       </div>
     </div>
 
-    <!-- 高级设置区域 -->
-    <div class="advanced-settings">
-      <GlobalSettings />
-    </div>
-
     <!-- 操作按钮区域 -->
     <div class="action-buttons">
-      <el-button @click="handleManageResumes">
+      <el-button @click="handleManageResumes" type="primary" size="small">
         <el-icon><Folder /></el-icon>
         简历管理
       </el-button>
@@ -75,7 +119,7 @@
 import { computed, ref } from 'vue'
 import {
   Setting, List, User, Document, Briefcase, School,
-  Star, Folder, Rank, Plus
+  Star, Folder, Rank, Plus, ArrowRight, Tools
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
 import GlobalSettings from './GlobalSettings.vue'
@@ -99,6 +143,18 @@ const templates = [
 ]
 
 const selectedTemplate = ref(resumeStore.selectedTemplate)
+
+// 导航状态管理
+const activeSection = ref('modules') // 默认展开简历内容
+
+// 切换导航区域
+const toggleSection = (section) => {
+  if (activeSection.value === section) {
+    activeSection.value = null // 如果已经展开，则折叠
+  } else {
+    activeSection.value = section // 展开新的区域
+  }
+}
 
 // 简历模块配置
 const modules = computed(() => {
@@ -199,22 +255,66 @@ const handleManageResumes = () => {
   overflow: hidden;
 }
 
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 16px 0;
-  padding: 0 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #303133;
+/* 主导航区域 */
+.main-navigation {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.global-settings {
-  padding: 20px 16px;
+/* 导航区域 */
+.nav-section {
   border-bottom: 1px solid #e4e7ed;
 }
 
+/* 导航项 */
+.nav-item {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background: #f0f2f5;
+}
+
+.nav-item.active {
+  background: #e6f7ff;
+}
+
+.nav-item-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  user-select: none;
+}
+
+.nav-item-header .el-icon {
+  font-size: 16px;
+  color: #409eff;
+}
+
+.expand-icon {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+  color: #909399 !important;
+}
+
+.expand-icon.expanded {
+  transform: rotate(90deg);
+}
+
+/* 导航内容 */
+.nav-content {
+  padding: 0 20px 16px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #e4e7ed;
+}
+
+/* 设置组样式 */
 .setting-group {
   margin-bottom: 16px;
 }
@@ -229,47 +329,23 @@ const handleManageResumes = () => {
 
 
 
-.module-list {
-  flex: 0 0 auto; /* 不伸缩，根据内容确定高度 */
-  max-height: 300px; /* 设置最大高度 */
-  overflow-y: auto; /* 启用垂直滚动 */
-  overflow-x: hidden;
-  padding: 20px 0;
-  border-bottom: 1px solid #e4e7ed;
-  /* 平滑滚动 */
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
-
-.advanced-settings {
-  flex: 1; /* 占用剩余空间 */
-  min-height: 0; /* 重要：允许flex子项收缩 */
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 0;
-  /* 平滑滚动 */
-  scroll-behavior: smooth;
-  /* 确保在移动设备上也能滚动 */
-  -webkit-overflow-scrolling: touch;
-}
-
+/* 模块列表样式 */
 .module-items {
-  padding: 0 8px;
-  /* 确保内容可以正常滚动 */
-  min-height: min-content;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  padding: 8px 0;
 }
 
+/* 模块项样式 */
 .module-item {
   display: flex;
   align-items: center;
-  padding: 12px 8px;
-  margin-bottom: 4px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 2px 8px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   border: 1px solid transparent;
 }
 
@@ -279,24 +355,24 @@ const handleManageResumes = () => {
 
 .module-item.active {
   background: #e6f7ff;
-  border-color: #409EFF;
+  border-color: #409eff;
 }
 
 .module-item.has-content .module-icon {
-  color: #67C23A;
+  color: #67c23a;
 }
 
 .module-icon {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f0f2f5;
-  border-radius: 6px;
-  margin-right: 12px;
+  border-radius: 4px;
+  margin-right: 10px;
   color: #909399;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .module-info {
@@ -306,20 +382,20 @@ const handleManageResumes = () => {
 }
 
 .module-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: #303133;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .module-status {
-  font-size: 11px;
+  font-size: 10px;
   color: #909399;
 }
 
 .module-actions {
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s ease;
 }
 
 .module-item:hover .module-actions {
@@ -329,74 +405,66 @@ const handleManageResumes = () => {
 .drag-handle {
   cursor: grab;
   color: #c0c4cc;
+  font-size: 12px;
 }
 
+/* 操作按钮区域 */
 .action-buttons {
-  padding: 16px;
+  padding: 16px 20px;
   border-top: 1px solid #e4e7ed;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  background: #fafbfc;
 }
 
 .action-buttons .el-button {
   width: 100%;
   justify-content: flex-start;
+  gap: 8px;
 }
 
 /* 滚动条样式 */
-.module-list::-webkit-scrollbar {
+.main-navigation::-webkit-scrollbar {
   width: 4px;
 }
 
-.module-list::-webkit-scrollbar-track {
+.main-navigation::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.module-list::-webkit-scrollbar-thumb {
+.main-navigation::-webkit-scrollbar-thumb {
   background: #c0c4cc;
   border-radius: 2px;
 }
 
-.module-list::-webkit-scrollbar-thumb:hover {
+.main-navigation::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
 
-/* 高级设置区域滚动条样式 */
-.advanced-settings::-webkit-scrollbar {
-  width: 4px;
-}
-
-.advanced-settings::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.advanced-settings::-webkit-scrollbar-thumb {
-  background: #c0c4cc;
-  border-radius: 2px;
-}
-
-.advanced-settings::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* 响应式设计 - 确保在不同屏幕尺寸下滚动正常 */
-@media (max-height: 800px) {
-  .module-list {
-    max-height: 250px;
-  }
-}
-
-@media (max-height: 600px) {
-  .module-list {
-    max-height: 200px;
-  }
-}
-
-/* 确保在小屏幕设备上滚动条可见 */
+/* 响应式设计 */
 @media (max-width: 768px) {
-  .advanced-settings::-webkit-scrollbar {
-    width: 6px;
+  .nav-item-header {
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+
+  .nav-content {
+    padding: 0 16px 12px 16px;
+  }
+
+  .module-item {
+    padding: 8px 10px;
+    margin: 2px 6px;
+  }
+
+  .module-name {
+    font-size: 11px;
+  }
+
+  .module-status {
+    font-size: 9px;
+  }
+
+  .action-buttons {
+    padding: 12px 16px;
   }
 }
 </style>

@@ -114,6 +114,9 @@
         <el-button @click="showSectionOrder = false">关闭</el-button>
       </template>
     </el-dialog>
+
+    <!-- 全局设置抽屉 -->
+    <GlobalSettingsDrawer />
   </div>
 </template>
 
@@ -145,6 +148,9 @@ import MultiPageLayout from './MultiPageLayout.vue'
 
 // 导入章节排序组件
 import SectionOrderManager from './SectionOrderManager.vue'
+
+// 导入全局设置抽屉组件
+import GlobalSettingsDrawer from './GlobalSettingsDrawer.vue'
 
 const resumeStore = useResumeStore()
 

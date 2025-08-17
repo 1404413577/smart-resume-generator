@@ -14,11 +14,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'element-plus': ['element-plus'],
-          'element-plus-icons': ['@element-plus/icons-vue'],
           'vue-vendor': ['vue', 'pinia'],
-          'pdf-utils': ['jspdf', 'html2canvas', 'file-saver'],
-          'utils': ['lodash-es', 'dayjs']
+          'element-plus': ['element-plus', '@element-plus/icons-vue'],
+          'pdf-utils': ['jspdf', 'html2canvas', 'file-saver']
         }
       }
     }

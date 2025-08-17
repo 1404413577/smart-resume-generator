@@ -1,68 +1,72 @@
 <template>
   <div class="paged-template" :class="templateClass">
-    <!-- 个人信息 -->
-    <section v-if="shouldShowSection('personalInfo')" class="section personal-info-section">
-      <slot name="personalInfo" :data="resumeData.personalInfo" />
-    </section>
-
-    <!-- 个人简介 -->
-    <section v-if="shouldShowSection('summary')" class="section summary-section">
-      <slot name="summary" :data="resumeData.summary" />
-    </section>
-
-    <!-- 工作经历 -->
-    <template v-if="shouldShowSection('workExperience')">
-      <section 
-        v-for="work in getPageContent('workExperience')" 
-        :key="work.id"
-        class="section work-section"
-      >
-        <slot name="workExperience" :data="work" :isFirst="isFirstWorkItem(work)" />
+    <!-- 动态渲染排序后的章节 -->
+    <template v-for="sectionKey in orderedSectionKeys" :key="sectionKey">
+      <!-- 个人信息 -->
+      <section v-if="sectionKey === 'personalInfo' && shouldShowSection('personalInfo')" class="section personal-info-section">
+        <slot name="personalInfo" :data="resumeData.personalInfo" />
       </section>
-    </template>
 
-    <!-- 教育背景 -->
-    <template v-if="shouldShowSection('education')">
-      <section 
-        v-for="edu in getPageContent('education')" 
-        :key="edu.id"
-        class="section education-section"
-      >
-        <slot name="education" :data="edu" :isFirst="isFirstEducationItem(edu)" />
+      <!-- 个人简介 -->
+      <section v-else-if="sectionKey === 'summary' && shouldShowSection('summary')" class="section summary-section">
+        <slot name="summary" :data="resumeData.summary" />
       </section>
-    </template>
 
-    <!-- 技能特长 -->
-    <section v-if="shouldShowSection('skills')" class="section skills-section">
-      <slot name="skills" :data="getPageContent('skills')" />
-    </section>
+      <!-- 工作经历 -->
+      <template v-else-if="sectionKey === 'workExperience' && shouldShowSection('workExperience')">
+        <section
+          v-for="work in getPageContent('workExperience')"
+          :key="work.id"
+          class="section work-section"
+        >
+          <slot name="workExperience" :data="work" :isFirst="isFirstWorkItem(work)" />
+        </section>
+      </template>
 
-    <!-- 项目经历 -->
-    <template v-if="shouldShowSection('projects')">
-      <section 
-        v-for="project in getPageContent('projects')" 
-        :key="project.id"
-        class="section projects-section"
-      >
-        <slot name="projects" :data="project" :isFirst="isFirstProjectItem(project)" />
+      <!-- 教育背景 -->
+      <template v-else-if="sectionKey === 'education' && shouldShowSection('education')">
+        <section
+          v-for="edu in getPageContent('education')"
+          :key="edu.id"
+          class="section education-section"
+        >
+          <slot name="education" :data="edu" :isFirst="isFirstEducationItem(edu)" />
+        </section>
+      </template>
+
+      <!-- 技能特长 -->
+      <section v-else-if="sectionKey === 'skills' && shouldShowSection('skills')" class="section skills-section">
+        <slot name="skills" :data="getPageContent('skills')" />
       </section>
-    </template>
 
-    <!-- 自定义模块 -->
-    <template v-if="shouldShowSection('customModules')">
-      <section 
-        v-for="module in getPageContent('customModules')" 
-        :key="module.id"
-        class="section custom-module-section"
-      >
-        <slot name="customModule" :data="module" />
-      </section>
+      <!-- 项目经历 -->
+      <template v-else-if="sectionKey === 'projects' && shouldShowSection('projects')">
+        <section
+          v-for="project in getPageContent('projects')"
+          :key="project.id"
+          class="section projects-section"
+        >
+          <slot name="projects" :data="project" :isFirst="isFirstProjectItem(project)" />
+        </section>
+      </template>
+
+      <!-- 自定义模块 -->
+      <template v-else-if="sectionKey === 'customModules' && shouldShowSection('customModules')">
+        <section
+          v-for="module in getPageContent('customModules')"
+          :key="module.id"
+          class="section custom-module-section"
+        >
+          <slot name="customModule" :data="module" />
+        </section>
+      </template>
     </template>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { useResumeStore } from '../../stores/resume'
 
 const props = defineProps({
   resumeData: {
@@ -87,13 +91,20 @@ const props = defineProps({
   }
 })
 
+const resumeStore = useResumeStore()
+
+// 获取排序后的章节键值
+const orderedSectionKeys = computed(() => {
+  return resumeStore.sectionOrder
+})
+
 // 检查当前页面是否应该显示某个章节
 const shouldShowSection = (sectionType) => {
   if (props.isSinglePage) {
     // 单页模式：显示所有有内容的章节
     switch (sectionType) {
       case 'personalInfo':
-        return props.resumeData.personalInfo.name
+        return true // 个人信息章节始终显示
       case 'summary':
         return props.resumeData.summary
       case 'workExperience':

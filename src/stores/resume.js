@@ -70,6 +70,7 @@ export const useResumeStore = defineStore('resume', () => {
 
   // 章节排序设置
   const sectionOrder = ref([
+    'personalInfo',   // 个人信息
     'summary',        // 个人简介
     'education',      // 教育背景
     'workExperience', // 工作经历
@@ -79,6 +80,7 @@ export const useResumeStore = defineStore('resume', () => {
 
   // 章节配置信息
   const sectionConfig = {
+    personalInfo: { name: '个人信息', icon: '👤' },
     summary: { name: '个人简介', icon: '📝' },
     education: { name: '教育背景', icon: '🎓' },
     workExperience: { name: '工作经历', icon: '💼' },
@@ -348,7 +350,12 @@ export const useResumeStore = defineStore('resume', () => {
     const savedSectionOrder = localStorage.getItem('sectionOrder')
     if (savedSectionOrder) {
       try {
-        sectionOrder.value = JSON.parse(savedSectionOrder)
+        const parsed = JSON.parse(savedSectionOrder)
+        // 检查是否包含personalInfo，如果没有则添加到开头
+        if (!parsed.includes('personalInfo')) {
+          parsed.unshift('personalInfo')
+        }
+        sectionOrder.value = parsed
       } catch (error) {
         console.error('加载章节排序设置失败:', error)
       }
@@ -433,6 +440,7 @@ export const useResumeStore = defineStore('resume', () => {
   // 模板设置
   const updateTemplateSetting = (key, value) => {
     templateSettings.value[key] = value
+    saveToLocalStorage()
   }
 
   // 预览模式切换
@@ -491,6 +499,7 @@ export const useResumeStore = defineStore('resume', () => {
 
   const resetSectionOrder = () => {
     const defaultOrder = [
+      'personalInfo',
       'summary',
       'education',
       'workExperience',
@@ -605,11 +614,13 @@ export const useResumeStore = defineStore('resume', () => {
       name: sectionConfig[sectionKey].name,
       icon: sectionConfig[sectionKey].icon,
       data: resumeData.value[sectionKey],
-      hasData: sectionKey === 'summary'
-        ? !!resumeData.value[sectionKey]
-        : Array.isArray(resumeData.value[sectionKey])
-          ? resumeData.value[sectionKey].length > 0
-          : !!resumeData.value[sectionKey]
+      hasData: sectionKey === 'personalInfo'
+        ? true // 个人信息始终显示
+        : sectionKey === 'summary'
+          ? !!resumeData.value[sectionKey]
+          : Array.isArray(resumeData.value[sectionKey])
+            ? resumeData.value[sectionKey].length > 0
+            : !!resumeData.value[sectionKey]
     }))
   })
 

@@ -10,11 +10,15 @@ export default defineConfig({
     assetsDir: 'assets',
     sourcemap: false,
     minify: 'terser',
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
           'element-plus': ['element-plus'],
-          'vue-vendor': ['vue', 'pinia']
+          'element-plus-icons': ['@element-plus/icons-vue'],
+          'vue-vendor': ['vue', 'pinia'],
+          'pdf-utils': ['jspdf', 'html2canvas', 'file-saver'],
+          'utils': ['lodash-es', 'dayjs']
         }
       }
     }

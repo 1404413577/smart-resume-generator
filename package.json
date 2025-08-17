@@ -28,6 +28,7 @@
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
     "@vitejs/plugin-vue": "^6.0.1",
+    "terser": "^5.43.1",
     "typescript": "^5.9.2",
     "vite": "^7.1.2"
   }

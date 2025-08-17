@@ -1,7 +1,7 @@
 <template>
-  <div class="resume-builder">
+  <div class="resume-builder" :class="{ 'preview-mode': resumeStore.isPreviewMode }">
     <!-- 左侧：模块导航区 -->
-    <div class="navigation-section">
+    <div class="navigation-section" v-show="!resumeStore.isPreviewMode">
       <ModuleNavigation
         :active-module="activeModule"
         @module-change="handleModuleChange"
@@ -11,7 +11,7 @@
     </div>
 
     <!-- 中间：内容编辑区 -->
-    <div class="editor-section">
+    <div class="editor-section" v-show="!resumeStore.isPreviewMode">
       <ContentEditor
         :active-module="activeModule"
         @ai-generate="handleAIGenerate"
@@ -417,8 +417,21 @@ const handleSectionOrderClose = () => {
 
 .preview-section.full-width {
   flex: 1;
+  width: 100vw;
   max-width: 100vw;
   height: 100vh;
+}
+
+/* 预览模式样式 */
+.resume-builder.preview-mode {
+  display: flex;
+  flex-direction: row;
+}
+
+.resume-builder.preview-mode .preview-section {
+  width: 100vw;
+  max-width: 100vw;
+  flex: 1;
 }
 
 .preview-container {

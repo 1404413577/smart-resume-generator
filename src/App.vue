@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Document, CircleCheck, Folder, Download, MagicStick, View } from '@element-plus/icons-vue'
 import { useResumeStore } from './stores/resume'
-import { generatePDF } from './utils/pdfGenerator'
+import { generateOptimizedPDF } from './utils/pdfGenerator'
 import ResumeBuilder from './components/ResumeBuilder.vue'
 import ResumeManager from './components/ResumeManager.vue'
 import AITestComponent from './components/AITestComponent.vue'
@@ -30,33 +30,13 @@ const handleExportPDF = async () => {
   try {
     isExporting.value = true
 
-    // 获取预览容器，如果有缩放需要重置
-    const previewElement = document.querySelector('.preview-content')
-    let originalTransform = null
+    // 使用优化的PDF生成函数，最大化A4纸张利用率
+    await generateOptimizedPDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
+    ElMessage.success('PDF下载成功！A4纸张空间已优化利用')
 
-    if (previewElement) {
-      originalTransform = previewElement.style.transform
-      previewElement.style.transform = 'scale(1)'
-      // 等待DOM更新
-      await new Promise(resolve => setTimeout(resolve, 100))
-    }
-
-    await generatePDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
-    ElMessage.success('PDF下载成功！')
-
-    // 恢复原始缩放
-    if (previewElement && originalTransform) {
-      previewElement.style.transform = originalTransform
-    }
   } catch (error) {
     console.error('PDF生成失败:', error)
     ElMessage.error('PDF生成失败，请重试')
-
-    // 确保恢复缩放
-    const previewElement = document.querySelector('.preview-content')
-    if (previewElement && originalTransform) {
-      previewElement.style.transform = originalTransform
-    }
   } finally {
     isExporting.value = false
   }

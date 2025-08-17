@@ -228,10 +228,11 @@ const getCustomModuleData = (moduleId) => {
   font-family: var(--resume-font-family, 'Times New Roman', Times, serif);
   line-height: var(--resume-line-height, 1.4);
   font-size: var(--resume-base-font-size, 11px);
-  padding: var(--resume-page-margin-top, 15mm) var(--resume-page-margin-right, 15mm) var(--resume-page-margin-bottom, 15mm) var(--resume-page-margin-left, 15mm);
-  min-height: calc(297mm - 30mm);
+  padding: var(--resume-page-margin-top, 10mm) var(--resume-page-margin-right, 10mm) var(--resume-page-margin-bottom, 10mm) var(--resume-page-margin-left, 10mm);
+  min-height: calc(297mm - 20mm);
   position: relative;
   page-break-after: auto;
+  box-sizing: border-box;
 }
 
 .modern-template.multi-page {
@@ -254,15 +255,15 @@ const getCustomModuleData = (moduleId) => {
 .resume-header {
   background: #2563eb;
   color: white;
-  padding: 20mm 0 15mm 0;
-  margin: -15mm -15mm 12mm -15mm;
+  padding: 15mm 0 10mm 0;
+  margin: -10mm -10mm 8mm -10mm;
   position: relative;
   page-break-inside: avoid;
 }
 
 .header-content {
   max-width: 100%;
-  padding: 0 15mm;
+  padding: 0 10mm;
 }
 
 .name {
@@ -344,18 +345,18 @@ const getCustomModuleData = (moduleId) => {
 
 /* 章节样式 - 紧凑专业设计 */
 .section {
-  margin-bottom: var(--resume-module-spacing, 8mm);
+  margin-bottom: var(--resume-module-spacing, 6mm);
   padding: 0;
   position: relative;
   page-break-inside: avoid;
 }
 
 .section-title {
-  font-size: var(--resume-title-font-size, 14px);
+  font-size: var(--resume-title-font-size, 13px);
   font-weight: 700;
   color: #1e293b;
-  margin: 0 0 4mm 0;
-  padding: 2mm 0;
+  margin: 0 0 3mm 0;
+  padding: 1.5mm 0;
   position: relative;
   border-bottom: 1.5pt solid #2563eb;
   text-transform: uppercase;
@@ -675,12 +676,13 @@ const getCustomModuleData = (moduleId) => {
     width: 210mm !important;
     max-width: 210mm !important;
     margin: 0 !important;
-    padding: 15mm !important;
+    padding: 10mm !important;
     font-size: 11px !important;
     line-height: 1.4 !important;
     background: white !important;
     box-shadow: none !important;
     page-break-after: auto;
+    box-sizing: border-box !important;
   }
 
   .modern-template.multi-page {
@@ -701,13 +703,13 @@ const getCustomModuleData = (moduleId) => {
   .resume-header {
     background: #2563eb !important;
     color: white !important;
-    padding: 15mm 0 10mm 0 !important;
-    margin: -15mm -15mm 8mm -15mm !important;
+    padding: 12mm 0 8mm 0 !important;
+    margin: -10mm -10mm 6mm -10mm !important;
     page-break-inside: avoid !important;
   }
 
   .header-content {
-    padding: 0 15mm !important;
+    padding: 0 10mm !important;
   }
 
   .name {

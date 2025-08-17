@@ -2,7 +2,7 @@
 import fs from 'fs'
 import path from 'path'
 
-const baseUrl = 'https://resume-editor.example.com'
+const baseUrl = 'https://smart-resume-generator.vercel.app'
 const currentDate = new Date().toISOString().split('T')[0]
 
 // 静态页面配置

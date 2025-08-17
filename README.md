@@ -45,6 +45,31 @@ npm run dev
 npm run build
 ```
 
+## 🤝 参与贡献
+
+我们欢迎志愿者参与项目开发！
+
+### 🌿 协作分支
+- **主分支**: `master` - 稳定版本
+- **协作分支**: `contrib/volunteer-contributions` - 志愿者开发分支
+
+### 📋 贡献流程
+1. 从协作分支创建功能分支
+2. 开发您的功能或修复
+3. 提交Pull Request到协作分支
+4. 经过代码审查后合并
+
+### 📚 贡献指南
+- 查看 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解详细贡献指南
+- 查看 [志愿者工作流程](./docs/VOLUNTEER_WORKFLOW.md) 了解协作流程
+- 遵循代码规范和提交规范
+
+### 🎯 贡献方向
+- 🎨 新增简历模板
+- 🔧 功能开发和优化
+- 🐛 Bug修复
+- 📚 文档和测试完善
+
 ## 🛠️ 技术栈
 
 - **前端框架**: Vue 3 + Composition API

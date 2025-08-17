@@ -89,6 +89,10 @@
             <span v-if="data.major" class="detail-item">专业: {{ data.major }}</span>
             <span v-if="data.gpa" class="detail-item">GPA: {{ data.gpa }}</span>
             <span v-if="data.honors" class="detail-item">{{ data.honors }}</span>
+            <div v-if="data.relevantCourses" class="relevant-courses">
+              <span class="courses-label">相关课程: </span>
+              <span class="courses-content">{{ data.relevantCourses }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -369,6 +373,22 @@ const getSkillCategories = (skills) => {
   margin-right: 15px;
   font-size: var(--resume-meta-font-size, 13px);
   color: #666;
+}
+
+.relevant-courses {
+  margin-top: 8px;
+  font-size: var(--resume-meta-font-size, 13px);
+  line-height: 1.5;
+}
+
+.courses-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.courses-content {
+  color: #666;
+  font-weight: 400;
 }
 
 /* 技能样式 */

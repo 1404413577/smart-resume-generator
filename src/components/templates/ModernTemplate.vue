@@ -110,6 +110,10 @@
           <div class="education-details">
             <span v-if="data.gpa" class="gpa">GPA: {{ data.gpa }}</span>
             <span v-if="data.honors" class="honors">{{ data.honors }}</span>
+            <div v-if="data.relevantCourses" class="relevant-courses">
+              <span class="courses-label">相关课程：</span>
+              <span class="courses-content">{{ data.relevantCourses }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -544,6 +548,27 @@ const getSkillCategories = (skills) => {
 .honors {
   color: #92400e;
   font-weight: 600;
+}
+
+.relevant-courses {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.courses-label {
+  color: #374151;
+  font-weight: 600;
+  font-size: var(--resume-meta-font-size, 10px);
+}
+
+.courses-content {
+  color: #6b7280;
+  font-weight: 400;
+  line-height: 1.4;
+  font-size: var(--resume-meta-font-size, 10px);
 }
 
 /* 技能特长 - 紧凑标签设计 */

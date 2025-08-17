@@ -155,9 +155,9 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background: #f5f5f5;
-  min-height: 100vh;
+  padding: 0;
+  background: transparent;
+  width: 100%;
 }
 
 @media print {

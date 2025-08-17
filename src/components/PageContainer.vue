@@ -77,8 +77,11 @@ const contentStyles = computed(() => {
 
 <style scoped>
 .page-container {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .page-container.print-mode {

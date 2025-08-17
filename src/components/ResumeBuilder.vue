@@ -77,7 +77,7 @@
           <div
             class="resume-preview"
             id="resume-preview"
-            :style="{ transform: `scale(${previewScale})`, transformOrigin: 'top left' }"
+            :style="{ transform: `scale(${previewScale})`, transformOrigin: 'top center' }"
           >
             <!-- 单页模式 -->
             <component
@@ -504,6 +504,9 @@ const handleSectionOrderClose = () => {
   background: #f8f9fa;
   padding: 20px;
   height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .resume-preview {
@@ -512,11 +515,11 @@ const handleSectionOrderClose = () => {
   border-radius: 8px;
   padding: 32px;
   min-height: 800px;
-  width: 100%;
+  width: auto;
   max-width: 210mm;
-  margin: 0 auto;
   transform-origin: top center;
   transition: transform 0.2s ease;
+  position: relative;
 }
 
 .template-setting-item {

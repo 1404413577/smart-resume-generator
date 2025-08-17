@@ -1,5 +1,6 @@
 // SEO优化组合函数
 import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { seoConfig, getPageSEO, generateStructuredData, debugSEO } from '../utils/seoConfig'
 
 export function useSEO() {
   const currentMeta = ref({})
@@ -123,6 +124,39 @@ export function useSEO() {
       setMeta(preset)
     }
   }
+
+  // 应用页面SEO配置（使用新的配置系统）
+  const applyPageSEO = (pageName, templateName = null) => {
+    const pageConfig = getPageSEO(pageName, templateName)
+
+    setTitle(pageConfig.title)
+    setMeta({
+      description: pageConfig.description,
+      keywords: pageConfig.keywords,
+      'og:title': pageConfig.openGraph.title,
+      'og:description': pageConfig.openGraph.description,
+      'og:url': pageConfig.openGraph.url,
+      'og:image': pageConfig.openGraph.image,
+      'twitter:title': pageConfig.twitterCard.title,
+      'twitter:description': pageConfig.twitterCard.description,
+      'twitter:image': pageConfig.twitterCard.image
+    })
+
+    setCanonical(pageConfig.canonical)
+
+    // 调试模式下输出SEO信息
+    if (import.meta.env.VITE_ENABLE_SEO_DEBUG === 'true') {
+      debugSEO()
+    }
+  }
+
+  // 设置应用结构化数据
+  const setAppStructuredData = () => {
+    const webAppData = generateStructuredData('webApplication')
+    if (webAppData) {
+      setStructuredData(webAppData)
+    }
+  }
   
   // 生成面包屑结构化数据
   const generateBreadcrumbData = (breadcrumbs) => {
@@ -201,6 +235,8 @@ export function useSEO() {
     setOGImage,
     setCanonical,
     applySEOPreset,
+    applyPageSEO,
+    setAppStructuredData,
     generateBreadcrumbData,
     generateArticleData,
     watchRoute,

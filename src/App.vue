@@ -15,39 +15,15 @@ const showAITest = ref(false)
 const isExporting = ref(false)
 
 // SEO优化
-const { applySEOPreset, setStructuredData } = useSEO()
+const { applyPageSEO, setAppStructuredData } = useSEO()
 
 // 初始化SEO
 onMounted(() => {
-  // 应用首页SEO配置
-  applySEOPreset('home')
+  // 应用首页SEO配置（使用新的配置系统）
+  applyPageSEO('home')
 
   // 设置应用结构化数据
-  setStructuredData({
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "简历编辑器",
-    "description": "专业的在线简历编辑器，提供多种精美简历模板，支持实时预览、PDF导出。",
-    "url": "https://resume-editor.example.com",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Web Browser",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "CNY"
-    },
-    "creator": {
-      "@type": "Organization",
-      "name": "简历编辑器团队"
-    },
-    "featureList": [
-      "多种简历模板",
-      "实时预览",
-      "PDF导出",
-      "在线编辑",
-      "免费使用"
-    ]
-  })
+  setAppStructuredData()
 
   // 移除加载状态
   const loadingElement = document.getElementById('loading')

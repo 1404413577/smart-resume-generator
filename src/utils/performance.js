@@ -1,5 +1,114 @@
 // 性能监控和Core Web Vitals
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals'
+// 备用的性能监控实现
+const fallbackMetrics = {
+  getCLS: (callback) => {
+    // 简化的CLS监控
+    let clsValue = 0
+    const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (!entry.hadRecentInput) {
+          clsValue += entry.value
+        }
+      }
+      callback({ value: clsValue, name: 'CLS' })
+    })
+
+    try {
+      observer.observe({ type: 'layout-shift', buffered: true })
+    } catch (e) {
+      // 浏览器不支持layout-shift
+      callback({ value: 0, name: 'CLS' })
+    }
+  },
+
+  getFID: (callback) => {
+    // 简化的FID监控
+    const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        callback({ value: entry.processingStart - entry.startTime, name: 'FID' })
+        observer.disconnect()
+        break
+      }
+    })
+
+    try {
+      observer.observe({ type: 'first-input', buffered: true })
+    } catch (e) {
+      // 浏览器不支持first-input
+      callback({ value: 0, name: 'FID' })
+    }
+  },
+
+  getFCP: (callback) => {
+    // 简化的FCP监控
+    const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (entry.name === 'first-contentful-paint') {
+          callback({ value: entry.startTime, name: 'FCP' })
+          observer.disconnect()
+          break
+        }
+      }
+    })
+
+    try {
+      observer.observe({ type: 'paint', buffered: true })
+    } catch (e) {
+      // 浏览器不支持paint
+      callback({ value: performance.now(), name: 'FCP' })
+    }
+  },
+
+  getLCP: (callback) => {
+    // 简化的LCP监控
+    const observer = new PerformanceObserver((list) => {
+      const entries = list.getEntries()
+      const lastEntry = entries[entries.length - 1]
+      callback({ value: lastEntry.startTime, name: 'LCP' })
+    })
+
+    try {
+      observer.observe({ type: 'largest-contentful-paint', buffered: true })
+    } catch (e) {
+      // 浏览器不支持largest-contentful-paint
+      callback({ value: performance.now(), name: 'LCP' })
+    }
+  },
+
+  getTTFB: (callback) => {
+    // 简化的TTFB监控
+    const navigationEntry = performance.getEntriesByType('navigation')[0]
+    if (navigationEntry) {
+      const ttfb = navigationEntry.responseStart - navigationEntry.requestStart
+      callback({ value: ttfb, name: 'TTFB' })
+    } else {
+      callback({ value: 0, name: 'TTFB' })
+    }
+  }
+}
+
+// 动态导入web-vitals或使用备用方案
+let metricsAPI = fallbackMetrics
+
+// 尝试加载web-vitals
+const loadWebVitals = async () => {
+  try {
+    const webVitals = await import('web-vitals')
+    metricsAPI = {
+      getCLS: webVitals.getCLS,
+      getFID: webVitals.getFID,
+      getFCP: webVitals.getFCP,
+      getLCP: webVitals.getLCP,
+      getTTFB: webVitals.getTTFB
+    }
+    console.log('✅ web-vitals加载成功')
+  } catch (error) {
+    console.warn('⚠️ web-vitals包未找到，使用备用性能监控方案')
+  }
+}
+
+// 初始化
+loadWebVitals()
 
 class PerformanceMonitor {
   constructor() {
@@ -25,31 +134,31 @@ class PerformanceMonitor {
   // 监控Core Web Vitals
   monitorCoreWebVitals() {
     // Largest Contentful Paint (LCP)
-    getLCP((metric) => {
+    metricsAPI.getLCP((metric) => {
       this.metrics.lcp = metric
       this.reportMetric('LCP', metric)
     })
 
     // First Input Delay (FID)
-    getFID((metric) => {
+    metricsAPI.getFID((metric) => {
       this.metrics.fid = metric
       this.reportMetric('FID', metric)
     })
 
     // Cumulative Layout Shift (CLS)
-    getCLS((metric) => {
+    metricsAPI.getCLS((metric) => {
       this.metrics.cls = metric
       this.reportMetric('CLS', metric)
     })
 
     // First Contentful Paint (FCP)
-    getFCP((metric) => {
+    metricsAPI.getFCP((metric) => {
       this.metrics.fcp = metric
       this.reportMetric('FCP', metric)
     })
 
     // Time to First Byte (TTFB)
-    getTTFB((metric) => {
+    metricsAPI.getTTFB((metric) => {
       this.metrics.ttfb = metric
       this.reportMetric('TTFB', metric)
     })

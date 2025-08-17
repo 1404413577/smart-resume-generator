@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run generate:sitemap",
+    "build": "vite build && npm run generate:sitemap && npm run generate:icons",
     "preview": "vite preview",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "netlify deploy --prod",
     "generate:sitemap": "node scripts/generate-sitemap.js",
     "generate:icons": "node scripts/generate-icons.js",
     "seo:analyze": "node scripts/seo-analyze.js",

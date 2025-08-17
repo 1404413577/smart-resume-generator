@@ -14,9 +14,15 @@ export function useGlobalStyles() {
    * 应用全局样式到预览区域
    */
   const applyGlobalStyles = () => {
-    const previewElement = document.getElementById('resume-preview')
-    if (previewElement && resumeStore.globalSettings) {
-      applyCSSVariables(previewElement, resumeStore.globalSettings)
+    if (resumeStore.globalSettings) {
+      // 应用到根元素，确保所有组件都能访问CSS变量
+      applyCSSVariables(document.documentElement, resumeStore.globalSettings)
+
+      // 同时应用到预览元素，保持向后兼容
+      const previewElement = document.getElementById('resume-preview')
+      if (previewElement) {
+        applyCSSVariables(previewElement, resumeStore.globalSettings)
+      }
     }
   }
 

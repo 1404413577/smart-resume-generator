@@ -88,6 +88,9 @@
       </div>
     </div>
 
+    <!-- 调试CSS变量面板（已禁用） -->
+    <!-- <DebugCSSVariables v-if="showDebugPanel" /> -->
+
     <!-- 章节排序对话框 -->
     <el-dialog
       v-model="showSectionOrder"
@@ -129,6 +132,9 @@ import MinimalTemplate from './templates/MinimalTemplate.vue'
 // 导入章节排序组件
 import SectionOrderManager from './SectionOrderManager.vue'
 
+// 导入调试组件（已禁用）
+// import DebugCSSVariables from './DebugCSSVariables.vue'
+
 const resumeStore = useResumeStore()
 
 // 使用全局样式
@@ -139,6 +145,9 @@ const activeModule = ref('personalInfo')
 
 // 章节排序对话框状态
 const showSectionOrder = ref(false)
+
+// 调试面板状态
+const showDebugPanel = ref(false) // 调试面板已禁用
 
 // 预览缩放比例
 const previewScale = ref(0.8)

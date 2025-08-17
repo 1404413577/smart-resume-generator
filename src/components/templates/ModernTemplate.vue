@@ -267,7 +267,7 @@ const getCustomModuleData = (moduleId) => {
 }
 
 .name {
-  font-size: 28px;
+  font-size: var(--resume-name-font-size, 28px);
   font-weight: 700;
   margin: 0 0 8mm 0;
   letter-spacing: 0.5px;
@@ -279,7 +279,7 @@ const getCustomModuleData = (moduleId) => {
   flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 8mm;
-  font-size: 10px;
+  font-size: var(--resume-contact-font-size, 10px);
 }
 
 .contact-item {
@@ -291,14 +291,14 @@ const getCustomModuleData = (moduleId) => {
 }
 
 .contact-item .el-icon {
-  font-size: 12px;
+  font-size: var(--resume-contact-font-size, 12px);
 }
 
 .links {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  font-size: 9px;
+  font-size: var(--resume-link-font-size, 9px);
 }
 
 .link {
@@ -319,6 +319,7 @@ const getCustomModuleData = (moduleId) => {
   font-weight: 600;
   white-space: nowrap;
   min-width: fit-content;
+  font-size: var(--resume-link-font-size, 9px);
 }
 
 .link-url {
@@ -327,6 +328,7 @@ const getCustomModuleData = (moduleId) => {
   font-family: 'Courier New', monospace;
   opacity: 0.95;
   flex: 1;
+  font-size: var(--resume-small-font-size, 8px);
 }
 
 .custom-field-link {
@@ -370,7 +372,7 @@ const getCustomModuleData = (moduleId) => {
 
 /* 个人简介 - 简洁排版 */
 .summary-text {
-  font-size: 11px;
+  font-size: var(--resume-content-font-size, 11px);
   line-height: 1.5;
   margin: 0;
   text-align: justify;
@@ -405,7 +407,7 @@ const getCustomModuleData = (moduleId) => {
 }
 
 .work-title h3 {
-  font-size: 12px;
+  font-size: var(--resume-subtitle-font-size, 12px);
   font-weight: 700;
   margin: 0 0 1mm 0;
   color: #1e293b;
@@ -413,7 +415,7 @@ const getCustomModuleData = (moduleId) => {
 }
 
 .work-title h4 {
-  font-size: 11px;
+  font-size: var(--resume-content-font-size, 11px);
   font-weight: 600;
   margin: 0;
   color: #2563eb;
@@ -424,7 +426,7 @@ const getCustomModuleData = (moduleId) => {
   text-align: right;
   color: #64748b;
   flex-shrink: 0;
-  font-size: 10px;
+  font-size: var(--resume-meta-font-size, 10px);
 }
 
 .work-period {
@@ -445,7 +447,7 @@ const getCustomModuleData = (moduleId) => {
   margin: 0;
   padding-left: 4mm;
   list-style: none;
-  font-size: 10px;
+  font-size: var(--resume-meta-font-size, 10px);
 }
 
 .work-responsibilities li {
@@ -486,7 +488,7 @@ const getCustomModuleData = (moduleId) => {
 }
 
 .education-title h3 {
-  font-size: 12px;
+  font-size: var(--resume-subtitle-font-size, 12px);
   font-weight: 700;
   margin: 0 0 1mm 0;
   color: #1e293b;
@@ -494,7 +496,7 @@ const getCustomModuleData = (moduleId) => {
 }
 
 .education-title h4 {
-  font-size: 11px;
+  font-size: var(--resume-content-font-size, 11px);
   font-weight: 600;
   margin: 0;
   color: #2563eb;
@@ -505,7 +507,7 @@ const getCustomModuleData = (moduleId) => {
   text-align: right;
   color: #64748b;
   flex-shrink: 0;
-  font-size: 10px;
+  font-size: var(--resume-meta-font-size, 10px);
 }
 
 .education-period {
@@ -523,7 +525,7 @@ const getCustomModuleData = (moduleId) => {
 .education-details {
   display: flex;
   gap: 8px;
-  font-size: 10px;
+  font-size: var(--resume-meta-font-size, 10px);
   color: #64748b;
   font-weight: 500;
   flex-wrap: wrap;
@@ -546,7 +548,7 @@ const getCustomModuleData = (moduleId) => {
 }
 
 .skill-category-title {
-  font-size: 11px;
+  font-size: var(--resume-content-font-size, 11px);
   font-weight: 700;
   margin: 0 0 2mm 0;
   color: #1e293b;
@@ -563,7 +565,7 @@ const getCustomModuleData = (moduleId) => {
 
 .skill-item {
   padding: 1mm 3mm;
-  font-size: 9px;
+  font-size: var(--resume-skill-font-size, 9px);
   font-weight: 600;
   background: #f1f5f9;
   color: #475569;
@@ -619,7 +621,7 @@ const getCustomModuleData = (moduleId) => {
 }
 
 .project-title h3 {
-  font-size: 12px;
+  font-size: var(--resume-subtitle-font-size, 12px);
   font-weight: 700;
   margin: 0;
   color: #1e293b;
@@ -630,7 +632,7 @@ const getCustomModuleData = (moduleId) => {
   display: inline;
   color: #2563eb;
   text-decoration: none;
-  font-size: 9px;
+  font-size: var(--resume-small-font-size, 9px);
   font-weight: 600;
   word-break: break-all;
 }
@@ -638,7 +640,7 @@ const getCustomModuleData = (moduleId) => {
 .project-meta {
   color: #64748b;
   font-weight: 600;
-  font-size: 10px;
+  font-size: var(--resume-meta-font-size, 10px);
   flex-shrink: 0;
   text-align: right;
 }
@@ -647,11 +649,11 @@ const getCustomModuleData = (moduleId) => {
   margin: 0 0 2mm 0;
   line-height: 1.4;
   color: #374151;
-  font-size: 10px;
+  font-size: var(--resume-meta-font-size, 10px);
 }
 
 .project-technologies {
-  font-size: 9px;
+  font-size: var(--resume-small-font-size, 9px);
   color: #64748b;
   line-height: 1.3;
 }
@@ -676,9 +678,9 @@ const getCustomModuleData = (moduleId) => {
     width: 210mm !important;
     max-width: 210mm !important;
     margin: 0 !important;
-    padding: 10mm !important;
-    font-size: 11px !important;
-    line-height: 1.4 !important;
+    padding: var(--resume-page-margin-top, 10mm) var(--resume-page-margin-right, 10mm) var(--resume-page-margin-bottom, 10mm) var(--resume-page-margin-left, 10mm) !important;
+    font-size: var(--resume-base-font-size, 11px) !important;
+    line-height: var(--resume-line-height, 1.4) !important;
     background: white !important;
     box-shadow: none !important;
     page-break-after: auto;
@@ -713,13 +715,13 @@ const getCustomModuleData = (moduleId) => {
   }
 
   .name {
-    font-size: 24px !important;
+    font-size: var(--resume-name-font-size, 24px) !important;
     color: white !important;
     margin: 0 0 6mm 0 !important;
   }
 
   .contact-info {
-    font-size: 9px !important;
+    font-size: var(--resume-contact-font-size, 9px) !important;
     gap: 10px !important;
     margin-bottom: 6mm !important;
   }
@@ -732,7 +734,7 @@ const getCustomModuleData = (moduleId) => {
   }
 
   .links {
-    font-size: 8px !important;
+    font-size: var(--resume-link-font-size, 8px) !important;
     gap: 6px !important;
   }
 
@@ -746,19 +748,19 @@ const getCustomModuleData = (moduleId) => {
   }
 
   .link-url {
-    font-size: 8px !important;
+    font-size: var(--resume-small-font-size, 8px) !important;
     color: white !important;
     opacity: 0.9 !important;
   }
 
   .section {
-    margin-bottom: 6mm !important;
+    margin-bottom: var(--resume-module-spacing, 6mm) !important;
     padding: 0 !important;
     page-break-inside: avoid;
   }
 
   .section-title {
-    font-size: 12px !important;
+    font-size: var(--resume-title-font-size, 12px) !important;
     margin: 0 0 3mm 0 !important;
     padding: 1.5mm 0 !important;
     border-bottom: 1pt solid #2563eb !important;
@@ -770,8 +772,8 @@ const getCustomModuleData = (moduleId) => {
   }
 
   .summary-text {
-    font-size: 10px !important;
-    line-height: 1.4 !important;
+    font-size: var(--resume-content-font-size, 10px) !important;
+    line-height: var(--resume-line-height, 1.4) !important;
     padding: 3mm 0 !important;
     border-left: 1.5pt solid #2563eb !important;
     padding-left: 3mm !important;
@@ -799,23 +801,23 @@ const getCustomModuleData = (moduleId) => {
   .work-title h3,
   .education-title h3,
   .project-title h3 {
-    font-size: 11px !important;
+    font-size: var(--resume-subtitle-font-size, 11px) !important;
     margin: 0 0 0.5mm 0 !important;
   }
 
   .work-title h4,
   .education-title h4 {
-    font-size: 10px !important;
+    font-size: var(--resume-content-font-size, 10px) !important;
   }
 
   .work-meta,
   .education-meta,
   .project-meta {
-    font-size: 9px !important;
+    font-size: var(--resume-meta-font-size, 9px) !important;
   }
 
   .work-responsibilities {
-    font-size: 9px !important;
+    font-size: var(--resume-meta-font-size, 9px) !important;
     padding-left: 3mm !important;
   }
 
@@ -825,22 +827,22 @@ const getCustomModuleData = (moduleId) => {
   }
 
   .education-details {
-    font-size: 9px !important;
+    font-size: var(--resume-meta-font-size, 9px) !important;
     gap: 6px !important;
   }
 
   .project-description {
-    font-size: 9px !important;
+    font-size: var(--resume-meta-font-size, 9px) !important;
     margin: 0 0 1.5mm 0 !important;
-    line-height: 1.3 !important;
+    line-height: var(--resume-line-height, 1.3) !important;
   }
 
   .project-technologies {
-    font-size: 8px !important;
+    font-size: var(--resume-small-font-size, 8px) !important;
   }
 
   .project-link {
-    font-size: 8px !important;
+    font-size: var(--resume-small-font-size, 8px) !important;
     color: #2563eb !important;
     background: none !important;
     padding: 0 !important;
@@ -856,7 +858,7 @@ const getCustomModuleData = (moduleId) => {
   }
 
   .skill-category-title {
-    font-size: 10px !important;
+    font-size: var(--resume-content-font-size, 10px) !important;
     margin: 0 0 1.5mm 0 !important;
   }
 
@@ -865,7 +867,7 @@ const getCustomModuleData = (moduleId) => {
   }
 
   .skill-item {
-    font-size: 8px !important;
+    font-size: var(--resume-skill-font-size, 8px) !important;
     padding: 0.5mm 2mm !important;
     border: 0.5pt solid #e2e8f0 !important;
   }

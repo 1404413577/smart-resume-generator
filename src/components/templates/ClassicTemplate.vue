@@ -466,7 +466,7 @@ const getDegreeType = (degree) => {
 
 .link-url {
   font-family: 'Courier New', monospace;
-  font-size: 13px;
+  font-size: var(--resume-small-font-size, 13px);
   color: #666;
   word-break: break-all;
 }
@@ -492,8 +492,8 @@ const getDegreeType = (degree) => {
 
 /* 个人简介 */
 .summary-text {
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: var(--resume-content-font-size, 14px);
+  line-height: var(--resume-line-height, 1.7);
   margin: 0;
   text-align: justify;
   text-indent: 2em;
@@ -645,7 +645,7 @@ const getDegreeType = (degree) => {
 }
 
 .certification-name {
-  font-size: 14px;
+  font-size: var(--resume-content-font-size, 14px);
   font-weight: bold;
   margin: 0;
   color: #333;
@@ -653,11 +653,11 @@ const getDegreeType = (degree) => {
 
 .certification-date {
   font-weight: bold;
-  font-size: 13px;
+  font-size: var(--resume-meta-font-size, 13px);
 }
 
 .certification-details {
-  font-size: 13px;
+  font-size: var(--resume-meta-font-size, 13px);
   color: #666;
 }
 
@@ -667,8 +667,8 @@ const getDegreeType = (degree) => {
 
 /* 语言能力 */
 .languages-list {
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--resume-content-font-size, 14px);
+  line-height: var(--resume-line-height, 1.6);
 }
 
 .language-item {
@@ -679,20 +679,20 @@ const getDegreeType = (degree) => {
 @media print {
   .classic-template {
     width: 210mm;
-    padding: 15mm;
+    padding: var(--resume-page-margin-top, 15mm) var(--resume-page-margin-right, 15mm) var(--resume-page-margin-bottom, 15mm) var(--resume-page-margin-left, 15mm);
     margin: 0;
     background-color: white;
     box-shadow: none;
     min-height: 297mm;
-    font-size: 12pt;
+    font-size: var(--resume-base-font-size, 12pt);
   }
 
   .name {
-    font-size: 18pt;
+    font-size: var(--resume-name-font-size, 18pt);
   }
 
   .section-title {
-    font-size: 14pt;
+    font-size: var(--resume-title-font-size, 14pt);
   }
 
   .section {
@@ -707,7 +707,7 @@ const getDegreeType = (degree) => {
   }
 
   .link-url {
-    font-size: 11pt !important;
+    font-size: var(--resume-small-font-size, 11pt) !important;
     color: #333 !important;
     font-weight: 500 !important;
   }

@@ -17,6 +17,15 @@ export function generateCSSVariables(globalSettings) {
     '--resume-subtitle-font-size': `${typography.subtitleFontSize}px`,
     '--resume-font-family': typography.fontFamily,
 
+    // 扩展字体大小变量
+    '--resume-name-font-size': `${Math.round(typography.baseFontSize * 2.5)}px`, // 姓名字体
+    '--resume-contact-font-size': `${Math.round(typography.baseFontSize * 0.85)}px`, // 联系信息字体
+    '--resume-link-font-size': `${Math.round(typography.baseFontSize * 0.75)}px`, // 链接字体
+    '--resume-content-font-size': `${Math.round(typography.baseFontSize * 0.95)}px`, // 内容字体
+    '--resume-meta-font-size': `${Math.round(typography.baseFontSize * 0.8)}px`, // 元信息字体
+    '--resume-small-font-size': `${Math.round(typography.baseFontSize * 0.7)}px`, // 小字体
+    '--resume-skill-font-size': `${Math.round(typography.baseFontSize * 0.75)}px`, // 技能标签字体
+
     // 间距相关变量
     '--resume-page-margin-top': `${spacing.pageMargin.top}mm`,
     '--resume-page-margin-right': `${spacing.pageMargin.right}mm`,
@@ -66,6 +75,13 @@ export function removeCSSVariables(element) {
     '--resume-title-font-size',
     '--resume-subtitle-font-size',
     '--resume-font-family',
+    '--resume-name-font-size',
+    '--resume-contact-font-size',
+    '--resume-link-font-size',
+    '--resume-content-font-size',
+    '--resume-meta-font-size',
+    '--resume-small-font-size',
+    '--resume-skill-font-size',
     '--resume-page-margin-top',
     '--resume-page-margin-right',
     '--resume-page-margin-bottom',

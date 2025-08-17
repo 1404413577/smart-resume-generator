@@ -57,90 +57,101 @@ const getContentHeight = () => {
 // 将简历内容分配到多个页面
 const distributeContent = () => {
   const maxPages = pageSettings.value.pageCount
+  const sectionOrder = resumeStore.sectionOrder
 
+  // 根据排序生成所有章节数据
+  const generateSectionsFromOrder = () => {
+    const sections = []
 
+    sectionOrder.forEach(sectionType => {
+      switch (sectionType) {
+        case 'personalInfo':
+          if (props.resumeData.personalInfo.name) {
+            sections.push({ type: 'personalInfo', data: props.resumeData.personalInfo })
+          }
+          break
+        case 'summary':
+          if (props.resumeData.summary) {
+            sections.push({ type: 'summary', data: props.resumeData.summary })
+          }
+          break
+        case 'workExperience':
+          if (props.resumeData.workExperience.length > 0) {
+            props.resumeData.workExperience.forEach(work => {
+              sections.push({ type: 'workExperience', data: work })
+            })
+          }
+          break
+        case 'education':
+          if (props.resumeData.education.length > 0) {
+            props.resumeData.education.forEach(edu => {
+              sections.push({ type: 'education', data: edu })
+            })
+          }
+          break
+        case 'skills':
+          if (props.resumeData.skills.length > 0) {
+            sections.push({ type: 'skills', data: props.resumeData.skills })
+          }
+          break
+        case 'projects':
+          if (props.resumeData.projects.length > 0) {
+            props.resumeData.projects.forEach(project => {
+              sections.push({ type: 'projects', data: project })
+            })
+          }
+          break
+      }
+    })
 
-  // 简化的分页逻辑：强制分页测试
+    return sections
+  }
+
+  const allSections = generateSectionsFromOrder()
+
   if (maxPages === 1) {
     // 单页模式：所有内容在一页
-    const allSections = []
-
-    if (props.resumeData.personalInfo.name) {
-      allSections.push({ type: 'personalInfo', data: props.resumeData.personalInfo })
-    }
-    if (props.resumeData.summary) {
-      allSections.push({ type: 'summary', data: props.resumeData.summary })
-    }
-    if (props.resumeData.workExperience.length > 0) {
-      props.resumeData.workExperience.forEach(work => {
-        allSections.push({ type: 'workExperience', data: work })
-      })
-    }
-    if (props.resumeData.education.length > 0) {
-      props.resumeData.education.forEach(edu => {
-        allSections.push({ type: 'education', data: edu })
-      })
-    }
-    if (props.resumeData.skills.length > 0) {
-      allSections.push({ type: 'skills', data: props.resumeData.skills })
-    }
-    if (props.resumeData.projects.length > 0) {
-      props.resumeData.projects.forEach(project => {
-        allSections.push({ type: 'projects', data: project })
-      })
-    }
-
     pages.value = [allSections]
     return
   }
 
-  // 多页模式：强制分页
-  const page1 = []
-  const page2 = []
+  // 多页模式：智能分配内容
+  const newPages = []
+  let currentPage = []
+  let sectionsPerPage = Math.ceil(allSections.length / maxPages)
 
-  // 第1页：个人信息 + 简介 + 第一个工作经历
-  if (props.resumeData.personalInfo.name) {
-    page1.push({ type: 'personalInfo', data: props.resumeData.personalInfo })
-  }
-  if (props.resumeData.summary) {
-    page1.push({ type: 'summary', data: props.resumeData.summary })
-  }
-  if (props.resumeData.workExperience.length > 0) {
-    page1.push({ type: 'workExperience', data: props.resumeData.workExperience[0] })
-  }
+  allSections.forEach((section, index) => {
+    currentPage.push(section)
 
-  // 第2页：剩余工作经历 + 教育 + 技能 + 项目
-  if (props.resumeData.workExperience.length > 1) {
-    for (let i = 1; i < props.resumeData.workExperience.length; i++) {
-      page2.push({ type: 'workExperience', data: props.resumeData.workExperience[i] })
+    // 检查是否需要创建新页面
+    if (currentPage.length >= sectionsPerPage && newPages.length < maxPages - 1) {
+      newPages.push([...currentPage])
+      currentPage = []
+      // 重新计算剩余章节的分配
+      const remainingSections = allSections.length - (index + 1)
+      const remainingPages = maxPages - newPages.length
+      if (remainingPages > 0) {
+        sectionsPerPage = Math.ceil(remainingSections / remainingPages)
+      }
     }
-  }
-  if (props.resumeData.education.length > 0) {
-    props.resumeData.education.forEach(edu => {
-      page2.push({ type: 'education', data: edu })
-    })
-  }
-  if (props.resumeData.skills.length > 0) {
-    page2.push({ type: 'skills', data: props.resumeData.skills })
-  }
-  if (props.resumeData.projects.length > 0) {
-    props.resumeData.projects.forEach(project => {
-      page2.push({ type: 'projects', data: project })
-    })
+  })
+
+  // 添加最后一页
+  if (currentPage.length > 0) {
+    newPages.push(currentPage)
   }
 
-  const newPages = [page1]
-  if (page2.length > 0) {
-    newPages.push(page2)
+  // 确保至少有一页
+  if (newPages.length === 0) {
+    newPages.push([])
   }
 
   pages.value = newPages
-
 }
 
 // 监听数据变化
 watch(
-  [() => props.resumeData, pageSettings, pageMargin],
+  [() => props.resumeData, pageSettings, pageMargin, () => resumeStore.sectionOrder],
   () => {
     nextTick(() => {
       distributeContent()

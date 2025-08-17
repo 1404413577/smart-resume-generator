@@ -9,13 +9,11 @@ import ResumeBuilder from './components/ResumeBuilder.vue'
 import ResumeManager from './components/ResumeManager.vue'
 import AITestComponent from './components/AITestComponent.vue'
 import DynamicStyles from './components/DynamicStyles.vue'
-import SectionOrderDebug from './components/SectionOrderDebug.vue'
 
 const resumeStore = useResumeStore()
 const showResumeManager = ref(false)
 const showAITest = ref(false)
 const isExporting = ref(false)
-const isDev = import.meta.env.DEV
 
 // SEO优化
 const { applyPageSEO, setAppStructuredData } = useSEO()
@@ -112,8 +110,6 @@ onMounted(() => {
       </el-header>
 
       <el-main class="app-main">
-        <!-- 临时调试组件 -->
-        <SectionOrderDebug v-if="isDev && !showAITest" />
         <AITestComponent v-if="showAITest" />
         <ResumeBuilder v-else />
       </el-main>

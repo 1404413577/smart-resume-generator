@@ -39,13 +39,48 @@ export const useResumeStore = defineStore('resume', () => {
 
   // 全局设置配置
   const globalSettings = ref({
+    // 颜色主题设置
+    theme: {
+      // 主色调系统
+      primary: '#409eff',
+      primaryLight: '#66b3ff',
+      primaryDark: '#1a73e8',
+
+      // 辅助色系统
+      secondary: '#67c23a',
+      accent: '#e6a23c',
+      warning: '#f56c6c',
+
+      // 文字颜色系统
+      textPrimary: '#303133',
+      textSecondary: '#606266',
+      textPlaceholder: '#c0c4cc',
+
+      // 背景色系统
+      background: '#ffffff',
+      backgroundSecondary: '#f5f7fa',
+      border: '#dcdfe6',
+
+      // 预设主题
+      preset: 'professional' // 'professional' | 'creative' | 'minimal' | 'custom'
+    },
+
     // 字体设置
     typography: {
       baseFontSize: 14,        // 基础字号 12-16px
       titleFontSize: 18,       // 模块标题字号 16-24px
       subtitleFontSize: 16,    // 一级标题字号 14-20px
-      fontFamily: 'system-ui'  // 字体族
+      fontFamily: 'system-ui', // 字体族
+      fontWeight: {
+        light: 300,
+        normal: 400,
+        medium: 500,
+        semibold: 600,
+        bold: 700
+      },
+      letterSpacing: 'normal'  // 'tight' | 'normal' | 'wide'
     },
+
     // 间距设置
     spacing: {
       pageMargin: {
@@ -55,7 +90,50 @@ export const useResumeStore = defineStore('resume', () => {
         left: 20    // 页面左边距 10-40px
       },
       moduleSpacing: 12,  // 模块间距 8-20px
-      lineHeight: 1.5     // 行高 1.2-2.0
+      lineHeight: 1.5,    // 行高 1.2-2.0
+      sectionSpacing: 16, // 章节内间距
+      itemSpacing: 8,     // 列表项间距
+      paragraphSpacing: 12 // 段落间距
+    },
+
+    // 布局设置
+    layout: {
+      alignment: {
+        global: 'left',     // 全局对齐: 'left' | 'center' | 'right'
+        headings: 'left',   // 标题对齐
+        content: 'left',    // 内容对齐
+        contact: 'right'    // 联系方式对齐
+      },
+      columns: {
+        enabled: false,     // 是否启用多列布局
+        count: 2,          // 列数
+        gap: 20,           // 列间距
+        distribution: 'auto' // 'auto' | 'manual'
+      }
+    },
+
+    // 装饰元素设置
+    decoration: {
+      borders: {
+        enabled: true,
+        style: 'solid',     // 'solid' | 'dashed' | 'dotted'
+        width: 1,
+        color: 'auto',      // 'auto' | 自定义颜色
+        radius: 4
+      },
+      dividers: {
+        enabled: true,
+        style: 'line',      // 'line' | 'dots' | 'custom'
+        thickness: 1,
+        color: 'auto',
+        margin: 8
+      },
+      icons: {
+        enabled: true,
+        style: 'emoji',     // 'emoji' | 'fontawesome' | 'custom'
+        size: 16,
+        color: 'auto'
+      }
     },
     // 页面设置
     pageSettings: {
@@ -79,13 +157,129 @@ export const useResumeStore = defineStore('resume', () => {
   ])
 
   // 章节配置信息
-  const sectionConfig = {
-    personalInfo: { name: '个人信息', icon: '👤' },
-    summary: { name: '个人简介', icon: '📝' },
-    education: { name: '教育背景', icon: '🎓' },
-    workExperience: { name: '工作经历', icon: '💼' },
-    skills: { name: '技能特长', icon: '⚡' },
-    projects: { name: '项目经历', icon: '🚀' }
+  const sectionConfig = ref({
+    personalInfo: {
+      name: '个人信息',
+      icon: '👤',
+      visible: true,
+      required: true,
+      collapsible: false,
+      fields: {
+        name: { visible: true, required: true, label: '姓名' },
+        email: { visible: true, required: true, label: '邮箱' },
+        phone: { visible: true, required: true, label: '电话' },
+        address: { visible: true, required: false, label: '地址' },
+        website: { visible: false, required: false, label: '个人网站' },
+        linkedin: { visible: false, required: false, label: 'LinkedIn' },
+        github: { visible: false, required: false, label: 'GitHub' }
+      }
+    },
+    summary: {
+      name: '个人简介',
+      icon: '📝',
+      visible: true,
+      required: false,
+      collapsible: true,
+      maxLength: 500
+    },
+    education: {
+      name: '教育背景',
+      icon: '🎓',
+      visible: true,
+      required: true,
+      collapsible: true,
+      fields: {
+        school: { visible: true, required: true, label: '学校' },
+        degree: { visible: true, required: true, label: '学位' },
+        major: { visible: true, required: true, label: '专业' },
+        startDate: { visible: true, required: true, label: '开始时间' },
+        endDate: { visible: true, required: false, label: '结束时间' },
+        gpa: { visible: false, required: false, label: 'GPA' },
+        honors: { visible: false, required: false, label: '荣誉' }
+      }
+    },
+    workExperience: {
+      name: '工作经历',
+      icon: '💼',
+      visible: true,
+      required: true,
+      collapsible: true,
+      fields: {
+        company: { visible: true, required: true, label: '公司' },
+        position: { visible: true, required: true, label: '职位' },
+        startDate: { visible: true, required: true, label: '开始时间' },
+        endDate: { visible: true, required: false, label: '结束时间' },
+        location: { visible: true, required: false, label: '工作地点' },
+        description: { visible: true, required: true, label: '工作描述' },
+        achievements: { visible: true, required: false, label: '主要成就' }
+      }
+    },
+    skills: {
+      name: '技能特长',
+      icon: '⚡',
+      visible: true,
+      required: false,
+      collapsible: true,
+      layout: 'list', // 'list' | 'grid' | 'tags'
+      showLevel: true // 是否显示技能等级
+    },
+    projects: {
+      name: '项目经历',
+      icon: '🚀',
+      visible: true,
+      required: false,
+      collapsible: true,
+      fields: {
+        name: { visible: true, required: true, label: '项目名称' },
+        role: { visible: true, required: true, label: '担任角色' },
+        startDate: { visible: true, required: false, label: '开始时间' },
+        endDate: { visible: true, required: false, label: '结束时间' },
+        description: { visible: true, required: true, label: '项目描述' },
+        technologies: { visible: true, required: false, label: '使用技术' },
+        url: { visible: false, required: false, label: '项目链接' },
+        github: { visible: false, required: false, label: 'GitHub' }
+      }
+    }
+  })
+
+  // 主题预设
+  const themePresets = {
+    professional: {
+      primary: '#2c3e50',
+      primaryLight: '#34495e',
+      primaryDark: '#1a252f',
+      secondary: '#3498db',
+      accent: '#e74c3c',
+      textPrimary: '#2c3e50',
+      textSecondary: '#7f8c8d',
+      background: '#ffffff',
+      backgroundSecondary: '#ecf0f1',
+      border: '#bdc3c7'
+    },
+    creative: {
+      primary: '#e74c3c',
+      primaryLight: '#ec7063',
+      primaryDark: '#c0392b',
+      secondary: '#f39c12',
+      accent: '#9b59b6',
+      textPrimary: '#2c3e50',
+      textSecondary: '#7f8c8d',
+      background: '#ffffff',
+      backgroundSecondary: '#fdf2e9',
+      border: '#f4d03f'
+    },
+    minimal: {
+      primary: '#34495e',
+      primaryLight: '#5d6d7e',
+      primaryDark: '#2c3e50',
+      secondary: '#95a5a6',
+      accent: '#3498db',
+      textPrimary: '#2c3e50',
+      textSecondary: '#7f8c8d',
+      background: '#ffffff',
+      backgroundSecondary: '#f8f9fa',
+      border: '#dee2e6'
+    }
   }
 
   // 计算属性
@@ -98,6 +292,50 @@ export const useResumeStore = defineStore('resume', () => {
       workExperience.length > 0 &&
       education.length > 0
     )
+  })
+
+  // 当前主题颜色
+  const currentThemeColors = computed(() => {
+    const preset = globalSettings.value.theme.preset
+    if (preset === 'custom') {
+      return globalSettings.value.theme
+    }
+    return { ...globalSettings.value.theme, ...themePresets[preset] }
+  })
+
+  // 动态CSS变量
+  const cssVariables = computed(() => {
+    const theme = currentThemeColors.value
+    const typography = globalSettings.value.typography
+    const spacing = globalSettings.value.spacing
+
+    return {
+      '--theme-primary': theme.primary,
+      '--theme-primary-light': theme.primaryLight,
+      '--theme-primary-dark': theme.primaryDark,
+      '--theme-secondary': theme.secondary,
+      '--theme-accent': theme.accent,
+      '--theme-text-primary': theme.textPrimary,
+      '--theme-text-secondary': theme.textSecondary,
+      '--theme-background': theme.background,
+      '--theme-background-secondary': theme.backgroundSecondary,
+      '--theme-border': theme.border,
+
+      '--font-size-base': `${typography.baseFontSize}px`,
+      '--font-size-title': `${typography.titleFontSize}px`,
+      '--font-size-subtitle': `${typography.subtitleFontSize}px`,
+      '--font-family': typography.fontFamily,
+      '--line-height': spacing.lineHeight,
+
+      '--spacing-page-margin-top': `${spacing.pageMargin.top}px`,
+      '--spacing-page-margin-right': `${spacing.pageMargin.right}px`,
+      '--spacing-page-margin-bottom': `${spacing.pageMargin.bottom}px`,
+      '--spacing-page-margin-left': `${spacing.pageMargin.left}px`,
+      '--spacing-module': `${spacing.moduleSpacing}px`,
+      '--spacing-section': `${spacing.sectionSpacing}px`,
+      '--spacing-item': `${spacing.itemSpacing}px`,
+      '--spacing-paragraph': `${spacing.paragraphSpacing}px`
+    }
   })
 
   // 个人信息操作
@@ -624,6 +862,52 @@ export const useResumeStore = defineStore('resume', () => {
     }))
   })
 
+  // 主题相关操作
+  const applyThemePreset = (presetName) => {
+    if (themePresets[presetName]) {
+      globalSettings.value.theme.preset = presetName
+      saveToLocalStorage()
+    }
+  }
+
+  const updateThemeColor = (colorKey, colorValue) => {
+    globalSettings.value.theme[colorKey] = colorValue
+    if (globalSettings.value.theme.preset !== 'custom') {
+      globalSettings.value.theme.preset = 'custom'
+    }
+    saveToLocalStorage()
+  }
+
+  const resetTheme = () => {
+    globalSettings.value.theme.preset = 'professional'
+    saveToLocalStorage()
+  }
+
+  // 章节配置操作
+  const updateSectionConfigAdvanced = (sectionKey, config) => {
+    if (sectionConfig.value[sectionKey]) {
+      sectionConfig.value[sectionKey] = {
+        ...sectionConfig.value[sectionKey],
+        ...config
+      }
+      saveToLocalStorage()
+    }
+  }
+
+  const toggleSectionVisibility = (sectionKey) => {
+    if (sectionConfig.value[sectionKey]) {
+      sectionConfig.value[sectionKey].visible = !sectionConfig.value[sectionKey].visible
+      saveToLocalStorage()
+    }
+  }
+
+  const updateFieldVisibility = (sectionKey, fieldKey, visible) => {
+    if (sectionConfig.value[sectionKey]?.fields?.[fieldKey]) {
+      sectionConfig.value[sectionKey].fields[fieldKey].visible = visible
+      saveToLocalStorage()
+    }
+  }
+
   // 初始化
   const init = () => {
     loadFromLocalStorage()
@@ -657,9 +941,12 @@ export const useResumeStore = defineStore('resume', () => {
     sectionOrder,
     sectionConfig,
     globalSettings,
+    themePresets,
 
     // 计算属性
     isResumeComplete,
+    currentThemeColors,
+    cssVariables,
     getOrderedSections,
 
     // 方法
@@ -717,6 +1004,16 @@ export const useResumeStore = defineStore('resume', () => {
     // 自定义模块数据管理
     updateCustomModuleData,
     getCustomModuleData,
-    initializeCustomModuleData
+    initializeCustomModuleData,
+
+    // 主题相关操作
+    applyThemePreset,
+    updateThemeColor,
+    resetTheme,
+
+    // 高级章节配置操作
+    updateSectionConfigAdvanced,
+    toggleSectionVisibility,
+    updateFieldVisibility
   }
 })

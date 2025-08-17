@@ -48,8 +48,21 @@
       </template>
 
       <div class="drawer-content">
-        <!-- 设置分组 -->
-        <el-collapse v-model="activeCollapse" accordion>
+        <!-- 设置标签页 -->
+        <el-tabs v-model="activeTab" type="border-card" class="settings-tabs">
+          <!-- 主题设置 -->
+          <el-tab-pane label="🎨 主题" name="theme">
+            <ThemeSettings />
+          </el-tab-pane>
+
+          <!-- 章节设置 -->
+          <el-tab-pane label="📋 章节" name="sections">
+            <SectionSettings />
+          </el-tab-pane>
+
+          <!-- 原有设置 -->
+          <el-tab-pane label="⚙️ 其他" name="other">
+            <el-collapse v-model="activeCollapse" accordion>
           <!-- 字体设置 -->
           <el-collapse-item title="字体设置" name="typography">
             <template #title>
@@ -242,7 +255,9 @@
               </div>
             </div>
           </el-collapse-item>
-        </el-collapse>
+            </el-collapse>
+          </el-tab-pane>
+        </el-tabs>
       </div>
 
       <template #footer>
@@ -260,11 +275,14 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useResumeStore } from '../stores/resume'
 import { Setting, RefreshLeft, Close, Document, Grid } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import ThemeSettings from './ThemeSettings.vue'
+import SectionSettings from './SectionSettings.vue'
 
 const resumeStore = useResumeStore()
 
 // 抽屉状态
 const drawerVisible = ref(false)
+const activeTab = ref('theme')
 const activeCollapse = ref('typography')
 
 // 设置数据的响应式引用

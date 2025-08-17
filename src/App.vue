@@ -8,6 +8,7 @@ import { useSEO } from './composables/useSEO'
 import ResumeBuilder from './components/ResumeBuilder.vue'
 import ResumeManager from './components/ResumeManager.vue'
 import AITestComponent from './components/AITestComponent.vue'
+import DynamicStyles from './components/DynamicStyles.vue'
 
 const resumeStore = useResumeStore()
 const showResumeManager = ref(false)
@@ -68,6 +69,9 @@ onMounted(() => {
 
 <template>
   <div id="app">
+    <!-- 动态样式组件 -->
+    <DynamicStyles />
+
     <el-container class="app-container">
       <el-header class="app-header">
         <div class="header-content">

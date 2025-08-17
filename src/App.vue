@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus'
 import { Document, CircleCheck, Folder, Download, MagicStick, View } from '@element-plus/icons-vue'
 import { useResumeStore } from './stores/resume'
 import { generateOptimizedPDF } from './utils/pdfGenerator'
+import { useSEO } from './composables/useSEO'
 import ResumeBuilder from './components/ResumeBuilder.vue'
 import ResumeManager from './components/ResumeManager.vue'
 import AITestComponent from './components/AITestComponent.vue'
@@ -12,6 +13,48 @@ const resumeStore = useResumeStore()
 const showResumeManager = ref(false)
 const showAITest = ref(false)
 const isExporting = ref(false)
+
+// SEO优化
+const { applySEOPreset, setStructuredData } = useSEO()
+
+// 初始化SEO
+onMounted(() => {
+  // 应用首页SEO配置
+  applySEOPreset('home')
+
+  // 设置应用结构化数据
+  setStructuredData({
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "简历编辑器",
+    "description": "专业的在线简历编辑器，提供多种精美简历模板，支持实时预览、PDF导出。",
+    "url": "https://resume-editor.example.com",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "CNY"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "简历编辑器团队"
+    },
+    "featureList": [
+      "多种简历模板",
+      "实时预览",
+      "PDF导出",
+      "在线编辑",
+      "免费使用"
+    ]
+  })
+
+  // 移除加载状态
+  const loadingElement = document.getElementById('loading')
+  if (loadingElement) {
+    loadingElement.style.display = 'none'
+  }
+})
 
 // 格式化保存时间
 const formatSaveTime = (saveTime) => {

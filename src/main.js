@@ -6,6 +6,9 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import './style.css'
 import App from './App.vue'
 
+// 导入性能监控
+import './utils/performance.js'
+
 const app = createApp(App)
 const pinia = createPinia()
 

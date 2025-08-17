@@ -160,9 +160,13 @@ import { computed } from 'vue'
 import { useResumeStore } from '../stores/resume'
 
 const resumeStore = useResumeStore()
+
+// 使用响应式引用，不要解构赋值以保持响应性
+const globalSettings = resumeStore.globalSettings
+const themePresets = resumeStore.themePresets
+
+// 解构方法函数（这些不需要响应性）
 const {
-  globalSettings,
-  themePresets,
   applyThemePreset,
   updateThemeColor,
   resetTheme,

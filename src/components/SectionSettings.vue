@@ -110,7 +110,7 @@
         <div class="section-order">
           <div
             v-for="(sectionKey, index) in sectionOrder"
-            :key="sectionKey"
+            :key="`${sectionKey}-${index}`"
             class="section-order-item"
           >
             <el-button
@@ -153,9 +153,13 @@ import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
 
 const resumeStore = useResumeStore()
+
+// 使用响应式引用，不要解构赋值以保持响应性
+const sectionConfig = resumeStore.sectionConfig
+const sectionOrder = resumeStore.sectionOrder
+
+// 解构方法函数（这些不需要响应性）
 const {
-  sectionConfig,
-  sectionOrder,
   toggleSectionVisibility,
   updateFieldVisibility,
   updateSectionConfigAdvanced,

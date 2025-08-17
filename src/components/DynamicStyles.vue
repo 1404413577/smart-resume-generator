@@ -9,7 +9,11 @@ import { computed } from 'vue'
 import { useResumeStore } from '../stores/resume'
 
 const resumeStore = useResumeStore()
-const { cssVariables, currentThemeColors, globalSettings } = resumeStore
+
+// 使用响应式引用，不要解构赋值以保持响应性
+const cssVariables = resumeStore.cssVariables
+const currentThemeColors = resumeStore.currentThemeColors
+const globalSettings = resumeStore.globalSettings
 
 // 生成动态CSS
 const dynamicCSS = computed(() => {

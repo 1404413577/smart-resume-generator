@@ -4,9 +4,9 @@
 
 import * as backupService from './aiServiceBackup.js'
 
-// Gemini API配置
-const GEMINI_API_KEY = 'AIzaSyAqgE78y8_m4nQ09qHaf7xFSC0T_5ppyMU'
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent'
+// Gemini API配置（改为读取环境变量，缺失时自动降级到备用服务）
+const GEMINI_API_KEY = import.meta?.env?.VITE_GEMINI_API_KEY || ''
+const GEMINI_API_URL = import.meta?.env?.VITE_GEMINI_API_URL || 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent'
 
 // 是否使用备用服务
 let useBackupService = false
@@ -655,6 +655,12 @@ ${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
   "improvements": ["改进建议1", "改进建议2"]
 }
 `
+
+    // 若未配置 API Key，直接走备用服务
+    if (!GEMINI_API_KEY) {
+      useBackupService = true
+      return await backupService.generateConversationalResponse(conversationData)
+    }
 
     const result = await callGeminiAPI(prompt)
 

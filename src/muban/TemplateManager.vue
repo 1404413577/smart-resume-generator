@@ -46,9 +46,14 @@ const currentCareer = ref('')
 
 // 方法
 const handleTemplateSelected = (template) => {
+  // 记录选择
   selectedTemplate.value = template
-  currentStep.value = 'editor'
-  ElMessage.success(`已选择 ${template.name} 模板，开始编辑简历内容`)
+  // 应用到全局store，驱动预览切换
+  resumeStore.setTemplate(template.id)
+  ElMessage.success(`已应用 ${template.name} 模板`)
+  // 通知父组件并关闭管理器
+  emit('template-applied', template)
+  emit('close')
 }
 
 const handleBackToGallery = () => {

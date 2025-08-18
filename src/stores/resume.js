@@ -673,6 +673,14 @@ export const useResumeStore = defineStore('resume', () => {
   // 模板切换
   const setTemplate = (templateId) => {
     selectedTemplate.value = templateId
+    saveToLocalStorage()
+  }
+
+  // 应用模板（用于模板选择功能）
+  const applyTemplate = (templateId) => {
+    selectedTemplate.value = templateId
+    saveToLocalStorage()
+    return true
   }
 
   // 模板设置
@@ -978,6 +986,7 @@ export const useResumeStore = defineStore('resume', () => {
     loadResume,
     deleteResume,
     setTemplate,
+    applyTemplate,
     updateTemplateSetting,
     togglePreviewMode,
     resetResumeData,

@@ -198,8 +198,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { getTemplateById } from '../templateConfig.js'
+import { useTemplateComponentStyles } from '../../composables/useTemplateStyles'
 
 const props = defineProps({
   resumeData: {
@@ -212,17 +211,8 @@ const props = defineProps({
   }
 })
 
-// 获取模板配置
-const templateConfig = computed(() => getTemplateById(props.templateId))
-
-// 模板样式
-const templateStyles = computed(() => ({
-  '--primary-color': templateConfig.value?.colors.primary || '#059669',
-  '--secondary-color': templateConfig.value?.colors.secondary || '#6b7280',
-  '--accent-color': templateConfig.value?.colors.accent || '#10b981',
-  '--text-color': templateConfig.value?.colors.text || '#111827',
-  '--background-color': templateConfig.value?.colors.background || '#f9fafb'
-}))
+// 使用新的样式系统
+const { templateStyles } = useTemplateComponentStyles(props.templateId)
 </script>
 
 <style scoped>

@@ -42,6 +42,9 @@
           </div>
 
           <div class="preview-actions">
+            <!-- 模板选择 -->
+            <TemplateSelector @open-template-gallery="openTemplateGallery" />
+
             <!-- 模板设置 -->
             <el-dropdown v-if="resumeStore.selectedTemplate === 'classic'" trigger="click">
               <el-button size="small">
@@ -138,7 +141,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, defineAsyncComponent } from 'vue'
 import { ElMessage, ElLoading } from 'element-plus'
 import { Setting, Sort, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
@@ -160,8 +163,14 @@ import ModernTemplate from './templates/ModernTemplate.vue'
 import ClassicTemplate from './templates/ClassicTemplate.vue'
 import MinimalTemplate from './templates/MinimalTemplate.vue'
 
+// 导入模板配置
+import { getAllTemplates, getTemplateById } from '../muban/templateConfig.js'
+
 // 导入分页组件
 import MultiPageLayout from './MultiPageLayout.vue'
+
+// 导入模板选择器
+import TemplateSelector from './TemplateSelector.vue'
 
 // 导入章节排序组件
 import SectionOrderManager from './SectionOrderManager.vue'
@@ -197,15 +206,30 @@ const previewScale = ref(0.8)
 // 页面设置
 const pageSettings = computed(() => resumeStore.globalSettings.pageSettings)
 
-// 可用模板
-const templates = [
-  { id: 'modern', name: '现代风格' },
-  { id: 'classic', name: '经典风格' },
-  { id: 'minimal', name: '简约风格' }
-]
+// 可用模板（从配置中获取）
+const templates = computed(() => {
+  try {
+    return getAllTemplates()
+  } catch (error) {
+    console.error('获取模板列表失败:', error)
+    // 降级到基础模板
+    return [
+      { id: 'modern', name: '现代风格' },
+      { id: 'classic', name: '经典风格' },
+      { id: 'minimal', name: '简约风格' }
+    ]
+  }
+})
 
 // 当前选中的模板组件
 const currentTemplate = computed(() => {
+  // 优先使用muban系统的模板
+  const templateConfig = getTemplateById(resumeStore.selectedTemplate)
+  if (templateConfig?.component) {
+    return defineAsyncComponent(templateConfig.component)
+  }
+
+  // 降级到基础模板映射
   const templateMap = {
     modern: ModernTemplate,
     classic: ClassicTemplate,
@@ -222,6 +246,12 @@ const handleModuleChange = (moduleId) => {
 // 模板切换处理
 const handleTemplateChange = (templateId) => {
   resumeStore.setTemplate(templateId)
+}
+
+// 打开模板画廊
+const openTemplateGallery = () => {
+  // 可以通过路由跳转到模板选择页面
+  window.open('/templates', '_blank')
 }
 
 // AI生成处理

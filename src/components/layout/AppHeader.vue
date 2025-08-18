@@ -55,10 +55,6 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="$router.push('/settings')">
-                <el-icon><Setting /></el-icon>
-                设置
-              </el-dropdown-item>
               <el-dropdown-item @click="$router.push('/about')">
                 <el-icon><InfoFilled /></el-icon>
                 关于
@@ -85,7 +81,6 @@ import {
   Download,
   View,
   User,
-  Setting,
   InfoFilled,
   RefreshLeft,
   House,
@@ -152,7 +147,7 @@ const handleReset = async () => {
       }
     )
     
-    resumeStore.resetData()
+    resumeStore.resetResumeData()
     ElMessage.success('数据已重置')
     router.push('/')
   } catch {

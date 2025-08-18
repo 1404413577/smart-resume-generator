@@ -56,21 +56,21 @@
           </div>
         </div>
 
-        <!-- 高级设置 -->
+        <!-- 样式设置 -->
         <div class="sidebar-section">
-          <div class="section-header" @click="toggleSection('advanced')">
-            <el-icon><Setting /></el-icon>
-            <span>高级设置</span>
-            <el-icon class="expand-icon" :class="{ expanded: expandedSections.advanced }">
+          <div class="section-header" @click="toggleSection('style')">
+            <el-icon><Tools /></el-icon>
+            <span>样式设置</span>
+            <el-icon class="expand-icon" :class="{ expanded: expandedSections.style }">
               <ArrowRight />
             </el-icon>
           </div>
-          <div v-show="expandedSections.advanced" class="section-content">
-            <button @click="handleManageResumes" class="section-button">
-              简历管理
-            </button>
+          <div v-show="expandedSections.style" class="section-content">
+            <StyleSettings />
           </div>
         </div>
+
+
       </aside>
 
       <!-- 中间编辑区域 -->
@@ -101,13 +101,26 @@
               <el-button @click="zoomIn" size="small" :icon="ZoomIn" :disabled="previewScale >= 1.5" />
             </div>
           </div>
-          <el-button @click="handleSectionSort" size="small" :icon="Sort">
-            章节排序
-          </el-button>
+          <div class="preview-actions">
+            <el-button @click="handleSectionSort" size="small" :icon="Sort">
+              章节排序
+            </el-button>
+            <el-button @click="handleExportPDF" type="primary" size="small" :icon="Printer" :loading="isExporting">
+              导出PDF
+            </el-button>
+          </div>
         </div>
         <div class="preview-content">
           <div class="preview-container" :style="{ transform: `scale(${previewScale})` }">
-            <ResumePreview :scale="previewScale" />
+            <div id="resume-preview">
+              <component
+                v-if="currentTemplateComponent"
+                :is="currentTemplateComponent"
+                :resume-data="resumeStore.resumeData"
+                :template-id="resumeStore.selectedTemplate"
+              />
+              <ResumePreview v-else :scale="previewScale" />
+            </div>
           </div>
         </div>
       </aside>
@@ -126,23 +139,18 @@
         @template-applied="handleTemplateApplied"
       />
 
-      <ResumeManager
-        :visible="showResumeManager"
-        @update:visible="showResumeManager = $event"
-        @close="showResumeManager = false"
-      />
+
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, defineAsyncComponent, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
   MagicStick,
   Grid,
   Document,
-  Setting,
   ArrowRight,
   User,
   Briefcase,
@@ -151,16 +159,20 @@ import {
   FolderOpened,
   ZoomIn,
   ZoomOut,
-  Sort
+  Sort,
+  Tools,
+  Printer
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
 import { generateOptimizedPDF } from '../utils/pdfGenerator'
+import { useGlobalStyles } from '../composables/useGlobalStyles'
 
 // 组件导入
 import AIResumeGenerator from '../components/ai/AIResumeGenerator.vue'
 import TemplateManager from '../muban/TemplateManager.vue'
-import ResumeManager from '../components/ResumeManager.vue'
 import ResumePreview from '../components/resume/ResumePreview.vue'
+import StyleSettings from '../components/StyleSettings.vue'
+import { getTemplateById } from '../muban/templateConfig.js'
 
 // 编辑器组件导入
 import PersonalInfoEditor from '../components/resume/editors/PersonalInfoEditor.vue'
@@ -172,18 +184,26 @@ import ProjectsEditor from '../components/resume/editors/ProjectsEditor.vue'
 
 const resumeStore = useResumeStore()
 
+// 启用全局样式管理，实现实时预览
+useGlobalStyles()
+
+// 当前模板组件（muban模板优先）
+const currentTemplateComponent = computed(() => {
+  const cfg = getTemplateById(resumeStore.selectedTemplate)
+  return cfg?.component ? defineAsyncComponent(cfg.component) : null
+})
+
 // 响应式数据
 const activeModule = ref('personalInfo')
 const previewScale = ref(0.8)
 const showAIGenerator = ref(false)
 const showTemplateManager = ref(false)
-const showResumeManager = ref(false)
 
 // 侧边栏展开状态
 const expandedSections = ref({
   template: false,
   content: true, // 默认展开简历内容
-  advanced: false
+  style: false
 })
 
 // 模块配置
@@ -228,9 +248,7 @@ const handleAIGenerate = () => {
   showAIGenerator.value = true
 }
 
-const handleManageResumes = () => {
-  showResumeManager.value = true
-}
+
 
 const handleSectionSort = () => {
   ElMessage.info('章节排序功能开发中...')
@@ -288,16 +306,21 @@ const resetZoom = () => {
   previewScale.value = 1
 }
 
+const isExporting = ref(false)
+
 const handleExportPDF = async () => {
   try {
-    resumeStore.setExporting(true)
+    isExporting.value = true
+    // 确保预览元素有固定的ID，供导出使用
+    // 我们在模板中预览容器里加上 id="resume-preview"
+    await nextTick()
     await generateOptimizedPDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
     ElMessage.success('PDF导出成功！')
   } catch (error) {
     console.error('PDF导出失败:', error)
     ElMessage.error('PDF导出失败，请重试')
   } finally {
-    resumeStore.setExporting(false)
+    isExporting.value = false
   }
 }
 
@@ -404,6 +427,38 @@ const handleTemplateApplied = (templateData) => {
 
 .section-content {
   padding: 0 16px 16px;
+}
+
+/* 样式设置特殊样式 */
+.sidebar-section .section-content .style-settings {
+  padding: 0;
+}
+
+.sidebar-section .section-content .style-settings .setting-group {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+}
+
+.sidebar-section .section-content .style-settings .group-title {
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.sidebar-section .section-content .style-settings .setting-item {
+  margin-bottom: 12px;
+}
+
+.sidebar-section .section-content .style-settings .theme-presets {
+  gap: 6px;
+}
+
+.sidebar-section .section-content .style-settings .theme-preset {
+  padding: 6px;
+}
+
+.sidebar-section .section-content .style-settings .color-dot {
+  width: 10px;
+  height: 10px;
 }
 
 .section-button {
@@ -528,6 +583,13 @@ const handleTemplateApplied = (templateData) => {
   justify-content: space-between;
   align-items: center;
 }
+
+.preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 
 .preview-title {
   display: flex;

@@ -138,24 +138,6 @@ export const TEMPLATE_CONFIGS = {
     features: ['技术布局', '代码配色', '等宽字体', '技能突出'],
     suitableFor: ['软件工程师', '系统架构师', 'DevOps工程师', '技术专家'],
     component: () => import('./templates/TechTemplate.vue')
-  },
-
-  [TEMPLATE_CATEGORIES.ACADEMIC]: {
-    id: 'academic',
-    name: '学术风格',
-    description: '学术研究风格，适合教育和研究领域',
-    category: 'academic',
-    thumbnail: '/templates/thumbnails/academic.png',
-    colors: {
-      primary: '#1e40af',
-      secondary: '#64748b',
-      accent: '#0ea5e9',
-      text: '#1e293b',
-      background: '#ffffff'
-    },
-    features: ['学术布局', '严谨配色', '学术字体', '详细信息'],
-    suitableFor: ['教授', '研究员', '博士生', '学者'],
-    component: () => import('./templates/AcademicTemplate.vue')
   }
 }
 

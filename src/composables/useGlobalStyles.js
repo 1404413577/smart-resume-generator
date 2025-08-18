@@ -5,6 +5,7 @@
 import { watch, onMounted, onUnmounted } from 'vue'
 import { useResumeStore } from '../stores/resume'
 import { applyCSSVariables, generatePrintStyles } from '../utils/styleUtils'
+import { getTemplateById } from '../muban/templateConfig.js'
 
 export function useGlobalStyles() {
   const resumeStore = useResumeStore()
@@ -15,13 +16,16 @@ export function useGlobalStyles() {
    */
   const applyGlobalStyles = () => {
     if (resumeStore.globalSettings) {
+      // 获取当前模板配置
+      const templateConfig = getTemplateById(resumeStore.selectedTemplate)
+
       // 应用到根元素，确保所有组件都能访问CSS变量
-      applyCSSVariables(document.documentElement, resumeStore.globalSettings)
+      applyCSSVariables(document.documentElement, resumeStore.globalSettings, templateConfig)
 
       // 同时应用到预览元素，保持向后兼容
       const previewElement = document.getElementById('resume-preview')
       if (previewElement) {
-        applyCSSVariables(previewElement, resumeStore.globalSettings)
+        applyCSSVariables(previewElement, resumeStore.globalSettings, templateConfig)
       }
     }
   }
@@ -51,10 +55,11 @@ export function useGlobalStyles() {
   }
 
   /**
-   * 监听全局设置变化
+   * 监听全局设置和模板变化
    */
   const watchGlobalSettings = () => {
-    return watch(
+    // 监听全局设置变化
+    const settingsWatcher = watch(
       () => resumeStore.globalSettings,
       () => {
         applyGlobalStyles()
@@ -62,6 +67,22 @@ export function useGlobalStyles() {
       },
       { deep: true, immediate: true }
     )
+
+    // 监听模板变化
+    const templateWatcher = watch(
+      () => resumeStore.selectedTemplate,
+      () => {
+        applyGlobalStyles()
+        updatePrintStyles()
+      },
+      { immediate: true }
+    )
+
+    // 返回停止函数
+    return () => {
+      settingsWatcher()
+      templateWatcher()
+    }
   }
 
   /**
@@ -104,9 +125,9 @@ export function useGlobalStyles() {
 export function useStyleVariables() {
   const resumeStore = useResumeStore()
 
-  const applyToElement = (element) => {
+  const applyToElement = (element, templateConfig = null) => {
     if (element && resumeStore.globalSettings) {
-      applyCSSVariables(element, resumeStore.globalSettings)
+      applyCSSVariables(element, resumeStore.globalSettings, templateConfig)
     }
   }
 

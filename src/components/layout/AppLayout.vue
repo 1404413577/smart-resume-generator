@@ -13,7 +13,6 @@
           <router-link to="/resumes" class="nav-link">简历管理</router-link>
           <router-link to="/ai-assistant" class="nav-link">AI助手</router-link>
           <router-link to="/templates" class="nav-link">模板中心</router-link>
-          <router-link to="/settings" class="nav-link">设置</router-link>
         </nav>
       </div>
     </header>

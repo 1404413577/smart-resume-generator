@@ -3,14 +3,57 @@
  */
 
 /**
+ * 合并模板样式和全局设置
+ * @param {Object} globalSettings - 全局设置对象
+ * @param {Object} templateConfig - 模板配置对象
+ * @returns {Object} 合并后的样式对象
+ */
+export function mergeTemplateStyles(globalSettings, templateConfig = null) {
+  // 默认样式
+  const defaultStyles = {
+    primary: '#409eff',
+    secondary: '#67c23a',
+    accent: '#e6a23c',
+    text: '#303133',
+    background: '#ffffff'
+  }
+
+  // 模板默认样式
+  const templateStyles = templateConfig?.colors || {}
+
+  // 用户自定义样式（优先级最高）
+  const userStyles = globalSettings?.theme || {}
+
+  // 合并样式，用户自定义 > 模板默认 > 系统默认
+  const mergedColors = {
+    ...defaultStyles,
+    ...templateStyles,
+    ...userStyles
+  }
+
+  return mergedColors
+}
+
+/**
  * 生成CSS变量对象
  * @param {Object} globalSettings - 全局设置对象
+ * @param {Object} templateConfig - 模板配置对象（可选）
  * @returns {Object} CSS变量对象
  */
-export function generateCSSVariables(globalSettings) {
+export function generateCSSVariables(globalSettings, templateConfig = null) {
   const { typography, spacing, pageSettings } = globalSettings
 
+  // 合并颜色样式
+  const mergedColors = mergeTemplateStyles(globalSettings, templateConfig)
+
   return {
+    // 颜色相关变量（统一命名，兼容模板和全局系统）
+    '--primary-color': mergedColors.primary,
+    '--secondary-color': mergedColors.secondary,
+    '--accent-color': mergedColors.accent,
+    '--text-color': mergedColors.text,
+    '--background-color': mergedColors.background,
+
     // 字体相关变量
     '--resume-base-font-size': `${typography.baseFontSize}px`,
     '--resume-title-font-size': `${typography.titleFontSize}px`,
@@ -52,12 +95,13 @@ export function generateCSSVariables(globalSettings) {
  * 应用CSS变量到指定元素
  * @param {HTMLElement} element - 目标元素
  * @param {Object} globalSettings - 全局设置对象
+ * @param {Object} templateConfig - 模板配置对象（可选）
  */
-export function applyCSSVariables(element, globalSettings) {
+export function applyCSSVariables(element, globalSettings, templateConfig = null) {
   if (!element || !globalSettings) return
-  
-  const variables = generateCSSVariables(globalSettings)
-  
+
+  const variables = generateCSSVariables(globalSettings, templateConfig)
+
   Object.entries(variables).forEach(([property, value]) => {
     element.style.setProperty(property, value)
   })
@@ -101,11 +145,12 @@ export function removeCSSVariables(element) {
 /**
  * 生成内联样式字符串
  * @param {Object} globalSettings - 全局设置对象
+ * @param {Object} templateConfig - 模板配置对象（可选）
  * @returns {string} 内联样式字符串
  */
-export function generateInlineStyles(globalSettings) {
-  const variables = generateCSSVariables(globalSettings)
-  
+export function generateInlineStyles(globalSettings, templateConfig = null) {
+  const variables = generateCSSVariables(globalSettings, templateConfig)
+
   return Object.entries(variables)
     .map(([property, value]) => `${property}: ${value}`)
     .join('; ')

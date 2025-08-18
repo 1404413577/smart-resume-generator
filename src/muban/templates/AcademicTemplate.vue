@@ -190,7 +190,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { getTemplateById } from '../templateConfig.js'
+import { useTemplateComponentStyles } from '../../composables/useTemplateStyles'
 
 const props = defineProps({
   resumeData: {
@@ -203,17 +203,8 @@ const props = defineProps({
   }
 })
 
-// 获取模板配置
-const templateConfig = computed(() => getTemplateById(props.templateId))
-
-// 模板样式
-const templateStyles = computed(() => ({
-  '--primary-color': templateConfig.value?.colors.primary || '#1e40af',
-  '--secondary-color': templateConfig.value?.colors.secondary || '#64748b',
-  '--accent-color': templateConfig.value?.colors.accent || '#0ea5e9',
-  '--text-color': templateConfig.value?.colors.text || '#1e293b',
-  '--background-color': templateConfig.value?.colors.background || '#ffffff'
-}))
+// 使用新的样式系统
+const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 // 按类别获取技能
 const getSkillsByCategory = (category) => {

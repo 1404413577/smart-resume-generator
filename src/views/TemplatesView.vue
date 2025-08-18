@@ -63,7 +63,7 @@
             >
               <div class="card-badge">推荐</div>
               <div class="template-preview">
-                <img :src="template.thumbnail" :alt="template.name" />
+                <TemplateThumbnail :template="template" :width="200" :height="150" />
               </div>
               <div class="template-info">
                 <h3 class="template-name">{{ template.name }}</h3>
@@ -100,7 +100,7 @@
               @click="selectTemplate(template)"
             >
               <div class="template-preview">
-                <img :src="template.thumbnail" :alt="template.name" />
+                <TemplateThumbnail :template="template" :width="200" :height="150" />
                 <div class="preview-overlay">
                   <el-button type="primary" size="small">选择模板</el-button>
                 </div>
@@ -134,7 +134,7 @@
               @click="selectTemplate(template)"
             >
               <div class="list-preview">
-                <img :src="template.thumbnail" :alt="template.name" />
+                <TemplateThumbnail :template="template" :width="120" :height="90" />
               </div>
               <div class="list-content">
                 <div class="list-header">
@@ -169,12 +169,18 @@
     <el-dialog
       v-model="showTemplateDialog"
       :title="selectedTemplate?.name"
-      width="80%"
+      width="90%"
       :close-on-click-modal="false"
+      class="template-dialog"
     >
       <div class="template-dialog-content" v-if="selectedTemplate">
         <div class="dialog-preview">
-          <img :src="selectedTemplate.thumbnail" :alt="selectedTemplate.name" />
+          <div class="preview-container">
+            <TemplatePreview
+              :template="selectedTemplate"
+              :scale="0.4"
+            />
+          </div>
         </div>
         <div class="dialog-info">
           <h3>{{ selectedTemplate.name }}</h3>
@@ -196,7 +202,29 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="showTemplateDialog = false">取消</el-button>
-          <el-button @click="previewTemplate" type="info">预览</el-button>
+          <el-button @click="previewTemplate" type="info">全屏预览</el-button>
+          <el-button @click="useTemplate" type="primary">使用此模板</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 全屏预览对话框 -->
+    <el-dialog
+      v-model="showFullPreview"
+      title="模板预览"
+      width="95%"
+      :close-on-click-modal="false"
+      class="fullscreen-preview-dialog"
+    >
+      <div class="fullscreen-preview-container" v-if="selectedTemplate">
+        <TemplatePreview
+          :template="selectedTemplate"
+          :scale="0.8"
+        />
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="showFullPreview = false">关闭</el-button>
           <el-button @click="useTemplate" type="primary">使用此模板</el-button>
         </div>
       </template>
@@ -216,6 +244,8 @@ import {
 } from '@element-plus/icons-vue'
 import { getAllTemplates, getTemplatesByCategory } from '../muban/templateConfig.js'
 import { useResumeStore } from '../stores/resume'
+import TemplateThumbnail from '../components/TemplateThumbnail.vue'
+import TemplatePreview from '../muban/components/TemplatePreview.vue'
 
 const router = useRouter()
 const resumeStore = useResumeStore()
@@ -226,6 +256,7 @@ const selectedCategory = ref('')
 const viewMode = ref('grid')
 const showPreview = ref(false)
 const showTemplateDialog = ref(false)
+const showFullPreview = ref(false)
 const selectedTemplate = ref(null)
 const templates = ref([])
 
@@ -278,9 +309,8 @@ const selectTemplate = (template) => {
 
 const previewTemplate = () => {
   if (!selectedTemplate.value) return
-  
-  // TODO: 实现模板预览功能
-  ElMessage.info('模板预览功能开发中...')
+
+  showFullPreview.value = true
 }
 
 const useTemplate = () => {
@@ -467,10 +497,9 @@ onMounted(async () => {
   overflow: hidden;
 }
 
-.template-preview img {
+.template-preview .template-thumbnail {
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 
 .preview-overlay {
@@ -560,10 +589,9 @@ onMounted(async () => {
   justify-content: center;
 }
 
-.list-preview img {
+.list-preview .template-thumbnail {
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 
 .list-content {
@@ -593,13 +621,30 @@ onMounted(async () => {
 
 .dialog-preview {
   flex: 1;
-  max-width: 400px;
+  max-width: 500px;
 }
 
-.dialog-preview img {
+.preview-container {
   width: 100%;
+  height: 400px;
+  overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreen-preview-container {
+  width: 100%;
+  height: 70vh;
+  overflow: auto;
+  background: #f8f9fa;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
 }
 
 .dialog-info {
@@ -697,5 +742,27 @@ onMounted(async () => {
   .dialog-preview {
     max-width: none;
   }
+}
+
+/* 对话框样式优化 */
+.template-dialog :deep(.el-dialog) {
+  border-radius: 12px;
+}
+
+.template-dialog :deep(.el-dialog__header) {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #e4e7ed;
+}
+
+.template-dialog :deep(.el-dialog__body) {
+  padding: 24px;
+}
+
+.fullscreen-preview-dialog :deep(.el-dialog) {
+  border-radius: 12px;
+}
+
+.fullscreen-preview-dialog :deep(.el-dialog__body) {
+  padding: 0;
 }
 </style>

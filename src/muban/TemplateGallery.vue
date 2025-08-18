@@ -61,16 +61,10 @@
               @click="selectTemplate(template)"
             >
               <div class="template-preview">
-                <div class="preview-placeholder" :style="getTemplatePreviewStyle(template)">
-                  <div class="preview-content">
-                    <div class="preview-header"></div>
-                    <div class="preview-body">
-                      <div class="preview-line"></div>
-                      <div class="preview-line short"></div>
-                      <div class="preview-line"></div>
-                    </div>
-                  </div>
-                </div>
+                <TemplatePreview
+                  :template="template"
+                  :scale="0.25"
+                />
                 <div class="recommended-badge">推荐</div>
               </div>
               <div class="template-info">
@@ -107,17 +101,10 @@
               @click="selectTemplate(template)"
             >
               <div class="template-preview">
-                <div class="preview-placeholder" :style="getTemplatePreviewStyle(template)">
-                  <div class="preview-content">
-                    <div class="preview-header"></div>
-                    <div class="preview-body">
-                      <div class="preview-line"></div>
-                      <div class="preview-line short"></div>
-                      <div class="preview-line"></div>
-                      <div class="preview-line medium"></div>
-                    </div>
-                  </div>
-                </div>
+                <TemplatePreview
+                  :template="template"
+                  :scale="0.25"
+                />
                 <div class="template-overlay">
                   <el-button type="primary" size="small">选择模板</el-button>
                 </div>
@@ -190,14 +177,14 @@ import { ElMessage } from 'element-plus'
 import {
   Search,
   Star,
-  Grid,
-  DocumentRemove
+  Grid
 } from '@element-plus/icons-vue'
-import { 
-  getAllTemplates, 
+import {
+  getAllTemplates,
   getRecommendedTemplates,
-  getTemplatesByCategory 
+  getTemplatesByCategory
 } from './templateConfig.js'
+import TemplatePreview from './components/TemplatePreview.vue'
 
 const props = defineProps({
   visible: {
@@ -268,12 +255,22 @@ const handleClose = () => {
   emit('close')
 }
 
+
+
+// 获取模板预览样式
 const getTemplatePreviewStyle = (template) => {
+  if (!template || !template.colors) {
+    return {
+      '--preview-background': '#ffffff',
+      '--preview-primary': '#3b82f6',
+      '--preview-secondary': '#6b7280'
+    }
+  }
+
   return {
-    '--preview-primary': template.colors.primary,
-    '--preview-secondary': template.colors.secondary,
-    '--preview-accent': template.colors.accent,
-    '--preview-background': template.colors.background
+    '--preview-background': template.colors.background || '#ffffff',
+    '--preview-primary': template.colors.primary || '#3b82f6',
+    '--preview-secondary': template.colors.secondary || '#6b7280'
   }
 }
 
@@ -387,49 +384,10 @@ onMounted(() => {
   position: relative;
   height: 200px;
   overflow: hidden;
-}
-
-.preview-placeholder {
-  width: 100%;
-  height: 100%;
-  background: var(--preview-background, #ffffff);
-  position: relative;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.preview-content {
-  padding: 20px;
-  height: 100%;
-}
 
-.preview-header {
-  height: 20px;
-  background: var(--preview-primary, #3b82f6);
-  border-radius: 4px;
-  margin-bottom: 15px;
-  width: 60%;
-}
-
-.preview-body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.preview-line {
-  height: 8px;
-  background: var(--preview-secondary, #6b7280);
-  border-radius: 4px;
-  opacity: 0.3;
-}
-
-.preview-line.short {
-  width: 40%;
-}
-
-.preview-line.medium {
-  width: 70%;
-}
 
 .template-overlay {
   position: absolute;

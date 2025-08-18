@@ -1,5 +1,13 @@
 <template>
   <div class="module-navigation">
+    <!-- AI生成简历按钮 - 置顶显示 -->
+    <div class="ai-generate-section">
+      <el-button @click="handleAIGenerate" type="success" size="default" class="ai-button">
+        <el-icon><MagicStick /></el-icon>
+        AI生成简历
+      </el-button>
+    </div>
+
     <!-- 主要导航区域 -->
     <div class="main-navigation">
       <!-- 模板选择 -->
@@ -107,11 +115,6 @@
 
     <!-- 操作按钮区域 -->
     <div class="action-buttons">
-      <el-button @click="handleAIGenerate" type="success" size="small" class="ai-button">
-        <el-icon><MagicStick /></el-icon>
-        AI生成简历
-      </el-button>
-
       <el-button @click="handleManageResumes" type="primary" size="small">
         <el-icon><Folder /></el-icon>
         简历管理
@@ -262,6 +265,38 @@ const handleAIGenerate = () => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* AI生成按钮区域样式 */
+.ai-generate-section {
+  padding: 16px;
+  border-bottom: 1px solid #e4e7ed;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.ai-generate-section .ai-button {
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(103, 194, 58, 0.3);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.ai-generate-section .ai-button:hover {
+  background: linear-gradient(135deg, #85ce61 0%, #67c23a 100%);
+  box-shadow: 0 4px 12px rgba(103, 194, 58, 0.4);
+  transform: translateY(-1px);
+}
+
+.ai-generate-section .ai-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(103, 194, 58, 0.3);
 }
 
 /* 主导航区域 */
@@ -479,21 +514,6 @@ const handleAIGenerate = () => {
   .action-buttons .el-button {
     width: 100%;
     margin-bottom: 8px;
-  }
-
-  .action-buttons .ai-button {
-    background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
-    border: none;
-    color: white;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(103, 194, 58, 0.3);
-    transition: all 0.3s ease;
-  }
-
-  .action-buttons .ai-button:hover {
-    background: linear-gradient(135deg, #85ce61 0%, #67c23a 100%);
-    box-shadow: 0 4px 12px rgba(103, 194, 58, 0.4);
-    transform: translateY(-1px);
   }
 }
 </style>

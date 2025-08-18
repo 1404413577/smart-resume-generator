@@ -295,6 +295,210 @@ export async function checkAPIAvailability() {
 }
 
 /**
+ * 智能对话式简历生成（备用服务）
+ */
+export async function generateConversationalResponse(conversationData) {
+  await simulateDelay(1500)
+
+  const { messages, currentStep, userProfile } = conversationData
+  const lastMessage = messages[messages.length - 1]
+
+  // 模拟智能对话响应
+  const responses = {
+    'career_selection': {
+      response: "很好！我了解您想要申请软件工程师职位。让我们来详细了解您的背景。您目前有多少年的相关工作经验？",
+      suggestions: ["突出技术技能", "强调项目经验", "展示学习能力"],
+      questions: ["您最擅长哪种编程语言？", "您参与过哪些重要项目？", "您的技术栈包括哪些？"],
+      resumeContent: null,
+      qualityScore: 20,
+      improvements: ["需要更多个人信息", "缺少技能描述"]
+    },
+    'experience_input': {
+      response: "根据您的经验，我建议重点突出您的技术能力和项目成果。让我为您生成一些专业的工作经历描述。",
+      suggestions: ["使用量化数据", "突出技术成就", "展示团队协作"],
+      questions: ["您在项目中承担什么角色？", "取得了哪些具体成果？"],
+      resumeContent: {
+        section: "workExperience",
+        content: "负责核心功能模块开发，使用React和Node.js技术栈，提升系统性能30%"
+      },
+      qualityScore: 65,
+      improvements: ["添加具体数据", "优化表述方式"]
+    }
+  }
+
+  return responses[currentStep] || {
+    response: "请告诉我更多关于您的背景信息，这样我可以为您提供更好的建议。",
+    suggestions: ["提供更多细节", "明确职业目标"],
+    questions: ["您的目标职位是什么？", "您有哪些相关经验？"],
+    resumeContent: null,
+    qualityScore: 40,
+    improvements: ["需要更完整的信息"]
+  }
+}
+
+/**
+ * 简历质量评分和分析（备用服务）
+ */
+export async function analyzeResumeQuality(resumeData) {
+  await simulateDelay(2000)
+
+  // 模拟质量分析
+  const completeness = calculateCompleteness(resumeData)
+  const overallScore = Math.min(95, Math.max(60, completeness + Math.random() * 20))
+
+  return {
+    overallScore: Math.round(overallScore),
+    scores: {
+      completeness: Math.round(completeness),
+      relevance: Math.round(75 + Math.random() * 20),
+      clarity: Math.round(80 + Math.random() * 15),
+      impact: Math.round(70 + Math.random() * 25),
+      formatting: Math.round(85 + Math.random() * 10)
+    },
+    strengths: [
+      "技术技能描述清晰",
+      "工作经历结构完整",
+      "教育背景相关性强"
+    ],
+    weaknesses: [
+      "缺少量化成果数据",
+      "项目描述可以更具体",
+      "技能熟练度需要明确"
+    ],
+    improvements: [
+      {
+        section: "workExperience",
+        issue: "工作职责描述过于宽泛",
+        suggestion: "添加具体的成果数据和影响力指标",
+        priority: "high"
+      },
+      {
+        section: "skills",
+        issue: "技能列表缺少熟练度说明",
+        suggestion: "为每项技能添加熟练程度标识",
+        priority: "medium"
+      }
+    ],
+    keywords: ["JavaScript", "React", "Node.js", "项目管理", "团队协作"],
+    missingElements: ["个人作品集链接", "开源项目贡献", "技术博客"]
+  }
+}
+
+/**
+ * JD匹配度分析（备用服务）
+ */
+export async function analyzeJobMatch(params) {
+  await simulateDelay(2500)
+
+  const { resumeData, jobDescription } = params
+
+  return {
+    matchScore: Math.round(65 + Math.random() * 25),
+    matchedSkills: ["JavaScript", "React", "Node.js", "Git", "团队协作"],
+    missingSkills: ["TypeScript", "Docker", "AWS", "微服务架构"],
+    recommendations: [
+      {
+        type: "add_skill",
+        content: "TypeScript",
+        reason: "职位要求中多次提及，是核心技能要求"
+      },
+      {
+        type: "optimize_experience",
+        content: "强调微服务架构经验",
+        reason: "与职位技术栈高度匹配"
+      }
+    ],
+    keywordOptimization: [
+      {
+        original: "负责前端开发",
+        optimized: "负责React前端应用开发，实现响应式用户界面",
+        reason: "更具体地描述技术栈和成果"
+      }
+    ],
+    sectionPriority: {
+      skills: "high",
+      experience: "high",
+      projects: "medium",
+      education: "low"
+    }
+  }
+}
+
+/**
+ * 智能内容优化（备用服务）
+ */
+export async function optimizeContent(params) {
+  await simulateDelay(1800)
+
+  const { content, section } = params
+
+  const optimizations = {
+    workExperience: {
+      optimizedContent: content.replace(/负责/g, '主导').replace(/参与/g, '深度参与'),
+      improvements: ["使用更有力的动词", "添加量化数据", "突出个人贡献"],
+      alternatives: [
+        content + "，提升团队效率25%",
+        content + "，获得客户高度认可"
+      ]
+    },
+    skills: {
+      optimizedContent: content + "（3年经验）",
+      improvements: ["添加熟练度说明", "按重要性排序", "分类展示"],
+      alternatives: [
+        content + " - 精通",
+        content + " - 熟练使用"
+      ]
+    }
+  }
+
+  const result = optimizations[section] || {
+    optimizedContent: content,
+    improvements: ["保持简洁明了", "突出关键信息"],
+    alternatives: [content]
+  }
+
+  return {
+    ...result,
+    keywords: extractKeywords(content),
+    tone: "professional",
+    impactScore: Math.round(70 + Math.random() * 25)
+  }
+}
+
+/**
+ * 计算简历完整度
+ */
+function calculateCompleteness(resumeData) {
+  let score = 0
+  const weights = {
+    personalInfo: 20,
+    summary: 15,
+    workExperience: 25,
+    education: 15,
+    skills: 15,
+    projects: 10
+  }
+
+  Object.keys(weights).forEach(section => {
+    if (resumeData[section] && resumeData[section].length > 0) {
+      score += weights[section]
+    }
+  })
+
+  return score
+}
+
+/**
+ * 提取关键词
+ */
+function extractKeywords(content) {
+  const keywords = ['JavaScript', 'React', 'Vue', 'Node.js', 'Python', 'Java', 'TypeScript', 'Docker', 'AWS']
+  return keywords.filter(keyword =>
+    content.toLowerCase().includes(keyword.toLowerCase())
+  )
+}
+
+/**
  * 模拟API延迟
  */
 function simulateDelay(ms = 1000) {

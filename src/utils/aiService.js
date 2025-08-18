@@ -614,6 +614,219 @@ export async function checkAPIAvailability() {
 }
 
 /**
+ * 智能对话式简历生成
+ * @param {Object} conversationData - 对话数据
+ * @returns {Promise<Object>} AI回复和建议
+ */
+export async function generateConversationalResponse(conversationData) {
+  try {
+    if (useBackupService) {
+      return await backupService.generateConversationalResponse(conversationData)
+    }
+
+    const { messages, currentStep, userProfile } = conversationData
+
+    const prompt = `
+你是一位专业的简历顾问，正在通过对话帮助用户创建完美的简历。
+
+用户档案：
+${userProfile ? JSON.stringify(userProfile, null, 2) : '暂无'}
+
+对话历史：
+${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
+
+当前步骤：${currentStep}
+
+请根据对话历史和用户档案，提供：
+1. 针对性的问题或建议
+2. 如果信息足够，生成相应的简历内容
+3. 质量评估和改进建议
+
+返回JSON格式：
+{
+  "response": "AI回复内容",
+  "suggestions": ["建议1", "建议2"],
+  "questions": ["问题1", "问题2"],
+  "resumeContent": {
+    "section": "章节名称",
+    "content": "生成的内容"
+  },
+  "qualityScore": 85,
+  "improvements": ["改进建议1", "改进建议2"]
+}
+`
+
+    const result = await callGeminiAPI(prompt)
+
+    try {
+      return JSON.parse(result)
+    } catch (parseError) {
+      return {
+        response: result,
+        suggestions: [],
+        questions: [],
+        resumeContent: null,
+        qualityScore: 0,
+        improvements: []
+      }
+    }
+  } catch (error) {
+    console.warn('对话式生成失败，使用备用服务:', error)
+    useBackupService = true
+    return await backupService.generateConversationalResponse(conversationData)
+  }
+}
+
+/**
+ * 简历质量评分和分析
+ * @param {Object} resumeData - 简历数据
+ * @returns {Promise<Object>} 质量分析结果
+ */
+export async function analyzeResumeQuality(resumeData) {
+  try {
+    if (useBackupService) {
+      return await backupService.analyzeResumeQuality(resumeData)
+    }
+
+    const prompt = `
+请分析以下简历的质量，并提供详细的评分和改进建议：
+
+简历数据：
+${JSON.stringify(resumeData, null, 2)}
+
+请返回JSON格式的分析结果：
+{
+  "overallScore": 85,
+  "scores": {
+    "completeness": 90,
+    "relevance": 80,
+    "clarity": 85,
+    "impact": 75,
+    "formatting": 95
+  },
+  "strengths": ["优势1", "优势2"],
+  "weaknesses": ["不足1", "不足2"],
+  "improvements": [
+    {
+      "section": "章节名称",
+      "issue": "问题描述",
+      "suggestion": "改进建议",
+      "priority": "high|medium|low"
+    }
+  ],
+  "keywords": ["关键词1", "关键词2"],
+  "missingElements": ["缺失元素1", "缺失元素2"]
+}
+`
+
+    const result = await callGeminiAPI(prompt)
+    return JSON.parse(result)
+  } catch (error) {
+    console.warn('质量分析失败，使用备用服务:', error)
+    useBackupService = true
+    return await backupService.analyzeResumeQuality(resumeData)
+  }
+}
+
+/**
+ * JD匹配度分析
+ * @param {Object} params - 分析参数
+ * @returns {Promise<Object>} 匹配度分析结果
+ */
+export async function analyzeJobMatch(params) {
+  try {
+    if (useBackupService) {
+      return await backupService.analyzeJobMatch(params)
+    }
+
+    const { resumeData, jobDescription } = params
+
+    const prompt = `
+请分析简历与职位描述的匹配度：
+
+简历数据：
+${JSON.stringify(resumeData, null, 2)}
+
+职位描述：
+${jobDescription}
+
+请返回JSON格式的匹配度分析：
+{
+  "matchScore": 78,
+  "matchedSkills": ["技能1", "技能2"],
+  "missingSkills": ["缺失技能1", "缺失技能2"],
+  "recommendations": [
+    {
+      "type": "add_skill",
+      "content": "建议添加的技能",
+      "reason": "原因说明"
+    }
+  ],
+  "keywordOptimization": [
+    {
+      "original": "原始表述",
+      "optimized": "优化后表述",
+      "reason": "优化原因"
+    }
+  ],
+  "sectionPriority": {
+    "skills": "high",
+    "experience": "medium",
+    "education": "low"
+  }
+}
+`
+
+    const result = await callGeminiAPI(prompt)
+    return JSON.parse(result)
+  } catch (error) {
+    console.warn('JD匹配分析失败，使用备用服务:', error)
+    useBackupService = true
+    return await backupService.analyzeJobMatch(params)
+  }
+}
+
+/**
+ * 智能内容优化
+ * @param {Object} params - 优化参数
+ * @returns {Promise<Object>} 优化结果
+ */
+export async function optimizeContent(params) {
+  try {
+    if (useBackupService) {
+      return await backupService.optimizeContent(params)
+    }
+
+    const { content, section, context } = params
+
+    const prompt = `
+请优化以下简历内容：
+
+章节：${section}
+原始内容：${content}
+上下文：${context ? JSON.stringify(context) : '无'}
+
+请返回JSON格式的优化结果：
+{
+  "optimizedContent": "优化后的内容",
+  "improvements": ["改进点1", "改进点2"],
+  "alternatives": ["替代方案1", "替代方案2"],
+  "keywords": ["关键词1", "关键词2"],
+  "tone": "professional|creative|technical",
+  "impactScore": 85
+}
+`
+
+    const result = await callGeminiAPI(prompt)
+    return JSON.parse(result)
+  } catch (error) {
+    console.warn('内容优化失败，使用备用服务:', error)
+    useBackupService = true
+    return await backupService.optimizeContent(params)
+  }
+}
+
+/**
  * 获取支持的职业类型列表
  * @returns {Array} 职业类型列表
  */

@@ -4,8 +4,9 @@
     <div class="ai-generate-section">
       <el-button @click="handleAIGenerate" type="success" size="default" class="ai-button">
         <el-icon><MagicStick /></el-icon>
-        AI生成简历
+        AI智能助手
       </el-button>
+      <p class="ai-description">对话式AI，智能生成个性化简历</p>
     </div>
 
     <!-- 主要导航区域 -->
@@ -297,6 +298,14 @@ const handleAIGenerate = () => {
 .ai-generate-section .ai-button:active {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(103, 194, 58, 0.3);
+}
+
+.ai-generate-section .ai-description {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #909399;
+  text-align: center;
+  line-height: 1.3;
 }
 
 /* 主导航区域 */

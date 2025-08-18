@@ -119,8 +119,8 @@
     <!-- 全局设置抽屉 -->
     <GlobalSettingsDrawer />
 
-    <!-- AI简历生成器 -->
-    <AIResumeGenerator
+    <!-- 高级AI简历生成器 -->
+    <AdvancedAIResumeGenerator
       :visible="showAIGenerator"
       @update:visible="showAIGenerator = $event"
       @close="showAIGenerator = false"
@@ -161,8 +161,8 @@ import SectionOrderManager from './SectionOrderManager.vue'
 // 导入全局设置抽屉组件
 import GlobalSettingsDrawer from './GlobalSettingsDrawer.vue'
 
-// 导入AI简历生成器组件
-import AIResumeGenerator from './AIResumeGenerator.vue'
+// 导入高级AI简历生成器组件
+import AdvancedAIResumeGenerator from './AdvancedAIResumeGenerator.vue'
 
 const resumeStore = useResumeStore()
 

@@ -312,6 +312,267 @@ export async function enhanceProjectDescription(project) {
 }
 
 /**
+ * 职业模板配置
+ */
+const CAREER_TEMPLATES = {
+  'software-engineer': {
+    name: '软件工程师',
+    skills: ['JavaScript', 'Python', 'React', 'Node.js', 'Git', 'Docker'],
+    summary: '具有{experience}年软件开发经验的工程师，精通前后端开发技术栈，具备良好的编程习惯和团队协作能力。',
+    workTemplate: {
+      responsibilities: [
+        '参与系统架构设计和技术选型，确保项目技术方案的可行性',
+        '负责核心功能模块的开发和维护，保证代码质量和性能',
+        '与产品经理和设计师协作，将需求转化为技术实现',
+        '参与代码审查和技术分享，提升团队整体技术水平',
+        '优化系统性能，解决生产环境中的技术问题'
+      ]
+    }
+  },
+  'product-manager': {
+    name: '产品经理',
+    skills: ['产品规划', '需求分析', 'Axure', 'Figma', '数据分析', '项目管理'],
+    summary: '拥有{experience}年产品管理经验，擅长用户需求分析和产品规划，具备敏锐的市场洞察力和优秀的跨部门协调能力。',
+    workTemplate: {
+      responsibilities: [
+        '负责产品需求调研和分析，制定产品发展规划和路线图',
+        '设计产品功能和用户体验，输出详细的产品需求文档',
+        '协调开发、设计、测试等团队，推进产品按时上线',
+        '分析产品数据和用户反馈，持续优化产品功能和体验',
+        '跟踪竞品动态和市场趋势，为产品决策提供数据支持'
+      ]
+    }
+  },
+  'ui-designer': {
+    name: 'UI设计师',
+    skills: ['Figma', 'Sketch', 'Adobe Creative Suite', '原型设计', '用户体验', '视觉设计'],
+    summary: '具有{experience}年UI/UX设计经验的设计师，擅长用户界面设计和交互体验优化，对设计趋势敏感，追求完美的视觉效果。',
+    workTemplate: {
+      responsibilities: [
+        '负责产品界面设计和交互原型制作，确保设计的可用性',
+        '制定和维护设计规范，保证产品视觉风格的一致性',
+        '与产品经理和开发工程师协作，确保设计方案的落地',
+        '进行用户研究和可用性测试，持续优化用户体验',
+        '跟踪设计趋势和最佳实践，提升设计质量和效率'
+      ]
+    }
+  },
+  'marketing-specialist': {
+    name: '市场营销专员',
+    skills: ['数字营销', 'SEO/SEM', '内容营销', '社交媒体', '数据分析', '品牌推广'],
+    summary: '拥有{experience}年市场营销经验，精通数字营销和品牌推广，具备敏锐的市场洞察力和创新的营销思维。',
+    workTemplate: {
+      responsibilities: [
+        '制定和执行市场营销策略，提升品牌知名度和市场份额',
+        '管理多渠道营销活动，包括线上线下推广和社交媒体运营',
+        '分析市场数据和竞争对手，为营销决策提供数据支持',
+        '与销售团队协作，制定销售支持材料和培训内容',
+        '监控营销效果和ROI，持续优化营销策略和执行方案'
+      ]
+    }
+  },
+  'data-analyst': {
+    name: '数据分析师',
+    skills: ['Python', 'SQL', 'Tableau', 'Excel', '统计分析', '机器学习'],
+    summary: '具有{experience}年数据分析经验，精通数据挖掘和统计分析，能够从数据中发现业务洞察，为决策提供有力支持。',
+    workTemplate: {
+      responsibilities: [
+        '收集、清洗和分析业务数据，建立数据分析模型和指标体系',
+        '制作数据报表和可视化图表，为业务团队提供数据支持',
+        '进行用户行为分析和市场趋势研究，发现业务增长机会',
+        '与业务团队协作，将数据洞察转化为可执行的业务策略',
+        '优化数据处理流程，提升数据分析的效率和准确性'
+      ]
+    }
+  }
+}
+
+/**
+ * 生成完整的AI简历
+ * @param {Object} options - 生成选项
+ * @param {string} options.career - 职业类型
+ * @param {string} options.name - 姓名
+ * @param {string} options.experience - 工作年限
+ * @param {string} options.education - 教育背景
+ * @param {Array} options.companies - 公司列表
+ * @returns {Promise<Object>} 生成的完整简历数据
+ */
+export async function generateCompleteResume(options) {
+  try {
+    if (useBackupService) {
+      return await backupService.generateCompleteResume(options)
+    }
+
+    const { career, name, experience, education, companies = [] } = options
+    const template = CAREER_TEMPLATES[career]
+
+    if (!template) {
+      throw new Error(`不支持的职业类型: ${career}`)
+    }
+
+    const prompt = `
+请为以下信息生成一份完整的专业简历，要求内容真实可信、结构清晰、突出亮点：
+
+基本信息：
+- 姓名：${name}
+- 目标职位：${template.name}
+- 工作年限：${experience}年
+- 教育背景：${education}
+- 目标公司类型：${companies.join('、') || '互联网公司'}
+
+请生成以下内容并以JSON格式返回：
+{
+  "personalInfo": {
+    "name": "${name}",
+    "email": "示例邮箱",
+    "phone": "示例电话",
+    "address": "示例地址"
+  },
+  "summary": "个人简介（100-150字）",
+  "workExperience": [
+    {
+      "jobTitle": "职位名称",
+      "company": "公司名称",
+      "location": "工作地点",
+      "startDate": "开始时间",
+      "endDate": "结束时间",
+      "current": false,
+      "responsibilities": ["职责1", "职责2", "职责3"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "学位",
+      "major": "专业",
+      "school": "学校名称",
+      "graduationDate": "毕业时间",
+      "gpa": "成绩"
+    }
+  ],
+  "skills": [
+    {
+      "name": "技能名称",
+      "level": "熟练程度",
+      "category": "技能分类"
+    }
+  ],
+  "projects": [
+    {
+      "name": "项目名称",
+      "description": "项目描述",
+      "technologies": ["技术1", "技术2"],
+      "highlights": ["亮点1", "亮点2"]
+    }
+  ]
+}
+
+要求：
+1. 内容要符合${template.name}的职业特点
+2. 工作经历要体现职业发展轨迹
+3. 技能要与职位匹配
+4. 项目经历要突出技术能力和业务价值
+5. 所有时间格式使用 YYYY-MM
+6. 只返回JSON，不要其他文字
+
+请确保返回的是有效的JSON格式。
+`
+
+    const result = await callGeminiAPI(prompt)
+
+    try {
+      const resumeData = JSON.parse(result)
+
+      // 验证和补充数据
+      return validateAndEnhanceResumeData(resumeData, template)
+    } catch (parseError) {
+      console.warn('AI返回内容不是有效JSON，使用模板生成:', parseError)
+      return generateResumeFromTemplate(options, template)
+    }
+  } catch (error) {
+    console.warn('Gemini API失败，使用备用服务:', error)
+    useBackupService = true
+    return await backupService.generateCompleteResume(options)
+  }
+}
+
+/**
+ * 验证和增强简历数据
+ */
+function validateAndEnhanceResumeData(data, template) {
+  // 确保必要字段存在
+  const enhanced = {
+    personalInfo: {
+      name: data.personalInfo?.name || '姓名',
+      email: data.personalInfo?.email || 'example@email.com',
+      phone: data.personalInfo?.phone || '138-0000-0000',
+      address: data.personalInfo?.address || '北京市',
+      ...data.personalInfo
+    },
+    summary: data.summary || template.summary.replace('{experience}', '3'),
+    workExperience: data.workExperience || [],
+    education: data.education || [],
+    skills: data.skills || template.skills.map(skill => ({
+      name: skill,
+      level: '熟练',
+      category: '技术技能'
+    })),
+    projects: data.projects || []
+  }
+
+  return enhanced
+}
+
+/**
+ * 从模板生成简历数据（备用方案）
+ */
+function generateResumeFromTemplate(options, template) {
+  const { name, experience, education } = options
+
+  return {
+    personalInfo: {
+      name: name,
+      email: `${name.toLowerCase().replace(/\s+/g, '')}@email.com`,
+      phone: '138-0000-0000',
+      address: '北京市朝阳区'
+    },
+    summary: template.summary.replace('{experience}', experience),
+    workExperience: [
+      {
+        jobTitle: template.name,
+        company: '科技有限公司',
+        location: '北京',
+        startDate: '2022-01',
+        endDate: '2024-01',
+        current: false,
+        responsibilities: template.workTemplate.responsibilities
+      }
+    ],
+    education: [
+      {
+        degree: '本科',
+        major: '计算机科学与技术',
+        school: education || '北京大学',
+        graduationDate: '2022-06',
+        gpa: '3.5'
+      }
+    ],
+    skills: template.skills.map(skill => ({
+      name: skill,
+      level: '熟练',
+      category: '专业技能'
+    })),
+    projects: [
+      {
+        name: '示例项目',
+        description: '这是一个展示技术能力的示例项目',
+        technologies: template.skills.slice(0, 3),
+        highlights: ['项目亮点1', '项目亮点2']
+      }
+    ]
+  }
+}
+
+/**
  * 检查API可用性
  * @returns {Promise<boolean>} API是否可用
  */
@@ -350,4 +611,16 @@ export async function checkAPIAvailability() {
     useBackupService = true
     return false
   }
+}
+
+/**
+ * 获取支持的职业类型列表
+ * @returns {Array} 职业类型列表
+ */
+export function getSupportedCareers() {
+  return Object.keys(CAREER_TEMPLATES).map(key => ({
+    id: key,
+    name: CAREER_TEMPLATES[key].name,
+    skills: CAREER_TEMPLATES[key].skills
+  }))
 }

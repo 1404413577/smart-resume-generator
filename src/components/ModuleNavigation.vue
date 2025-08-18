@@ -107,6 +107,11 @@
 
     <!-- 操作按钮区域 -->
     <div class="action-buttons">
+      <el-button @click="handleAIGenerate" type="success" size="small" class="ai-button">
+        <el-icon><MagicStick /></el-icon>
+        AI生成简历
+      </el-button>
+
       <el-button @click="handleManageResumes" type="primary" size="small">
         <el-icon><Folder /></el-icon>
         简历管理
@@ -119,7 +124,7 @@
 import { computed, ref } from 'vue'
 import {
   Setting, List, User, Document, Briefcase, School,
-  Star, Folder, Rank, Plus, ArrowRight, Tools
+  Star, Folder, Rank, Plus, ArrowRight, Tools, MagicStick
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '../stores/resume'
 import GlobalSettings from './GlobalSettings.vue'
@@ -131,7 +136,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['module-change', 'template-change', 'manage-resumes'])
+const emit = defineEmits(['module-change', 'template-change', 'manage-resumes', 'ai-generate'])
 
 const resumeStore = useResumeStore()
 
@@ -242,6 +247,10 @@ const handleTemplateChange = (templateId) => {
 
 const handleManageResumes = () => {
   emit('manage-resumes')
+}
+
+const handleAIGenerate = () => {
+  emit('ai-generate')
 }
 </script>
 
@@ -465,6 +474,26 @@ const handleManageResumes = () => {
 
   .action-buttons {
     padding: 12px 16px;
+  }
+
+  .action-buttons .el-button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .action-buttons .ai-button {
+    background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(103, 194, 58, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .action-buttons .ai-button:hover {
+    background: linear-gradient(135deg, #85ce61 0%, #67c23a 100%);
+    box-shadow: 0 4px 12px rgba(103, 194, 58, 0.4);
+    transform: translateY(-1px);
   }
 }
 </style>

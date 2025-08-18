@@ -7,6 +7,7 @@
         @module-change="handleModuleChange"
         @template-change="handleTemplateChange"
         @manage-resumes="handleManageResumes"
+        @ai-generate="handleAIGenerateResume"
       />
     </div>
 
@@ -117,6 +118,14 @@
 
     <!-- 全局设置抽屉 -->
     <GlobalSettingsDrawer />
+
+    <!-- AI简历生成器 -->
+    <AIResumeGenerator
+      :visible="showAIGenerator"
+      @update:visible="showAIGenerator = $event"
+      @close="showAIGenerator = false"
+      @resume-generated="handleResumeGenerated"
+    />
   </div>
 </template>
 
@@ -152,6 +161,9 @@ import SectionOrderManager from './SectionOrderManager.vue'
 // 导入全局设置抽屉组件
 import GlobalSettingsDrawer from './GlobalSettingsDrawer.vue'
 
+// 导入AI简历生成器组件
+import AIResumeGenerator from './AIResumeGenerator.vue'
+
 const resumeStore = useResumeStore()
 
 // 使用全局样式
@@ -162,6 +174,9 @@ const activeModule = ref('personalInfo')
 
 // 章节排序对话框状态
 const showSectionOrder = ref(false)
+
+// AI简历生成器状态
+const showAIGenerator = ref(false)
 
 // 预览缩放比例
 const previewScale = ref(0.8)
@@ -393,6 +408,20 @@ const updateTitleAlignment = (alignment) => {
 const handleSectionOrderClose = () => {
   showSectionOrder.value = false
 }
+
+// 处理AI简历生成
+const handleAIGenerateResume = () => {
+  showAIGenerator.value = true
+}
+
+// 处理简历生成完成
+const handleResumeGenerated = (resumeData) => {
+  ElMessage.success('AI简历已应用，您可以继续编辑和完善！')
+  // 切换到个人信息模块，让用户看到生成的内容
+  activeModule.value = 'personalInfo'
+}
+
+
 </script>
 
 <style scoped>

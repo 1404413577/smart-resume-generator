@@ -9,6 +9,15 @@
       <p class="ai-description">对话式AI，智能生成个性化简历</p>
     </div>
 
+    <!-- 模板管理按钮 -->
+    <div class="template-manage-section">
+      <el-button @click="handleTemplateManage" type="primary" size="default" class="template-button">
+        <el-icon><Document /></el-icon>
+        模板中心
+      </el-button>
+      <p class="template-description">选择模板，直接编辑，导出PDF</p>
+    </div>
+
     <!-- 主要导航区域 -->
     <div class="main-navigation">
       <!-- 模板选择 -->
@@ -256,6 +265,10 @@ const handleManageResumes = () => {
 const handleAIGenerate = () => {
   emit('ai-generate')
 }
+
+const handleTemplateManage = () => {
+  emit('template-manage')
+}
 </script>
 
 <style scoped>
@@ -301,6 +314,46 @@ const handleAIGenerate = () => {
 }
 
 .ai-generate-section .ai-description {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #909399;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* 模板管理按钮区域样式 */
+.template-manage-section {
+  padding: 16px;
+  border-bottom: 1px solid #e4e7ed;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.template-manage-section .template-button {
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(135deg, #409eff 0%, #67c23a 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.template-manage-section .template-button:hover {
+  background: linear-gradient(135deg, #67c23a 0%, #409eff 100%);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.template-manage-section .template-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(64, 158, 255, 0.3);
+}
+
+.template-manage-section .template-description {
   margin: 8px 0 0 0;
   font-size: 12px;
   color: #909399;

@@ -7,6 +7,7 @@
         @module-change="handleModuleChange"
         @template-change="handleTemplateChange"
         @manage-resumes="handleManageResumes"
+        @template-manage="handleTemplateManage"
         @ai-generate="handleAIGenerateResume"
       />
     </div>
@@ -126,6 +127,13 @@
       @close="showAIGenerator = false"
       @resume-generated="handleResumeGenerated"
     />
+
+    <!-- 模板管理器 -->
+    <TemplateManager
+      v-if="showTemplateManager"
+      @close="showTemplateManager = false"
+      @template-applied="handleTemplateApplied"
+    />
   </div>
 </template>
 
@@ -163,6 +171,8 @@ import GlobalSettingsDrawer from './GlobalSettingsDrawer.vue'
 
 // 导入高级AI简历生成器组件
 import AdvancedAIResumeGenerator from './AdvancedAIResumeGenerator.vue'
+// 导入模板管理器组件
+import TemplateManager from '../muban/TemplateManager.vue'
 
 const resumeStore = useResumeStore()
 
@@ -177,6 +187,9 @@ const showSectionOrder = ref(false)
 
 // AI简历生成器状态
 const showAIGenerator = ref(false)
+
+// 模板管理器状态
+const showTemplateManager = ref(false)
 
 // 预览缩放比例
 const previewScale = ref(0.8)
@@ -419,6 +432,17 @@ const handleResumeGenerated = (resumeData) => {
   ElMessage.success('AI简历已应用，您可以继续编辑和完善！')
   // 切换到个人信息模块，让用户看到生成的内容
   activeModule.value = 'personalInfo'
+}
+
+// 处理模板管理
+const handleTemplateManage = () => {
+  showTemplateManager.value = true
+}
+
+// 处理模板应用完成
+const handleTemplateApplied = (templateData) => {
+  ElMessage.success('模板已应用成功！')
+  showTemplateManager.value = false
 }
 
 

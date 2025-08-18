@@ -1,30 +1,24 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
-import { Document, CircleCheck, Folder, Download, MagicStick, View } from '@element-plus/icons-vue'
+import { onMounted } from 'vue'
 import { useResumeStore } from './stores/resume'
-import { generateOptimizedPDF } from './utils/pdfGenerator'
 import { useSEO } from './composables/useSEO'
-import ResumeBuilder from './components/ResumeBuilder.vue'
-import ResumeManager from './components/ResumeManager.vue'
-import AITestComponent from './components/AITestComponent.vue'
-import DynamicStyles from './components/DynamicStyles.vue'
+import AppLayout from './components/layout/AppLayout.vue'
 
 const resumeStore = useResumeStore()
-const showResumeManager = ref(false)
-const showAITest = ref(false)
-const isExporting = ref(false)
 
 // SEO优化
 const { applyPageSEO, setAppStructuredData } = useSEO()
 
-// 初始化SEO
+// 初始化
 onMounted(() => {
-  // 应用首页SEO配置（使用新的配置系统）
+  // 应用首页SEO配置
   applyPageSEO('home')
 
   // 设置应用结构化数据
   setAppStructuredData()
+
+  // 初始化简历store
+  resumeStore.init()
 
   // 移除加载状态
   const loadingElement = document.getElementById('loading')
@@ -32,95 +26,12 @@ onMounted(() => {
     loadingElement.style.display = 'none'
   }
 })
-
-// 格式化保存时间
-const formatSaveTime = (saveTime) => {
-  if (!saveTime) return ''
-  const now = new Date()
-  const diff = Math.floor((now - saveTime) / 1000) // 秒数差
-
-  if (diff < 10) return '刚刚'
-  if (diff < 60) return `${diff}秒前`
-  if (diff < 3600) return `${Math.floor(diff / 60)}分钟前`
-  return saveTime.toLocaleTimeString()
-}
-
-// 导出PDF处理
-const handleExportPDF = async () => {
-  try {
-    isExporting.value = true
-
-    // 使用优化的PDF生成函数，最大化A4纸张利用率
-    await generateOptimizedPDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
-    ElMessage.success('PDF下载成功！A4纸张空间已优化利用')
-
-  } catch (error) {
-    console.error('PDF生成失败:', error)
-    ElMessage.error('PDF生成失败，请重试')
-  } finally {
-    isExporting.value = false
-  }
-}
-
-onMounted(() => {
-  resumeStore.init()
-})
 </script>
 
 <template>
   <div id="app">
-    <!-- 动态样式组件 -->
-    <DynamicStyles />
-
-    <el-container class="app-container">
-      <el-header class="app-header">
-        <div class="header-content">
-          <h1 class="app-title">
-            <el-icon><Document /></el-icon>
-            智能简历生成器
-          </h1>
-          <div class="header-actions">
-            <div class="auto-save-status" v-if="resumeStore.isAutoSaveEnabled">
-              <el-icon class="save-icon"><CircleCheck /></el-icon>
-              <span class="save-text">
-                自动保存
-                <span v-if="resumeStore.lastSaveTime" class="save-time">
-                  ({{ formatSaveTime(resumeStore.lastSaveTime) }})
-                </span>
-              </span>
-            </div>
-            <el-button @click="showResumeManager = true">
-              <el-icon><Folder /></el-icon>
-              简历管理
-            </el-button>
-            <el-button type="primary" @click="handleExportPDF" :loading="isExporting">
-              <el-icon><Download /></el-icon>
-              导出PDF
-            </el-button>
-            <el-button @click="showAITest = !showAITest">
-              <el-icon><MagicStick /></el-icon>
-              AI测试
-            </el-button>
-            <el-button @click="resumeStore.togglePreviewMode()">
-              <el-icon><View /></el-icon>
-              {{ resumeStore.isPreviewMode ? '编辑模式' : '预览模式' }}
-            </el-button>
-          </div>
-        </div>
-      </el-header>
-
-      <el-main class="app-main">
-        <AITestComponent v-if="showAITest" />
-        <ResumeBuilder v-else />
-      </el-main>
-    </el-container>
-
-    <!-- 简历管理对话框 -->
-    <ResumeManager
-      :visible="showResumeManager"
-      @update:visible="showResumeManager = $event"
-      @close="showResumeManager = false"
-    />
+    <!-- 应用布局 -->
+    <AppLayout />
   </div>
 </template>
 
@@ -146,85 +57,4 @@ html, body {
 }
 </style>
 
-<style scoped>
-.app-container {
-  height: 100vh;
-  width: 100vw;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
 
-.app-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
-  height: 64px;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin: 0;
-  padding: 0 20px;
-  height: 100%;
-}
-
-.app-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  color: #2c3e50;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.app-main {
-  flex: 1;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  height: calc(100vh - 64px);
-  overflow: hidden;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.auto-save-status {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  font-size: 14px;
-  color: white;
-}
-
-.save-icon {
-  color: #67c23a;
-  animation: pulse 2s infinite;
-}
-
-.save-text {
-  font-weight: 500;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-
-</style>

@@ -5,6 +5,7 @@ import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import './style.css'
 import App from './App.vue'
+import router from './router'
 
 // 导入性能监控（简化版，不依赖外部包）
 import './utils/performanceSimple.js'
@@ -18,5 +19,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 app.use(pinia)
+app.use(router)
 app.use(ElementPlus)
 app.mount('#app')

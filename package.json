@@ -21,9 +21,11 @@
     "element-plus": "^2.10.7",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.10.3",
     "jspdf": "^3.0.1",
     "pinia": "^3.0.3",
     "vue": "^3.5.18",
+    "vue-router": "^4.5.1",
     "web-vitals": "^3.5.2"
   },
   "devDependencies": {

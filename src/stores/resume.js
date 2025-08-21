@@ -244,7 +244,7 @@ export const useResumeStore = defineStore('resume', () => {
   })
 
   // 主题预设
-  const themePresets = {
+  const themePresets = ref({
     professional: {
       primary: '#2c3e50',
       primaryLight: '#34495e',
@@ -281,7 +281,7 @@ export const useResumeStore = defineStore('resume', () => {
       backgroundSecondary: '#f8f9fa',
       border: '#dee2e6'
     }
-  }
+  })
 
   // 计算属性
   const isResumeComplete = computed(() => {
@@ -301,7 +301,7 @@ export const useResumeStore = defineStore('resume', () => {
     if (preset === 'custom') {
       return globalSettings.value.theme
     }
-    return { ...globalSettings.value.theme, ...themePresets[preset] }
+    return { ...globalSettings.value.theme, ...themePresets.value[preset] }
   })
 
   // 动态CSS变量
@@ -889,11 +889,11 @@ export const useResumeStore = defineStore('resume', () => {
 
   // 主题相关操作
   const applyThemePreset = (presetName) => {
-    if (themePresets[presetName]) {
+    if (themePresets.value[presetName]) {
       // 应用预设的颜色值
       globalSettings.value.theme = {
         ...globalSettings.value.theme,
-        ...themePresets[presetName],
+        ...themePresets.value[presetName],
         preset: presetName
       }
       saveToLocalStorage()

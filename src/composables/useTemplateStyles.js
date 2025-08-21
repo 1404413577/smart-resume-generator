@@ -14,7 +14,7 @@ export function useTemplateStyles(templateId = null) {
   // 获取当前模板配置
   const currentTemplateConfig = computed(() => {
     const id = templateId || resumeStore.selectedTemplate
-    return getTemplateById(id)
+    return getTemplate(id)
   })
 
   // 合并后的样式

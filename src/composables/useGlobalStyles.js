@@ -17,7 +17,7 @@ export function useGlobalStyles() {
   const applyGlobalStyles = () => {
     if (resumeStore.globalSettings) {
       // 获取当前模板配置
-      const templateConfig = getTemplateById(resumeStore.selectedTemplate)
+      const templateConfig = getTemplate(resumeStore.selectedTemplate)
 
       // 应用到根元素，确保所有组件都能访问CSS变量
       applyCSSVariables(document.documentElement, resumeStore.globalSettings, templateConfig)

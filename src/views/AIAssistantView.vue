@@ -187,7 +187,7 @@ import {
   User,
   Upload
 } from '@element-plus/icons-vue'
-import { generateConversationalResponse } from '../utils/aiService'
+import { generateConversationalResponse } from '@utils/ai/aiService'
 
 // 响应式数据
 const showHistory = ref(false)

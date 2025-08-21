@@ -38,26 +38,95 @@
       <div class="custom-colors">
         <h5>自定义颜色</h5>
         <div class="color-controls">
-          <div class="color-item">
-            <label>主色调</label>
-            <el-color-picker 
-              v-model="currentTheme.primary" 
-              @change="handleColorChange('primary', $event)"
-            />
+          <div class="color-grid">
+            <div class="color-item">
+              <label class="color-label">主色调</label>
+              <div class="color-picker-wrapper">
+                <el-color-picker
+                  v-model="currentTheme.primary"
+                  @change="handleColorChange('primary', $event)"
+                  show-alpha
+                  size="small"
+                />
+                <span class="color-value">{{ currentTheme.primary }}</span>
+              </div>
+            </div>
+            <div class="color-item">
+              <label class="color-label">辅助色</label>
+              <div class="color-picker-wrapper">
+                <el-color-picker
+                  v-model="currentTheme.secondary"
+                  @change="handleColorChange('secondary', $event)"
+                  show-alpha
+                  size="small"
+                />
+                <span class="color-value">{{ currentTheme.secondary }}</span>
+              </div>
+            </div>
+            <div class="color-item">
+              <label class="color-label">强调色</label>
+              <div class="color-picker-wrapper">
+                <el-color-picker
+                  v-model="currentTheme.accent"
+                  @change="handleColorChange('accent', $event)"
+                  show-alpha
+                  size="small"
+                />
+                <span class="color-value">{{ currentTheme.accent }}</span>
+              </div>
+            </div>
+            <div class="color-item">
+              <label class="color-label">文字颜色</label>
+              <div class="color-picker-wrapper">
+                <el-color-picker
+                  v-model="currentTheme.textPrimary"
+                  @change="handleColorChange('textPrimary', $event)"
+                  show-alpha
+                  size="small"
+                />
+                <span class="color-value">{{ currentTheme.textPrimary }}</span>
+              </div>
+            </div>
+            <div class="color-item">
+              <label class="color-label">背景颜色</label>
+              <div class="color-picker-wrapper">
+                <el-color-picker
+                  v-model="currentTheme.background"
+                  @change="handleColorChange('background', $event)"
+                  show-alpha
+                  size="small"
+                />
+                <span class="color-value">{{ currentTheme.background }}</span>
+              </div>
+            </div>
+            <div class="color-item">
+              <label class="color-label">边框颜色</label>
+              <div class="color-picker-wrapper">
+                <el-color-picker
+                  v-model="currentTheme.border"
+                  @change="handleColorChange('border', $event)"
+                  show-alpha
+                  size="small"
+                />
+                <span class="color-value">{{ currentTheme.border }}</span>
+              </div>
+            </div>
           </div>
-          <div class="color-item">
-            <label>辅助色</label>
-            <el-color-picker 
-              v-model="currentTheme.secondary" 
-              @change="handleColorChange('secondary', $event)"
-            />
-          </div>
-          <div class="color-item">
-            <label>强调色</label>
-            <el-color-picker 
-              v-model="currentTheme.accent" 
-              @change="handleColorChange('accent', $event)"
-            />
+
+          <!-- 颜色快速操作 -->
+          <div class="color-actions">
+            <el-button size="small" @click="generateRandomColors">
+              <el-icon><Refresh /></el-icon>
+              随机配色
+            </el-button>
+            <el-button size="small" @click="resetColors">
+              <el-icon><RefreshLeft /></el-icon>
+              重置颜色
+            </el-button>
+            <el-button size="small" @click="copyColorScheme">
+              <el-icon><Document /></el-icon>
+              复制配色
+            </el-button>
           </div>
         </div>
       </div>
@@ -156,6 +225,102 @@
       </div>
     </div>
 
+    <!-- 布局设置 -->
+    <div class="setting-group">
+      <h4 class="group-title">
+        <el-icon><Grid /></el-icon>
+        布局设置
+      </h4>
+
+      <div class="layout-controls">
+        <!-- 布局方向 -->
+        <div class="control-item">
+          <label class="control-label">布局方向</label>
+          <el-radio-group v-model="currentLayout.orientation" @change="handleLayoutChange">
+            <el-radio value="vertical">
+              <el-icon><ArrowDown /></el-icon>
+              纵向布局
+            </el-radio>
+            <el-radio value="horizontal">
+              <el-icon><ArrowRight /></el-icon>
+              横向布局
+            </el-radio>
+          </el-radio-group>
+        </div>
+
+        <!-- 列数设置（横向布局时显示） -->
+        <div v-if="currentLayout.orientation === 'horizontal'" class="control-item">
+          <label class="control-label">列数 ({{ currentLayout.columns }}列)</label>
+          <el-slider
+            v-model="currentLayout.columns"
+            :min="2"
+            :max="4"
+            :step="1"
+            @change="handleLayoutChange"
+          />
+        </div>
+
+        <!-- 列间距（横向布局时显示） -->
+        <div v-if="currentLayout.orientation === 'horizontal'" class="control-item">
+          <label class="control-label">列间距 ({{ currentLayout.columnGap }}px)</label>
+          <el-slider
+            v-model="currentLayout.columnGap"
+            :min="10"
+            :max="40"
+            @change="handleLayoutChange"
+          />
+        </div>
+
+        <!-- 对齐方式 -->
+        <div class="control-item">
+          <label class="control-label">内容对齐</label>
+          <el-radio-group v-model="currentLayout.alignment" @change="handleLayoutChange">
+            <el-radio value="left">左对齐</el-radio>
+            <el-radio value="center">居中</el-radio>
+            <el-radio value="right">右对齐</el-radio>
+          </el-radio-group>
+        </div>
+
+        <!-- 标题对齐 -->
+        <div class="control-item">
+          <label class="control-label">标题对齐</label>
+          <el-radio-group v-model="currentLayout.titleAlignment" @change="handleLayoutChange">
+            <el-radio value="left">左对齐</el-radio>
+            <el-radio value="center">居中</el-radio>
+            <el-radio value="right">右对齐</el-radio>
+          </el-radio-group>
+        </div>
+
+        <!-- 布局预设 -->
+        <div class="control-item">
+          <label class="control-label">布局预设</label>
+          <div class="layout-presets">
+            <el-button
+              size="small"
+              :type="currentLayout.preset === 'traditional' ? 'primary' : ''"
+              @click="applyLayoutPreset('traditional')"
+            >
+              传统单列
+            </el-button>
+            <el-button
+              size="small"
+              :type="currentLayout.preset === 'modern' ? 'primary' : ''"
+              @click="applyLayoutPreset('modern')"
+            >
+              现代双列
+            </el-button>
+            <el-button
+              size="small"
+              :type="currentLayout.preset === 'creative' ? 'primary' : ''"
+              @click="applyLayoutPreset('creative')"
+            >
+              创意多列
+            </el-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 页面设置 -->
     <div class="setting-group">
       <h4 class="group-title">
@@ -235,7 +400,10 @@ import {
   Grid,
   RefreshLeft,
   Warning,
-  CircleCheck
+  CircleCheck,
+  Refresh,
+  ArrowDown,
+  ArrowRight
 } from '@element-plus/icons-vue'
 import { createMultiPageManager } from '@/utils/multipage/pageManager'
 
@@ -275,6 +443,16 @@ const currentPageSettings = reactive({
   showPageNumbers: true,
   pageBreaks: [],
   ...globalSettings.value?.pageSettings
+})
+
+const currentLayout = reactive({
+  orientation: 'vertical',
+  columns: 2,
+  columnGap: 20,
+  alignment: 'left',
+  titleAlignment: 'left',
+  preset: 'traditional',
+  ...globalSettings.value?.layout
 })
 
 // 可用的主题预设
@@ -377,13 +555,100 @@ const handleResetSettings = () => {
   ElMessage.success('已重置为默认设置')
 }
 
+// 颜色相关方法
+const generateRandomColors = () => {
+  const colors = [
+    '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+    '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#f1c40f'
+  ]
+
+  currentTheme.primary = colors[Math.floor(Math.random() * colors.length)]
+  currentTheme.secondary = colors[Math.floor(Math.random() * colors.length)]
+  currentTheme.accent = colors[Math.floor(Math.random() * colors.length)]
+
+  updateGlobalSettings()
+  ElMessage.success('已生成随机配色')
+}
+
+const resetColors = () => {
+  currentTheme.primary = '#2c3e50'
+  currentTheme.secondary = '#3498db'
+  currentTheme.accent = '#e74c3c'
+  currentTheme.textPrimary = '#333333'
+  currentTheme.background = '#ffffff'
+  currentTheme.border = '#e0e0e0'
+
+  updateGlobalSettings()
+  ElMessage.success('已重置颜色')
+}
+
+const copyColorScheme = async () => {
+  const colorScheme = {
+    primary: currentTheme.primary,
+    secondary: currentTheme.secondary,
+    accent: currentTheme.accent,
+    textPrimary: currentTheme.textPrimary,
+    background: currentTheme.background,
+    border: currentTheme.border
+  }
+
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(colorScheme, null, 2))
+    ElMessage.success('配色方案已复制到剪贴板')
+  } catch (error) {
+    ElMessage.error('复制失败')
+  }
+}
+
+// 布局相关方法
+const handleLayoutChange = () => {
+  updateGlobalSettings()
+}
+
+const applyLayoutPreset = (preset) => {
+  const presets = {
+    traditional: {
+      orientation: 'vertical',
+      columns: 1,
+      columnGap: 0,
+      alignment: 'left',
+      titleAlignment: 'left',
+      preset: 'traditional'
+    },
+    modern: {
+      orientation: 'horizontal',
+      columns: 2,
+      columnGap: 20,
+      alignment: 'left',
+      titleAlignment: 'left',
+      preset: 'modern'
+    },
+    creative: {
+      orientation: 'horizontal',
+      columns: 3,
+      columnGap: 15,
+      alignment: 'center',
+      titleAlignment: 'center',
+      preset: 'creative'
+    }
+  }
+
+  const presetConfig = presets[preset]
+  if (presetConfig) {
+    Object.assign(currentLayout, presetConfig)
+    updateGlobalSettings()
+    ElMessage.success(`已应用${preset === 'traditional' ? '传统' : preset === 'modern' ? '现代' : '创意'}布局`)
+  }
+}
+
 // 更新全局设置
 const updateGlobalSettings = () => {
   resumeStore.updateGlobalSettings({
     theme: { ...currentTheme },
     typography: { ...currentTypography },
     spacing: { ...currentSpacing },
-    pageSettings: { ...currentPageSettings }
+    pageSettings: { ...currentPageSettings },
+    layout: { ...currentLayout }
   })
 }
 
@@ -401,6 +666,9 @@ watch(globalSettings, (newSettings) => {
   if (newSettings?.pageSettings) {
     Object.assign(currentPageSettings, newSettings.pageSettings)
   }
+  if (newSettings?.layout) {
+    Object.assign(currentLayout, newSettings.layout)
+  }
 }, { deep: true })
 
 // 组件挂载时初始化
@@ -417,6 +685,9 @@ onMounted(() => {
   }
   if (globalSettings.value?.pageSettings) {
     Object.assign(currentPageSettings, globalSettings.value.pageSettings)
+  }
+  if (globalSettings.value?.layout) {
+    Object.assign(currentLayout, globalSettings.value.layout)
   }
 })
 </script>
@@ -502,22 +773,74 @@ onMounted(() => {
 }
 
 .color-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.color-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 16px;
 }
 
 .color-item {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.color-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.color-picker-wrapper {
+  display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.color-item label {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
+.color-value {
+  font-size: 11px;
+  color: #9ca3af;
+  font-family: monospace;
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 70px;
+  text-align: center;
+}
+
+.color-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.color-actions .el-button {
+  flex: 1;
+  min-width: 100px;
+}
+
+/* 布局设置 */
+.layout-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.layout-presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.layout-presets .el-button {
+  flex: 1;
+  min-width: 80px;
 }
 
 /* 控制项 */

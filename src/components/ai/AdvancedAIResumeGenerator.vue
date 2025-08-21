@@ -32,6 +32,59 @@
           </div>
 
           <div class="chat-messages" ref="chatMessages">
+            <!-- 欢迎引导 -->
+            <div v-if="messages.length <= 1" class="welcome-guide">
+              <div class="welcome-header">
+                <el-icon class="welcome-icon"><MagicStick /></el-icon>
+                <h3>欢迎使用AI智能简历助手</h3>
+                <p>我将通过对话的方式帮您创建完美的简历</p>
+              </div>
+
+              <div class="quick-start-templates">
+                <div class="templates-title">快速开始模板：</div>
+                <div class="template-buttons">
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="useTemplate('software-engineer')"
+                  >
+                    软件工程师
+                  </el-button>
+                  <el-button
+                    size="small"
+                    type="success"
+                    @click="useTemplate('product-manager')"
+                  >
+                    产品经理
+                  </el-button>
+                  <el-button
+                    size="small"
+                    type="warning"
+                    @click="useTemplate('designer')"
+                  >
+                    设计师
+                  </el-button>
+                  <el-button
+                    size="small"
+                    type="info"
+                    @click="useTemplate('marketing')"
+                  >
+                    市场营销
+                  </el-button>
+                </div>
+              </div>
+
+              <div class="usage-tips">
+                <div class="tips-title">💡 使用技巧：</div>
+                <ul class="tips-list">
+                  <li>详细描述您的工作经历和技能</li>
+                  <li>提供目标职位信息，我会为您定制内容</li>
+                  <li>可以上传职位描述(JD)进行匹配分析</li>
+                  <li>随时询问简历优化建议</li>
+                </ul>
+              </div>
+            </div>
+
             <div
               v-for="(message, index) in messages"
               :key="index"
@@ -276,7 +329,8 @@ import {
   TrendCharts,
   Promotion,
   Refresh,
-  ArrowRight
+  ArrowRight,
+  MagicStick
 } from '@element-plus/icons-vue'
 import {
   generateConversationalResponse,
@@ -420,6 +474,34 @@ const updatePreviewData = (resumeContent) => {
 
   if (resumeContent.section && resumeContent.content) {
     previewData.value[resumeContent.section] = resumeContent.content
+  }
+}
+
+const useTemplate = (templateType) => {
+  const templates = {
+    'software-engineer': {
+      message: '我想创建一份软件工程师的简历，请帮我开始。',
+      context: '软件工程师职位'
+    },
+    'product-manager': {
+      message: '我想创建一份产品经理的简历，请帮我开始。',
+      context: '产品经理职位'
+    },
+    'designer': {
+      message: '我想创建一份设计师的简历，请帮我开始。',
+      context: '设计师职位'
+    },
+    'marketing': {
+      message: '我想创建一份市场营销的简历，请帮我开始。',
+      context: '市场营销职位'
+    }
+  }
+
+  const template = templates[templateType]
+  if (template) {
+    userInput.value = template.message
+    sendMessage()
+    ElMessage.success(`已选择${template.context}模板`)
   }
 }
 
@@ -977,6 +1059,91 @@ onMounted(() => {
   color: #409eff;
   margin-top: 2px;
   flex-shrink: 0;
+}
+
+/* 欢迎引导样式 */
+.welcome-guide {
+  padding: 20px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border-radius: 12px;
+  border: 1px solid #e1e6ff;
+}
+
+.welcome-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.welcome-icon {
+  font-size: 48px;
+  color: #667eea;
+  margin-bottom: 12px;
+}
+
+.welcome-header h3 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.welcome-header p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.quick-start-templates {
+  margin-bottom: 20px;
+}
+
+.templates-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.template-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.template-buttons .el-button {
+  height: 36px;
+  font-size: 12px;
+}
+
+.usage-tips {
+  background: #f0f9ff;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+}
+
+.tips-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e40af;
+  margin-bottom: 8px;
+}
+
+.tips-list {
+  margin: 0;
+  padding-left: 16px;
+  color: #374151;
+}
+
+.tips-list li {
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.tips-list li:last-child {
+  margin-bottom: 0;
 }
 
 /* 动画 */

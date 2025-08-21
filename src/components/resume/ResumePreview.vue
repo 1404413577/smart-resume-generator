@@ -1,5 +1,5 @@
 <template>
-  <div class="resume-preview" :style="previewStyle">
+  <div class="resume-preview" :style="previewStyle" :class="layoutClasses">
     <!-- 个人信息部分 -->
     <div class="resume-header">
       <div class="personal-info">
@@ -33,6 +33,9 @@
         </div>
       </div>
     </div>
+
+    <!-- 主要内容区域 -->
+    <div class="resume-content" :class="contentLayoutClass">
 
     <!-- 个人简介 -->
     <div v-if="resumeData.summary" class="resume-section">
@@ -155,6 +158,7 @@
         </div>
       </div>
     </div>
+    </div> <!-- 结束 resume-content -->
   </div>
 </template>
 
@@ -171,11 +175,43 @@ const props = defineProps({
 
 const resumeStore = useResumeStore()
 const resumeData = computed(() => resumeStore.resumeData)
+const globalSettings = computed(() => resumeStore.globalSettings)
 
-const previewStyle = computed(() => ({
-  transform: `scale(${props.scale})`,
-  transformOrigin: 'top left'
-}))
+const previewStyle = computed(() => {
+  const layout = globalSettings.value?.layout || {}
+  const theme = globalSettings.value?.theme || {}
+
+  return {
+    transform: `scale(${props.scale})`,
+    transformOrigin: 'top left',
+    '--primary-color': theme.primary || '#2c3e50',
+    '--secondary-color': theme.secondary || '#3498db',
+    '--accent-color': theme.accent || '#e74c3c',
+    '--text-primary': theme.textPrimary || '#333333',
+    '--background-color': theme.background || '#ffffff',
+    '--border-color': theme.border || '#e0e0e0',
+    '--column-gap': layout.columnGap ? `${layout.columnGap}px` : '20px'
+  }
+})
+
+const layoutClasses = computed(() => {
+  const layout = globalSettings.value?.layout || {}
+  return {
+    'layout-horizontal': layout.orientation === 'horizontal',
+    'layout-vertical': layout.orientation !== 'horizontal',
+    [`columns-${layout.columns || 1}`]: layout.orientation === 'horizontal',
+    [`align-${layout.alignment || 'left'}`]: true,
+    [`title-align-${layout.titleAlignment || 'left'}`]: true
+  }
+})
+
+const contentLayoutClass = computed(() => {
+  const layout = globalSettings.value?.layout || {}
+  if (layout.orientation === 'horizontal') {
+    return `horizontal-layout columns-${layout.columns || 2}`
+  }
+  return 'vertical-layout'
+})
 
 // 格式化日期
 const formatDate = (dateString) => {
@@ -200,27 +236,83 @@ const getSkillWidth = (level) => {
 .resume-preview {
   width: 210mm;
   min-height: 297mm;
-  background: white;
+  background: var(--background-color, white);
   padding: 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  color: #333;
+  color: var(--text-primary, #333);
   overflow: hidden;
+}
+
+/* 布局相关样式 */
+.resume-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.horizontal-layout {
+  display: grid;
+  gap: var(--column-gap, 20px);
+  align-items: start;
+}
+
+.horizontal-layout.columns-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.horizontal-layout.columns-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.horizontal-layout.columns-4 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.vertical-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 对齐方式 */
+.align-left .section-content {
+  text-align: left;
+}
+
+.align-center .section-content {
+  text-align: center;
+}
+
+.align-right .section-content {
+  text-align: right;
+}
+
+.title-align-left .section-title {
+  text-align: left;
+}
+
+.title-align-center .section-title {
+  text-align: center;
+}
+
+.title-align-right .section-title {
+  text-align: right;
 }
 
 /* 个人信息部分 */
 .resume-header {
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 2px solid #409eff;
+  border-bottom: 2px solid var(--primary-color, #409eff);
 }
 
 .personal-info .name {
   font-size: 32px;
   font-weight: 700;
-  color: #409eff;
+  color: var(--primary-color, #409eff);
   margin: 0 0 8px 0;
   text-align: center;
 }
@@ -228,7 +320,7 @@ const getSkillWidth = (level) => {
 .personal-info .target-position {
   font-size: 18px;
   font-weight: 500;
-  color: #666;
+  color: var(--secondary-color, #666);
   margin: 0 0 15px 0;
   text-align: center;
   font-style: italic;
@@ -261,10 +353,10 @@ const getSkillWidth = (level) => {
 .section-title {
   font-size: 20px;
   font-weight: 600;
-  color: #409eff;
+  color: var(--primary-color, #409eff);
   margin: 0 0 15px 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid var(--border-color, #e4e7ed);
   position: relative;
 }
 
@@ -275,7 +367,7 @@ const getSkillWidth = (level) => {
   left: 0;
   width: 50px;
   height: 2px;
-  background: #409eff;
+  background: var(--primary-color, #409eff);
 }
 
 .section-content {

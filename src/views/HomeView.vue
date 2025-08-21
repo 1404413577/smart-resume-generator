@@ -5,29 +5,89 @@
       <!-- 左侧导航栏 -->
       <aside class="left-sidebar">
         <!-- AI助手区域 -->
-        <div class="sidebar-section">
+        <div class="sidebar-section ai-assistant-section">
           <div class="section-header" @click="toggleSection('ai')">
-            <el-icon><MagicStick /></el-icon>
-            <span>AI智能助手</span>
+            <div class="header-left">
+              <el-icon><MagicStick /></el-icon>
+              <span>AI智能助手</span>
+              <div class="ai-status" :class="{ online: aiStatus.online }">
+                <div class="status-dot"></div>
+                <span class="status-text">{{ aiStatus.online ? '在线' : '离线' }}</span>
+              </div>
+            </div>
             <el-icon class="expand-icon" :class="{ expanded: expandedSections.ai }">
               <ArrowRight />
             </el-icon>
           </div>
           <div v-show="expandedSections.ai" class="section-content">
-            <div class="action-item ai-action" @click="handleAIGenerate">
-              <el-icon class="action-icon"><MagicStick /></el-icon>
-              <div class="action-info">
-                <div class="action-name">智能生成简历</div>
-                <div class="action-desc">对话式AI，个性化生成</div>
+            <!-- 主要AI功能 -->
+            <div class="ai-main-actions">
+              <div class="action-item ai-action primary" @click="handleAIGenerate">
+                <el-icon class="action-icon"><MagicStick /></el-icon>
+                <div class="action-info">
+                  <div class="action-name">智能对话助手</div>
+                  <div class="action-desc">与AI对话，生成个性化简历</div>
+                </div>
+                <div class="action-badge">AI</div>
               </div>
-              <div class="action-badge">AI</div>
             </div>
+
+            <!-- 快速操作 -->
+            <div class="ai-quick-actions">
+              <div class="quick-actions-title">快速操作</div>
+              <div class="quick-actions-grid">
+                <div class="quick-action-item" @click="handleQuickOptimize">
+                  <el-icon><Promotion /></el-icon>
+                  <span>智能优化</span>
+                </div>
+                <div class="quick-action-item" @click="handleJobMatch">
+                  <el-icon><Search /></el-icon>
+                  <span>职位匹配</span>
+                </div>
+                <div class="quick-action-item" @click="handleQualityCheck">
+                  <el-icon><TrendCharts /></el-icon>
+                  <span>质量检查</span>
+                </div>
+                <div class="quick-action-item" @click="handleAIGenerate">
+                  <el-icon><ChatRound /></el-icon>
+                  <span>AI对话</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 智能推荐 -->
+            <div class="ai-recommendations" v-if="aiRecommendations.length > 0">
+              <div class="recommendations-title">
+                <el-icon><Star /></el-icon>
+                智能推荐
+              </div>
+              <div class="recommendations-list">
+                <div
+                  v-for="rec in aiRecommendations"
+                  :key="rec.id"
+                  class="recommendation-item"
+                  @click="handleRecommendation(rec)"
+                >
+                  <div class="rec-icon">
+                    <el-icon><component :is="rec.icon" /></el-icon>
+                  </div>
+                  <div class="rec-content">
+                    <div class="rec-title">{{ rec.title }}</div>
+                    <div class="rec-desc">{{ rec.description }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- 开发模式下的AI测试按钮 -->
-            <div v-if="isDevelopment" class="action-item" @click="showAITest = true">
-              <el-icon class="action-icon"><Tools /></el-icon>
-              <div class="action-info">
-                <div class="action-name">AI功能测试</div>
-                <div class="action-desc">测试API连接和功能</div>
+            <div v-if="isDevelopment" class="ai-dev-section">
+              <div class="action-item ai-test-action" @click="showAITest = true">
+                <el-icon class="action-icon"><Tools /></el-icon>
+                <div class="action-info">
+                  <div class="action-name">AI功能测试</div>
+                  <div class="action-desc">测试API连接和功能</div>
+                </div>
+                <div class="action-badge dev">DEV</div>
               </div>
             </div>
           </div>
@@ -198,7 +258,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
   MagicStick,
@@ -214,7 +274,11 @@ import {
   ZoomOut,
   Sort,
   Tools,
-  Printer
+  Printer,
+  Promotion,
+  Search,
+  TrendCharts,
+  ChatRound
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
@@ -282,6 +346,37 @@ const expandedSections = ref({
   content: true, // 默认展开简历内容
   style: false
 })
+
+// AI助手状态
+const aiStatus = ref({
+  online: true,
+  lastCheck: new Date()
+})
+
+// AI智能推荐
+const aiRecommendations = ref([
+  {
+    id: 1,
+    title: '完善个人信息',
+    description: '添加联系方式和基本信息',
+    icon: 'User',
+    action: 'personalInfo'
+  },
+  {
+    id: 2,
+    title: '优化工作经历',
+    description: '使用AI优化工作经历描述',
+    icon: 'Briefcase',
+    action: 'optimize-work'
+  },
+  {
+    id: 3,
+    title: '技能匹配分析',
+    description: '分析技能与目标职位的匹配度',
+    icon: 'TrendCharts',
+    action: 'skill-match'
+  }
+])
 
 // 模块配置
 const modules = [
@@ -451,6 +546,132 @@ const handleApplySuggestedPaging = (analysis) => {
     ElMessage.success(`已应用${analysis.suggestedPages}页布局建议`)
   }
 }
+
+// AI助手相关方法
+const handleQuickOptimize = () => {
+  if (!resumeStore.resumeData.personalInfo.name) {
+    ElMessage.warning('请先填写基本信息')
+    return
+  }
+  showAIGenerator.value = true
+  ElMessage.info('正在启动AI智能优化...')
+}
+
+const handleJobMatch = () => {
+  showAIGenerator.value = true
+  ElMessage.info('正在启动职位匹配分析...')
+}
+
+const handleQualityCheck = () => {
+  if (!resumeStore.resumeData.personalInfo.name) {
+    ElMessage.warning('请先填写基本信息')
+    return
+  }
+  showAIGenerator.value = true
+  ElMessage.info('正在启动简历质量检查...')
+}
+
+const handleRecommendation = (recommendation) => {
+  switch (recommendation.action) {
+    case 'personalInfo':
+      activeModule.value = 'personalInfo'
+      ElMessage.info('请完善个人信息')
+      break
+    case 'optimize-work':
+      if (!resumeStore.resumeData.workExperience?.length) {
+        activeModule.value = 'workExperience'
+        ElMessage.info('请先添加工作经历')
+      } else {
+        showAIGenerator.value = true
+        ElMessage.info('正在启动工作经历优化...')
+      }
+      break
+    case 'skill-match':
+      showAIGenerator.value = true
+      ElMessage.info('正在启动技能匹配分析...')
+      break
+    default:
+      showAIGenerator.value = true
+  }
+}
+
+// 检查AI服务状态
+const checkAIStatus = async () => {
+  try {
+    // 这里可以添加实际的API检查逻辑
+    aiStatus.value.online = true
+    aiStatus.value.lastCheck = new Date()
+  } catch (error) {
+    aiStatus.value.online = false
+    console.warn('AI服务检查失败:', error)
+  }
+}
+
+// 更新AI推荐
+const updateAIRecommendations = () => {
+  const recommendations = []
+  const data = resumeStore.resumeData
+
+  // 检查个人信息完整度
+  if (!data.personalInfo.name || !data.personalInfo.email) {
+    recommendations.push({
+      id: 1,
+      title: '完善个人信息',
+      description: '添加姓名、邮箱等基本信息',
+      icon: 'User',
+      action: 'personalInfo'
+    })
+  }
+
+  // 检查工作经历
+  if (!data.workExperience?.length) {
+    recommendations.push({
+      id: 2,
+      title: '添加工作经历',
+      description: '添加您的工作经验',
+      icon: 'Briefcase',
+      action: 'workExperience'
+    })
+  } else if (data.workExperience.some(work => !work.description || work.description.length < 50)) {
+    recommendations.push({
+      id: 3,
+      title: '优化工作经历',
+      description: '使用AI优化工作经历描述',
+      icon: 'Promotion',
+      action: 'optimize-work'
+    })
+  }
+
+  // 检查技能
+  if (!data.skills?.length) {
+    recommendations.push({
+      id: 4,
+      title: '添加技能特长',
+      description: '展示您的专业技能',
+      icon: 'Star',
+      action: 'skills'
+    })
+  }
+
+  aiRecommendations.value = recommendations.slice(0, 3) // 最多显示3个推荐
+}
+
+// 生命周期钩子
+onMounted(() => {
+  // 初始化AI状态检查
+  checkAIStatus()
+
+  // 更新AI推荐
+  updateAIRecommendations()
+
+  // 定期检查AI状态
+  setInterval(checkAIStatus, 30000) // 每30秒检查一次
+})
+
+// 监听简历数据变化，更新推荐
+watch(() => resumeStore.resumeData, () => {
+  updateAIRecommendations()
+}, { deep: true })
 </script>
 
 <style scoped>
@@ -481,6 +702,234 @@ const handleApplySuggestedPaging = (analysis) => {
 
 .sidebar-section {
   border-bottom: 1px solid #f0f2f5;
+}
+
+/* AI助手区域特殊样式 */
+.ai-assistant-section {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border-bottom: 1px solid #e1e6ff;
+}
+
+.ai-assistant-section .section-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin: 0;
+  border-radius: 0;
+}
+
+.ai-assistant-section .section-header .header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.ai-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff4757;
+  animation: pulse 2s infinite;
+}
+
+.ai-status.online .status-dot {
+  background: #2ed573;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.status-text {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* AI主要操作 */
+.ai-main-actions {
+  padding: 12px;
+}
+
+.ai-action.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.ai-action.primary:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.ai-action.primary .action-icon {
+  color: white;
+}
+
+.ai-action.primary .action-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 快速操作 */
+.ai-quick-actions {
+  padding: 0 12px 12px;
+}
+
+.quick-actions-title {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.quick-action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.quick-action-item:hover {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  transform: translateY(-1px);
+}
+
+.quick-action-item .el-icon {
+  font-size: 16px;
+  color: #2196f3;
+  margin-bottom: 4px;
+}
+
+.quick-action-item span {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* 智能推荐 */
+.ai-recommendations {
+  padding: 0 12px 12px;
+}
+
+.recommendations-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.recommendations-title .el-icon {
+  color: #ffa726;
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recommendation-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: #fff3e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #ffe0b2;
+}
+
+.recommendation-item:hover {
+  background: #ffecb3;
+  border-color: #ffa726;
+  transform: translateX(2px);
+}
+
+.rec-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffa726;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.rec-icon .el-icon {
+  color: white;
+  font-size: 12px;
+}
+
+.rec-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.rec-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.rec-desc {
+  font-size: 10px;
+  color: #666;
+  line-height: 1.3;
+}
+
+/* 开发模式区域 */
+.ai-dev-section {
+  padding: 8px 12px;
+  border-top: 1px solid #f0f2f5;
+  background: #f8f9fa;
+}
+
+.ai-test-action {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+}
+
+.ai-test-action:hover {
+  background: #ffeaa7;
+}
+
+.ai-test-action .action-badge.dev {
+  background: #fd79a8;
+  color: white;
+  font-size: 10px;
 }
 
 /* 操作项样式 - 统一的按钮样式 */

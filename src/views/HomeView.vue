@@ -135,6 +135,7 @@
                 :is="currentTemplateComponent"
                 :resume-data="resumeStore.resumeData"
                 :template-id="resumeStore.selectedTemplate"
+                :page-settings="resumeStore.globalSettings?.pageSettings"
               />
               <ResumePreview v-else :scale="previewScale" />
             </div>

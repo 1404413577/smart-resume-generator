@@ -6,6 +6,7 @@ import ProfessionalTemplate from './components/ProfessionalTemplate.vue'
 import AcademicTemplate from './components/AcademicTemplate.vue'
 import TechTemplate from './components/TechTemplate.vue'
 import MinimalistTemplate from './components/MinimalistTemplate.vue'
+import MultiPageTemplate from './components/MultiPageTemplate.vue'
 
 // 模板注册表
 export const templateRegistry = {
@@ -71,6 +72,23 @@ export const templateRegistry = {
     preview: '/images/templates/minimalist-preview.png',
     features: ['极简设计', '内容导向', '清爽布局'],
     suitableFor: ['所有行业', '注重内容', '简约风格']
+  },
+
+  multipage: {
+    name: 'MultiPage Engineering',
+    component: MultiPageTemplate,
+    description: '工科专业多页简历，适合技术内容丰富的求职者',
+    category: 'engineering',
+    preview: '/images/templates/multipage-preview.png',
+    features: ['多页布局', '智能分页', '技术导向', '内容完整'],
+    suitableFor: ['工程师', '研究员', '技术专家', '博士生'],
+    isMultiPage: true,
+    defaultPageSettings: {
+      pageCount: 2,
+      pagingMode: 'auto',
+      showPageNumbers: true,
+      pageBreaks: []
+    }
   }
 }
 

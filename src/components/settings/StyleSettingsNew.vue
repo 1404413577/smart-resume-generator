@@ -156,11 +156,66 @@
       </div>
     </div>
 
+    <!-- 页面设置 -->
+    <div class="setting-group">
+      <h4 class="group-title">
+        <el-icon><Document /></el-icon>
+        页面设置
+      </h4>
+
+      <div class="page-controls">
+        <div class="control-item">
+          <label>页面模式</label>
+          <el-radio-group v-model="currentPageSettings.pageCount" @change="handlePageSettingsChange">
+            <el-radio :label="1">单页</el-radio>
+            <el-radio :label="2">双页</el-radio>
+            <el-radio :label="3">三页</el-radio>
+          </el-radio-group>
+        </div>
+
+        <div v-if="currentPageSettings.pageCount > 1" class="control-item">
+          <label>分页模式</label>
+          <el-radio-group v-model="currentPageSettings.pagingMode" @change="handlePageSettingsChange">
+            <el-radio label="auto">自动分页</el-radio>
+            <el-radio label="manual">手动分页</el-radio>
+          </el-radio-group>
+        </div>
+
+        <div v-if="currentPageSettings.pageCount > 1" class="control-item">
+          <el-checkbox
+            v-model="currentPageSettings.showPageNumbers"
+            @change="handlePageSettingsChange"
+          >
+            显示页码
+          </el-checkbox>
+        </div>
+
+        <!-- 内容溢出分析 -->
+        <div v-if="contentAnalysis" class="content-analysis">
+          <div class="analysis-title">内容分析</div>
+          <div class="analysis-result" :class="{ warning: contentAnalysis.isOverflowing }">
+            <el-icon v-if="contentAnalysis.isOverflowing"><Warning /></el-icon>
+            <el-icon v-else><CircleCheck /></el-icon>
+            <span>{{ contentAnalysis.recommendation }}</span>
+          </div>
+          <div v-if="contentAnalysis.isOverflowing" class="analysis-suggestion">
+            <el-button
+              size="small"
+              type="primary"
+              @click="applySuggestedPages"
+            >
+              应用建议 ({{ contentAnalysis.suggestedPages }}页)
+            </el-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 重置按钮 -->
     <div class="setting-group">
-      <el-button 
-        type="danger" 
-        :icon="RefreshLeft" 
+      <el-button
+        type="danger"
+        :icon="RefreshLeft"
         @click="handleResetSettings"
         plain
       >
@@ -178,8 +233,11 @@ import {
   Edit,
   Document,
   Grid,
-  RefreshLeft
+  RefreshLeft,
+  Warning,
+  CircleCheck
 } from '@element-plus/icons-vue'
+import { createMultiPageManager } from '@/utils/multipage/pageManager'
 
 const resumeStore = useResumeStore()
 
@@ -209,6 +267,14 @@ const currentSpacing = reactive({
   lineHeight: 1.5,
   sectionSpacing: 16,
   ...globalSettings.value?.spacing
+})
+
+const currentPageSettings = reactive({
+  pageCount: 1,
+  pagingMode: 'auto',
+  showPageNumbers: true,
+  pageBreaks: [],
+  ...globalSettings.value?.pageSettings
 })
 
 // 可用的主题预设
@@ -241,6 +307,17 @@ const getPresetName = (key) => {
   }
   return names[key] || key
 }
+
+// 内容分析
+const contentAnalysis = computed(() => {
+  try {
+    const pageManager = createMultiPageManager(resumeStore.resumeData, currentPageSettings)
+    return pageManager.analyzeContentOverflow()
+  } catch (error) {
+    console.warn('内容分析失败:', error)
+    return null
+  }
+})
 
 // 事件处理函数
 const handleApplyThemePreset = (presetKey) => {
@@ -278,12 +355,25 @@ const handlePageMarginChange = () => {
   updateGlobalSettings()
 }
 
+const handlePageSettingsChange = () => {
+  updateGlobalSettings()
+}
+
+const applySuggestedPages = () => {
+  if (contentAnalysis.value) {
+    currentPageSettings.pageCount = contentAnalysis.value.suggestedPages
+    updateGlobalSettings()
+    ElMessage.success(`已应用${contentAnalysis.value.suggestedPages}页布局`)
+  }
+}
+
 const handleResetSettings = () => {
   resumeStore.resetGlobalSettings()
   // 重新加载当前设置
   Object.assign(currentTheme, globalSettings.value?.theme || {})
   Object.assign(currentTypography, globalSettings.value?.typography || {})
   Object.assign(currentSpacing, globalSettings.value?.spacing || {})
+  Object.assign(currentPageSettings, globalSettings.value?.pageSettings || {})
   ElMessage.success('已重置为默认设置')
 }
 
@@ -292,7 +382,8 @@ const updateGlobalSettings = () => {
   resumeStore.updateGlobalSettings({
     theme: { ...currentTheme },
     typography: { ...currentTypography },
-    spacing: { ...currentSpacing }
+    spacing: { ...currentSpacing },
+    pageSettings: { ...currentPageSettings }
   })
 }
 
@@ -307,6 +398,9 @@ watch(globalSettings, (newSettings) => {
   if (newSettings?.spacing) {
     Object.assign(currentSpacing, newSettings.spacing)
   }
+  if (newSettings?.pageSettings) {
+    Object.assign(currentPageSettings, newSettings.pageSettings)
+  }
 }, { deep: true })
 
 // 组件挂载时初始化
@@ -320,6 +414,9 @@ onMounted(() => {
   }
   if (globalSettings.value?.spacing) {
     Object.assign(currentSpacing, globalSettings.value.spacing)
+  }
+  if (globalSettings.value?.pageSettings) {
+    Object.assign(currentPageSettings, globalSettings.value.pageSettings)
   }
 })
 </script>
@@ -445,6 +542,44 @@ onMounted(() => {
 
 .control-item .el-select {
   width: 100%;
+}
+
+/* 页面设置样式 */
+.page-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.content-analysis {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.analysis-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.analysis-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #059669;
+  margin-bottom: 12px;
+}
+
+.analysis-result.warning {
+  color: #d97706;
+}
+
+.analysis-suggestion {
+  text-align: center;
 }
 
 /* 响应式设计 */

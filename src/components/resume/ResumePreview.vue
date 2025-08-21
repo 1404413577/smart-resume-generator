@@ -160,7 +160,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useResumeStore } from '../../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 const props = defineProps({
   scale: {

@@ -35,7 +35,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { useResumeStore } from '../../../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 const emit = defineEmits(['data-updated'])
 const resumeStore = useResumeStore()

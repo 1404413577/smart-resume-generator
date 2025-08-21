@@ -182,7 +182,7 @@
 
 <script setup>
 import { computed, nextTick } from 'vue'
-import { useResumeStore } from '../stores/resume'
+import { useResumeStore } from '@stores/resume'
 import {
   Edit,
   Document,

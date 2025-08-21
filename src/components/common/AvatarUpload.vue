@@ -48,7 +48,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete } from '@element-plus/icons-vue'
-import { useResumeStore } from '../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 const resumeStore = useResumeStore()
 const fileInput = ref(null)

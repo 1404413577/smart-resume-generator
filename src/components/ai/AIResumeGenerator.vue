@@ -197,8 +197,8 @@ import {
   Check, 
   Refresh 
 } from '@element-plus/icons-vue'
-import { generateCompleteResume, getSupportedCareers } from '../utils/aiService'
-import { useResumeStore } from '../stores/resume'
+import { generateCompleteResume, getSupportedCareers } from '@utils/ai/aiService'
+import { useResumeStore } from '@stores/resume'
 
 const props = defineProps({
   visible: {

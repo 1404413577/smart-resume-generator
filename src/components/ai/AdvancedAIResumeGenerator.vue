@@ -237,8 +237,8 @@ import {
   analyzeResumeQuality,
   analyzeJobMatch,
   optimizeContent
-} from '../utils/aiService'
-import { useResumeStore } from '../stores/resume'
+} from '@utils/ai/aiService'
+import { useResumeStore } from '@stores/resume'
 
 const props = defineProps({
   visible: {

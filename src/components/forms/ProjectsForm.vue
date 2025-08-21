@@ -184,7 +184,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useResumeStore } from '../../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 const resumeStore = useResumeStore()
 

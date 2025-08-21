@@ -61,7 +61,7 @@ import { computed } from 'vue'
 import {
   User, Document, Briefcase, School, Star, Folder, MagicStick, Plus
 } from '@element-plus/icons-vue'
-import { useResumeStore } from '../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 // 导入表单组件
 import PersonalInfoForm from './forms/PersonalInfoForm.vue'

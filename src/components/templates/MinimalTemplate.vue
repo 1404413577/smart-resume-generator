@@ -137,7 +137,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useResumeStore } from '../../stores/resume'
+import { useResumeStore } from '@stores/resume'
 import PagedTemplateBase from './PagedTemplateBase.vue'
 
 const props = defineProps({

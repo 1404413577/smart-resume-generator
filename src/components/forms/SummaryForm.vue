@@ -53,7 +53,7 @@
 <script setup>
 import { computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useResumeStore } from '../../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 const resumeStore = useResumeStore()
 

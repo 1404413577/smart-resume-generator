@@ -167,8 +167,8 @@ import {
   Clock,
   User
 } from '@element-plus/icons-vue'
-import { useResumeStore } from '../stores/resume'
-import { generateOptimizedPDF } from '../utils/pdfGenerator'
+import { useResumeStore } from '@stores/resume'
+import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
 
 const router = useRouter()
 const resumeStore = useResumeStore()

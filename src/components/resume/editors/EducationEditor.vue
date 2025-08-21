@@ -186,7 +186,7 @@
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Delete, MagicStick, EditPen } from '@element-plus/icons-vue'
-import { useResumeStore } from '../../../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 const emit = defineEmits(['data-updated'])
 const resumeStore = useResumeStore()

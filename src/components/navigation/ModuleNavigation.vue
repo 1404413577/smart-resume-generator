@@ -32,7 +32,7 @@ import {
   Star,
   FolderOpened
 } from '@element-plus/icons-vue'
-import { useResumeStore } from '../../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 const props = defineProps({
   activeModule: {

@@ -54,7 +54,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useResumeStore } from '../stores/resume'
+import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
 
 // 组件导入

@@ -240,8 +240,8 @@
 import { computed, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, ArrowUp, ArrowDown, Delete } from '@element-plus/icons-vue'
-import { useResumeStore } from '../../stores/resume'
-import AvatarUpload from '../AvatarUpload.vue'
+import { useResumeStore } from '@stores/resume'
+import AvatarUpload from '@components/common/AvatarUpload.vue'
 
 const resumeStore = useResumeStore()
 

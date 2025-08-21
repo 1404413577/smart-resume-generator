@@ -42,7 +42,7 @@ import {
   FullScreen,
   Download
 } from '@element-plus/icons-vue'
-import { useResumeStore } from '../../stores/resume'
+import { useResumeStore } from '@stores/resume'
 import ResumePreview from './ResumePreview.vue'
 
 const props = defineProps({

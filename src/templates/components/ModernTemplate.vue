@@ -1,42 +1,33 @@
 <template>
-  <OrderedTemplateBase
-    :resume-data="resumeData"
-    :page-content="pageContent"
-    :page-number="pageNumber"
-    :is-single-page="isSinglePage"
-    template-class="modern-template"
-    :style="templateStyles"
-  >
-    <!-- 个人信息插槽 -->
-    <template #personalInfo="{ data }">
-      <div class="resume-container">
-        <!-- 左侧栏 -->
-        <div class="sidebar">
-          <!-- 个人头像 -->
-          <div class="avatar-section" v-if="data?.photo">
-            <img :src="data.photo" alt="头像" class="avatar" />
-          </div>
+  <div class="modern-template" :style="templateStyles">
+    <div class="resume-container">
+      <!-- 左侧栏 -->
+      <div class="sidebar">
+        <!-- 个人头像 -->
+        <div class="avatar-section" v-if="resumeData.personalInfo?.photo">
+          <img :src="resumeData.personalInfo.photo" alt="头像" class="avatar" />
+        </div>
 
-          <!-- 联系信息 -->
-          <div class="contact-section">
-            <h3 class="section-title">联系方式</h3>
-            <div class="contact-item" v-if="data?.email">
-              <i class="icon">📧</i>
-              <span>{{ data.email }}</span>
-            </div>
-            <div class="contact-item" v-if="data?.phone">
-              <i class="icon">📱</i>
-              <span>{{ data.phone }}</span>
-            </div>
-            <div class="contact-item" v-if="data?.address">
-              <i class="icon">📍</i>
-              <span>{{ data.address }}</span>
-            </div>
-            <div class="contact-item" v-if="data?.website">
-              <i class="icon">🌐</i>
-              <span>{{ data.website }}</span>
-            </div>
+        <!-- 联系信息 -->
+        <div class="contact-section">
+          <h3 class="section-title">联系方式</h3>
+          <div class="contact-item" v-if="resumeData.personalInfo?.email">
+            <i class="icon">📧</i>
+            <span>{{ resumeData.personalInfo.email }}</span>
           </div>
+          <div class="contact-item" v-if="resumeData.personalInfo?.phone">
+            <i class="icon">📱</i>
+            <span>{{ resumeData.personalInfo.phone }}</span>
+          </div>
+          <div class="contact-item" v-if="resumeData.personalInfo?.address">
+            <i class="icon">📍</i>
+            <span>{{ resumeData.personalInfo.address }}</span>
+          </div>
+          <div class="contact-item" v-if="resumeData.personalInfo?.website">
+            <i class="icon">🌐</i>
+            <span>{{ resumeData.personalInfo.website }}</span>
+          </div>
+        </div>
 
         <!-- 技能特长 -->
         <div class="skills-section" v-if="resumeData.skills?.length">
@@ -76,93 +67,97 @@
           <h2 class="title">{{ resumeData.personalInfo?.targetPosition || resumeData.personalInfo?.title || '职位' }}</h2>
         </div>
 
-        <!-- 个人简介 -->
-        <div class="summary-section" v-if="resumeData.summary">
-          <h3 class="section-title">个人简介</h3>
-          <p class="summary-text">{{ resumeData.summary }}</p>
-        </div>
-
-        <!-- 工作经历 -->
-        <div class="experience-section" v-if="resumeData.workExperience?.length">
-          <h3 class="section-title">工作经历</h3>
-          <div 
-            v-for="work in resumeData.workExperience" 
-            :key="work.id"
-            class="experience-item"
-          >
-            <div class="experience-header">
-              <div class="job-info">
-                <h4 class="job-title">{{ work.position }}</h4>
-                <h5 class="company-name">{{ work.company }}</h5>
-              </div>
-              <div class="date-location">
-                <span class="date">{{ work.startDate }} - {{ work.endDate }}</span>
-                <span class="location" v-if="work.location">{{ work.location }}</span>
-              </div>
-            </div>
-            <div v-if="work.description" class="work-description">
-              <p>{{ work.description }}</p>
-            </div>
-            <ul class="achievements" v-if="work.achievements?.length">
-              <li v-for="achievement in work.achievements" :key="achievement">{{ achievement }}</li>
-            </ul>
+        <!-- 动态渲染排序后的章节 -->
+        <template v-for="sectionKey in orderedMainSections" :key="sectionKey">
+          <!-- 个人简介 -->
+          <div v-if="sectionKey === 'summary' && resumeData.summary" class="summary-section">
+            <h3 class="section-title">个人简介</h3>
+            <p class="summary-text">{{ resumeData.summary }}</p>
           </div>
-        </div>
 
-        <!-- 教育背景 -->
-        <div class="education-section" v-if="resumeData.education?.length">
-          <h3 class="section-title">教育背景</h3>
-          <div 
-            v-for="edu in resumeData.education" 
-            :key="edu.id"
-            class="education-item"
-          >
-            <div class="education-header">
-              <div class="degree-info">
-                <h4 class="degree">{{ edu.degree }}</h4>
-                <h5 class="school">{{ edu.school }}</h5>
+          <!-- 工作经历 -->
+          <div v-else-if="sectionKey === 'workExperience' && resumeData.workExperience?.length" class="experience-section">
+            <h3 class="section-title">工作经历</h3>
+            <div
+              v-for="work in resumeData.workExperience"
+              :key="work.id"
+              class="experience-item"
+            >
+              <div class="experience-header">
+                <div class="job-info">
+                  <h4 class="job-title">{{ work.position }}</h4>
+                  <h5 class="company-name">{{ work.company }}</h5>
+                </div>
+                <div class="date-location">
+                  <span class="date">{{ work.startDate }} - {{ work.endDate }}</span>
+                  <span class="location" v-if="work.location">{{ work.location }}</span>
+                </div>
               </div>
-              <div class="edu-date">
-                <span class="date">{{ edu.endDate }}</span>
-                <span class="gpa" v-if="edu.gpa">GPA: {{ edu.gpa }}</span>
+              <div v-if="work.description" class="work-description">
+                <p>{{ work.description }}</p>
               </div>
-            </div>
-            <div v-if="edu.honors" class="education-honors">
-              <p>{{ edu.honors }}</p>
-            </div>
-            <div v-if="edu.description" class="education-description">
-              <p>{{ edu.description }}</p>
+              <ul class="achievements" v-if="work.achievements?.length">
+                <li v-for="achievement in work.achievements" :key="achievement">{{ achievement }}</li>
+              </ul>
             </div>
           </div>
-        </div>
 
-        <!-- 项目经历 -->
-        <div class="projects-section" v-if="resumeData.projects?.length">
-          <h3 class="section-title">项目经历</h3>
-          <div 
-            v-for="project in resumeData.projects" 
-            :key="project.id"
-            class="project-item"
-          >
-            <div class="project-header">
-              <h4 class="project-name">{{ project.name }}</h4>
-              <span class="project-date">{{ project.startDate }} - {{ project.endDate }}</span>
-            </div>
-            <p class="project-description">{{ project.description }}</p>
-            <div class="project-tech" v-if="project.technologies?.length">
-              <span class="tech-label">技术栈：</span>
-              <span class="tech-list">{{ project.technologies.join(', ') }}</span>
+          <!-- 教育背景 -->
+          <div v-else-if="sectionKey === 'education' && resumeData.education?.length" class="education-section">
+            <h3 class="section-title">教育背景</h3>
+            <div
+              v-for="edu in resumeData.education"
+              :key="edu.id"
+              class="education-item"
+            >
+              <div class="education-header">
+                <div class="degree-info">
+                  <h4 class="degree">{{ edu.degree }}</h4>
+                  <h5 class="school">{{ edu.school }}</h5>
+                </div>
+                <div class="edu-date">
+                  <span class="date">{{ edu.endDate }}</span>
+                  <span class="gpa" v-if="edu.gpa">GPA: {{ edu.gpa }}</span>
+                </div>
+              </div>
+              <div v-if="edu.honors" class="education-honors">
+                <p>{{ edu.honors }}</p>
+              </div>
+              <div v-if="edu.description" class="education-description">
+                <p>{{ edu.description }}</p>
+              </div>
             </div>
           </div>
-        </div>
+
+          <!-- 项目经历 -->
+          <div v-else-if="sectionKey === 'projects' && resumeData.projects?.length" class="projects-section">
+            <h3 class="section-title">项目经历</h3>
+            <div
+              v-for="project in resumeData.projects"
+              :key="project.id"
+              class="project-item"
+            >
+              <div class="project-header">
+                <h4 class="project-name">{{ project.name }}</h4>
+                <span class="project-date">{{ project.startDate }} - {{ project.endDate }}</span>
+              </div>
+              <p class="project-description">{{ project.description }}</p>
+              <div class="project-tech" v-if="project.technologies?.length">
+                <span class="tech-label">技术栈：</span>
+                <span class="tech-list">{{ project.technologies.join(', ') }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useTemplateComponentStyles } from '../../composables/useTemplateStyles'
-import OrderedTemplateBase from './OrderedTemplateBase.vue'
+import { useResumeStore } from '@stores/resume'
 
 const props = defineProps({
   resumeData: {
@@ -185,6 +180,13 @@ const props = defineProps({
     type: Boolean,
     default: true
   }
+})
+
+const resumeStore = useResumeStore()
+
+// 获取排序后的主要章节（排除个人信息，因为它在标题区域）
+const orderedMainSections = computed(() => {
+  return (resumeStore.sectionOrder || []).filter(section => section !== 'personalInfo')
 })
 
 // 使用新的样式系统

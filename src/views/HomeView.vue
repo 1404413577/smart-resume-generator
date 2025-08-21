@@ -22,6 +22,14 @@
               </div>
               <div class="action-badge">AI</div>
             </div>
+            <!-- 开发模式下的AI测试按钮 -->
+            <div v-if="isDevelopment" class="action-item" @click="showAITest = true">
+              <el-icon class="action-icon"><Tools /></el-icon>
+              <div class="action-info">
+                <div class="action-name">AI功能测试</div>
+                <div class="action-desc">测试API连接和功能</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -174,6 +182,17 @@
         @order-changed="handleSectionOrderChanged"
       />
 
+      <!-- AI测试面板对话框 (仅开发模式) -->
+      <el-dialog
+        v-model="showAITest"
+        title="AI功能测试面板"
+        width="90%"
+        :before-close="() => showAITest = false"
+        v-if="isDevelopment"
+      >
+        <AITestPanel />
+      </el-dialog>
+
     </div>
   </div>
 </template>
@@ -210,6 +229,7 @@ import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
 import StyleSettings from '@components/settings/StyleSettingsNew.vue'
 import MultiPagePreviewControls from '@components/resume/MultiPagePreviewControls.vue'
+import AITestPanel from '@components/ai/AITestPanel.vue'
 import { getTemplate } from '@templates'
 
 // 编辑器组件导入
@@ -248,6 +268,12 @@ const showTemplateManager = ref(false)
 const showSectionSort = ref(false)
 const currentPreviewPage = ref(1)
 const showAllPages = ref(false)
+const showAITest = ref(false)
+
+// 开发模式检测
+const isDevelopment = computed(() => {
+  return import.meta.env.MODE === 'development' || import.meta.env.DEV
+})
 
 // 侧边栏展开状态
 const expandedSections = ref({

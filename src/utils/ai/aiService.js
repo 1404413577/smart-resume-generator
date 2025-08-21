@@ -1,19 +1,35 @@
 /**
- * AI服务模块 - 使用Gemini API生成简历内容，失败时使用备用服务
+ * AI服务模块 - 使用Gemini API生成简历内容
  */
 
-import * as backupService from './aiServiceBackup.js'
+import { GoogleGenAI } from '@google/genai'
 
-// Gemini API配置（改为读取环境变量，缺失时自动降级到备用服务）
-const GEMINI_API_KEY = import.meta?.env?.VITE_GEMINI_API_KEY || ''
-const GEMINI_API_URL = import.meta?.env?.VITE_GEMINI_API_URL || 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent'
-
-// 是否使用备用服务
-let useBackupService = false
+// Gemini API配置
+const GEMINI_API_KEY = import.meta?.env?.VITE_GEMINI_API_KEY || 'AIzaSyAqgE78y8_m4nQ09qHaf7xFSC0T_5ppyMU'
+const GEMINI_MODEL = 'gemini-2.0-flash'
 
 // 请求频率限制
 let lastRequestTime = 0
 const REQUEST_INTERVAL = 1000 // 1秒间隔
+
+// 初始化 Gemini AI 客户端
+let genAI = null
+
+/**
+ * 获取或初始化 Gemini AI 客户端
+ * @returns {GoogleGenAI} Gemini AI 客户端实例
+ */
+function getGenAIClient() {
+  if (!GEMINI_API_KEY) {
+    throw new Error('AI服务未配置，请联系管理员配置API密钥')
+  }
+
+  if (!genAI) {
+    genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY })
+  }
+
+  return genAI
+}
 
 /**
  * 调用Gemini API生成内容
@@ -30,69 +46,33 @@ async function callGeminiAPI(prompt) {
   lastRequestTime = Date.now()
 
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
-        }
-      })
+    const ai = getGenAIClient()
+
+    const response = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: prompt,
+      generationConfig: {
+        temperature: 0.7,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 1024,
+      }
     })
 
-    if (!response.ok) {
-      console.warn(`Gemini API请求失败: ${response.status} ${response.statusText}`)
-      // 如果API失败，使用模拟数据
-      return generateMockContent(prompt)
+    if (!response || !response.text) {
+      throw new Error('AI服务返回数据格式异常，请稍后重试')
     }
 
-    const data = await response.json()
-
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      console.warn('API返回数据格式错误，使用模拟数据')
-      return generateMockContent(prompt)
-    }
-
-    return data.candidates[0].content.parts[0].text.trim()
+    return response.text.trim()
   } catch (error) {
-    console.warn('Gemini API调用失败，使用模拟数据:', error)
-    return generateMockContent(prompt)
+    if (error.message.includes('AI服务')) {
+      throw error
+    }
+    throw new Error(`AI服务连接失败: ${error.message}`)
   }
 }
 
-/**
- * 生成模拟内容作为备选方案
- * @param {string} prompt - 提示词
- * @returns {string} 模拟生成的内容
- */
-function generateMockContent(prompt) {
-  // 模拟API延迟
-  return new Promise(resolve => {
-    setTimeout(() => {
-      if (prompt.includes('个人简介')) {
-        resolve('具有5年以上前端开发经验的专业工程师，精通Vue.js、React等现代前端框架。具备良好的团队协作能力和项目管理经验，致力于创建高质量的用户界面和优秀的用户体验。对新技术保持敏锐的学习能力，能够快速适应项目需求并提供创新解决方案。')
-      } else if (prompt.includes('工作经历') || prompt.includes('职责描述')) {
-        resolve('["负责前端架构设计和技术选型，提升开发效率30%", "主导团队代码规范制定，降低bug率25%", "优化页面性能，首屏加载时间减少40%", "参与产品需求分析，确保技术方案可行性", "指导初级开发人员，提升团队整体技术水平"]')
-      } else if (prompt.includes('技能') || prompt.includes('推荐')) {
-        resolve('{"technical": ["TypeScript", "Node.js", "Webpack", "Docker"], "soft": ["团队协作", "项目管理", "问题解决"], "language": ["英语", "日语"]}')
-      } else if (prompt.includes('项目')) {
-        resolve('{"description": "基于Vue.js和Element Plus开发的企业级管理系统，支持多角色权限管理、数据可视化和实时通信功能。采用微前端架构，提升了系统的可维护性和扩展性。", "highlights": ["实现了完整的RBAC权限系统", "集成了ECharts数据可视化组件", "使用WebSocket实现实时消息推送", "采用Docker容器化部署，提升部署效率"]}')
-      } else {
-        resolve('这是一个AI生成的示例内容，用于演示功能。实际使用时会根据您的具体信息生成个性化内容。')
-      }
-    }, 1000) // 模拟1秒延迟
-  })
-}
+
 
 /**
  * 生成个人简介
@@ -101,12 +81,7 @@ function generateMockContent(prompt) {
  * @returns {Promise<string>} 生成的个人简介
  */
 export async function generatePersonalSummary(personalInfo, targetPosition = '') {
-  try {
-    if (useBackupService) {
-      return await backupService.generatePersonalSummary(personalInfo, targetPosition)
-    }
-
-    const prompt = `
+  const prompt = `
 请为以下个人信息生成一份专业的个人简介，要求简洁有力，突出核心优势：
 
 个人信息：
@@ -126,12 +101,7 @@ export async function generatePersonalSummary(personalInfo, targetPosition = '')
 请直接返回生成的个人简介内容，不要包含其他说明文字。
 `
 
-    return await callGeminiAPI(prompt)
-  } catch (error) {
-    console.warn('Gemini API失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.generatePersonalSummary(personalInfo, targetPosition)
-  }
+  return await callGeminiAPI(prompt)
 }
 
 /**
@@ -140,12 +110,7 @@ export async function generatePersonalSummary(personalInfo, targetPosition = '')
  * @returns {Promise<Array>} 优化后的职责描述数组
  */
 export async function optimizeWorkExperience(workExperience) {
-  try {
-    if (useBackupService) {
-      return await backupService.optimizeWorkExperience(workExperience)
-    }
-
-    const prompt = `
+  const prompt = `
 请为以下工作经历生成专业的职责描述，要求突出成果和贡献：
 
 工作信息：
@@ -166,26 +131,21 @@ export async function optimizeWorkExperience(workExperience) {
 只返回JSON数组，不要包含其他文字。
 `
 
-    const result = await callGeminiAPI(prompt)
+  const result = await callGeminiAPI(prompt)
 
-    try {
-      // 尝试解析JSON
-      const parsed = JSON.parse(result)
-      if (Array.isArray(parsed)) {
-        return parsed
-      }
-    } catch (parseError) {
-      console.warn('AI返回内容不是有效JSON，尝试文本解析')
+  try {
+    // 尝试解析JSON
+    const parsed = JSON.parse(result)
+    if (Array.isArray(parsed)) {
+      return parsed
     }
-
-    // 如果JSON解析失败，尝试文本解析
-    const lines = result.split('\n').filter(line => line.trim())
-    return lines.map(line => line.replace(/^[-•\d.]\s*/, '').trim()).filter(line => line)
-  } catch (error) {
-    console.warn('Gemini API失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.optimizeWorkExperience(workExperience)
+  } catch (parseError) {
+    console.warn('AI返回内容不是有效JSON，尝试文本解析:', parseError)
   }
+
+  // 如果JSON解析失败，尝试文本解析
+  const lines = result.split('\n').filter(line => line.trim())
+  return lines.map(line => line.replace(/^[-•\d.]\s*/, '').trim()).filter(line => line)
 }
 
 /**
@@ -196,14 +156,9 @@ export async function optimizeWorkExperience(workExperience) {
  * @returns {Promise<Object>} 推荐的技能分类
  */
 export async function recommendSkills(industry = '', position = '', currentSkills = []) {
-  try {
-    if (useBackupService) {
-      return await backupService.recommendSkills(industry, position, currentSkills)
-    }
+  const currentSkillsText = currentSkills.map(skill => skill.name).join('、')
 
-    const currentSkillsText = currentSkills.map(skill => skill.name).join('、')
-
-    const prompt = `
+  const prompt = `
 请为以下职位推荐相关的技能特长，分为技术技能、软技能和语言技能：
 
 职位信息：
@@ -228,27 +183,22 @@ export async function recommendSkills(industry = '', position = '', currentSkill
 只返回JSON对象，不要包含其他文字。
 `
 
-    const result = await callGeminiAPI(prompt)
+  const result = await callGeminiAPI(prompt)
 
-    try {
-      const parsed = JSON.parse(result)
-      return {
-        technical: parsed.technical || [],
-        soft: parsed.soft || [],
-        language: parsed.language || []
-      }
-    } catch (parseError) {
-      console.warn('技能推荐JSON解析失败:', parseError)
-      return {
-        technical: [],
-        soft: [],
-        language: []
-      }
+  try {
+    const parsed = JSON.parse(result)
+    return {
+      technical: parsed.technical || [],
+      soft: parsed.soft || [],
+      language: parsed.language || []
     }
-  } catch (error) {
-    console.warn('Gemini API失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.recommendSkills(industry, position, currentSkills)
+  } catch (parseError) {
+    console.warn('技能推荐JSON解析失败:', parseError)
+    return {
+      technical: [],
+      soft: [],
+      language: []
+    }
   }
 }
 
@@ -258,12 +208,7 @@ export async function recommendSkills(industry = '', position = '', currentSkill
  * @returns {Promise<Object>} 完善后的项目描述
  */
 export async function enhanceProjectDescription(project) {
-  try {
-    if (useBackupService) {
-      return await backupService.enhanceProjectDescription(project)
-    }
-
-    const prompt = `
+  const prompt = `
 请为以下项目经历生成专业的描述和亮点：
 
 项目信息：
@@ -289,25 +234,20 @@ export async function enhanceProjectDescription(project) {
 只返回JSON对象，不要包含其他文字。
 `
 
-    const result = await callGeminiAPI(prompt)
+  const result = await callGeminiAPI(prompt)
 
-    try {
-      const parsed = JSON.parse(result)
-      return {
-        description: parsed.description || project.description || '',
-        highlights: parsed.highlights || []
-      }
-    } catch (parseError) {
-      console.warn('项目描述JSON解析失败:', parseError)
-      return {
-        description: project.description || '',
-        highlights: []
-      }
+  try {
+    const parsed = JSON.parse(result)
+    return {
+      description: parsed.description || project.description || '',
+      highlights: parsed.highlights || []
     }
-  } catch (error) {
-    console.warn('Gemini API失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.enhanceProjectDescription(project)
+  } catch (parseError) {
+    console.warn('项目描述JSON解析失败:', parseError)
+    return {
+      description: project.description || '',
+      highlights: []
+    }
   }
 }
 
@@ -398,19 +338,14 @@ const CAREER_TEMPLATES = {
  * @returns {Promise<Object>} 生成的完整简历数据
  */
 export async function generateCompleteResume(options) {
-  try {
-    if (useBackupService) {
-      return await backupService.generateCompleteResume(options)
-    }
+  const { career, name, experience, education, companies = [] } = options
+  const template = CAREER_TEMPLATES[career]
 
-    const { career, name, experience, education, companies = [] } = options
-    const template = CAREER_TEMPLATES[career]
+  if (!template) {
+    throw new Error(`不支持的职业类型: ${career}`)
+  }
 
-    if (!template) {
-      throw new Error(`不支持的职业类型: ${career}`)
-    }
-
-    const prompt = `
+  const prompt = `
 请为以下信息生成一份完整的专业简历，要求内容真实可信、结构清晰、突出亮点：
 
 基本信息：
@@ -477,21 +412,15 @@ export async function generateCompleteResume(options) {
 请确保返回的是有效的JSON格式。
 `
 
-    const result = await callGeminiAPI(prompt)
+  const result = await callGeminiAPI(prompt)
 
-    try {
-      const resumeData = JSON.parse(result)
-
-      // 验证和补充数据
-      return validateAndEnhanceResumeData(resumeData, template)
-    } catch (parseError) {
-      console.warn('AI返回内容不是有效JSON，使用模板生成:', parseError)
-      return generateResumeFromTemplate(options, template)
-    }
-  } catch (error) {
-    console.warn('Gemini API失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.generateCompleteResume(options)
+  try {
+    const resumeData = JSON.parse(result)
+    // 验证和补充数据
+    return validateAndEnhanceResumeData(resumeData, template)
+  } catch (parseError) {
+    console.warn('AI返回内容不是有效JSON，使用模板生成:', parseError)
+    return generateResumeFromTemplate(options, template)
   }
 }
 
@@ -577,38 +506,25 @@ function generateResumeFromTemplate(options, template) {
  * @returns {Promise<boolean>} API是否可用
  */
 export async function checkAPIAvailability() {
-  if (useBackupService) {
-    return await backupService.checkAPIAvailability()
+  if (!GEMINI_API_KEY) {
+    return false
   }
 
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: '测试连接'
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 10,
-        }
-      })
+    const ai = getGenAIClient()
+
+    const response = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: '测试连接',
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 10,
+      }
     })
 
-    if (!response.ok) {
-      useBackupService = true
-      return false
-    }
-
-    return true
+    return response && response.text
   } catch (error) {
     console.error('API连接测试失败:', error)
-    useBackupService = true
     return false
   }
 }
@@ -619,14 +535,9 @@ export async function checkAPIAvailability() {
  * @returns {Promise<Object>} AI回复和建议
  */
 export async function generateConversationalResponse(conversationData) {
-  try {
-    if (useBackupService) {
-      return await backupService.generateConversationalResponse(conversationData)
-    }
+  const { messages, currentStep, userProfile } = conversationData
 
-    const { messages, currentStep, userProfile } = conversationData
-
-    const prompt = `
+  const prompt = `
 你是一位专业的简历顾问，正在通过对话帮助用户创建完美的简历。
 
 用户档案：
@@ -656,30 +567,20 @@ ${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
 }
 `
 
-    // 若未配置 API Key，直接走备用服务
-    if (!GEMINI_API_KEY) {
-      useBackupService = true
-      return await backupService.generateConversationalResponse(conversationData)
-    }
+  const result = await callGeminiAPI(prompt)
 
-    const result = await callGeminiAPI(prompt)
-
-    try {
-      return JSON.parse(result)
-    } catch (parseError) {
-      return {
-        response: result,
-        suggestions: [],
-        questions: [],
-        resumeContent: null,
-        qualityScore: 0,
-        improvements: []
-      }
+  try {
+    return JSON.parse(result)
+  } catch (parseError) {
+    console.warn('对话式生成JSON解析失败:', parseError)
+    return {
+      response: result,
+      suggestions: [],
+      questions: [],
+      resumeContent: null,
+      qualityScore: 0,
+      improvements: []
     }
-  } catch (error) {
-    console.warn('对话式生成失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.generateConversationalResponse(conversationData)
   }
 }
 
@@ -689,12 +590,7 @@ ${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
  * @returns {Promise<Object>} 质量分析结果
  */
 export async function analyzeResumeQuality(resumeData) {
-  try {
-    if (useBackupService) {
-      return await backupService.analyzeResumeQuality(resumeData)
-    }
-
-    const prompt = `
+  const prompt = `
 请分析以下简历的质量，并提供详细的评分和改进建议：
 
 简历数据：
@@ -725,13 +621,8 @@ ${JSON.stringify(resumeData, null, 2)}
 }
 `
 
-    const result = await callGeminiAPI(prompt)
-    return JSON.parse(result)
-  } catch (error) {
-    console.warn('质量分析失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.analyzeResumeQuality(resumeData)
-  }
+  const result = await callGeminiAPI(prompt)
+  return JSON.parse(result)
 }
 
 /**
@@ -740,14 +631,9 @@ ${JSON.stringify(resumeData, null, 2)}
  * @returns {Promise<Object>} 匹配度分析结果
  */
 export async function analyzeJobMatch(params) {
-  try {
-    if (useBackupService) {
-      return await backupService.analyzeJobMatch(params)
-    }
+  const { resumeData, jobDescription } = params
 
-    const { resumeData, jobDescription } = params
-
-    const prompt = `
+  const prompt = `
 请分析简历与职位描述的匹配度：
 
 简历数据：
@@ -783,13 +669,8 @@ ${jobDescription}
 }
 `
 
-    const result = await callGeminiAPI(prompt)
-    return JSON.parse(result)
-  } catch (error) {
-    console.warn('JD匹配分析失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.analyzeJobMatch(params)
-  }
+  const result = await callGeminiAPI(prompt)
+  return JSON.parse(result)
 }
 
 /**
@@ -798,14 +679,9 @@ ${jobDescription}
  * @returns {Promise<Object>} 优化结果
  */
 export async function optimizeContent(params) {
-  try {
-    if (useBackupService) {
-      return await backupService.optimizeContent(params)
-    }
+  const { content, section, context } = params
 
-    const { content, section, context } = params
-
-    const prompt = `
+  const prompt = `
 请优化以下简历内容：
 
 章节：${section}
@@ -823,13 +699,8 @@ export async function optimizeContent(params) {
 }
 `
 
-    const result = await callGeminiAPI(prompt)
-    return JSON.parse(result)
-  } catch (error) {
-    console.warn('内容优化失败，使用备用服务:', error)
-    useBackupService = true
-    return await backupService.optimizeContent(params)
-  }
+  const result = await callGeminiAPI(prompt)
+  return JSON.parse(result)
 }
 
 /**

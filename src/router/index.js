@@ -9,6 +9,7 @@ const TemplatesView = () => import('../views/TemplatesView.vue')
 const SettingsView = () => import('../views/SettingsView.vue')
 const AboutView = () => import('../views/AboutView.vue')
 const NotFoundView = () => import('../views/NotFoundView.vue')
+const TestRandomStyleView = () => import('../views/TestRandomStyleView.vue')
 
 const routes = [
   {
@@ -78,6 +79,16 @@ const routes = [
     meta: {
       title: '编辑简历',
       description: '编辑您的简历',
+      requiresResume: false
+    }
+  },
+  {
+    path: '/test-random-style',
+    name: 'TestRandomStyle',
+    component: TestRandomStyleView,
+    meta: {
+      title: '随机风格测试',
+      description: '测试随机简历风格生成功能',
       requiresResume: false
     }
   },

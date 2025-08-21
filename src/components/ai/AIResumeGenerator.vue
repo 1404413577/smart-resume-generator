@@ -13,6 +13,7 @@
         <el-steps :active="currentStep" align-center class="steps-indicator">
           <el-step title="选择职业" description="选择目标职位类型" />
           <el-step title="填写信息" description="完善基本信息" />
+          <el-step title="选择风格" description="随机生成简历风格" />
           <el-step title="生成简历" description="AI智能生成" />
         </el-steps>
 
@@ -102,8 +103,19 @@
           </el-form>
         </div>
 
-        <!-- 步骤3: 生成结果 -->
+        <!-- 步骤3: 风格选择 -->
         <div v-if="currentStep === 2" class="step-content">
+          <h3>选择简历风格</h3>
+          <p class="step-description">AI将为您生成多种风格选项，选择最适合的一种</p>
+          <RandomStyleSelector
+            :career="selectedCareer"
+            :show-career-selector="false"
+            @style-applied="handleStyleSelected"
+          />
+        </div>
+
+        <!-- 步骤4: 生成结果 -->
+        <div v-if="currentStep === 3" class="step-content">
           <div v-if="isGenerating" class="generating-status">
             <el-icon class="is-loading"><Loading /></el-icon>
             <h3>AI正在为您生成专业简历...</h3>
@@ -199,6 +211,7 @@ import {
 } from '@element-plus/icons-vue'
 import { generateCompleteResume, getSupportedCareers } from '@utils/ai/aiService'
 import { useResumeStore } from '@stores/resume'
+import RandomStyleSelector from './RandomStyleSelector.vue'
 
 const props = defineProps({
   visible: {
@@ -227,6 +240,8 @@ const formData = ref({
   requirements: ''
 })
 
+const selectedStyle = ref(null) // 选中的风格
+
 // 计算属性
 const canProceed = computed(() => {
   if (currentStep.value === 0) {
@@ -234,6 +249,9 @@ const canProceed = computed(() => {
   }
   if (currentStep.value === 1) {
     return formData.value.name && formData.value.experience && formData.value.education
+  }
+  if (currentStep.value === 2) {
+    return selectedStyle.value !== null
   }
   return true
 })
@@ -262,7 +280,7 @@ const selectCareer = (careerId) => {
 }
 
 const nextStep = async () => {
-  if (currentStep.value === 1) {
+  if (currentStep.value === 2) {
     // 开始生成简历
     await generateResume()
   }
@@ -305,9 +323,15 @@ const generateResume = async () => {
 }
 
 const regenerate = () => {
-  currentStep.value = 1
+  currentStep.value = 2
   generatedResume.value = null
   generationError.value = ''
+}
+
+// 处理风格选择
+const handleStyleSelected = (style) => {
+  selectedStyle.value = style
+  ElMessage.success(`已选择"${style.name}"风格！`)
 }
 
 const applyToResume = () => {

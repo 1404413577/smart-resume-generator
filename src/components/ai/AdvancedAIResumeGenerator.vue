@@ -124,19 +124,21 @@
           </div>
         </div>
 
-        <!-- 右侧：实时预览区域 -->
+        <!-- 右侧：预览和风格区域 -->
         <div class="preview-section">
-          <div class="preview-header">
-            <h3>实时预览</h3>
-            <div class="preview-tools">
-              <el-button size="small" @click="refreshPreview" :icon="Refresh">
-                刷新
-              </el-button>
-              <el-button size="small" @click="applyToEditor" type="primary">
-                应用到编辑器
-              </el-button>
-            </div>
-          </div>
+          <el-tabs v-model="activeTab" class="preview-tabs">
+            <el-tab-pane label="实时预览" name="preview">
+              <div class="preview-header">
+                <h3>实时预览</h3>
+                <div class="preview-tools">
+                  <el-button size="small" @click="refreshPreview" :icon="Refresh">
+                    刷新
+                  </el-button>
+                  <el-button size="small" @click="applyToEditor" type="primary">
+                    应用到编辑器
+                  </el-button>
+                </div>
+              </div>
 
           <div class="preview-content">
             <div class="resume-preview" v-if="previewData">
@@ -194,7 +196,18 @@
               <p>开始对话，AI将实时生成您的简历内容</p>
             </div>
           </div>
-        </div>
+        </el-tab-pane>
+
+        <el-tab-pane label="随机风格" name="style">
+          <RandomStyleSelector
+            :career="getCurrentCareer()"
+            :show-career-selector="false"
+            @style-applied="handleStyleApplied"
+            @style-previewed="handleStylePreviewed"
+          />
+        </el-tab-pane>
+      </el-tabs>
+    </div>
       </div>
 
       <!-- JD上传对话框 -->
@@ -239,6 +252,7 @@ import {
   optimizeContent
 } from '@utils/ai/aiService'
 import { useResumeStore } from '@stores/resume'
+import RandomStyleSelector from './RandomStyleSelector.vue'
 
 const props = defineProps({
   visible: {
@@ -266,6 +280,7 @@ const isThinking = ref(false)
 const qualityScore = ref(0)
 const previewData = ref(null)
 const chatMessages = ref(null)
+const activeTab = ref('preview') // 当前活跃的标签页
 
 // JD分析相关
 const showJobDescriptionDialog = ref(false)
@@ -475,6 +490,32 @@ const applyToEditor = () => {
 const handleClose = () => {
   emit('update:visible', false)
   emit('close')
+}
+
+// 随机风格处理方法
+const getCurrentCareer = () => {
+  // 从用户档案或对话中推断职业类型
+  return userProfile.value.career || 'software-engineer'
+}
+
+const handleStyleApplied = (style) => {
+  ElMessage.success(`已应用"${style.name}"风格！`)
+
+  // 添加风格应用消息到对话
+  messages.value.push({
+    role: 'assistant',
+    content: `我已经为您应用了"${style.name}"风格。这个风格采用了${style.colors.name}配色方案，${style.typography.name}字体，以及${style.spacing.name}间距设计。您觉得怎么样？`,
+    suggestions: ['继续优化内容', '尝试其他风格', '应用到编辑器'],
+    questions: ['您喜欢这个风格吗？', '需要调整什么地方？']
+  })
+
+  nextTick(() => {
+    scrollToBottom()
+  })
+}
+
+const handleStylePreviewed = ({ style, originalSettings }) => {
+  ElMessage.info(`正在预览"${style.name}"风格，您可以随时切换回原来的设置`)
 }
 
 // 监听对话变化，自动滚动
@@ -713,6 +754,22 @@ onMounted(() => {
   border-radius: 12px;
   border: 1px solid #e4e7ed;
   overflow: hidden;
+}
+
+.preview-tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-tabs :deep(.el-tabs__content) {
+  flex: 1;
+  overflow: hidden;
+}
+
+.preview-tabs :deep(.el-tab-pane) {
+  height: 100%;
+  overflow-y: auto;
 }
 
 .preview-header {

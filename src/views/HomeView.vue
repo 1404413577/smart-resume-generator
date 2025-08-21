@@ -128,6 +128,17 @@
           </div>
         </div>
         <div class="preview-content">
+          <!-- 多页预览控制 -->
+          <MultiPagePreviewControls
+            v-if="currentPageManager"
+            :page-manager="currentPageManager"
+            :current-page="currentPreviewPage"
+            :show-all-pages="showAllPages"
+            @page-changed="handlePageChanged"
+            @view-mode-changed="handleViewModeChanged"
+            @apply-suggested-paging="handleApplySuggestedPaging"
+          />
+
           <div class="preview-container" :style="{ transform: `scale(${previewScale})` }">
             <div id="resume-preview">
               <component
@@ -188,6 +199,7 @@ import {
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
+import { generateMultiPageResumePDF } from '@utils/pdf/multiPagePdfGenerator'
 import { useGlobalStyles } from '@/composables/useGlobalStyles'
 
 // 组件导入
@@ -196,6 +208,7 @@ import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
 import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
 import StyleSettings from '@components/settings/StyleSettingsNew.vue'
+import MultiPagePreviewControls from '@components/resume/MultiPagePreviewControls.vue'
 import { getTemplate } from '@templates'
 
 // 编辑器组件导入
@@ -217,12 +230,24 @@ const currentTemplateComponent = computed(() => {
   return template?.component || null
 })
 
+// 当前页面管理器
+const currentPageManager = computed(() => {
+  const template = getTemplate(resumeStore.selectedTemplate)
+  if (template?.isMultiPage && resumeStore.globalSettings?.pageSettings) {
+    const { createMultiPageManager } = require('@/utils/multipage/pageManager')
+    return createMultiPageManager(resumeStore.resumeData, resumeStore.globalSettings.pageSettings)
+  }
+  return null
+})
+
 // 响应式数据
 const activeModule = ref('personalInfo')
 const previewScale = ref(0.8)
 const showAIGenerator = ref(false)
 const showTemplateManager = ref(false)
 const showSectionSort = ref(false)
+const currentPreviewPage = ref(1)
+const showAllPages = ref(false)
 
 // 侧边栏展开状态
 const expandedSections = ref({
@@ -342,11 +367,25 @@ const isExporting = ref(false)
 const handleExportPDF = async () => {
   try {
     isExporting.value = true
-    // 确保预览元素有固定的ID，供导出使用
-    // 我们在模板中预览容器里加上 id="resume-preview"
     await nextTick()
-    await generateOptimizedPDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
-    ElMessage.success('PDF导出成功！')
+
+    const filename = `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`
+    const template = getTemplate(resumeStore.selectedTemplate)
+
+    // 检查是否为多页模板
+    if (template?.isMultiPage && currentPageManager.value) {
+      // 使用多页PDF生成器
+      await generateMultiPageResumePDF(
+        'resume-preview',
+        filename,
+        resumeStore.globalSettings?.pageSettings
+      )
+      ElMessage.success('多页PDF导出成功！')
+    } else {
+      // 使用标准PDF生成器
+      await generateOptimizedPDF('resume-preview', filename)
+      ElMessage.success('PDF导出成功！')
+    }
   } catch (error) {
     console.error('PDF导出失败:', error)
     ElMessage.error('PDF导出失败，请重试')
@@ -364,6 +403,27 @@ const handleResumeGenerated = (resumeData) => {
 const handleTemplateApplied = (templateData) => {
   ElMessage.success('模板已应用成功！')
   showTemplateManager.value = false
+}
+
+// 多页预览控制事件处理
+const handlePageChanged = (pageNumber) => {
+  currentPreviewPage.value = pageNumber
+}
+
+const handleViewModeChanged = (showAll) => {
+  showAllPages.value = showAll
+}
+
+const handleApplySuggestedPaging = (analysis) => {
+  if (analysis && analysis.suggestedPages) {
+    resumeStore.updateGlobalSettings({
+      pageSettings: {
+        ...resumeStore.globalSettings?.pageSettings,
+        pageCount: analysis.suggestedPages
+      }
+    })
+    ElMessage.success(`已应用${analysis.suggestedPages}页布局建议`)
+  }
 }
 </script>
 

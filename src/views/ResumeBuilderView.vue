@@ -55,15 +55,14 @@
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useResumeStore } from '../stores/resume'
-import { generateOptimizedPDF } from '../utils/pdfGenerator'
+import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
 
 // 组件导入
-import NavigationPanel from '../components/navigation/NavigationPanel.vue'
-import EditorPanel from '../components/resume/EditorPanel.vue'
-import PreviewPanel from '../components/resume/PreviewPanel.vue'
-import AIResumeGenerator from '../components/ai/AIResumeGenerator.vue'
-import TemplateManager from '../muban/TemplateManager.vue'
-import ResumeManager from '../components/ResumeManager.vue'
+import NavigationPanel from '@components/navigation/NavigationPanel.vue'
+import EditorPanel from '@components/resume/EditorPanel.vue'
+import PreviewPanel from '@components/resume/PreviewPanel.vue'
+import AIResumeGenerator from '@components/ai/AIResumeGenerator.vue'
+import ResumeManager from '@components/resume/ResumeManager.vue'
 
 const resumeStore = useResumeStore()
 

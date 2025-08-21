@@ -38,8 +38,8 @@
 import { computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Grid, ArrowDown, Plus } from '@element-plus/icons-vue'
-import { useResumeStore } from '../stores/resume'
-import { getAllTemplates, getTemplateById } from '../muban/templateConfig.js'
+import { useResumeStore } from '@stores/resume'
+import { getAllTemplates, getTemplate } from '@templates'
 
 const emit = defineEmits(['open-template-gallery'])
 
@@ -60,7 +60,7 @@ const selectedTemplate = computed(() => resumeStore.selectedTemplate)
 
 // 当前模板名称
 const currentTemplateName = computed(() => {
-  const template = getTemplateById(selectedTemplate.value)
+  const template = getTemplate(selectedTemplate.value)
   return template?.name || '选择模板'
 })
 
@@ -83,7 +83,7 @@ const getTemplatePreviewStyle = (template) => {
 const handleTemplateChange = (templateId) => {
   try {
     resumeStore.setTemplate(templateId)
-    const template = getTemplateById(templateId)
+    const template = getTemplate(templateId)
     ElMessage.success(`已切换到 ${template?.name || templateId} 模板`)
   } catch (error) {
     console.error('切换模板失败:', error)

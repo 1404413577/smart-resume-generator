@@ -3,9 +3,9 @@
  */
 
 import { watch, onMounted, onUnmounted } from 'vue'
-import { useResumeStore } from '../stores/resume'
-import { applyCSSVariables, generatePrintStyles } from '../utils/styleUtils'
-import { getTemplateById } from '../muban/templateConfig.js'
+import { useResumeStore } from '@stores/resume'
+import { applyCSSVariables, generatePrintStyles } from '@utils/styles/styleUtils'
+import { getTemplate } from '@templates'
 
 export function useGlobalStyles() {
   const resumeStore = useResumeStore()

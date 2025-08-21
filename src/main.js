@@ -7,8 +7,8 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 
-// 导入性能监控（简化版，不依赖外部包）
-import './utils/performanceSimple.js'
+// 导入性能监控
+import './utils/performance/performance.js'
 
 const app = createApp(App)
 const pinia = createPinia()

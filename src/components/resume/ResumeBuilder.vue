@@ -144,27 +144,22 @@
 import { computed, ref, defineAsyncComponent } from 'vue'
 import { ElMessage, ElLoading } from 'element-plus'
 import { Setting, Sort, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
-import { useResumeStore } from '../stores/resume'
-import { generatePDF } from '../utils/pdfGenerator'
+import { useResumeStore } from '@stores/resume'
+import { generatePDF } from '@utils/pdf/pdfGenerator'
 import {
   generatePersonalSummary,
   optimizeWorkExperience,
   recommendSkills,
   enhanceProjectDescription
-} from '../utils/aiService'
-import { useGlobalStyles } from '../composables/useGlobalStyles'
+} from '@utils/ai/aiService'
+import { useGlobalStyles } from '@/composables/useGlobalStyles'
 
 // 导入新的组件
-import ModuleNavigation from './ModuleNavigation.vue'
-import ContentEditor from './ContentEditor.vue'
-
-// 导入模板组件
-import ModernTemplate from './templates/ModernTemplate.vue'
-import ClassicTemplate from './templates/ClassicTemplate.vue'
-import MinimalTemplate from './templates/MinimalTemplate.vue'
+import ModuleNavigation from '@components/navigation/ModuleNavigation.vue'
+import ContentEditor from '@components/resume/ContentEditor.vue'
 
 // 导入模板配置
-import { getAllTemplates, getTemplateById } from '../muban/templateConfig.js'
+import { getAllTemplates, getTemplate } from '@templates'
 
 // 导入分页组件
 import MultiPageLayout from './MultiPageLayout.vue'
@@ -223,19 +218,13 @@ const templates = computed(() => {
 
 // 当前选中的模板组件
 const currentTemplate = computed(() => {
-  // 优先使用muban系统的模板
-  const templateConfig = getTemplateById(resumeStore.selectedTemplate)
-  if (templateConfig?.component) {
-    return defineAsyncComponent(templateConfig.component)
+  const template = getTemplate(resumeStore.selectedTemplate)
+  if (template?.component) {
+    return defineAsyncComponent(() => import(`@templates/components/${template.component.name}.vue`))
   }
 
-  // 降级到基础模板映射
-  const templateMap = {
-    modern: ModernTemplate,
-    classic: ClassicTemplate,
-    minimal: MinimalTemplate
-  }
-  return templateMap[resumeStore.selectedTemplate] || ModernTemplate
+  // 默认使用现代模板
+  return defineAsyncComponent(() => import('@templates/components/ModernTemplate.vue'))
 })
 
 // 模块切换处理

@@ -73,6 +73,9 @@ export function getTemplatesByCategory(category) {
   return getAllTemplates().filter(template => template.category === category)
 }
 
+// 兼容旧的函数名
+export const getTemplateById = getTemplate
+
 // 获取单个模板
 export function getTemplate(templateId) {
   return templateRegistry[templateId]

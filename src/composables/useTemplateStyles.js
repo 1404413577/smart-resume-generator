@@ -4,9 +4,9 @@
  */
 
 import { computed } from 'vue'
-import { useResumeStore } from '../stores/resume'
-import { getTemplateById } from '../muban/templateConfig.js'
-import { mergeTemplateStyles, generateCSSVariables } from '../utils/styleUtils'
+import { useResumeStore } from '@stores/resume'
+import { getTemplate } from '@templates'
+import { mergeTemplateStyles, generateCSSVariables } from '@utils/styles/styleUtils'
 
 export function useTemplateStyles(templateId = null) {
   const resumeStore = useResumeStore()

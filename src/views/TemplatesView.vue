@@ -242,10 +242,9 @@ import {
   Search,
   Star
 } from '@element-plus/icons-vue'
-import { getAllTemplates, getTemplatesByCategory } from '../muban/templateConfig.js'
-import { useResumeStore } from '../stores/resume'
-import TemplateThumbnail from '../components/TemplateThumbnail.vue'
-import TemplatePreview from '../muban/components/TemplatePreview.vue'
+import { getAllTemplates, getTemplatesByCategory } from '@templates'
+import { useResumeStore } from '@stores/resume'
+import TemplateThumbnail from '@components/templates/TemplateThumbnail.vue'
 
 const router = useRouter()
 const resumeStore = useResumeStore()

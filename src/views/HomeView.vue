@@ -145,7 +145,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineAsyncComponent, nextTick } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
   MagicStick,
@@ -189,7 +189,7 @@ useGlobalStyles()
 // 当前模板组件（使用新的统一模板系统）
 const currentTemplateComponent = computed(() => {
   const template = getTemplate(resumeStore.selectedTemplate)
-  return template?.component ? defineAsyncComponent(() => import(`@templates/components/${template.component.name}.vue`)) : null
+  return template?.component || null
 })
 
 // 响应式数据

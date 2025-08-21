@@ -63,12 +63,12 @@
             >
               <div class="card-badge">推荐</div>
               <div class="template-preview">
-                <TemplateThumbnail :template="template" :width="200" :height="150" />
+                <TemplatePreview :template="template" :width="200" :height="150" />
               </div>
               <div class="template-info">
                 <h3 class="template-name">{{ template.name }}</h3>
                 <p class="template-description">{{ template.description }}</p>
-                <div class="template-features">
+                <div class="template-features" v-if="template.features?.length">
                   <el-tag
                     v-for="feature in template.features.slice(0, 2)"
                     :key="feature"
@@ -108,7 +108,7 @@
               <div class="template-info">
                 <h3 class="template-name">{{ template.name }}</h3>
                 <p class="template-description">{{ template.description }}</p>
-                <div class="template-features">
+                <div class="template-features" v-if="template.features?.length">
                   <el-tag
                     v-for="feature in template.features"
                     :key="feature"
@@ -134,7 +134,7 @@
               @click="selectTemplate(template)"
             >
               <div class="list-preview">
-                <TemplateThumbnail :template="template" :width="120" :height="90" />
+                <TemplatePreview :template="template" :width="120" :height="90" />
               </div>
               <div class="list-content">
                 <div class="list-header">
@@ -143,7 +143,7 @@
                 </div>
                 <p class="template-description">{{ template.description }}</p>
                 <div class="template-meta">
-                  <div class="template-features">
+                  <div class="template-features" v-if="template.features?.length">
                     <el-tag
                       v-for="feature in template.features"
                       :key="feature"
@@ -185,7 +185,7 @@
         <div class="dialog-info">
           <h3>{{ selectedTemplate.name }}</h3>
           <p>{{ selectedTemplate.description }}</p>
-          <div class="dialog-features">
+          <div class="dialog-features" v-if="selectedTemplate.features?.length">
             <h4>特色功能：</h4>
             <ul>
               <li v-for="feature in selectedTemplate.features" :key="feature">
@@ -244,7 +244,7 @@ import {
 } from '@element-plus/icons-vue'
 import { getAllTemplates, getTemplatesByCategory } from '@templates'
 import { useResumeStore } from '@stores/resume'
-import TemplateThumbnail from '@components/templates/TemplateThumbnail.vue'
+import TemplatePreview from '@components/templates/TemplatePreview.vue'
 
 const router = useRouter()
 const resumeStore = useResumeStore()
@@ -285,8 +285,8 @@ const filteredTemplates = computed(() => {
     filtered = filtered.filter(template =>
       template.name.toLowerCase().includes(query) ||
       template.description.toLowerCase().includes(query) ||
-      template.features.some(feature => feature.toLowerCase().includes(query)) ||
-      template.suitableFor.some(suitable => suitable.toLowerCase().includes(query))
+      (template.features && template.features.some(feature => feature.toLowerCase().includes(query))) ||
+      (template.suitableFor && template.suitableFor.some(suitable => suitable.toLowerCase().includes(query)))
     )
   }
 

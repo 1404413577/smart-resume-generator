@@ -141,7 +141,7 @@
 </template>
 
 <script setup>
-import { computed, ref, defineAsyncComponent } from 'vue'
+import { computed, ref } from 'vue'
 import { ElMessage, ElLoading } from 'element-plus'
 import { Setting, Sort, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
@@ -219,12 +219,7 @@ const templates = computed(() => {
 // 当前选中的模板组件
 const currentTemplate = computed(() => {
   const template = getTemplate(resumeStore.selectedTemplate)
-  if (template?.component) {
-    return defineAsyncComponent(() => import(`@templates/components/${template.component.name}.vue`))
-  }
-
-  // 默认使用现代模板
-  return defineAsyncComponent(() => import('@templates/components/ModernTemplate.vue'))
+  return template?.component || null
 })
 
 // 模块切换处理

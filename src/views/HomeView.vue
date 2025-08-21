@@ -6,11 +6,23 @@
       <aside class="left-sidebar">
         <!-- AI助手区域 -->
         <div class="sidebar-section">
-          <button @click="handleAIGenerate" class="ai-button">
+          <div class="section-header" @click="toggleSection('ai')">
             <el-icon><MagicStick /></el-icon>
-            AI智能助手
-          </button>
-          <p class="section-desc">对话式AI，智能生成个性化简历</p>
+            <span>AI智能助手</span>
+            <el-icon class="expand-icon" :class="{ expanded: expandedSections.ai }">
+              <ArrowRight />
+            </el-icon>
+          </div>
+          <div v-show="expandedSections.ai" class="section-content">
+            <div class="action-item ai-action" @click="handleAIGenerate">
+              <el-icon class="action-icon"><MagicStick /></el-icon>
+              <div class="action-info">
+                <div class="action-name">智能生成简历</div>
+                <div class="action-desc">对话式AI，个性化生成</div>
+              </div>
+              <div class="action-badge">AI</div>
+            </div>
+          </div>
         </div>
 
         <!-- 模板设置 -->
@@ -23,9 +35,14 @@
             </el-icon>
           </div>
           <div v-show="expandedSections.template" class="section-content">
-            <button @click="handleTemplateManage" class="section-button">
-              选择模板
-            </button>
+            <div class="action-item template-action" @click="handleTemplateManage">
+              <el-icon class="action-icon"><Document /></el-icon>
+              <div class="action-info">
+                <div class="action-name">选择模板</div>
+                <div class="action-desc">浏览和应用简历模板</div>
+              </div>
+              <el-icon class="action-arrow"><ArrowRight /></el-icon>
+            </div>
           </div>
         </div>
 
@@ -208,6 +225,7 @@ const showSectionSort = ref(false)
 
 // 侧边栏展开状态
 const expandedSections = ref({
+  ai: false,
   template: false,
   content: true, // 默认展开简历内容
   style: false
@@ -378,25 +396,96 @@ const handleTemplateApplied = (templateData) => {
   border-bottom: 1px solid #f0f2f5;
 }
 
-.ai-button {
-  width: 100%;
-  height: 48px;
-  background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
-  border: none;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
+/* 操作项样式 - 统一的按钮样式 */
+.action-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  padding: 12px;
+  margin-bottom: 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #f0f2f5;
 }
 
-.ai-button:hover {
-  background: linear-gradient(135deg, #85ce61 0%, #67c23a 100%);
-  transform: translateY(-1px);
+.action-item:hover {
+  background: #f5f7fa;
+  border-color: #e4e7ed;
+}
+
+.action-icon {
+  color: #606266;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.action-info {
+  flex: 1;
+}
+
+.action-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #303133;
+  margin-bottom: 2px;
+}
+
+.action-desc {
+  font-size: 11px;
+  color: #909399;
+  line-height: 1.3;
+}
+
+.action-arrow {
+  color: #c0c4cc;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.action-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+/* AI助手特殊样式 */
+.ai-action:hover {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.ai-action:hover .action-icon {
+  color: #0ea5e9;
+}
+
+.ai-action:hover .action-name {
+  color: #0ea5e9;
+}
+
+/* 模板操作特殊样式 */
+.template-action:hover {
+  background: #fefce8;
+  border-color: #fde047;
+}
+
+.template-action:hover .action-icon {
+  color: #eab308;
+}
+
+.template-action:hover .action-name {
+  color: #eab308;
+}
+
+.template-action:hover .action-arrow {
+  color: #eab308;
 }
 
 .section-desc {

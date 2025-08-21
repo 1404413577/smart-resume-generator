@@ -49,7 +49,7 @@
             class="suggestion-item"
           >
             <div class="suggestion-icon">
-              <el-icon><Lightbulb /></el-icon>
+              <el-icon><Sunny /></el-icon>
             </div>
             <div class="suggestion-content">
               <div class="suggestion-title">{{ suggestion.title }}</div>
@@ -144,10 +144,10 @@
           >
             添加技术技能
           </el-button>
-          <el-button 
-            size="small" 
+          <el-button
+            size="small"
             @click="optimizeForATS"
-            :icon="DocumentChecked"
+            :icon="Document"
           >
             ATS优化
           </el-button>
@@ -173,10 +173,10 @@ import {
   CircleCheck,
   Warning,
   CircleClose,
-  Lightbulb,
+  Sunny,
   InfoFilled,
   Plus,
-  DocumentChecked,
+  Document,
   MagicStick
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'

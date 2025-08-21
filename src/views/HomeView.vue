@@ -200,6 +200,7 @@ import {
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
 import { generateMultiPageResumePDF } from '@utils/pdf/multiPagePdfGenerator'
+import { createMultiPageManager } from '@/utils/multipage/pageManager'
 import { useGlobalStyles } from '@/composables/useGlobalStyles'
 
 // 组件导入
@@ -234,7 +235,6 @@ const currentTemplateComponent = computed(() => {
 const currentPageManager = computed(() => {
   const template = getTemplate(resumeStore.selectedTemplate)
   if (template?.isMultiPage && resumeStore.globalSettings?.pageSettings) {
-    const { createMultiPageManager } = require('@/utils/multipage/pageManager')
     return createMultiPageManager(resumeStore.resumeData, resumeStore.globalSettings.pageSettings)
   }
   return null

@@ -92,7 +92,7 @@
         <!-- 分页建议 -->
         <div v-if="contentAnalysis" class="paging-suggestions">
           <div class="suggestion-header">
-            <el-icon><Lightbulb /></el-icon>
+            <el-icon><Sunny /></el-icon>
             <span>分页建议</span>
           </div>
           <div class="suggestion-content">
@@ -146,7 +146,7 @@ import {
   ArrowRight,
   InfoFilled,
   Close,
-  Lightbulb
+  Sunny
 } from '@element-plus/icons-vue'
 
 const props = defineProps({

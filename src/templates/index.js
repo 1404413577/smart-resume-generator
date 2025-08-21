@@ -7,6 +7,10 @@ import AcademicTemplate from './components/AcademicTemplate.vue'
 import TechTemplate from './components/TechTemplate.vue'
 import MinimalistTemplate from './components/MinimalistTemplate.vue'
 import MultiPageTemplate from './components/MultiPageTemplate.vue'
+import ExecutiveTemplate from './components/ExecutiveTemplate.vue'
+import DesignerTemplate from './components/DesignerTemplate.vue'
+import SalesTemplate from './components/SalesTemplate.vue'
+import StartupTemplate from './components/StartupTemplate.vue'
 
 // 模板注册表
 export const templateRegistry = {
@@ -89,6 +93,46 @@ export const templateRegistry = {
       showPageNumbers: true,
       pageBreaks: []
     }
+  },
+
+  executive: {
+    name: 'Executive Business',
+    component: ExecutiveTemplate,
+    description: '高管商务风格，突出领导经验和战略成果',
+    category: 'business',
+    preview: '/images/templates/executive-preview.png',
+    features: ['权威设计', '深色主题', '领导导向', '成果突出'],
+    suitableFor: ['高级管理', 'CEO/CTO', '总监级别', '企业高管']
+  },
+
+  designer: {
+    name: 'Creative Designer',
+    component: DesignerTemplate,
+    description: '设计师作品集风格，展示创意能力和视觉作品',
+    category: 'creative',
+    preview: '/images/templates/designer-preview.png',
+    features: ['创意布局', '渐变配色', '作品展示', '视觉冲击'],
+    suitableFor: ['UI/UX设计师', '平面设计师', '创意总监', '视觉设计师']
+  },
+
+  sales: {
+    name: 'Sales Performance',
+    component: SalesTemplate,
+    description: '销售业绩导向，突出数据成果和客户成功',
+    category: 'sales',
+    preview: '/images/templates/sales-preview.png',
+    features: ['业绩导向', '动态设计', '数据突出', '成果展示'],
+    suitableFor: ['销售经理', '业务代表', '客户经理', '销售总监']
+  },
+
+  startup: {
+    name: 'Startup Innovation',
+    component: StartupTemplate,
+    description: '创业公司风格，展现创新思维和产品能力',
+    category: 'startup',
+    preview: '/images/templates/startup-preview.png',
+    features: ['年轻活力', '创新设计', '产品导向', '技术前沿'],
+    suitableFor: ['产品经理', '创业者', '互联网从业者', '技术创新者']
   }
 }
 

@@ -134,7 +134,7 @@
       />
 
       <TemplateManager
-        v-if="showTemplateManager"
+        v-model="showTemplateManager"
         @close="showTemplateManager = false"
         @template-applied="handleTemplateApplied"
       />
@@ -175,6 +175,7 @@ import { useGlobalStyles } from '@/composables/useGlobalStyles'
 // 组件导入
 import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.vue'
 import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
+import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
 import StyleSettings from '@components/settings/StyleSettings.vue'
 import { getTemplate } from '@templates'

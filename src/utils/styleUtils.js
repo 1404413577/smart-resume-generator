@@ -22,7 +22,16 @@ export function mergeTemplateStyles(globalSettings, templateConfig = null) {
   const templateStyles = templateConfig?.colors || {}
 
   // 用户自定义样式（优先级最高）
-  const userStyles = globalSettings?.theme || {}
+  const userTheme = globalSettings?.theme || {}
+
+  // 映射用户主题字段到标准字段名
+  const userStyles = {
+    primary: userTheme.primary,
+    secondary: userTheme.secondary,
+    accent: userTheme.accent,
+    text: userTheme.textPrimary,
+    background: userTheme.background
+  }
 
   // 合并样式，用户自定义 > 模板默认 > 系统默认
   const mergedColors = {

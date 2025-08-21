@@ -212,17 +212,14 @@ const {
   applyThemePreset,
   updateThemeColor,
   resetTheme,
-  updateGlobalSettings
+  updateGlobalSettings,
+  updateTypographySetting: storeUpdateTypographySetting,
+  updateSpacingSetting: storeUpdateSpacingSetting
 } = resumeStore
 
 // 字体和间距设置的辅助函数
 const updateTypographySetting = (key, value) => {
-  updateGlobalSettings({
-    typography: {
-      ...globalSettings.value.typography,
-      [key]: value
-    }
-  })
+  storeUpdateTypographySetting(key, value)
   // 强制触发样式更新
   nextTick(() => {
     const event = new CustomEvent('resume-style-updated')
@@ -231,12 +228,7 @@ const updateTypographySetting = (key, value) => {
 }
 
 const updateSpacingSetting = (key, value) => {
-  updateGlobalSettings({
-    spacing: {
-      ...globalSettings.value.spacing,
-      [key]: value
-    }
-  })
+  storeUpdateSpacingSetting(key, value)
   // 强制触发样式更新
   nextTick(() => {
     const event = new CustomEvent('resume-style-updated')
@@ -266,7 +258,7 @@ const updatePageMargins = (value) => {
     bottom: value,
     left: value
   }
-  updateSpacingSetting('pageMargin', margins)
+  storeUpdateSpacingSetting('pageMargin', margins)
 }
 
 // 获取预设名称

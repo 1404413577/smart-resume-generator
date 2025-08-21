@@ -805,6 +805,21 @@ export const useResumeStore = defineStore('resume', () => {
     saveToLocalStorage()
   }
 
+  const updateGlobalSettings = (updates) => {
+    // 深度合并更新
+    Object.keys(updates).forEach(key => {
+      if (typeof updates[key] === 'object' && updates[key] !== null && !Array.isArray(updates[key])) {
+        globalSettings.value[key] = {
+          ...globalSettings.value[key],
+          ...updates[key]
+        }
+      } else {
+        globalSettings.value[key] = updates[key]
+      }
+    })
+    saveToLocalStorage()
+  }
+
   const resetGlobalSettings = () => {
     globalSettings.value = {
       typography: {
@@ -875,7 +890,12 @@ export const useResumeStore = defineStore('resume', () => {
   // 主题相关操作
   const applyThemePreset = (presetName) => {
     if (themePresets[presetName]) {
-      globalSettings.value.theme.preset = presetName
+      // 应用预设的颜色值
+      globalSettings.value.theme = {
+        ...globalSettings.value.theme,
+        ...themePresets[presetName],
+        preset: presetName
+      }
       saveToLocalStorage()
     }
   }
@@ -889,8 +909,8 @@ export const useResumeStore = defineStore('resume', () => {
   }
 
   const resetTheme = () => {
-    globalSettings.value.theme.preset = 'professional'
-    saveToLocalStorage()
+    // 重置为professional主题预设
+    applyThemePreset('professional')
   }
 
   // 章节配置操作
@@ -1004,6 +1024,7 @@ export const useResumeStore = defineStore('resume', () => {
     resetSectionOrder,
 
     // 全局设置方法
+    updateGlobalSettings,
     updateTypographySetting,
     updateSpacingSetting,
     updatePageSetting,

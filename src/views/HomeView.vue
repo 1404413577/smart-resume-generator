@@ -139,6 +139,11 @@
         @template-applied="handleTemplateApplied"
       />
 
+      <!-- 章节排序对话框 -->
+      <SectionSortDialog
+        v-model="showSectionSort"
+        @order-changed="handleSectionOrderChanged"
+      />
 
     </div>
   </div>
@@ -169,6 +174,7 @@ import { useGlobalStyles } from '@/composables/useGlobalStyles'
 
 // 组件导入
 import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.vue'
+import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
 import StyleSettings from '@components/settings/StyleSettings.vue'
 import { getTemplate } from '@templates'
@@ -197,6 +203,7 @@ const activeModule = ref('personalInfo')
 const previewScale = ref(0.8)
 const showAIGenerator = ref(false)
 const showTemplateManager = ref(false)
+const showSectionSort = ref(false)
 
 // 侧边栏展开状态
 const expandedSections = ref({
@@ -250,7 +257,12 @@ const handleAIGenerate = () => {
 
 
 const handleSectionSort = () => {
-  ElMessage.info('章节排序功能开发中...')
+  showSectionSort.value = true
+}
+
+const handleSectionOrderChanged = (newOrder) => {
+  ElMessage.success('章节排序已更新')
+  // 这里可以添加额外的处理逻辑，比如刷新预览等
 }
 
 const handleDataUpdated = (data) => {

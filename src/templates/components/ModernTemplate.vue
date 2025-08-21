@@ -1,33 +1,42 @@
 <template>
-  <div class="modern-template" :style="templateStyles">
-    <div class="resume-container">
-      <!-- 左侧栏 -->
-      <div class="sidebar">
-        <!-- 个人头像 -->
-        <div class="avatar-section" v-if="resumeData.personalInfo?.photo">
-          <img :src="resumeData.personalInfo.photo" alt="头像" class="avatar" />
-        </div>
+  <OrderedTemplateBase
+    :resume-data="resumeData"
+    :page-content="pageContent"
+    :page-number="pageNumber"
+    :is-single-page="isSinglePage"
+    template-class="modern-template"
+    :style="templateStyles"
+  >
+    <!-- 个人信息插槽 -->
+    <template #personalInfo="{ data }">
+      <div class="resume-container">
+        <!-- 左侧栏 -->
+        <div class="sidebar">
+          <!-- 个人头像 -->
+          <div class="avatar-section" v-if="data?.photo">
+            <img :src="data.photo" alt="头像" class="avatar" />
+          </div>
 
-        <!-- 联系信息 -->
-        <div class="contact-section">
-          <h3 class="section-title">联系方式</h3>
-          <div class="contact-item" v-if="resumeData.personalInfo?.email">
-            <i class="icon">📧</i>
-            <span>{{ resumeData.personalInfo.email }}</span>
+          <!-- 联系信息 -->
+          <div class="contact-section">
+            <h3 class="section-title">联系方式</h3>
+            <div class="contact-item" v-if="data?.email">
+              <i class="icon">📧</i>
+              <span>{{ data.email }}</span>
+            </div>
+            <div class="contact-item" v-if="data?.phone">
+              <i class="icon">📱</i>
+              <span>{{ data.phone }}</span>
+            </div>
+            <div class="contact-item" v-if="data?.address">
+              <i class="icon">📍</i>
+              <span>{{ data.address }}</span>
+            </div>
+            <div class="contact-item" v-if="data?.website">
+              <i class="icon">🌐</i>
+              <span>{{ data.website }}</span>
+            </div>
           </div>
-          <div class="contact-item" v-if="resumeData.personalInfo?.phone">
-            <i class="icon">📱</i>
-            <span>{{ resumeData.personalInfo.phone }}</span>
-          </div>
-          <div class="contact-item" v-if="resumeData.personalInfo?.address">
-            <i class="icon">📍</i>
-            <span>{{ resumeData.personalInfo.address }}</span>
-          </div>
-          <div class="contact-item" v-if="resumeData.personalInfo?.website">
-            <i class="icon">🌐</i>
-            <span>{{ resumeData.personalInfo.website }}</span>
-          </div>
-        </div>
 
         <!-- 技能特长 -->
         <div class="skills-section" v-if="resumeData.skills?.length">
@@ -153,6 +162,7 @@
 
 <script setup>
 import { useTemplateComponentStyles } from '../../composables/useTemplateStyles'
+import OrderedTemplateBase from './OrderedTemplateBase.vue'
 
 const props = defineProps({
   resumeData: {
@@ -162,6 +172,18 @@ const props = defineProps({
   templateId: {
     type: String,
     default: 'modern'
+  },
+  pageContent: {
+    type: Array,
+    default: () => []
+  },
+  pageNumber: {
+    type: Number,
+    default: 1
+  },
+  isSinglePage: {
+    type: Boolean,
+    default: true
   }
 })
 

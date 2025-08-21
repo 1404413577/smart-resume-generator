@@ -12,6 +12,7 @@
         <div class="header-content">
           <div class="personal-info">
             <h1 class="name">{{ data.name || '姓名' }}</h1>
+            <h2 v-if="data.targetPosition" class="target-position">{{ data.targetPosition }}</h2>
             <div class="contact-info">
               <div class="contact-item" v-if="data.email">
                 <el-icon><Message /></el-icon>
@@ -24,6 +25,10 @@
               <div class="contact-item" v-if="data.address">
                 <el-icon><Location /></el-icon>
                 <span>{{ data.address }}</span>
+              </div>
+              <div class="contact-item" v-if="data.github">
+                <el-icon><Link /></el-icon>
+                <span>{{ data.github }}</span>
               </div>
             </div>
             <div class="links" v-if="hasLinks(data)">
@@ -73,7 +78,7 @@
         <div class="work-item">
           <div class="work-header">
             <div class="work-title">
-              <h3>{{ data.jobTitle }}</h3>
+              <h3>{{ data.position }}</h3>
               <h4>{{ data.company }}</h4>
             </div>
             <div class="work-meta">
@@ -83,9 +88,12 @@
               <span v-if="data.location" class="work-location">{{ data.location }}</span>
             </div>
           </div>
-          <ul class="work-responsibilities">
-            <li v-for="(responsibility, index) in data.responsibilities" :key="index">
-              {{ responsibility }}
+          <div v-if="data.description" class="work-description">
+            <p>{{ data.description }}</p>
+          </div>
+          <ul class="work-achievements" v-if="data.achievements?.length">
+            <li v-for="(achievement, index) in data.achievements" :key="index">
+              {{ achievement }}
             </li>
           </ul>
         </div>
@@ -100,19 +108,18 @@
           <div class="education-header">
             <div class="education-title">
               <h3>{{ data.degree }} - {{ data.major }}</h3>
-              <h4>{{ data.institution }}</h4>
+              <h4>{{ data.school }}</h4>
             </div>
             <div class="education-meta">
-              <span class="education-period">{{ data.graduationDate }}</span>
-              <span v-if="data.location" class="education-location">{{ data.location }}</span>
+              <span class="education-period">{{ data.endDate }}</span>
             </div>
           </div>
           <div class="education-details">
             <span v-if="data.gpa" class="gpa">GPA: {{ data.gpa }}</span>
             <span v-if="data.honors" class="honors">{{ data.honors }}</span>
-            <div v-if="data.relevantCourses" class="relevant-courses">
-              <span class="courses-label">相关课程：</span>
-              <span class="courses-content">{{ data.relevantCourses }}</span>
+            <div v-if="data.description" class="course-description">
+              <span class="description-label">课程描述：</span>
+              <span class="courses-content">{{ data.description }}</span>
             </div>
           </div>
         </div>
@@ -278,9 +285,17 @@ const getSkillCategories = (skills) => {
 .name {
   font-size: var(--resume-name-font-size, 28px);
   font-weight: 700;
-  margin: 0 0 8mm 0;
+  margin: 0 0 4mm 0;
   letter-spacing: 0.5px;
   color: white;
+}
+
+.target-position {
+  font-size: var(--resume-target-position-font-size, 16px);
+  font-weight: 400;
+  margin: 0 0 8mm 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-style: italic;
 }
 
 .contact-info {

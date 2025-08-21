@@ -22,6 +22,9 @@
                 <span class="contact-item name-item">
                   姓名：{{ data.name || '姓名' }}
                 </span>
+                <span v-if="data.targetPosition" class="contact-item">
+                  期望职位：{{ data.targetPosition }}
+                </span>
                 <span v-if="data.email" class="contact-item">
                   邮箱：{{ data.email }}
                 </span>
@@ -77,16 +80,16 @@
       <div class="section-content">
         <div class="entry">
           <div class="entry-header">
-            <span>{{ data.company }} | {{ data.jobTitle }}</span>
+            <span>{{ data.company }} | {{ data.position }}</span>
             <span>{{ data.startDate }} - {{ data.current ? '至今' : data.endDate }}</span>
           </div>
           <div class="entry-content">
             <div v-if="data.location || data.description">
               {{ data.location }}{{ data.location && data.description ? ' | ' : '' }}{{ data.description }}
             </div>
-            <ul v-if="data.responsibilities && data.responsibilities.length > 0">
-              <li v-for="(responsibility, index) in data.responsibilities" :key="index">
-                {{ responsibility }}
+            <ul v-if="data.achievements && data.achievements.length > 0">
+              <li v-for="(achievement, index) in data.achievements" :key="index">
+                {{ achievement }}
               </li>
             </ul>
           </div>

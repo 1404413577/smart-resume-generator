@@ -85,6 +85,14 @@
             </el-input>
           </el-form-item>
         </el-col>
+        <el-col :span="12">
+          <el-form-item label="期望职位">
+            <el-input
+              v-model="personalInfo.targetPosition"
+              placeholder="请输入期望职位"
+            />
+          </el-form-item>
+        </el-col>
       </el-row>
 
       <!-- 自定义字段分隔线 -->

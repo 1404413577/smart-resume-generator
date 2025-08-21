@@ -8,7 +8,7 @@
             <h1 class="name">{{ resumeData.personalInfo?.name || 'Developer Name' }}</h1>
             <div class="title-line">
               <span class="prompt">$</span>
-              <span class="title">{{ resumeData.personalInfo?.title || 'Software Engineer' }}</span>
+              <span class="title">{{ resumeData.personalInfo?.targetPosition || resumeData.personalInfo?.title || 'Software Engineer' }}</span>
               <span class="cursor">_</span>
             </div>
           </div>
@@ -84,7 +84,7 @@
                   <span class="property">company</span>: <span class="string">"{{ work.company }}"</span>,
                 </div>
                 <div class="property-line">
-                  <span class="property">position</span>: <span class="string">"{{ work.jobTitle }}"</span>,
+                  <span class="property">position</span>: <span class="string">"{{ work.position }}"</span>,
                 </div>
                 <div class="property-line">
                   <span class="property">period</span>: <span class="string">"{{ work.startDate }} - {{ work.endDate }}"</span>,
@@ -92,15 +92,18 @@
                 <div v-if="work.location" class="property-line">
                   <span class="property">location</span>: <span class="string">"{{ work.location }}"</span>,
                 </div>
-                <div v-if="work.responsibilities?.length" class="property-line">
+                <div v-if="work.description" class="property-line">
+                  <span class="property">description</span>: <span class="string">"{{ work.description }}"</span>,
+                </div>
+                <div v-if="work.achievements?.length" class="property-line">
                   <span class="property">achievements</span>: [<br>
                   <div class="achievements-array">
-                    <div 
-                      v-for="(resp, respIndex) in work.responsibilities" 
-                      :key="respIndex"
+                    <div
+                      v-for="(achievement, achievementIndex) in work.achievements"
+                      :key="achievementIndex"
                       class="achievement-line"
                     >
-                      <span class="string">"{{ resp }}"</span><span v-if="respIndex < work.responsibilities.length - 1">,</span>
+                      <span class="string">"{{ achievement }}"</span><span v-if="achievementIndex < work.achievements.length - 1">,</span>
                     </div>
                   </div>
                   ]
@@ -170,10 +173,16 @@
                   <span class="property">degree</span>: <span class="string">"{{ edu.degree }} in {{ edu.major }}"</span>,
                 </div>
                 <div class="property-line">
-                  <span class="property">graduation</span>: <span class="string">"{{ edu.graduationDate }}"</span><span v-if="edu.gpa">,</span>
+                  <span class="property">graduation</span>: <span class="string">"{{ edu.endDate }}"</span><span v-if="edu.gpa || edu.honors || edu.description">,</span>
                 </div>
                 <div v-if="edu.gpa" class="property-line">
-                  <span class="property">gpa</span>: <span class="number">{{ edu.gpa }}</span>
+                  <span class="property">gpa</span>: <span class="number">{{ edu.gpa }}</span><span v-if="edu.honors || edu.description">,</span>
+                </div>
+                <div v-if="edu.honors" class="property-line">
+                  <span class="property">honors</span>: <span class="string">"{{ edu.honors }}"</span><span v-if="edu.description">,</span>
+                </div>
+                <div v-if="edu.description" class="property-line">
+                  <span class="property">description</span>: <span class="string">"{{ edu.description }}"</span>
                 </div>
               </div>
               }<span v-if="index < resumeData.education.length - 1">,</span><br>

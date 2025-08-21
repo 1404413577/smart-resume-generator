@@ -69,8 +69,8 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="学校名称" required>
-                <el-input 
-                  v-model="education.institution" 
+                <el-input
+                  v-model="education.school"
                   placeholder="如：清华大学"
                   @input="updateEducation(education.id, education)"
                 />
@@ -103,7 +103,7 @@
             <el-col :span="8">
               <el-form-item label="毕业时间" required>
                 <el-date-picker
-                  v-model="education.graduationDate"
+                  v-model="education.endDate"
                   type="month"
                   placeholder="选择毕业时间"
                   format="YYYY-MM"
@@ -139,12 +139,12 @@
 
           <el-row :gutter="20">
             <el-col :span="24">
-              <el-form-item label="相关课程">
-                <el-input 
-                  v-model="education.relevantCourses" 
+              <el-form-item label="课程描述">
+                <el-input
+                  v-model="education.description"
                   type="textarea"
                   :rows="2"
-                  placeholder="列出与目标职位相关的主要课程，用逗号分隔"
+                  placeholder="简要描述主要课程、研究方向或学习成果"
                   @input="updateEducation(education.id, education)"
                 />
               </el-form-item>
@@ -171,13 +171,13 @@ const addNewEducation = () => {
   const newEducation = {
     degree: '',
     major: '',
-    institution: '',
-    location: '',
+    school: '',
     startDate: '',
-    graduationDate: '',
+    endDate: '',
+    current: false,
     gpa: '',
     honors: '',
-    relevantCourses: ''
+    description: ''
   }
   resumeStore.addEducation(newEducation)
 }

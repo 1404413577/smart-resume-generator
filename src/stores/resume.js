@@ -12,6 +12,7 @@ export const useResumeStore = defineStore('resume', () => {
       website: '',
       linkedin: '',
       github: '',
+      targetPosition: '', // 期望职位
       avatar: '', // 头像base64数据
       avatarPosition: 'left', // 头像位置: 'left' | 'right' | 'center'
       customFields: [] // 自定义字段数组
@@ -705,6 +706,7 @@ export const useResumeStore = defineStore('resume', () => {
         website: '',
         linkedin: '',
         github: '',
+        targetPosition: '',
         customFields: []
       },
       summary: '',

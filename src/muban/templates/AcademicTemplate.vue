@@ -4,7 +4,7 @@
       <!-- 头部信息 -->
       <div class="header-section">
         <h1 class="name">{{ resumeData.personalInfo?.name || 'Academic Name' }}</h1>
-        <h2 class="title">{{ resumeData.personalInfo?.title || 'Academic Position' }}</h2>
+        <h2 class="title">{{ resumeData.personalInfo?.targetPosition || resumeData.personalInfo?.title || 'Academic Position' }}</h2>
         
         <div class="contact-info">
           <div class="contact-row">
@@ -46,9 +46,15 @@
               <h5 class="institution">{{ edu.school }}</h5>
             </div>
             <div class="education-meta">
-              <span class="graduation-date">{{ edu.graduationDate }}</span>
+              <span class="graduation-date">{{ edu.endDate }}</span>
               <span v-if="edu.gpa" class="gpa">GPA: {{ edu.gpa }}</span>
             </div>
+          </div>
+          <div v-if="edu.honors" class="honors">
+            <strong>Honors:</strong> {{ edu.honors }}
+          </div>
+          <div v-if="edu.description" class="description">
+            <strong>Description:</strong> {{ edu.description }}
           </div>
           <div v-if="edu.thesis" class="thesis">
             <strong>Thesis:</strong> {{ edu.thesis }}

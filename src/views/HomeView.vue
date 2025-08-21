@@ -126,7 +126,7 @@
       </aside>
 
       <!-- 弹窗组件 -->
-      <AIResumeGenerator
+      <AdvancedAIResumeGenerator
         :visible="showAIGenerator"
         @update:visible="showAIGenerator = $event"
         @close="showAIGenerator = false"
@@ -168,7 +168,7 @@ import { generateOptimizedPDF } from '../utils/pdfGenerator'
 import { useGlobalStyles } from '../composables/useGlobalStyles'
 
 // 组件导入
-import AIResumeGenerator from '../components/ai/AIResumeGenerator.vue'
+import AdvancedAIResumeGenerator from '../components/AdvancedAIResumeGenerator.vue'
 import TemplateManager from '../muban/TemplateManager.vue'
 import ResumePreview from '../components/resume/ResumePreview.vue'
 import StyleSettings from '../components/StyleSettings.vue'

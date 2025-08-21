@@ -5,7 +5,7 @@
       <div class="header-section">
         <div class="personal-info">
           <h1 class="name">{{ resumeData.personalInfo?.name || '姓名' }}</h1>
-          <h2 class="title">{{ resumeData.personalInfo?.title || '职位' }}</h2>
+          <h2 class="title">{{ resumeData.personalInfo?.targetPosition || resumeData.personalInfo?.title || '职位' }}</h2>
           
           <div class="contact-info">
             <div class="contact-row">
@@ -51,7 +51,7 @@
         >
           <div class="experience-header">
             <div class="job-info">
-              <h4 class="job-title">{{ work.jobTitle }}</h4>
+              <h4 class="job-title">{{ work.position }}</h4>
               <h5 class="company-name">{{ work.company }}</h5>
             </div>
             <div class="date-location">
@@ -59,8 +59,11 @@
               <span class="location" v-if="work.location">{{ work.location }}</span>
             </div>
           </div>
-          <ul class="responsibilities" v-if="work.responsibilities?.length">
-            <li v-for="resp in work.responsibilities" :key="resp">{{ resp }}</li>
+          <div v-if="work.description" class="work-description">
+            <p>{{ work.description }}</p>
+          </div>
+          <ul class="achievements" v-if="work.achievements?.length">
+            <li v-for="achievement in work.achievements" :key="achievement">{{ achievement }}</li>
           </ul>
         </div>
       </div>
@@ -79,9 +82,15 @@
               <h5 class="school">{{ edu.school }}</h5>
             </div>
             <div class="edu-date">
-              <span class="date">{{ edu.graduationDate }}</span>
+              <span class="date">{{ edu.endDate }}</span>
               <span class="gpa" v-if="edu.gpa">GPA: {{ edu.gpa }}</span>
             </div>
+          </div>
+          <div v-if="edu.honors" class="education-honors">
+            <p>{{ edu.honors }}</p>
+          </div>
+          <div v-if="edu.description" class="education-description">
+            <p>{{ edu.description }}</p>
           </div>
         </div>
       </div>

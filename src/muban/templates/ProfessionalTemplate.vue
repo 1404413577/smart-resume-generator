@@ -9,7 +9,7 @@
           </div>
           <div class="name-section">
             <h1 class="name">{{ resumeData.personalInfo?.name || 'Professional Name' }}</h1>
-            <h2 class="title">{{ resumeData.personalInfo?.title || 'Professional Title' }}</h2>
+            <h2 class="title">{{ resumeData.personalInfo?.targetPosition || resumeData.personalInfo?.title || 'Professional Title' }}</h2>
           </div>
         </div>
         
@@ -82,8 +82,10 @@
               <div class="education-degree">{{ edu.degree }}</div>
               <div class="education-major">{{ edu.major }}</div>
               <div class="education-school">{{ edu.school }}</div>
-              <div class="education-date">{{ edu.graduationDate }}</div>
+              <div class="education-date">{{ edu.endDate }}</div>
               <div v-if="edu.gpa" class="education-gpa">GPA: {{ edu.gpa }}</div>
+              <div v-if="edu.honors" class="education-honors">{{ edu.honors }}</div>
+              <div v-if="edu.description" class="education-description">{{ edu.description }}</div>
             </div>
           </div>
 
@@ -115,7 +117,7 @@
             >
               <div class="experience-header">
                 <div class="experience-left">
-                  <h4 class="job-title">{{ work.jobTitle }}</h4>
+                  <h4 class="job-title">{{ work.position }}</h4>
                   <h5 class="company-name">{{ work.company }}</h5>
                 </div>
                 <div class="experience-right">
@@ -123,8 +125,11 @@
                   <div v-if="work.location" class="work-location">{{ work.location }}</div>
                 </div>
               </div>
-              <ul class="responsibilities" v-if="work.responsibilities?.length">
-                <li v-for="resp in work.responsibilities" :key="resp">{{ resp }}</li>
+              <div v-if="work.description" class="work-description">
+                <p>{{ work.description }}</p>
+              </div>
+              <ul class="achievements" v-if="work.achievements?.length">
+                <li v-for="achievement in work.achievements" :key="achievement">{{ achievement }}</li>
               </ul>
             </div>
           </div>

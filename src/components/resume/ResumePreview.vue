@@ -4,6 +4,7 @@
     <div class="resume-header">
       <div class="personal-info">
         <h1 class="name">{{ resumeData.personalInfo.name || '姓名' }}</h1>
+        <h2 v-if="resumeData.personalInfo.targetPosition" class="target-position">{{ resumeData.personalInfo.targetPosition }}</h2>
         <div class="contact-info">
           <div v-if="resumeData.personalInfo.email" class="contact-item">
             <span class="contact-icon">📧</span>
@@ -24,6 +25,10 @@
           <div v-if="resumeData.personalInfo.linkedin" class="contact-item">
             <span class="contact-icon">💼</span>
             <span>{{ resumeData.personalInfo.linkedin }}</span>
+          </div>
+          <div v-if="resumeData.personalInfo.github" class="contact-item">
+            <span class="contact-icon">🐙</span>
+            <span>{{ resumeData.personalInfo.github }}</span>
           </div>
         </div>
       </div>
@@ -216,8 +221,17 @@ const getSkillWidth = (level) => {
   font-size: 32px;
   font-weight: 700;
   color: #409eff;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.personal-info .target-position {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
   margin: 0 0 15px 0;
   text-align: center;
+  font-style: italic;
 }
 
 .contact-info {

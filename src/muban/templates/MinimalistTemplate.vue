@@ -4,7 +4,7 @@
       <!-- 头部信息 -->
       <div class="header-section">
         <h1 class="name">{{ resumeData.personalInfo?.name || 'Name' }}</h1>
-        <p class="title">{{ resumeData.personalInfo?.title || 'Position' }}</p>
+        <p class="title">{{ resumeData.personalInfo?.targetPosition || resumeData.personalInfo?.title || 'Position' }}</p>
         
         <div class="contact-line">
           <span v-if="resumeData.personalInfo?.email" class="contact-item">

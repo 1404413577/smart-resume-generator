@@ -20,7 +20,7 @@
           <h1 class="name">{{ resumeData.personalInfo?.name || 'Creative Name' }}</h1>
           <div class="title-container">
             <div class="title-decoration"></div>
-            <h2 class="title">{{ resumeData.personalInfo?.title || 'Creative Position' }}</h2>
+            <h2 class="title">{{ resumeData.personalInfo?.targetPosition || resumeData.personalInfo?.title || 'Creative Position' }}</h2>
             <div class="title-decoration"></div>
           </div>
           
@@ -94,15 +94,18 @@
             <div class="timeline-content">
               <div class="work-card">
                 <div class="work-header">
-                  <h4 class="job-title">{{ work.jobTitle }}</h4>
+                  <h4 class="job-title">{{ work.position }}</h4>
                   <div class="company-badge">{{ work.company }}</div>
                 </div>
                 <div class="work-meta">
                   <span class="work-period">{{ work.startDate }} - {{ work.endDate }}</span>
                   <span v-if="work.location" class="work-location">{{ work.location }}</span>
                 </div>
-                <ul class="work-achievements" v-if="work.responsibilities?.length">
-                  <li v-for="resp in work.responsibilities" :key="resp">{{ resp }}</li>
+                <div v-if="work.description" class="work-description">
+                  <p>{{ work.description }}</p>
+                </div>
+                <ul class="work-achievements" v-if="work.achievements?.length">
+                  <li v-for="achievement in work.achievements" :key="achievement">{{ achievement }}</li>
                 </ul>
               </div>
             </div>
@@ -157,9 +160,11 @@
               <h5 class="major-title">{{ edu.major }}</h5>
               <div class="school-info">
                 <span class="school-name">{{ edu.school }}</span>
-                <span class="graduation-date">{{ edu.graduationDate }}</span>
+                <span class="graduation-date">{{ edu.endDate }}</span>
               </div>
               <div v-if="edu.gpa" class="gpa-badge">GPA: {{ edu.gpa }}</div>
+              <div v-if="edu.honors" class="honors-badge">{{ edu.honors }}</div>
+              <div v-if="edu.description" class="description-text">{{ edu.description }}</div>
             </div>
           </div>
         </div>

@@ -39,8 +39,8 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="职位名称" required>
-                <el-input 
-                  v-model="experience.jobTitle" 
+                <el-input
+                  v-model="experience.position"
                   placeholder="如：前端开发工程师"
                   @input="updateExperience(experience.id, experience)"
                 />
@@ -101,38 +101,48 @@
             </el-col>
           </el-row>
 
-          <el-form-item label="工作职责">
-            <div class="responsibilities-section">
-              <div 
-                v-for="(responsibility, respIndex) in experience.responsibilities" 
-                :key="respIndex"
-                class="responsibility-item"
+          <el-form-item label="工作描述">
+            <el-input
+              v-model="experience.description"
+              type="textarea"
+              :rows="3"
+              placeholder="描述您的主要工作内容和职责"
+              @input="updateExperience(experience.id, experience)"
+            />
+          </el-form-item>
+
+          <el-form-item label="主要成就">
+            <div class="achievements-section">
+              <div
+                v-for="(achievement, achievementIndex) in experience.achievements"
+                :key="achievementIndex"
+                class="achievement-item"
               >
                 <el-input
-                  v-model="experience.responsibilities[respIndex]"
-                  placeholder="描述您的工作职责和成就"
+                  v-model="experience.achievements[achievementIndex]"
+                  placeholder="描述您的工作成就和亮点"
                   @input="updateExperience(experience.id, experience)"
                 >
                   <template #suffix>
-                    <el-button 
-                      type="danger" 
-                      text 
+                    <el-button
+                      type="danger"
+                      text
                       size="small"
-                      @click="removeResponsibility(experience, respIndex)"
+                      @click="removeAchievement(experience, achievementIndex)"
                     >
                       <el-icon><Close /></el-icon>
                     </el-button>
                   </template>
                 </el-input>
               </div>
-              <el-button 
-                type="primary" 
-                text 
-                @click="addResponsibility(experience)"
-                class="add-responsibility-btn"
+              <el-button
+                type="primary"
+                text
+                @click="addAchievement(experience)"
+                class="add-achievement-btn"
               >
                 <el-icon><Plus /></el-icon>
-                添加职责描述
+                添加成就
               </el-button>
             </div>
           </el-form-item>
@@ -155,13 +165,14 @@ const workExperiences = computed(() => resumeStore.resumeData.workExperience)
 // 添加新的工作经历
 const addNewExperience = () => {
   const newExperience = {
-    jobTitle: '',
+    position: '',
     company: '',
     location: '',
     startDate: '',
     endDate: '',
     current: false,
-    responsibilities: ['']
+    description: '',
+    achievements: []
   }
   resumeStore.addWorkExperience(newExperience)
 }
@@ -193,19 +204,20 @@ const handleCurrentChange = (experience) => {
   updateExperience(experience.id, experience)
 }
 
-// 添加职责描述
-const addResponsibility = (experience) => {
-  experience.responsibilities.push('')
+// 添加成就描述
+const addAchievement = (experience) => {
+  if (!experience.achievements) {
+    experience.achievements = []
+  }
+  experience.achievements.push('')
   updateExperience(experience.id, experience)
 }
 
-// 删除职责描述
-const removeResponsibility = (experience, index) => {
-  if (experience.responsibilities.length > 1) {
-    experience.responsibilities.splice(index, 1)
+// 删除成就描述
+const removeAchievement = (experience, index) => {
+  if (experience.achievements.length > 0) {
+    experience.achievements.splice(index, 1)
     updateExperience(experience.id, experience)
-  } else {
-    ElMessage.warning('至少保留一条职责描述')
   }
 }
 
@@ -254,7 +266,7 @@ const removeResponsibility = (experience, index) => {
   color: #2c3e50;
 }
 
-.responsibilities-section {
+.achievements-section {
   display: flex;
   flex-direction: column;
   gap: 10px;

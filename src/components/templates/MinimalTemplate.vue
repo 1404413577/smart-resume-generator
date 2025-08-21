@@ -10,6 +10,7 @@
     <template #personalInfo="{ data }">
       <header class="resume-header">
         <h1 class="name">{{ data.name || '姓名' }}</h1>
+        <h2 v-if="data.targetPosition" class="target-position">{{ data.targetPosition }}</h2>
         <div class="contact-info">
           <span v-if="data.email" class="contact-item">{{ data.email }}</span>
           <span v-if="data.phone" class="contact-item">{{ data.phone }}</span>
@@ -78,20 +79,19 @@
           <div class="item-header">
             <div class="item-title">
               <h3>{{ data.degree }}</h3>
-              <span class="institution">{{ data.institution }}</span>
+              <span class="institution">{{ data.school }}</span>
             </div>
             <div class="item-meta">
-              <span class="period">{{ data.graduationDate }}</span>
-              <span v-if="data.location" class="location">{{ data.location }}</span>
+              <span class="period">{{ data.endDate }}</span>
             </div>
           </div>
           <div class="item-details">
             <span v-if="data.major" class="detail-item">专业: {{ data.major }}</span>
             <span v-if="data.gpa" class="detail-item">GPA: {{ data.gpa }}</span>
             <span v-if="data.honors" class="detail-item">{{ data.honors }}</span>
-            <div v-if="data.relevantCourses" class="relevant-courses">
-              <span class="courses-label">相关课程: </span>
-              <span class="courses-content">{{ data.relevantCourses }}</span>
+            <div v-if="data.description" class="course-description">
+              <span class="courses-label">课程描述: </span>
+              <span class="courses-content">{{ data.description }}</span>
             </div>
           </div>
         </div>
@@ -199,9 +199,18 @@ const getSkillCategories = (skills) => {
 .name {
   font-size: var(--resume-name-font-size, 28px);
   font-weight: 300;
-  margin: 0 0 15px 0;
+  margin: 0 0 8px 0;
   color: #2c3e50;
   letter-spacing: 1px;
+}
+
+.target-position {
+  font-size: var(--resume-target-position-font-size, 16px);
+  font-weight: 400;
+  margin: 0 0 15px 0;
+  color: #666;
+  font-style: italic;
+  text-align: center;
 }
 
 .contact-info {

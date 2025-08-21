@@ -169,28 +169,27 @@ import { useGlobalStyles } from '../composables/useGlobalStyles'
 
 // 组件导入
 import AdvancedAIResumeGenerator from '../components/AdvancedAIResumeGenerator.vue'
-import TemplateManager from '../muban/TemplateManager.vue'
-import ResumePreview from '../components/resume/ResumePreview.vue'
-import StyleSettings from '../components/StyleSettings.vue'
-import { getTemplateById } from '../muban/templateConfig.js'
+import ResumePreview from '@components/resume/ResumePreview.vue'
+import StyleSettings from '@components/settings/StyleSettings.vue'
+import { getTemplate } from '@templates'
 
 // 编辑器组件导入
-import PersonalInfoEditor from '../components/resume/editors/PersonalInfoEditor.vue'
-import SummaryEditor from '../components/resume/editors/SummaryEditor.vue'
-import WorkExperienceEditor from '../components/resume/editors/WorkExperienceEditor.vue'
-import EducationEditor from '../components/resume/editors/EducationEditor.vue'
-import SkillsEditor from '../components/resume/editors/SkillsEditor.vue'
-import ProjectsEditor from '../components/resume/editors/ProjectsEditor.vue'
+import PersonalInfoEditor from '@components/resume/editors/PersonalInfoEditor.vue'
+import SummaryEditor from '@components/resume/editors/SummaryEditor.vue'
+import WorkExperienceEditor from '@components/resume/editors/WorkExperienceEditor.vue'
+import EducationEditor from '@components/resume/editors/EducationEditor.vue'
+import SkillsEditor from '@components/resume/editors/SkillsEditor.vue'
+import ProjectsEditor from '@components/resume/editors/ProjectsEditor.vue'
 
 const resumeStore = useResumeStore()
 
 // 启用全局样式管理，实现实时预览
 useGlobalStyles()
 
-// 当前模板组件（muban模板优先）
+// 当前模板组件（使用新的统一模板系统）
 const currentTemplateComponent = computed(() => {
-  const cfg = getTemplateById(resumeStore.selectedTemplate)
-  return cfg?.component ? defineAsyncComponent(cfg.component) : null
+  const template = getTemplate(resumeStore.selectedTemplate)
+  return template?.component ? defineAsyncComponent(() => import(`@templates/components/${template.component.name}.vue`)) : null
 })
 
 // 响应式数据

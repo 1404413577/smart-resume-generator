@@ -89,21 +89,63 @@
                 </div>
                 <div class="message-content">
                   <div class="message-text" v-html="formatMessage(message.content)"></div>
+
+                  <!-- 质量评分 -->
+                  <div v-if="message.qualityScore > 0" class="message-quality">
+                    <div class="quality-title">简历质量评分：</div>
+                    <div class="quality-score">
+                      <el-progress
+                        :percentage="message.qualityScore"
+                        :color="getScoreColor(message.qualityScore)"
+                        :stroke-width="8"
+                      />
+                      <span class="score-text">{{ message.qualityScore }}/100</span>
+                    </div>
+                  </div>
+
+                  <!-- 改进建议 -->
+                  <div v-if="message.improvements?.length" class="message-improvements">
+                    <div class="improvements-title">
+                      <el-icon><TrendCharts /></el-icon>
+                      改进建议：
+                    </div>
+                    <div class="improvements-list">
+                      <div
+                        v-for="(improvement, index) in message.improvements"
+                        :key="index"
+                        class="improvement-item"
+                      >
+                        <el-icon class="improvement-icon"><ArrowRight /></el-icon>
+                        <span>{{ improvement }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 建议标签 -->
                   <div v-if="message.suggestions?.length" class="message-suggestions">
-                    <div class="suggestions-title">建议：</div>
+                    <div class="suggestions-title">
+                      <el-icon><Star /></el-icon>
+                      建议：
+                    </div>
                     <div class="suggestions-list">
                       <el-tag
                         v-for="suggestion in message.suggestions"
                         :key="suggestion"
                         size="small"
                         class="suggestion-tag"
+                        type="success"
                       >
                         {{ suggestion }}
                       </el-tag>
                     </div>
                   </div>
+
+                  <!-- 相关问题 -->
                   <div v-if="message.questions?.length" class="message-questions">
-                    <div class="questions-title">相关问题：</div>
+                    <div class="questions-title">
+                      <el-icon><QuestionFilled /></el-icon>
+                      相关问题：
+                    </div>
                     <div class="questions-list">
                       <el-button
                         v-for="question in message.questions"
@@ -113,6 +155,7 @@
                         text
                         class="question-btn"
                       >
+                        <el-icon><ChatRound /></el-icon>
                         {{ question }}
                       </el-button>
                     </div>
@@ -185,7 +228,12 @@ import {
   Clock,
   Close,
   User,
-  Upload
+  Upload,
+  TrendCharts,
+  ArrowRight,
+  Star,
+  QuestionFilled,
+  ChatRound
 } from '@element-plus/icons-vue'
 import { generateConversationalResponse } from '@utils/ai/aiService'
 
@@ -235,6 +283,8 @@ const sendMessage = async () => {
       content: response.response,
       suggestions: response.suggestions,
       questions: response.questions,
+      qualityScore: response.qualityScore,
+      improvements: response.improvements,
       timestamp: new Date()
     }
 
@@ -299,6 +349,13 @@ const formatTime = (time) => {
   if (diff < 3600) return `${Math.floor(diff / 60)}分钟前`
   if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`
   return date.toLocaleDateString()
+}
+
+const getScoreColor = (score) => {
+  if (score >= 80) return '#67c23a'  // 绿色 - 优秀
+  if (score >= 60) return '#e6a23c'  // 橙色 - 良好
+  if (score >= 40) return '#f56c6c'  // 红色 - 需要改进
+  return '#909399'  // 灰色 - 较差
 }
 
 const scrollToBottom = () => {
@@ -551,16 +608,56 @@ onMounted(() => {
   color: white;
 }
 
+.message-quality,
+.message-improvements,
 .message-suggestions,
 .message-questions {
   margin-top: 12px;
 }
 
+.quality-title,
+.improvements-title,
 .suggestions-title,
 .questions-title {
   font-size: 12px;
   color: #909399;
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quality-score {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.score-text {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 50px;
+}
+
+.improvements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.improvement-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #606266;
+}
+
+.improvement-icon {
+  color: #409eff;
+  margin-top: 2px;
+  flex-shrink: 0;
 }
 
 .suggestions-list {

@@ -570,17 +570,141 @@ ${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
   const result = await callGeminiAPI(prompt)
 
   try {
+    // 尝试直接解析JSON
     return JSON.parse(result)
   } catch (parseError) {
-    console.warn('对话式生成JSON解析失败:', parseError)
-    return {
-      response: result,
-      suggestions: [],
-      questions: [],
-      resumeContent: null,
-      qualityScore: 0,
-      improvements: []
+    console.warn('对话式生成JSON解析失败，尝试清理格式:', parseError)
+    console.log('原始响应:', result)
+
+    try {
+      // 尝试清理常见的JSON格式问题
+      let cleanedResult = result.trim()
+
+      // 移除可能的markdown代码块标记
+      cleanedResult = cleanedResult.replace(/^```json\s*/i, '').replace(/\s*```$/i, '')
+      cleanedResult = cleanedResult.replace(/^```\s*/i, '').replace(/\s*```$/i, '')
+
+      // 移除可能的其他文本前缀
+      cleanedResult = cleanedResult.replace(/^[^{]*/, '')
+      cleanedResult = cleanedResult.replace(/[^}]*$/, '')
+
+      // 尝试找到JSON对象的开始和结束
+      const jsonStart = cleanedResult.indexOf('{')
+      const jsonEnd = cleanedResult.lastIndexOf('}')
+
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        cleanedResult = cleanedResult.substring(jsonStart, jsonEnd + 1)
+        console.log('清理后的JSON:', cleanedResult)
+        return JSON.parse(cleanedResult)
+      }
+
+      // 如果还是失败，尝试提取可能的JSON内容
+      const jsonMatch = cleanedResult.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        console.log('匹配到的JSON:', jsonMatch[0])
+        return JSON.parse(jsonMatch[0])
+      }
+
+      throw new Error('无法提取有效的JSON')
+
+    } catch (secondParseError) {
+      console.warn('JSON清理后仍然解析失败:', secondParseError)
+      console.log('清理失败的内容:', result)
+
+      // 尝试从响应中提取有用信息
+      const extractedResponse = extractResponseFromText(result)
+      return extractedResponse
     }
+  }
+}
+
+/**
+ * 从文本中提取响应信息的辅助函数
+ * @param {string} text - 原始文本响应
+ * @returns {Object} 提取的响应对象
+ */
+function extractResponseFromText(text) {
+  console.log('尝试从文本中提取响应:', text.substring(0, 200) + '...')
+
+  // 首先尝试移除markdown代码块并重新解析
+  let cleanText = text.trim()
+  cleanText = cleanText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '')
+  cleanText = cleanText.replace(/^```\s*/i, '').replace(/\s*```$/i, '')
+
+  // 再次尝试JSON解析
+  try {
+    const parsed = JSON.parse(cleanText)
+    console.log('成功解析清理后的JSON:', parsed)
+    return parsed
+  } catch (e) {
+    console.log('清理后仍无法解析JSON，继续提取字段')
+  }
+
+  // 如果文本看起来像JSON但解析失败，尝试提取主要内容
+  if (text.includes('"response"') || text.includes('"suggestions"')) {
+    // 尝试提取response字段 - 改进正则表达式以处理多行内容
+    const responseMatch = text.match(/"response"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/)
+    const response = responseMatch ? responseMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n') : text
+
+    // 尝试提取suggestions
+    const suggestionsMatch = text.match(/"suggestions"\s*:\s*\[(.*?)\]/s)
+    let suggestions = []
+    if (suggestionsMatch) {
+      try {
+        const suggestionsStr = '[' + suggestionsMatch[1] + ']'
+        suggestions = JSON.parse(suggestionsStr)
+      } catch (e) {
+        // 如果解析失败，尝试简单的字符串分割
+        suggestions = suggestionsMatch[1].split(',').map(s => s.trim().replace(/"/g, ''))
+      }
+    }
+
+    // 尝试提取questions
+    const questionsMatch = text.match(/"questions"\s*:\s*\[(.*?)\]/s)
+    let questions = []
+    if (questionsMatch) {
+      try {
+        const questionsStr = '[' + questionsMatch[1] + ']'
+        questions = JSON.parse(questionsStr)
+      } catch (e) {
+        questions = questionsMatch[1].split(',').map(s => s.trim().replace(/"/g, ''))
+      }
+    }
+
+    // 尝试提取qualityScore
+    const scoreMatch = text.match(/"qualityScore"\s*:\s*(\d+)/)
+    const qualityScore = scoreMatch ? parseInt(scoreMatch[1]) : 0
+
+    // 尝试提取improvements
+    const improvementsMatch = text.match(/"improvements"\s*:\s*\[(.*?)\]/s)
+    let improvements = []
+    if (improvementsMatch) {
+      try {
+        const improvementsStr = '[' + improvementsMatch[1] + ']'
+        improvements = JSON.parse(improvementsStr)
+      } catch (e) {
+        improvements = improvementsMatch[1].split(',').map(s => s.trim().replace(/"/g, ''))
+      }
+    }
+
+    return {
+      response,
+      suggestions,
+      questions,
+      resumeContent: null,
+      qualityScore,
+      improvements
+    }
+  }
+
+  // 如果不是JSON格式，直接返回文本作为response
+  return {
+    response: text,
+    suggestions: [],
+    questions: [],
+    resumeContent: null,
+    qualityScore: 0,
+    improvements: []
   }
 }
 

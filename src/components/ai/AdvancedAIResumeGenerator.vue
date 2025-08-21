@@ -43,7 +43,39 @@
                 <el-icon v-else><User /></el-icon>
               </div>
               <div class="message-content">
-                <div class="message-text">{{ message.content }}</div>
+                <div class="message-text" v-html="formatMessage(message.content)"></div>
+
+                <!-- 质量评分 -->
+                <div v-if="message.qualityScore > 0" class="message-quality">
+                  <div class="quality-title">简历质量评分：</div>
+                  <div class="quality-score">
+                    <el-progress
+                      :percentage="message.qualityScore"
+                      :color="getScoreColor(message.qualityScore)"
+                      :stroke-width="6"
+                    />
+                    <span class="score-text">{{ message.qualityScore }}/100</span>
+                  </div>
+                </div>
+
+                <!-- 改进建议 -->
+                <div v-if="message.improvements?.length" class="message-improvements">
+                  <div class="improvements-title">
+                    <el-icon><TrendCharts /></el-icon>
+                    改进建议：
+                  </div>
+                  <div class="improvements-list">
+                    <div
+                      v-for="(improvement, index) in message.improvements"
+                      :key="index"
+                      class="improvement-item"
+                    >
+                      <el-icon class="improvement-icon"><ArrowRight /></el-icon>
+                      <span>{{ improvement }}</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div v-if="message.suggestions && message.suggestions.length" class="suggestions">
                   <h4>💡 建议</h4>
                   <ul>
@@ -243,7 +275,8 @@ import {
   Document,
   TrendCharts,
   Promotion,
-  Refresh
+  Refresh,
+  ArrowRight
 } from '@element-plus/icons-vue'
 import {
   generateConversationalResponse,
@@ -303,6 +336,11 @@ const getScoreColor = (score) => {
   return '#f56c6c'
 }
 
+const formatMessage = (content) => {
+  if (!content) return ''
+  return content.replace(/\n/g, '<br>')
+}
+
 // 方法
 const sendMessage = async () => {
   if (!userInput.value.trim() || isThinking.value) return
@@ -329,7 +367,9 @@ const sendMessage = async () => {
       role: 'assistant',
       content: response.response,
       suggestions: response.suggestions,
-      questions: response.questions
+      questions: response.questions,
+      qualityScore: response.qualityScore,
+      improvements: response.improvements
     })
 
     // 更新质量评分
@@ -884,6 +924,59 @@ onMounted(() => {
   font-size: 48px;
   margin-bottom: 16px;
   opacity: 0.5;
+}
+
+/* 质量评分和改进建议样式 */
+.message-quality,
+.message-improvements {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #409eff;
+}
+
+.quality-title,
+.improvements-title {
+  font-size: 12px;
+  color: #909399;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quality-score {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.score-text {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 50px;
+}
+
+.improvements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.improvement-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #606266;
+}
+
+.improvement-icon {
+  color: #409eff;
+  margin-top: 2px;
+  flex-shrink: 0;
 }
 
 /* 动画 */

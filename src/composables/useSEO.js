@@ -1,6 +1,6 @@
 // SEO优化组合函数
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { seoConfig, getPageSEO, generateStructuredData, debugSEO } from '../utils/seoConfig'
+import { seoConfig, getPageSEO, generateStructuredData, debugSEO } from '@utils/seo/seoConfig'
 
 export function useSEO() {
   const currentMeta = ref({})

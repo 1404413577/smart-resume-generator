@@ -33,7 +33,7 @@
 
 <script setup>
 import { Document } from '@element-plus/icons-vue'
-import DynamicStyles from '../DynamicStyles.vue'
+import DynamicStyles from '@components/common/DynamicStyles.vue'
 </script>
 
 <style scoped>

@@ -70,7 +70,7 @@
 <script setup>
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { generatePersonalSummary, checkAPIAvailability } from '../utils/aiService'
+import { generatePersonalSummary, checkAPIAvailability } from '@utils/ai/aiService'
 
 const loading = ref(false)
 const apiTesting = ref(false)

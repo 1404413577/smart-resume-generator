@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted } from 'vue'
-import { useResumeStore } from './stores/resume'
-import { useSEO } from './composables/useSEO'
-import AppLayout from './components/layout/AppLayout.vue'
+import { useResumeStore } from '@stores/resume'
+import { useSEO } from '@/composables/useSEO'
+import AppLayout from '@components/layout/AppLayout.vue'
 
 const resumeStore = useResumeStore()
 

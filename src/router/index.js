@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useResumeStore } from '../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 // 路由组件懒加载
 const HomeView = () => import('../views/HomeView.vue')

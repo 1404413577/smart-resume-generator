@@ -248,7 +248,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Setting } from '@element-plus/icons-vue'
-import { useResumeStore } from '../stores/resume'
+import { useResumeStore } from '@stores/resume'
 
 const resumeStore = useResumeStore()
 

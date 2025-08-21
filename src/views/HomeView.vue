@@ -163,12 +163,12 @@ import {
   Tools,
   Printer
 } from '@element-plus/icons-vue'
-import { useResumeStore } from '../stores/resume'
-import { generateOptimizedPDF } from '../utils/pdfGenerator'
-import { useGlobalStyles } from '../composables/useGlobalStyles'
+import { useResumeStore } from '@stores/resume'
+import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
+import { useGlobalStyles } from '@/composables/useGlobalStyles'
 
 // 组件导入
-import AdvancedAIResumeGenerator from '../components/AdvancedAIResumeGenerator.vue'
+import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
 import StyleSettings from '@components/settings/StyleSettings.vue'
 import { getTemplate } from '@templates'

@@ -607,11 +607,33 @@ export const useResumeStore = defineStore('resume', () => {
         const parsed = JSON.parse(savedGlobalSettings)
         // 合并默认设置和保存的设置，确保新增的配置项有默认值
         globalSettings.value = {
+          theme: {
+            primary: '#409eff',
+            primaryLight: '#66b3ff',
+            primaryDark: '#1a73e8',
+            secondary: '#67c23a',
+            accent: '#e6a23c',
+            textPrimary: '#303133',
+            textSecondary: '#606266',
+            background: '#ffffff',
+            backgroundSecondary: '#f8f9fa',
+            border: '#dee2e6',
+            preset: 'professional',
+            ...parsed.theme
+          },
           typography: {
             baseFontSize: 14,
             titleFontSize: 18,
             subtitleFontSize: 16,
             fontFamily: 'system-ui',
+            fontWeight: {
+              light: 300,
+              normal: 400,
+              medium: 500,
+              semibold: 600,
+              bold: 700
+            },
+            letterSpacing: 'normal',
             ...parsed.typography
           },
           spacing: {
@@ -623,7 +645,17 @@ export const useResumeStore = defineStore('resume', () => {
               ...parsed.spacing?.pageMargin
             },
             moduleSpacing: parsed.spacing?.moduleSpacing || 12,
-            lineHeight: parsed.spacing?.lineHeight || 1.5
+            lineHeight: parsed.spacing?.lineHeight || 1.5,
+            sectionSpacing: parsed.spacing?.sectionSpacing || 16,
+            itemSpacing: parsed.spacing?.itemSpacing || 8,
+            paragraphSpacing: parsed.spacing?.paragraphSpacing || 12
+          },
+          layout: {
+            alignment: {
+              text: 'left',
+              title: 'left'
+            },
+            ...parsed.layout
           },
           pageSettings: {
             pageCount: parsed.pageSettings?.pageCount || 1,
@@ -822,11 +854,32 @@ export const useResumeStore = defineStore('resume', () => {
 
   const resetGlobalSettings = () => {
     globalSettings.value = {
+      theme: {
+        primary: '#409eff',
+        primaryLight: '#66b3ff',
+        primaryDark: '#1a73e8',
+        secondary: '#67c23a',
+        accent: '#e6a23c',
+        textPrimary: '#303133',
+        textSecondary: '#606266',
+        background: '#ffffff',
+        backgroundSecondary: '#f8f9fa',
+        border: '#dee2e6',
+        preset: 'professional'
+      },
       typography: {
         baseFontSize: 14,
         titleFontSize: 18,
         subtitleFontSize: 16,
-        fontFamily: 'system-ui'
+        fontFamily: 'system-ui',
+        fontWeight: {
+          light: 300,
+          normal: 400,
+          medium: 500,
+          semibold: 600,
+          bold: 700
+        },
+        letterSpacing: 'normal'
       },
       spacing: {
         pageMargin: {
@@ -836,7 +889,16 @@ export const useResumeStore = defineStore('resume', () => {
           left: 20
         },
         moduleSpacing: 12,
-        lineHeight: 1.5
+        lineHeight: 1.5,
+        sectionSpacing: 16,
+        itemSpacing: 8,
+        paragraphSpacing: 12
+      },
+      layout: {
+        alignment: {
+          text: 'left',
+          title: 'left'
+        }
       },
       pageSettings: {
         pageCount: 1,

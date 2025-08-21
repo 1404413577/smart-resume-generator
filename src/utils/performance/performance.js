@@ -294,7 +294,7 @@ class PerformanceMonitor {
   sendToAnalytics(name, metric) {
     // 这里可以集成第三方分析服务
     // 例如：Google Analytics, Mixpanel, 自建分析系统等
-    
+
     const data = {
       metric: name,
       value: metric.value || metric.duration || 0,
@@ -304,9 +304,15 @@ class PerformanceMonitor {
       connection: this.getConnectionInfo()
     }
 
+    // 暂时禁用发送到后端，避免404错误
     // 使用sendBeacon发送数据（不阻塞页面）
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon('/api/analytics/performance', JSON.stringify(data))
+    // if (navigator.sendBeacon) {
+    //   navigator.sendBeacon('/api/analytics/performance', JSON.stringify(data))
+    // }
+
+    // 只在开发环境下记录到控制台
+    if (import.meta.env.DEV) {
+      console.log('📊 Performance Data:', data)
     }
   }
 
@@ -397,11 +403,17 @@ export { performanceMonitor }
 // 页面卸载时发送最终报告
 window.addEventListener('beforeunload', () => {
   const report = performanceMonitor.getPerformanceReport()
-  
+
+  // 暂时禁用发送最终性能报告，避免404错误
   // 发送最终性能报告
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon('/api/analytics/performance-report', JSON.stringify(report))
+  // if (navigator.sendBeacon) {
+  //   navigator.sendBeacon('/api/analytics/performance-report', JSON.stringify(report))
+  // }
+
+  // 只在开发环境下记录到控制台
+  if (import.meta.env.DEV) {
+    console.log('📊 Final Performance Report:', report)
   }
-  
+
   performanceMonitor.cleanup()
 })

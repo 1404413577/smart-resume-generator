@@ -177,7 +177,7 @@ import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.
 import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
 import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
-import StyleSettings from '@components/settings/StyleSettings.vue'
+import StyleSettings from '@components/settings/StyleSettingsNew.vue'
 import { getTemplate } from '@templates'
 
 // 编辑器组件导入

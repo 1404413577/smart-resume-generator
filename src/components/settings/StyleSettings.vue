@@ -1,13 +1,6 @@
 <template>
-  <div class="style-settings" v-if="globalSettings && themePresets">
-    <!-- 加载状态 -->
-    <div v-if="!isLoaded" class="loading-state">
-      <el-icon class="is-loading"><Loading /></el-icon>
-      <span>加载设置中...</span>
-    </div>
-
+  <div class="style-settings">
     <!-- 设置内容 -->
-    <div v-else>
     <!-- 主题设置 -->
     <div class="setting-group">
       <h4 class="group-title">
@@ -175,8 +168,6 @@
         重置样式
       </el-button>
     </div>
-
-    </div> <!-- 关闭设置内容 div -->
   </div>
 </template>
 

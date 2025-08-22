@@ -193,6 +193,9 @@
             <el-button @click="handleExportPDF" type="primary" size="small" :icon="Printer" :loading="isExporting">
               导出PDF
             </el-button>
+            <el-button @click="handleExportWord" size="small" :icon="Document">
+              导出Word
+            </el-button>
           </div>
         </div>
         <div class="preview-content">
@@ -285,6 +288,7 @@ import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
 import { generateMultiPageResumePDF } from '@utils/pdf/multiPagePdfGenerator'
 import { createMultiPageManager } from '@/utils/multipage/pageManager'
 import { useGlobalStyles } from '@/composables/useGlobalStyles'
+import { exportResumeToDocx } from '@utils/word/exportDocx'
 
 // 组件导入
 import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.vue'
@@ -484,6 +488,7 @@ const resetZoom = () => {
 }
 
 const isExporting = ref(false)
+const isExportingWord = ref(false)
 
 const handleExportPDF = async () => {
   try {
@@ -512,6 +517,30 @@ const handleExportPDF = async () => {
     ElMessage.error('PDF导出失败，请重试')
   } finally {
     isExporting.value = false
+  }
+}
+
+const handleExportWord = async () => {
+  try {
+    isExportingWord.value = true
+    await nextTick()
+    const name = resumeStore.resumeData.personalInfo?.name?.trim()
+    const filename = `${name || '简历'}.docx`
+    const blob = await exportResumeToDocx(resumeStore.resumeData)
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    ElMessage.success('Word导出成功！')
+  } catch (error) {
+    console.error('Word导出失败:', error)
+    ElMessage.error('Word导出失败，请重试')
+  } finally {
+    isExportingWord.value = false
   }
 }
 

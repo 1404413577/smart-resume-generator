@@ -276,23 +276,29 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     // 保存原始样式
     const originalStyle = element.style.cssText
 
-    // 设置最优的PDF样式
+    // 设置PDF样式 - 保持与屏幕显示的一致性
     element.style.width = '210mm'
+    element.style.height = '297mm'
+    element.style.minHeight = '297mm'
     element.style.maxWidth = '210mm'
-    element.style.padding = '8mm' // 进一步减少边距
+    element.style.padding = '30px' // 保持与屏幕显示一致的边距
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
     element.style.transform = 'none'
     element.style.position = 'relative'
-    element.style.fontSize = '10px' // 稍微减小字体以容纳更多内容
+    element.style.overflow = 'visible'
+
+    // 保持原有字体设置，只微调渲染
+    element.style.webkitFontSmoothing = 'antialiased'
+    element.style.mozOsxFontSmoothing = 'grayscale'
 
     // 等待样式应用
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise(resolve => setTimeout(resolve, 500))
 
-    // 高质量canvas配置
+    // 优化canvas配置 - 平衡质量和一致性
     const canvas = await html2canvas(element, {
-      scale: 4, // 更高的分辨率
+      scale: 2, // 适中的分辨率，避免过度放大导致的差异
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
@@ -301,7 +307,9 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       scrollX: 0,
       scrollY: 0,
       windowWidth: 794,
-      windowHeight: 1123
+      windowHeight: 1123,
+      letterRendering: true, // 改善文字渲染
+      logging: false // 关闭日志以提高性能
     })
 
     // 恢复原始样式

@@ -90,6 +90,7 @@ import {
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
+import { exportPdfViaServer } from '@utils/pdf/serverExport'
 
 const router = useRouter()
 const resumeStore = useResumeStore()
@@ -119,7 +120,25 @@ const formatSaveTime = (saveTime) => {
 const handleExportPDF = async () => {
   try {
     isExporting.value = true
-    await generateOptimizedPDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
+    const filename = `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`
+    // 先尝试服务端高保真导出
+    try {
+      // 优先使用 savedResumes 的 rid 通过 /print 还原，否则让服务端注入快照
+      const saved = localStorage.getItem('savedResumes')
+      const firstId = saved ? (JSON.parse(saved)[0]?.id) : undefined
+      await exportPdfViaServer(filename, {
+        query: firstId ? { rid: firstId } : {},
+        snapshot: firstId ? null : {
+          resumeData: JSON.parse(localStorage.getItem('resumeData') || 'null'),
+          selectedTemplate: localStorage.getItem('selectedTemplate') || 'modern',
+          templateSettings: JSON.parse(localStorage.getItem('templateSettings') || 'null'),
+          globalSettings: JSON.parse(localStorage.getItem('globalSettings') || 'null')
+        }
+      })
+    } catch (e) {
+      console.warn('服务端导出失败，回退到前端方案：', e)
+      await generateOptimizedPDF('resume-preview', filename)
+    }
     ElMessage.success('PDF导出成功！')
   } catch (error) {
     console.error('PDF导出失败:', error)

@@ -78,16 +78,18 @@ export class MultiPagePdfGenerator {
         const originalDisplay = page.style.display
         page.style.display = 'block'
 
-        // 生成页面截图
+        // 生成页面截图 - 保持一致性
         const canvas = await html2canvas(page, {
-          scale: 2, // 高分辨率
+          scale: 2, // 适中的分辨率
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
           width: page.scrollWidth,
           height: page.scrollHeight,
           scrollX: 0,
-          scrollY: 0
+          scrollY: 0,
+          letterRendering: true, // 改善文字渲染
+          logging: false // 关闭日志以提高性能
         })
 
         // 恢复原始显示状态
@@ -136,10 +138,12 @@ export class MultiPagePdfGenerator {
    */
   async generateSinglePagePDF(element, filename) {
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: 2, // 适中的分辨率
       useCORS: true,
       allowTaint: true,
-      backgroundColor: '#ffffff'
+      backgroundColor: '#ffffff',
+      letterRendering: true, // 改善文字渲染
+      logging: false // 关闭日志以提高性能
     })
 
     const pdf = new jsPDF({

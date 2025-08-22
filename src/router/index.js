@@ -10,6 +10,7 @@ const SettingsView = () => import('../views/SettingsView.vue')
 const AboutView = () => import('../views/AboutView.vue')
 const NotFoundView = () => import('../views/NotFoundView.vue')
 const TestRandomStyleView = () => import('../views/TestRandomStyleView.vue')
+const PrintView = () => import('../views/PrintView.vue')
 
 const routes = [
   {
@@ -89,6 +90,16 @@ const routes = [
     meta: {
       title: '随机风格测试',
       description: '测试随机简历风格生成功能',
+      requiresResume: false
+    }
+  },
+  {
+    path: '/print',
+    name: 'Print',
+    component: PrintView,
+    meta: {
+      title: '打印预览',
+      description: '用于服务端导出高保真PDF的打印页面',
       requiresResume: false
     }
   },

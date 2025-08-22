@@ -84,7 +84,6 @@ import {
   InfoFilled,
   RefreshLeft,
   House,
-  Folder,
   MagicStick,
   Grid
 } from '@element-plus/icons-vue'
@@ -99,7 +98,6 @@ const isExporting = ref(false)
 // 导航菜单项
 const navItems = [
   { name: 'Home', path: '/', label: '编辑器', icon: House },
-  { name: 'Resumes', path: '/resumes', label: '简历管理', icon: Folder },
   { name: 'AIAssistant', path: '/ai-assistant', label: 'AI助手', icon: MagicStick },
   { name: 'Templates', path: '/templates', label: '模板中心', icon: Grid }
 ]
@@ -123,12 +121,8 @@ const handleExportPDF = async () => {
     const filename = `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`
     // 先尝试服务端高保真导出
     try {
-      // 优先使用 savedResumes 的 rid 通过 /print 还原，否则让服务端注入快照
-      const saved = localStorage.getItem('savedResumes')
-      const firstId = saved ? (JSON.parse(saved)[0]?.id) : undefined
       await exportPdfViaServer(filename, {
-        query: firstId ? { rid: firstId } : {},
-        snapshot: firstId ? null : {
+        snapshot: {
           resumeData: JSON.parse(localStorage.getItem('resumeData') || 'null'),
           selectedTemplate: localStorage.getItem('selectedTemplate') || 'modern',
           templateSettings: JSON.parse(localStorage.getItem('templateSettings') || 'null'),

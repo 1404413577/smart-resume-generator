@@ -1,16 +1,11 @@
 <template>
   <div class="action-buttons">
-    <el-button @click="$emit('manage-resumes')" type="primary" size="small" class="manage-button">
-      <el-icon><Folder /></el-icon>
-      简历管理
-    </el-button>
+    <!-- 其他操作按钮可以在这里添加 -->
   </div>
 </template>
 
 <script setup>
-import { Folder } from '@element-plus/icons-vue'
-
-defineEmits(['manage-resumes'])
+// 可以在这里添加其他操作按钮的逻辑
 </script>
 
 <style scoped>

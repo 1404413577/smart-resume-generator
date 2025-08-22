@@ -12,7 +12,8 @@ export default defineConfig({
       '@templates': resolve(__dirname, 'src/templates'),
       '@components': resolve(__dirname, 'src/components'),
       '@utils': resolve(__dirname, 'src/utils'),
-      '@stores': resolve(__dirname, 'src/stores')
+      '@stores': resolve(__dirname, 'src/stores'),
+      '@api': resolve(__dirname, 'src/api')
     }
   },
   build: {

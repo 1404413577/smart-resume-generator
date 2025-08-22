@@ -29,7 +29,6 @@ export const useResumeStore = defineStore('resume', () => {
 
   const selectedTemplate = ref('modern')
   const isPreviewMode = ref(false)
-  const savedResumes = ref([])
   const lastSaveTime = ref(null)
   const isAutoSaveEnabled = ref(false)
 
@@ -671,37 +670,7 @@ export const useResumeStore = defineStore('resume', () => {
     }
   }
 
-  // 简历管理
-  const saveResume = (name) => {
-    const newResume = {
-      id: Date.now().toString(),
-      name,
-      data: JSON.parse(JSON.stringify(resumeData.value)),
-      template: selectedTemplate.value,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-    savedResumes.value.push(newResume)
-    localStorage.setItem('savedResumes', JSON.stringify(savedResumes.value))
-  }
 
-  const loadResume = (id) => {
-    const resume = savedResumes.value.find(r => r.id === id)
-    if (resume) {
-      resumeData.value = JSON.parse(JSON.stringify(resume.data))
-      // 如果简历使用的是已移除的简约风格，则重置为现代风格
-      if (resume.template === 'minimal') {
-        selectedTemplate.value = 'modern'
-      } else {
-        selectedTemplate.value = resume.template
-      }
-    }
-  }
-
-  const deleteResume = (id) => {
-    savedResumes.value = savedResumes.value.filter(r => r.id !== id)
-    localStorage.setItem('savedResumes', JSON.stringify(savedResumes.value))
-  }
 
   // 模板切换
   const setTemplate = (templateId) => {
@@ -1003,14 +972,6 @@ export const useResumeStore = defineStore('resume', () => {
   // 初始化
   const init = () => {
     loadFromLocalStorage()
-    const saved = localStorage.getItem('savedResumes')
-    if (saved) {
-      try {
-        savedResumes.value = JSON.parse(saved)
-      } catch (error) {
-        console.error('加载保存的简历失败:', error)
-      }
-    }
 
     // 启动自动保存
     startAutoSave()
@@ -1026,7 +987,6 @@ export const useResumeStore = defineStore('resume', () => {
     resumeData,
     selectedTemplate,
     isPreviewMode,
-    savedResumes,
     lastSaveTime,
     isAutoSaveEnabled,
     templateSettings,
@@ -1066,9 +1026,6 @@ export const useResumeStore = defineStore('resume', () => {
     removeCertification,
     addLanguage,
     removeLanguage,
-    saveResume,
-    loadResume,
-    deleteResume,
     setTemplate,
     applyTemplate,
     updateTemplateSetting,

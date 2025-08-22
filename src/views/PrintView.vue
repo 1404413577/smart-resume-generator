@@ -15,23 +15,8 @@ const route = useRoute()
 const resumeStore = useResumeStore()
 
 onMounted(() => {
-  // 可通过 /print?rid=xxx 预览某个已保存简历
-  const rid = route.query.rid
-  if (rid) {
-    try {
-      const saved = localStorage.getItem('savedResumes')
-      if (saved) {
-        const arr = JSON.parse(saved)
-        const found = arr.find(r => r.id === rid)
-        if (found) {
-          resumeStore.resumeData = JSON.parse(JSON.stringify(found.data))
-          resumeStore.selectedTemplate = found.template || 'modern'
-        }
-      }
-    } catch (e) {
-      console.warn('加载指定简历失败:', e)
-    }
-  }
+  // 打印视图初始化
+  console.log('Print view mounted')
 })
 </script>
 

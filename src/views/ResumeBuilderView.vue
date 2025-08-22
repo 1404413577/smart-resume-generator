@@ -7,7 +7,6 @@
       @module-change="handleModuleChange"
       @template-manage="handleTemplateManage"
       @ai-generate="handleAIGenerate"
-      @manage-resumes="handleManageResumes"
     />
 
     <!-- 中间：内容编辑区 -->
@@ -42,12 +41,7 @@
       @template-applied="handleTemplateApplied"
     />
 
-    <!-- 简历管理器 -->
-    <ResumeManager
-      :visible="showResumeManager"
-      @update:visible="showResumeManager = $event"
-      @close="showResumeManager = false"
-    />
+
   </div>
 </template>
 
@@ -62,7 +56,6 @@ import NavigationPanel from '@components/navigation/NavigationPanel.vue'
 import EditorPanel from '@components/resume/EditorPanel.vue'
 import PreviewPanel from '@components/resume/PreviewPanel.vue'
 import AIResumeGenerator from '@components/ai/AIResumeGenerator.vue'
-import ResumeManager from '@components/resume/ResumeManager.vue'
 
 const resumeStore = useResumeStore()
 
@@ -71,7 +64,7 @@ const activeModule = ref('personalInfo')
 const previewScale = ref(1)
 const showAIGenerator = ref(false)
 const showTemplateManager = ref(false)
-const showResumeManager = ref(false)
+
 
 // 计算属性
 const isExporting = computed(() => resumeStore.isExporting)
@@ -89,9 +82,7 @@ const handleAIGenerate = () => {
   showAIGenerator.value = true
 }
 
-const handleManageResumes = () => {
-  showResumeManager.value = true
-}
+
 
 const zoomIn = () => {
   if (previewScale.value < 1.5) {

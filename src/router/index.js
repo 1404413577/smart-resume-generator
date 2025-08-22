@@ -3,7 +3,6 @@ import { useResumeStore } from '@stores/resume'
 
 // 路由组件懒加载
 const HomeView = () => import('../views/HomeView.vue')
-const ResumesView = () => import('../views/ResumesView.vue')
 const AIAssistantView = () => import('../views/AIAssistantView.vue')
 const TemplatesView = () => import('../views/TemplatesView.vue')
 const SettingsView = () => import('../views/SettingsView.vue')
@@ -23,16 +22,7 @@ const routes = [
       requiresResume: false
     }
   },
-  {
-    path: '/resumes',
-    name: 'Resumes',
-    component: ResumesView,
-    meta: {
-      title: '简历管理',
-      description: '管理您的所有简历',
-      requiresResume: false
-    }
-  },
+
   {
     path: '/ai-assistant',
     name: 'AIAssistant',

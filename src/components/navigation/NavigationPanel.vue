@@ -13,9 +13,7 @@
     />
 
     <!-- 底部操作按钮 -->
-    <ActionButtons
-      @manage-resumes="$emit('manage-resumes')"
-    />
+    <ActionButtons />
   </div>
 </template>
 
@@ -34,8 +32,7 @@ defineProps({
 defineEmits([
   'module-change',
   'template-manage',
-  'ai-generate',
-  'manage-resumes'
+  'ai-generate'
 ])
 </script>
 

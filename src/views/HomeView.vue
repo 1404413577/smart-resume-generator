@@ -193,8 +193,11 @@
             <el-button @click="handleExportPDF" type="primary" size="small" :icon="Printer" :loading="isExporting">
               导出PDF
             </el-button>
-            <el-button @click="handleExportWord" size="small" :icon="Document">
+            <el-button @click="handleExportWord" size="small" :icon="Document" :loading="isExportingWord">
               导出Word
+            </el-button>
+            <el-button @click="showTemplateUploader = true" size="small" :icon="Upload" type="success">
+              模板导出
             </el-button>
           </div>
         </div>
@@ -256,6 +259,21 @@
         <AITestPanel />
       </el-dialog>
 
+      <!-- 模板上传对话框 -->
+      <el-dialog
+        v-model="showTemplateUploader"
+        title="Word模板导出"
+        width="800px"
+        :close-on-click-modal="false"
+      >
+        <TemplateUploader
+          @export-success="handleTemplateExportSuccess"
+          @export-error="handleTemplateExportError"
+        />
+      </el-dialog>
+
+
+
     </div>
   </div>
 </template>
@@ -281,7 +299,8 @@ import {
   Promotion,
   Search,
   TrendCharts,
-  ChatRound
+  ChatRound,
+  Upload
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
@@ -291,6 +310,7 @@ import { useGlobalStyles } from '@/composables/useGlobalStyles'
 import { exportResumeToDocx } from '@utils/word/exportDocx'
 
 // 组件导入
+import TemplateUploader from '@components/word/TemplateUploader.vue'
 import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.vue'
 import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
 import TemplateManager from '@components/templates/TemplateManager.vue'
@@ -489,6 +509,8 @@ const resetZoom = () => {
 
 const isExporting = ref(false)
 const isExportingWord = ref(false)
+const showTemplateUploader = ref(false)
+
 
 const handleExportPDF = async () => {
   try {
@@ -542,6 +564,16 @@ const handleExportWord = async () => {
   } finally {
     isExportingWord.value = false
   }
+}
+
+const handleTemplateExportSuccess = (result) => {
+  showTemplateUploader.value = false
+  ElMessage.success(`模板导出成功：${result.filename}`)
+}
+
+const handleTemplateExportError = (error) => {
+  console.error('模板导出错误:', error)
+  ElMessage.error('模板导出失败，请检查模板格式')
 }
 
 const handleResumeGenerated = (resumeData) => {

@@ -6,7 +6,6 @@
         :active-module="activeModule"
         @module-change="handleModuleChange"
         @template-change="handleTemplateChange"
-        @manage-resumes="handleManageResumes"
         @template-manage="handleTemplateManage"
         @ai-generate="handleAIGenerateResume"
       />
@@ -401,11 +400,7 @@ const generateAIProjects = async () => {
   resumeStore.updateProject(latestProject.id, updatedProject)
 }
 
-// 简历管理处理
-const handleManageResumes = () => {
-  // 触发简历管理对话框
-  ElMessage.info('打开简历管理')
-}
+
 
 // 缩放功能
 const zoomIn = () => {

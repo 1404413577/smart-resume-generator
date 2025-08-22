@@ -132,8 +132,7 @@ src/
 ├── components/          # 组件目录
 │   ├── forms/          # 表单组件
 │   ├── templates/      # 简历模板
-│   ├── ResumeBuilder.vue
-│   └── ResumeManager.vue
+│   └── ResumeBuilder.vue
 ├── stores/             # Pinia状态管理
 │   └── resume.js
 ├── utils/              # 工具函数

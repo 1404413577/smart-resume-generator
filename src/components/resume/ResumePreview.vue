@@ -263,12 +263,12 @@ const getSkillWidth = (level) => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
 
-  /* 优化字体设置，确保跨平台一致性 */
+  /* 优化字体设置，确保跨平台一致性，特别是中文字符 */
   font-family: 'Segoe UI', 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 14px;
   line-height: 1.5; /* 优化行间距 */
-  letter-spacing: 0.01em; /* 轻微增加字符间距 */
-  word-spacing: 0.02em; /* 优化单词间距 */
+  letter-spacing: 0.05em; /* 增加字符间距，改善中文显示 */
+  word-spacing: 0.03em; /* 优化单词间距 */
   color: var(--text-primary, #333);
 
   /* 字体渲染优化 */
@@ -805,9 +805,9 @@ const getSkillWidth = (level) => {
     background: white !important;
     overflow: visible !important;
     page-break-inside: avoid !important;
-    letter-spacing: normal !important;
-    word-spacing: normal !important;
-    line-height: normal !important;
+    letter-spacing: 0.05em !important; /* 保持适当的字符间距，特别是中文 */
+    word-spacing: 0.03em !important;
+    line-height: 1.5 !important; /* 保持良好的行间距 */
   }
 
   /* 个人信息部分 - 保持原有样式 */

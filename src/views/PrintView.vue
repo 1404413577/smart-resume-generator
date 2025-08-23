@@ -56,13 +56,14 @@ onMounted(() => {
     aspect-ratio: auto !important;
     overflow: visible !important;
   }
-  /* 行距与字距采用屏幕默认，避免打印时硬性覆盖 */
+  /* 优化字体渲染，保持适当的字符间距 */
   #resume-preview {
-    letter-spacing: normal !important;
-    word-spacing: normal !important;
-    line-height: normal !important;
+    letter-spacing: 0.05em !important; /* 保持适当的字符间距，特别是中文 */
+    word-spacing: 0.03em !important;
+    line-height: 1.5 !important; /* 保持良好的行间距 */
     -webkit-font-smoothing: antialiased !important;
     text-rendering: optimizeLegibility !important;
+    font-family: 'Segoe UI', 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', sans-serif !important;
   }
 }
 </style>

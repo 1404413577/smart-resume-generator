@@ -15,6 +15,9 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     backgroundColor: '#ffffff',
     width: 794, // A4纸宽度像素 (210mm * 3.78 dpi)
     height: 1123, // A4纸高度像素 (297mm * 3.78 dpi)
+    // 优化中文字符渲染 - 移除不支持的参数
+    letterRendering: false,
+    logging: false,
     ...options
   }
 
@@ -25,7 +28,7 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
       throw new Error(`找不到ID为 ${elementId} 的元素`)
     }
 
-    // 临时调整元素样式以适应PDF - 优化边距
+    // 临时调整元素样式以适应PDF - 优化边距和字体渲染
     const originalStyle = element.style.cssText
     element.style.width = '210mm' // A4纸宽度
     element.style.minHeight = '297mm' // A4纸高度
@@ -36,17 +39,40 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     element.style.transform = 'none' // 移除任何变换
     element.style.position = 'relative'
 
+    // 优化字体渲染设置，特别针对中文字符
+    element.style.webkitFontSmoothing = 'antialiased'
+    element.style.mozOsxFontSmoothing = 'grayscale'
+    element.style.textRendering = 'optimizeLegibility'
+    element.style.letterSpacing = '0.05em'
+    element.style.wordSpacing = '0.03em'
+
+    // 安全地设置字体回退链
+    const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
+    if (!currentFontFamily.includes('Microsoft YaHei') && !currentFontFamily.includes('SimSun')) {
+      // 确保字体名称格式正确
+      const safeFontFamily = currentFontFamily.trim()
+      if (safeFontFamily) {
+        element.style.fontFamily = `${safeFontFamily}, "Microsoft YaHei", "SimSun", sans-serif`
+      } else {
+        element.style.fontFamily = '"Microsoft YaHei", "SimSun", system-ui, sans-serif'
+      }
+    }
+
     // 等待样式生效
     await new Promise(resolve => setTimeout(resolve, 200))
 
     // 使用html2canvas转换为canvas
+    console.log('开始生成PDF，元素尺寸:', element.offsetWidth, 'x', element.offsetHeight)
     const canvas = await html2canvas(element, defaultOptions)
+    console.log('Canvas生成完成，尺寸:', canvas.width, 'x', canvas.height)
 
     // 恢复原始样式
     element.style.cssText = originalStyle
 
     // 创建PDF - 优化配置
     const imgData = canvas.toDataURL('image/png', 1.0) // 最高质量
+    console.log('图片数据生成完成，长度:', imgData.length)
+
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -131,6 +157,25 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
 
+    // 优化字体渲染设置，特别针对中文字符
+    element.style.webkitFontSmoothing = 'antialiased'
+    element.style.mozOsxFontSmoothing = 'grayscale'
+    element.style.textRendering = 'optimizeLegibility'
+    element.style.letterSpacing = '0.05em'
+    element.style.wordSpacing = '0.03em'
+
+    // 安全地设置字体回退链
+    const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
+    if (!currentFontFamily.includes('Microsoft YaHei') && !currentFontFamily.includes('SimSun')) {
+      // 确保字体名称格式正确
+      const safeFontFamily = currentFontFamily.trim()
+      if (safeFontFamily) {
+        element.style.fontFamily = `${safeFontFamily}, "Microsoft YaHei", "SimSun", sans-serif`
+      } else {
+        element.style.fontFamily = '"Microsoft YaHei", "SimSun", system-ui, sans-serif'
+      }
+    }
+
     await new Promise(resolve => setTimeout(resolve, 200))
 
     const canvas = await html2canvas(element, {
@@ -139,7 +184,10 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
       allowTaint: true,
       backgroundColor: '#ffffff',
       width: 794,
-      height: 1123
+      height: 1123,
+      // 优化中文字符渲染
+      letterRendering: false,
+      logging: false
     })
 
     // 恢复样式
@@ -289,14 +337,31 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     element.style.position = 'relative'
     element.style.overflow = 'visible'
 
-    // 保持原有字体设置，只微调渲染
+    // 优化字体渲染设置，特别针对中文字符
     element.style.webkitFontSmoothing = 'antialiased'
     element.style.mozOsxFontSmoothing = 'grayscale'
+    element.style.textRendering = 'optimizeLegibility'
+
+    // 为中文字符优化字符间距
+    element.style.letterSpacing = '0.05em'
+    element.style.wordSpacing = '0.03em'
+
+    // 安全地设置字体回退链
+    const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
+    if (!currentFontFamily.includes('Microsoft YaHei') && !currentFontFamily.includes('SimSun')) {
+      // 确保字体名称格式正确
+      const safeFontFamily = currentFontFamily.trim()
+      if (safeFontFamily) {
+        element.style.fontFamily = `${safeFontFamily}, "Microsoft YaHei", "SimSun", sans-serif`
+      } else {
+        element.style.fontFamily = '"Microsoft YaHei", "SimSun", system-ui, sans-serif'
+      }
+    }
 
     // 等待样式应用
     await new Promise(resolve => setTimeout(resolve, 500))
 
-    // 优化canvas配置 - 平衡质量和一致性
+    // 优化canvas配置 - 平衡质量和一致性，特别优化中文字符渲染
     const canvas = await html2canvas(element, {
       scale: 2, // 适中的分辨率，避免过度放大导致的差异
       useCORS: true,
@@ -308,7 +373,7 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       scrollY: 0,
       windowWidth: 794,
       windowHeight: 1123,
-      letterRendering: true, // 改善文字渲染
+      letterRendering: false, // 禁用letterRendering以避免中文字符间距问题
       logging: false // 关闭日志以提高性能
     })
 

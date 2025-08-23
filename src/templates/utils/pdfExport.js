@@ -12,8 +12,9 @@ const PDF_EXPORT_SETTINGS = {
   html2canvas: {
     scale: 2,
     useCORS: true,
-    letterRendering: true,
-    allowTaint: false
+    letterRendering: false, // 禁用letterRendering以避免中文字符间距问题
+    allowTaint: false,
+    logging: false
   },
   jsPDF: {
     unit: 'mm',

@@ -430,30 +430,39 @@ const getSkillLevel = (level) => {
   color: var(--secondary-color);
 }
 
+/* PDF导出专用样式 - 最小化边距 */
+.modern-template.pdf-export .sidebar {
+  padding: 8px 6px !important;
+}
+
+.modern-template.pdf-export .main-content {
+  padding: 10px 8px !important;
+}
+
 /* 打印样式 */
 @media print {
   .modern-template {
     font-size: 12px;
   }
-  
+
   .resume-container {
     box-shadow: none;
     min-height: auto;
   }
-  
+
   .sidebar {
     width: 30%;
-    padding: 20px 15px;
+    padding: 10px 8px; /* 最小化边距，最大化内容区域 */
   }
-  
+
   .main-content {
-    padding: 25px 20px;
+    padding: 12px 10px; /* 最小化边距，最大化内容区域 */
   }
-  
+
   .name {
     font-size: 24px;
   }
-  
+
   .avatar {
     width: 80px;
     height: 80px;

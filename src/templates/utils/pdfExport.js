@@ -7,7 +7,7 @@ import html2pdf from 'html2pdf.js'
 
 // PDF导出默认设置
 const PDF_EXPORT_SETTINGS = {
-  margin: [10, 10, 10, 10],
+  margin: [2, 2, 2, 2], // 最小边距，最大化内容区域
   image: { type: 'jpeg', quality: 0.98 },
   html2canvas: {
     scale: 2,

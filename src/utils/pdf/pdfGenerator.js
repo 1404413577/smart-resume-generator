@@ -28,11 +28,18 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
       throw new Error(`找不到ID为 ${elementId} 的元素`)
     }
 
+    // 检测是否为Modern模板并添加PDF导出专用CSS类
+    const isModernTemplate = element.querySelector('.modern-template')
+
+    if (isModernTemplate) {
+      isModernTemplate.classList.add('pdf-export')
+    }
+
     // 临时调整元素样式以适应PDF - 优化边距和字体渲染
     const originalStyle = element.style.cssText
     element.style.width = '210mm' // A4纸宽度
     element.style.minHeight = '297mm' // A4纸高度
-    element.style.padding = '10mm' // 减少边距到10mm
+    element.style.padding = '5mm' // 最小边距，最大化内容区域
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
     element.style.margin = '0'
@@ -66,8 +73,11 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     const canvas = await html2canvas(element, defaultOptions)
     console.log('Canvas生成完成，尺寸:', canvas.width, 'x', canvas.height)
 
-    // 恢复原始样式
+    // 恢复原始样式和CSS类
     element.style.cssText = originalStyle
+    if (isModernTemplate) {
+      isModernTemplate.classList.remove('pdf-export')
+    }
 
     // 创建PDF - 优化配置
     const imgData = canvas.toDataURL('image/png', 1.0) // 最高质量
@@ -84,27 +94,13 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     const pdfWidth = 210
     const pdfHeight = 297
 
-    // 计算缩放比例 - 确保充分利用页面空间
-    const canvasAspectRatio = canvas.width / canvas.height
-    const pdfAspectRatio = pdfWidth / pdfHeight
+    // 直接使用整个页面空间，无边距
+    const finalWidth = pdfWidth
+    const finalHeight = pdfHeight
+    const offsetX = 0
+    const offsetY = 0
 
-    let finalWidth, finalHeight, offsetX, offsetY
-
-    if (canvasAspectRatio > pdfAspectRatio) {
-      // 图片更宽，以宽度为准
-      finalWidth = pdfWidth
-      finalHeight = pdfWidth / canvasAspectRatio
-      offsetX = 0
-      offsetY = (pdfHeight - finalHeight) / 2
-    } else {
-      // 图片更高，以高度为准
-      finalHeight = pdfHeight
-      finalWidth = pdfHeight * canvasAspectRatio
-      offsetX = (pdfWidth - finalWidth) / 2
-      offsetY = 0
-    }
-
-    // 添加图片到PDF - 充分利用页面空间
+    // 添加图片到PDF - 充分利用整个页面空间
     pdf.addImage(imgData, 'PNG', offsetX, offsetY, finalWidth, finalHeight)
 
     // 如果内容超过一页，需要分页处理
@@ -149,10 +145,16 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
       throw new Error(`找不到ID为 ${elementId} 的元素`)
     }
 
+    // 检测是否为Modern模板并添加PDF导出专用CSS类
+    const isModernTemplate = element.querySelector('.modern-template')
+    if (isModernTemplate) {
+      isModernTemplate.classList.add('pdf-export')
+    }
+
     // 临时调整元素样式
     const originalStyle = element.style.cssText
     element.style.width = '210mm'
-    element.style.padding = '10mm'
+    element.style.padding = '5mm' // 最小边距，最大化内容区域
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
@@ -190,8 +192,11 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
       logging: false
     })
 
-    // 恢复样式
+    // 恢复样式和CSS类
     element.style.cssText = originalStyle
+    if (isModernTemplate) {
+      isModernTemplate.classList.remove('pdf-export')
+    }
 
     const imgData = canvas.toDataURL('image/png', 1.0)
     const pdf = new jsPDF('portrait', 'mm', 'a4')
@@ -200,23 +205,11 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
     const pdfWidth = 210
     const pdfHeight = 297
 
-    // 计算最佳尺寸
-    const canvasAspectRatio = canvas.width / canvas.height
-    const pdfAspectRatio = pdfWidth / pdfHeight
-
-    let finalWidth, finalHeight, offsetX, offsetY
-
-    if (canvasAspectRatio > pdfAspectRatio) {
-      finalWidth = pdfWidth
-      finalHeight = pdfWidth / canvasAspectRatio
-      offsetX = 0
-      offsetY = (pdfHeight - finalHeight) / 2
-    } else {
-      finalHeight = pdfHeight
-      finalWidth = pdfHeight * canvasAspectRatio
-      offsetX = (pdfWidth - finalWidth) / 2
-      offsetY = 0
-    }
+    // 直接使用整个页面空间，无边距
+    const finalWidth = pdfWidth
+    const finalHeight = pdfHeight
+    const offsetX = 0
+    const offsetY = 0
 
     pdf.addImage(imgData, 'PNG', offsetX, offsetY, finalWidth, finalHeight)
     
@@ -321,6 +314,12 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       throw new Error(`找不到ID为 ${elementId} 的元素`)
     }
 
+    // 检测是否为Modern模板并添加PDF导出专用CSS类
+    const isModernTemplate = element.querySelector('.modern-template')
+    if (isModernTemplate) {
+      isModernTemplate.classList.add('pdf-export')
+    }
+
     // 保存原始样式
     const originalStyle = element.style.cssText
 
@@ -329,7 +328,7 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     element.style.height = '297mm'
     element.style.minHeight = '297mm'
     element.style.maxWidth = '210mm'
-    element.style.padding = '30px' // 保持与屏幕显示一致的边距
+    element.style.padding = '15px' // 最小边距，最大化内容区域
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
@@ -377,8 +376,11 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       logging: false // 关闭日志以提高性能
     })
 
-    // 恢复原始样式
+    // 恢复原始样式和CSS类
     element.style.cssText = originalStyle
+    if (isModernTemplate) {
+      isModernTemplate.classList.remove('pdf-export')
+    }
 
     // 创建PDF
     const imgData = canvas.toDataURL('image/png', 1.0)

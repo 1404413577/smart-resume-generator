@@ -213,16 +213,18 @@
             @apply-suggested-paging="handleApplySuggestedPaging"
           />
 
-          <div class="preview-container" :style="{ transform: `scale(${previewScale})` }">
-            <div id="resume-preview">
-              <component
-                v-if="currentTemplateComponent"
-                :is="currentTemplateComponent"
-                :resume-data="resumeStore.resumeData"
-                :template-id="resumeStore.selectedTemplate"
-                :page-settings="resumeStore.globalSettings?.pageSettings"
-              />
-              <ResumePreview v-else :scale="previewScale" />
+          <div class="preview-wrapper">
+            <div class="preview-container" :style="{ transform: `scale(${previewScale})` }">
+              <div id="resume-preview">
+                <component
+                  v-if="currentTemplateComponent"
+                  :is="currentTemplateComponent"
+                  :resume-data="resumeStore.resumeData"
+                  :template-id="resumeStore.selectedTemplate"
+                  :page-settings="resumeStore.globalSettings?.pageSettings"
+                />
+                <ResumePreview v-else :scale="previewScale" />
+              </div>
             </div>
           </div>
         </div>
@@ -1326,8 +1328,16 @@ watch(() => resumeStore.resumeData, () => {
   overflow: auto;
   padding: 20px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 600px; /* 确保预览区域有最小高度 */
+}
+
+.preview-wrapper {
+  display: flex;
   justify-content: center;
-  align-items: flex-start;
+  width: 100%;
+  min-height: 297mm; /* 确保预览包装器有最小高度 */
 }
 
 .preview-container {
@@ -1337,6 +1347,9 @@ watch(() => resumeStore.resumeData, () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   overflow: hidden;
+  min-width: 210mm; /* A4纸张宽度 */
+  min-height: 297mm; /* A4纸张高度 */
+  max-width: 210mm; /* 限制最大宽度 */
 }
 
 /* 响应式设计 */
@@ -1377,6 +1390,16 @@ watch(() => resumeStore.resumeData, () => {
 
   .right-preview {
     height: 400px;
+  }
+
+  .preview-container {
+    min-width: calc(100vw - 80px); /* 移动端适配 */
+    max-width: calc(100vw - 80px);
+    min-height: calc((100vw - 80px) * 1.414); /* 保持A4比例 */
+  }
+
+  .preview-wrapper {
+    min-height: auto;
   }
 }
 </style>

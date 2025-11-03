@@ -88,7 +88,7 @@ export class MultiPagePdfGenerator {
           height: page.scrollHeight,
           scrollX: 0,
           scrollY: 0,
-          letterRendering: true, // 改善文字渲染
+          letterRendering: false, // 禁用letterRendering以避免字符间距问题
           logging: false // 关闭日志以提高性能
         })
 
@@ -142,7 +142,7 @@ export class MultiPagePdfGenerator {
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
-      letterRendering: true, // 改善文字渲染
+      letterRendering: false, // 禁用letterRendering以避免字符间距问题
       logging: false // 关闭日志以提高性能
     })
 

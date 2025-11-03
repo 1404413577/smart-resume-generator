@@ -7,14 +7,15 @@ import html2pdf from 'html2pdf.js'
 
 // PDF导出默认设置
 const PDF_EXPORT_SETTINGS = {
-  margin: [2, 2, 2, 2], // 最小边距，最大化内容区域
+  margin: [10, 10, 10, 10], // 增加边距，避免内容被压缩 (mm)
   image: { type: 'jpeg', quality: 0.98 },
   html2canvas: {
     scale: 2,
     useCORS: true,
     letterRendering: false, // 禁用letterRendering以避免中文字符间距问题
     allowTaint: false,
-    logging: false
+    logging: false,
+    backgroundColor: '#ffffff' // 确保背景色
   },
   jsPDF: {
     unit: 'mm',

@@ -203,8 +203,7 @@ const previewStyle = computed(() => {
   const theme = globalSettings.value?.theme || {}
 
   return {
-    transform: `scale(${props.scale})`,
-    transformOrigin: 'top left',
+    // 不使用 transform scale，保持真实尺寸
     '--primary-color': theme.primary || '#2c3e50',
     '--secondary-color': theme.secondary || '#3498db',
     '--accent-color': theme.accent || '#e74c3c',
@@ -256,8 +255,7 @@ const getSkillWidth = (level) => {
 <style scoped>
 .resume-preview {
   width: 210mm;
-  height: 297mm; /* 固定A4高度 */
-  min-height: 297mm; /* 确保最小高度 */
+  /* 移除固定高度，让内容自然流动 */
   background: var(--background-color, white);
   padding: 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -266,7 +264,7 @@ const getSkillWidth = (level) => {
   /* 优化字体设置，确保跨平台一致性，特别是中文字符 */
   font-family: 'Segoe UI', 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 14px;
-  line-height: 1.5; /* 优化行间距 */
+  line-height: 1.6; /* 增加行间距，提高可读性 */
   letter-spacing: 0.05em; /* 增加字符间距，改善中文显示 */
   word-spacing: 0.03em; /* 优化单词间距 */
   color: var(--text-primary, #333);
@@ -276,13 +274,10 @@ const getSkillWidth = (level) => {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   display: flex;
   flex-direction: column;
-
-  /* 确保A4比例 */
-  aspect-ratio: 210/297;
 
   /* 响应式处理 */
   box-sizing: border-box;
@@ -410,17 +405,17 @@ const getSkillWidth = (level) => {
 
 /* 章节样式 */
 .resume-section {
-  margin-bottom: 25px;
-  min-height: 60px; /* 确保每个section有最小高度 */
+  margin-bottom: 18px; /* 增加章节间距 */
   display: flex;
   flex-direction: column;
+  page-break-inside: avoid; /* 防止分页时被截断 */
 }
 
 .section-title {
   font-size: 20px;
   font-weight: 600;
   color: var(--primary-color, #409eff);
-  margin: 0 0 15px 0;
+  margin: 0 0 12px 0; /* 增加标题下方间距 */
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color, #e4e7ed);
   position: relative;
@@ -440,7 +435,6 @@ const getSkillWidth = (level) => {
 .section-content {
   padding-left: 10px;
   flex: 1;
-  min-height: 30px; /* 确保内容区域有最小高度 */
 }
 
 /* 个人简介 */
@@ -457,9 +451,10 @@ const getSkillWidth = (level) => {
 
 /* 工作经历 */
 .experience-item {
-  margin-bottom: 20px;
-  padding-bottom: 15px;
+  margin-bottom: 16px; /* 增加项目间距 */
+  padding-bottom: 12px;
   border-bottom: 1px solid #f0f0f0;
+  page-break-inside: avoid; /* 防止分页时被截断 */
 }
 
 .experience-item:last-child {
@@ -471,7 +466,7 @@ const getSkillWidth = (level) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .experience-title .position {
@@ -501,7 +496,7 @@ const getSkillWidth = (level) => {
   gap: 6px;
   font-size: 14px;
   color: #666;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .location-icon {
@@ -509,11 +504,11 @@ const getSkillWidth = (level) => {
 }
 
 .experience-description {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .experience-description p {
-  margin: 0;
+  margin: 0 0 6px 0; /* 增加段落间距 */
   font-size: 14px;
   color: #555;
   line-height: 1.6;
@@ -527,14 +522,15 @@ const getSkillWidth = (level) => {
 .experience-achievements li {
   font-size: 14px;
   color: #555;
-  margin-bottom: 4px;
+  margin-bottom: 6px; /* 增加列表项间距 */
 }
 
 /* 教育背景 */
 .education-item {
-  margin-bottom: 15px;
-  padding-bottom: 12px;
+  margin-bottom: 14px; /* 增加项目间距 */
+  padding-bottom: 10px;
   border-bottom: 1px solid #f0f0f0;
+  page-break-inside: avoid; /* 防止分页时被截断 */
 }
 
 .education-item:last-child {
@@ -546,21 +542,21 @@ const getSkillWidth = (level) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .education-title .degree {
   font-size: 16px;
   font-weight: 600;
   color: #333;
-  margin: 0 0 2px 0;
+  margin: 0 0 3px 0;
 }
 
 .education-title .school {
   font-size: 15px;
   font-weight: 500;
   color: #666;
-  margin: 0 0 2px 0;
+  margin: 0 0 3px 0;
 }
 
 .education-title .major {
@@ -579,7 +575,7 @@ const getSkillWidth = (level) => {
 .education-honors {
   font-size: 14px;
   color: #666;
-  margin-top: 4px;
+  margin-top: 5px; /* 增加间距 */
 }
 
 /* 技能特长 */
@@ -630,9 +626,10 @@ const getSkillWidth = (level) => {
 
 /* 项目经历 */
 .project-item {
-  margin-bottom: 20px;
-  padding-bottom: 15px;
+  margin-bottom: 16px; /* 增加项目间距 */
+  padding-bottom: 12px;
   border-bottom: 1px solid #f0f0f0;
+  page-break-inside: avoid; /* 防止分页时被截断 */
 }
 
 .project-item:last-child {
@@ -644,7 +641,7 @@ const getSkillWidth = (level) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .project-title .project-name {
@@ -668,11 +665,11 @@ const getSkillWidth = (level) => {
 }
 
 .project-description {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .project-description p {
-  margin: 0;
+  margin: 0 0 6px 0; /* 增加段落间距 */
   font-size: 14px;
   color: #555;
   line-height: 1.6;
@@ -798,7 +795,7 @@ const getSkillWidth = (level) => {
     width: auto !important;
     height: auto !important;
     min-height: auto !important;
-    padding: 0 !important;
+    padding: 20mm !important; /* 保持合理的页边距 */
     margin: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
@@ -807,7 +804,7 @@ const getSkillWidth = (level) => {
     page-break-inside: avoid !important;
     letter-spacing: 0.05em !important; /* 保持适当的字符间距，特别是中文 */
     word-spacing: 0.03em !important;
-    line-height: 1.5 !important; /* 保持良好的行间距 */
+    line-height: 1.6 !important; /* 保持良好的行间距 */
   }
 
   /* 个人信息部分 - 保持原有样式 */

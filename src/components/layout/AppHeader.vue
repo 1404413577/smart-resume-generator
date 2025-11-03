@@ -90,6 +90,7 @@ import {
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
 import { exportPdfViaServer } from '@utils/pdf/serverExport'
+import { printResume } from '@utils/pdf/browserPrint'
 
 const router = useRouter()
 const resumeStore = useResumeStore()
@@ -114,29 +115,26 @@ const formatSaveTime = (saveTime) => {
   return saveTime.toLocaleTimeString()
 }
 
-// 导出PDF
+// 导出PDF - 使用浏览器原生打印功能
 const handleExportPDF = async () => {
   try {
     isExporting.value = true
-    const filename = `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`
-    // 先尝试服务端高保真导出
-    try {
-      await exportPdfViaServer(filename, {
-        snapshot: {
-          resumeData: JSON.parse(localStorage.getItem('resumeData') || 'null'),
-          selectedTemplate: localStorage.getItem('selectedTemplate') || 'modern',
-          templateSettings: JSON.parse(localStorage.getItem('templateSettings') || 'null'),
-          globalSettings: JSON.parse(localStorage.getItem('globalSettings') || 'null')
-        }
-      })
-    } catch (e) {
-      console.warn('服务端导出失败，回退到前端方案：', e)
-      await generateOptimizedPDF('resume-preview', filename)
-    }
-    ElMessage.success('PDF导出成功！')
+    const name = resumeStore.resumeData.personalInfo.name || '简历'
+    
+    // 使用浏览器原生打印对话框
+    await printResume('resume-preview', {
+      title: `${name}.pdf`,
+      removeAfterPrint: true,
+      addPrintStyles: true
+    })
+    
+    ElMessage.success({
+      message: 'PDF打印窗口已打开，请在打印对话框中选择"另存为PDF"',
+      duration: 5000
+    })
   } catch (error) {
-    console.error('PDF导出失败:', error)
-    ElMessage.error('PDF导出失败，请重试')
+    console.error('打印失败:', error)
+    ElMessage.error('打印失败，请重试')
   } finally {
     isExporting.value = false
   }

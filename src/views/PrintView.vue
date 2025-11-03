@@ -24,7 +24,6 @@ onMounted(() => {
 .print-root {
   /* 屏幕预览时的居中容器 */
   width: 210mm;
-  min-height: 297mm;
   margin: 0 auto;
   padding: 12mm;
   background: #fff;
@@ -42,7 +41,7 @@ onMounted(() => {
     background: #fff !important;
   }
   /* 让 @page 控制边距，避免容器与组件的 padding 叠加导致缩放 */
-  @page { size: A4; margin: 12mm; }
+  @page { size: A4; margin: 20mm; }
 
   /* 移除组件内部的固定尺寸与边距，避免被 PDF 缩放造成字距异常 */
   #resume-preview.resume-preview {
@@ -60,7 +59,7 @@ onMounted(() => {
   #resume-preview {
     letter-spacing: 0.05em !important; /* 保持适当的字符间距，特别是中文 */
     word-spacing: 0.03em !important;
-    line-height: 1.5 !important; /* 保持良好的行间距 */
+    line-height: 1.6 !important; /* 增加行间距 */
     -webkit-font-smoothing: antialiased !important;
     text-rendering: optimizeLegibility !important;
     font-family: 'Segoe UI', 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', sans-serif !important;

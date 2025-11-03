@@ -214,7 +214,8 @@
           />
 
           <div class="preview-wrapper">
-            <div class="preview-container" :style="{ transform: `scale(${previewScale})` }">
+            <!-- 使用真实尺寸实现 WYSIWYG，缩放只用于视觉显示 -->
+            <div class="preview-container" :style="getPreviewContainerStyle">
               <div id="resume-preview">
                 <component
                   v-if="currentTemplateComponent"
@@ -223,7 +224,7 @@
                   :template-id="resumeStore.selectedTemplate"
                   :page-settings="resumeStore.globalSettings?.pageSettings"
                 />
-                <ResumePreview v-else :scale="previewScale" />
+                <ResumePreview v-else :scale="1" />
               </div>
             </div>
           </div>
@@ -509,6 +510,15 @@ const resetZoom = () => {
   previewScale.value = 1
 }
 
+// 计算预览容器的缩放样式（用于显示缩放效果，但不影响导出）
+const getPreviewContainerStyle = computed(() => {
+  // 注意：这里只用于视觉显示，实际导出时不使用这个缩放
+  return {
+    transform: `scale(${previewScale.value})`,
+    transformOrigin: 'top center'
+  }
+})
+
 const isExporting = ref(false)
 const isExportingWord = ref(false)
 const showTemplateUploader = ref(false)
@@ -519,22 +529,36 @@ const handleExportPDF = async () => {
     isExporting.value = true
     await nextTick()
 
+    // 临时移除预览容器的缩放，确保导出的是真实尺寸
+    const previewContainer = document.querySelector('.preview-container')
+    const originalTransform = previewContainer?.style.transform
+    if (previewContainer) {
+      previewContainer.style.transform = 'none'
+    }
+
     const filename = `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`
     const template = getTemplate(resumeStore.selectedTemplate)
 
-    // 检查是否为多页模板
-    if (template?.isMultiPage && currentPageManager.value) {
-      // 使用多页PDF生成器
-      await generateMultiPageResumePDF(
-        'resume-preview',
-        filename,
-        resumeStore.globalSettings?.pageSettings
-      )
-      ElMessage.success('多页PDF导出成功！')
-    } else {
-      // 使用标准PDF生成器
-      await generateOptimizedPDF('resume-preview', filename)
-      ElMessage.success('PDF导出成功！')
+    try {
+      // 检查是否为多页模板
+      if (template?.isMultiPage && currentPageManager.value) {
+        // 使用多页PDF生成器
+        await generateMultiPageResumePDF(
+          'resume-preview',
+          filename,
+          resumeStore.globalSettings?.pageSettings
+        )
+        ElMessage.success('多页PDF导出成功！')
+      } else {
+        // 使用标准PDF生成器
+        await generateOptimizedPDF('resume-preview', filename)
+        ElMessage.success('PDF导出成功！')
+      }
+    } finally {
+      // 恢复预览容器的缩放
+      if (previewContainer && originalTransform) {
+        previewContainer.style.transform = originalTransform
+      }
     }
   } catch (error) {
     console.error('PDF导出失败:', error)
@@ -1341,14 +1365,12 @@ watch(() => resumeStore.resumeData, () => {
 }
 
 .preview-container {
-  transition: transform 0.3s ease;
-  transform-origin: top center;
+  /* 移除 transform scale，使用真实尺寸 */
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   overflow: hidden;
-  min-width: 210mm; /* A4纸张宽度 */
-  min-height: 297mm; /* A4纸张高度 */
+  width: 210mm; /* A4纸张宽度 */
   max-width: 210mm; /* 限制最大宽度 */
 }
 

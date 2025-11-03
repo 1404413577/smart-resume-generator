@@ -49,7 +49,7 @@
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useResumeStore } from '@stores/resume'
-import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
+import { printResume } from '@utils/pdf/browserPrint'
 
 // 组件导入
 import NavigationPanel from '@components/navigation/NavigationPanel.vue'
@@ -103,11 +103,22 @@ const resetZoom = () => {
 const handleExportPDF = async () => {
   try {
     resumeStore.setExporting(true)
-    await generateOptimizedPDF('resume-preview', `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`)
-    ElMessage.success('PDF导出成功！')
+    const name = resumeStore.resumeData.personalInfo.name || '简历'
+    
+    // 使用浏览器原生打印功能
+    await printResume('resume-preview', {
+      title: `${name}.pdf`,
+      removeAfterPrint: true,
+      addPrintStyles: true
+    })
+    
+    ElMessage.success({
+      message: 'PDF打印窗口已打开，请在打印对话框中选择"另存为PDF"',
+      duration: 5000
+    })
   } catch (error) {
-    console.error('PDF导出失败:', error)
-    ElMessage.error('PDF导出失败，请重试')
+    console.error('打印失败:', error)
+    ElMessage.error('打印失败，请重试')
   } finally {
     resumeStore.setExporting(false)
   }

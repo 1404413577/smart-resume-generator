@@ -1,13 +1,32 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { useResumeStore } from '@stores/resume'
 import { useSEO } from '@/composables/useSEO'
+import { printResume } from '@utils/pdf/browserPrint'
+import { ElMessage } from 'element-plus'
 import AppLayout from '@components/layout/AppLayout.vue'
 
 const resumeStore = useResumeStore()
 
 // SEO优化
 const { applyPageSEO, setAppStructuredData } = useSEO()
+
+// 处理键盘快捷键
+const handleKeyboardShortcut = (event) => {
+  // Ctrl+P 或 Cmd+P 打印简历
+  if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
+    event.preventDefault()
+    const name = resumeStore.resumeData.personalInfo.name || '简历'
+    printResume('resume-preview', {
+      title: `${name}.pdf`,
+      removeAfterPrint: true,
+      addPrintStyles: true
+    }).catch(error => {
+      console.error('打印失败:', error)
+      ElMessage.error('打印失败，请重试')
+    })
+  }
+}
 
 // 初始化
 onMounted(() => {
@@ -25,6 +44,14 @@ onMounted(() => {
   if (loadingElement) {
     loadingElement.style.display = 'none'
   }
+
+  // 添加键盘快捷键监听
+  window.addEventListener('keydown', handleKeyboardShortcut)
+})
+
+// 清理
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyboardShortcut)
 })
 </script>
 

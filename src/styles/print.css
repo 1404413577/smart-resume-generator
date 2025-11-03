@@ -1,0 +1,118 @@
+/* 
+ * 打印样式 - 最小化干预，保持预览效果
+ * 原则：只隐藏UI元素和移除视觉效果，不修改布局和文字样式
+ */
+
+@media print {
+  /* 页面设置 */
+  @page {
+    size: A4;
+    margin: 20mm; /* 设置合理的页边距 */
+  }
+
+  /* 确保颜色正确打印 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 最小化全局修改 */
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    line-height: 1.6; /* 增加行间距 */
+  }
+
+  /* 隐藏UI控件 - 只隐藏，不修改其他元素 */
+  .app-header,
+  .app-sidebar,
+  .navigation-panel,
+  .editor-panel,
+  .preview-header,
+  .action-buttons,
+  .no-print,
+  .el-button,
+  .el-dropdown,
+  button,
+  nav:not(.resume-nav),
+  header:not(.resume-header),
+  .zoom-controls,
+  .action-controls {
+    display: none !important;
+  }
+
+  /* 预览面板在打印时占满全屏 */
+  .preview-panel {
+    width: 100% !important;
+    max-width: none !important;
+    background: white !important;
+  }
+
+  .preview-content {
+    padding: 0 !important;
+  }
+
+  /* 移除预览缩放，确保打印尺寸与实际一致 */
+  .preview-container {
+    transform: none !important;
+    transform-origin: top left !important;
+  }
+
+  #resume-preview {
+    transform: none !important;
+    transform-origin: top left !important;
+  }
+
+  /* 只移除视觉效果，不改变布局和文字样式 */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* 分页控制 - 避免内容被截断 */
+  .section,
+  .work-item,
+  .education-item,
+  .project-item {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* 多页支持 */
+  .page {
+    page-break-after: always;
+    break-after: always;
+  }
+
+  .page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  /* 链接不显示URL */
+  a[href]:after {
+    content: none !important;
+  }
+}
+
+/* 打印预览时的样式（在调用window.print()之前） */
+.print-preview-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  z-index: 9999;
+  overflow: auto;
+}
+
+.print-preview-mode .resume-preview {
+  width: 210mm;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

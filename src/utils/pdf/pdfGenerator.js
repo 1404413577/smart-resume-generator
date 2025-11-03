@@ -47,11 +47,9 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     element.style.position = 'relative'
 
     // 优化字体渲染设置，特别针对中文字符
-    element.style.webkitFontSmoothing = 'antialiased'
-    element.style.mozOsxFontSmoothing = 'grayscale'
-    element.style.textRendering = 'optimizeLegibility'
-    element.style.letterSpacing = '0.05em'
-    element.style.wordSpacing = '0.03em'
+  element.style.webkitFontSmoothing = 'antialiased'
+  element.style.mozOsxFontSmoothing = 'grayscale'
+  element.style.textRendering = 'optimizeLegibility'
 
     // 安全地设置字体回退链
     const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
@@ -160,11 +158,9 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
     element.style.backgroundColor = '#ffffff'
 
     // 优化字体渲染设置，特别针对中文字符
-    element.style.webkitFontSmoothing = 'antialiased'
-    element.style.mozOsxFontSmoothing = 'grayscale'
-    element.style.textRendering = 'optimizeLegibility'
-    element.style.letterSpacing = '0.05em'
-    element.style.wordSpacing = '0.03em'
+  element.style.webkitFontSmoothing = 'antialiased'
+  element.style.mozOsxFontSmoothing = 'grayscale'
+  element.style.textRendering = 'optimizeLegibility'
 
     // 安全地设置字体回退链
     const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
@@ -323,27 +319,24 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     // 保存原始样式
     const originalStyle = element.style.cssText
 
-    // 设置PDF样式 - 保持与屏幕显示的一致性
+    // 设置PDF样式 - 保持与屏幕显示的一致性，确保没有缩放
     element.style.width = '210mm'
-    element.style.height = '297mm'
-    element.style.minHeight = '297mm'
+    element.style.height = 'auto' // 让高度自动适应内容
+    element.style.minHeight = 'auto'
     element.style.maxWidth = '210mm'
-    element.style.padding = '15px' // 最小边距，最大化内容区域
+    element.style.padding = '20mm' // 保持合理的页边距
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
-    element.style.transform = 'none'
+    element.style.transform = 'none' // 确保没有缩放
     element.style.position = 'relative'
     element.style.overflow = 'visible'
+    element.style.display = 'block'
 
     // 优化字体渲染设置，特别针对中文字符
-    element.style.webkitFontSmoothing = 'antialiased'
-    element.style.mozOsxFontSmoothing = 'grayscale'
-    element.style.textRendering = 'optimizeLegibility'
-
-    // 为中文字符优化字符间距
-    element.style.letterSpacing = '0.05em'
-    element.style.wordSpacing = '0.03em'
+  element.style.webkitFontSmoothing = 'antialiased'
+  element.style.mozOsxFontSmoothing = 'grayscale'
+  element.style.textRendering = 'optimizeLegibility'
 
     // 安全地设置字体回退链
     const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
@@ -360,18 +353,26 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     // 等待样式应用
     await new Promise(resolve => setTimeout(resolve, 500))
 
+    // 获取实际的内容高度
+    const contentHeight = element.scrollHeight
+    const contentWidth = element.scrollWidth
+
+    // 计算像素尺寸 (1mm ≈ 3.78px)
+    const pixelWidth = Math.ceil(contentWidth)
+    const pixelHeight = Math.ceil(contentHeight)
+
     // 优化canvas配置 - 平衡质量和一致性，特别优化中文字符渲染
     const canvas = await html2canvas(element, {
       scale: 2, // 适中的分辨率，避免过度放大导致的差异
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
-      width: 794, // A4宽度像素
-      height: 1123, // A4高度像素
+      width: pixelWidth, // 使用实际宽度
+      height: pixelHeight, // 使用实际高度
       scrollX: 0,
       scrollY: 0,
-      windowWidth: 794,
-      windowHeight: 1123,
+      windowWidth: pixelWidth,
+      windowHeight: pixelHeight,
       letterRendering: false, // 禁用letterRendering以避免中文字符间距问题
       logging: false // 关闭日志以提高性能
     })
@@ -384,6 +385,12 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
 
     // 创建PDF
     const imgData = canvas.toDataURL('image/png', 1.0)
+
+    // 计算实际的PDF高度（mm）
+    // canvas高度 / 像素密度 = mm高度
+    // 1mm ≈ 3.78px (at 96dpi)
+    const actualHeightMm = (pixelHeight / 3.78)
+
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -392,8 +399,25 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       precision: 2
     })
 
-    // 直接使用全页面尺寸，最大化利用空间
-    pdf.addImage(imgData, 'PNG', 0, 0, 210, 297, '', 'FAST')
+    // 根据实际内容高度添加图像
+    // 如果内容超过一页，需要分页
+    const pageHeight = 297
+    const pageWidth = 210
+
+    // 计算需要多少页
+    const totalPages = Math.ceil(actualHeightMm / pageHeight)
+
+    // 添加第一页
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight, '', 'FAST')
+
+    // 如果内容超过一页，添加额外的页面
+    if (totalPages > 1) {
+      for (let i = 1; i < totalPages; i++) {
+        pdf.addPage()
+        const yOffset = -(i * pageHeight)
+        pdf.addImage(imgData, 'PNG', 0, yOffset, pageWidth, pageHeight, '', 'FAST')
+      }
+    }
 
     // 保存PDF
     const pdfBlob = pdf.output('blob')

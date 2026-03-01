@@ -12,6 +12,11 @@ import DesignerTemplate from './components/DesignerTemplate.vue'
 import SalesTemplate from './components/SalesTemplate.vue'
 import StartupTemplate from './components/StartupTemplate.vue'
 
+// 针对特定行业的新增模板
+import FinanceTemplate from './components/FinanceTemplate.vue'
+import EducationTemplate from './components/EducationTemplate.vue'
+import MarketingTemplate from './components/MarketingTemplate.vue'
+
 // 模板注册表
 export const templateRegistry = {
   modern: {
@@ -133,6 +138,36 @@ export const templateRegistry = {
     preview: '/images/templates/startup-preview.png',
     features: ['年轻活力', '创新设计', '产品导向', '技术前沿'],
     suitableFor: ['产品经理', '创业者', '互联网从业者', '技术创新者']
+  },
+
+  finance: {
+    name: 'Finance / Investment',
+    component: FinanceTemplate,
+    description: '金融投行风格，排版严谨，强调数据对齐和专业感',
+    category: 'finance',
+    preview: '/images/templates/finance-preview.png',
+    features: ['严谨排版', '数据导向', '经典色系', '权威专业'],
+    suitableFor: ['金融分析师', '投行经理', '四大会计师', '财务专家']
+  },
+
+  education: {
+    name: 'Education / Teaching',
+    component: EducationTemplate,
+    description: '教育教学风格，配色温暖柔和，排版具亲和力',
+    category: 'education',
+    preview: '/images/templates/education-preview.png',
+    features: ['温暖亲和', '结构清晰', '证书展示', '圆滑组件'],
+    suitableFor: ['教师', '大学讲师', '公务员', '培训师']
+  },
+
+  marketing: {
+    name: 'Marketing / Media',
+    component: MarketingTemplate,
+    description: '市场营销风格，大块的现代杂志式拼贴排版，视觉冲击力强',
+    category: 'marketing',
+    preview: '/images/templates/marketing-preview.png',
+    features: ['杂志排版', '核心指标突出', '大色块', '视觉张力'],
+    suitableFor: ['市场经理', '公关专家', '新媒体运营', '活动策划']
   }
 }
 
@@ -160,9 +195,16 @@ export function getTemplate(templateId) {
 // 模板分类
 export const templateCategories = {
   professional: '专业商务',
-  creative: '创意设计',
+  business: '高管商务',
+  finance: '金融财务',
+  sales: '销售业绩',
   traditional: '传统经典',
+  education: '教育公职',
+  creative: '创意设计',
+  marketing: '市场营销',
   academic: '学术研究',
   tech: '技术开发',
+  engineering: '工程研发',
+  startup: '创业创新',
   minimalist: '极简主义'
 }

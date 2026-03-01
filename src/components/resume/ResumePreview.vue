@@ -792,11 +792,6 @@ const getSkillWidth = (level) => {
 @media print {
   /* 避免组件固定尺寸干扰打印，交由 @page 控制 */
   .resume-preview {
-    width: auto !important;
-    height: auto !important;
-    min-height: auto !important;
-    padding: 20mm !important; /* 保持合理的页边距 */
-    margin: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
     background: white !important;

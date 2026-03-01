@@ -458,29 +458,4 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   font-style: italic;
 }
 
-/* 打印样式 */
-@media print {
-  .classic-template {
-    font-size: 12px;
-  }
-  
-  .resume-container {
-    box-shadow: none;
-    padding: 20px;
-    min-height: auto;
-  }
-  
-  .name {
-    font-size: 24px;
-  }
-  
-  .avatar {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .section-title {
-    font-size: 14px;
-  }
-}
 </style>

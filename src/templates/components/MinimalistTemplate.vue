@@ -313,34 +313,6 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   border-radius: 2px;
 }
 
-/* 打印样式 */
-@media print {
-  .minimalist-template {
-    font-size: 12px;
-  }
-  
-  .resume-container {
-    padding: 40px 30px;
-    min-height: auto;
-  }
-  
-  .name {
-    font-size: 28px;
-  }
-  
-  .section {
-    margin-bottom: 35px;
-  }
-  
-  .section-title {
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-  
-  .item {
-    margin-bottom: 25px;
-  }
-}
 
 /* 响应式设计 */
 @media (max-width: 768px) {

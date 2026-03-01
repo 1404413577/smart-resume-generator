@@ -977,15 +977,4 @@ const getSkillClass = (level) => {
   }
 }
 
-/* 打印样式 */
-@media print {
-  .startup-template {
-    box-shadow: none;
-    margin: 0;
-  }
-
-  .avatar-glow {
-    animation: none;
-  }
-}
 </style>

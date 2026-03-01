@@ -730,15 +730,4 @@ const getSkillLevel = (level) => {
   }
 }
 
-/* 打印样式 */
-@media print {
-  .designer-template {
-    box-shadow: none;
-    margin: 0;
-  }
-
-  .avatar-ring {
-    animation: none;
-  }
-}
 </style>

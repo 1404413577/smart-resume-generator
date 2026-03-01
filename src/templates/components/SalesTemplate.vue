@@ -904,15 +904,4 @@ const getSkillPercentage = (level) => {
   }
 }
 
-/* 打印样式 */
-@media print {
-  .sales-template {
-    box-shadow: none;
-    margin: 0;
-  }
-
-  .photo-border {
-    animation: none;
-  }
-}
 </style>

@@ -585,28 +585,4 @@ const getSkillsByCategory = (category) => {
   color: var(--secondary-color);
 }
 
-/* 打印样式 */
-@media print {
-  .academic-template {
-    font-size: 11px;
-  }
-  
-  .resume-container {
-    box-shadow: none;
-    padding: 15mm 10mm;
-    min-height: auto;
-  }
-  
-  .name {
-    font-size: 20px;
-  }
-  
-  .section {
-    margin-bottom: 20px;
-  }
-  
-  .section-title {
-    font-size: 13px;
-  }
-}
 </style>

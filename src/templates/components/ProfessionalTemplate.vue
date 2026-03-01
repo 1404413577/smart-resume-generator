@@ -586,35 +586,6 @@ const getSkillWidth = (level) => {
   line-height: 1.6;
 }
 
-/* 打印样式 */
-@media print {
-  .professional-template {
-    font-size: 12px;
-  }
-  
-  .resume-container {
-    box-shadow: none;
-    padding: 20px;
-    min-height: auto;
-  }
-  
-  .name {
-    font-size: 22px;
-  }
-  
-  .avatar {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .main-content {
-    gap: 20px;
-  }
-  
-  .sidebar {
-    width: 30%;
-  }
-}
 
 /* 响应式设计 */
 @media (max-width: 768px) {

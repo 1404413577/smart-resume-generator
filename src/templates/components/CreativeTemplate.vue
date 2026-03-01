@@ -655,36 +655,6 @@ const getSkillClass = (level) => {
   font-weight: 500;
 }
 
-/* 打印样式 */
-@media print {
-  .creative-template {
-    font-size: 12px;
-  }
-  
-  .resume-container {
-    box-shadow: none;
-    padding: 20px;
-    min-height: auto;
-  }
-  
-  .bg-decoration {
-    display: none;
-  }
-  
-  .name {
-    font-size: 24px;
-  }
-  
-  .avatar {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .skill-bubble:hover,
-  .project-card:hover {
-    transform: none;
-  }
-}
 
 /* 响应式设计 */
 @media (max-width: 768px) {

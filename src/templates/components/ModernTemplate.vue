@@ -439,33 +439,5 @@ const getSkillLevel = (level) => {
   padding: 10px 8px !important;
 }
 
-/* 打印样式 */
-@media print {
-  .modern-template {
-    font-size: 12px;
-  }
 
-  .resume-container {
-    box-shadow: none;
-    min-height: auto;
-  }
-
-  .sidebar {
-    width: 30%;
-    padding: 10px 8px; /* 最小化边距，最大化内容区域 */
-  }
-
-  .main-content {
-    padding: 12px 10px; /* 最小化边距，最大化内容区域 */
-  }
-
-  .name {
-    font-size: 24px;
-  }
-
-  .avatar {
-    width: 80px;
-    height: 80px;
-  }
-}
 </style>

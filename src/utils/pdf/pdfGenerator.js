@@ -39,7 +39,7 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     const originalStyle = element.style.cssText
     element.style.width = '210mm' // A4纸宽度
     element.style.minHeight = '297mm' // A4纸高度
-    element.style.padding = '5mm' // 最小边距，最大化内容区域
+    element.style.padding = '0' // 移除边距，避免出现多余空白
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
     element.style.margin = '0'
@@ -47,9 +47,9 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     element.style.position = 'relative'
 
     // 优化字体渲染设置，特别针对中文字符
-  element.style.webkitFontSmoothing = 'antialiased'
-  element.style.mozOsxFontSmoothing = 'grayscale'
-  element.style.textRendering = 'optimizeLegibility'
+    element.style.webkitFontSmoothing = 'antialiased'
+    element.style.mozOsxFontSmoothing = 'grayscale'
+    element.style.textRendering = 'optimizeLegibility'
 
     // 安全地设置字体回退链
     const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
@@ -152,15 +152,15 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
     // 临时调整元素样式
     const originalStyle = element.style.cssText
     element.style.width = '210mm'
-    element.style.padding = '5mm' // 最小边距，最大化内容区域
+    element.style.padding = '0' // 移除边距，避免出现多余空白
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
 
     // 优化字体渲染设置，特别针对中文字符
-  element.style.webkitFontSmoothing = 'antialiased'
-  element.style.mozOsxFontSmoothing = 'grayscale'
-  element.style.textRendering = 'optimizeLegibility'
+    element.style.webkitFontSmoothing = 'antialiased'
+    element.style.mozOsxFontSmoothing = 'grayscale'
+    element.style.textRendering = 'optimizeLegibility'
 
     // 安全地设置字体回退链
     const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
@@ -208,7 +208,7 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
     const offsetY = 0
 
     pdf.addImage(imgData, 'PNG', offsetX, offsetY, finalWidth, finalHeight)
-    
+
     // 转换为Blob并下载 - 使用更可靠的下载方法
     const pdfBlob = pdf.output('blob')
     const url = URL.createObjectURL(pdfBlob)
@@ -242,7 +242,7 @@ export async function previewPDF(elementId) {
     // 使用与生成PDF相同的配置
     const originalStyle = element.style.cssText
     element.style.width = '210mm'
-    element.style.padding = '10mm'
+    element.style.padding = '0' // 移除边距，避免出现多余空白
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
@@ -324,7 +324,7 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     element.style.height = 'auto' // 让高度自动适应内容
     element.style.minHeight = 'auto'
     element.style.maxWidth = '210mm'
-    element.style.padding = '20mm' // 保持合理的页边距
+    element.style.padding = '0' // 移除强制边距，依靠内容本身边距
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
@@ -334,9 +334,9 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     element.style.display = 'block'
 
     // 优化字体渲染设置，特别针对中文字符
-  element.style.webkitFontSmoothing = 'antialiased'
-  element.style.mozOsxFontSmoothing = 'grayscale'
-  element.style.textRendering = 'optimizeLegibility'
+    element.style.webkitFontSmoothing = 'antialiased'
+    element.style.mozOsxFontSmoothing = 'grayscale'
+    element.style.textRendering = 'optimizeLegibility'
 
     // 安全地设置字体回退链
     const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'

@@ -561,11 +561,4 @@ const calculateDuration = (startDate, endDate) => {
   }
 }
 
-/* 打印样式 */
-@media print {
-  .executive-template {
-    box-shadow: none;
-    margin: 0;
-  }
-}
 </style>

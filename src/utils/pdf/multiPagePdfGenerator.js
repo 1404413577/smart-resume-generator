@@ -15,10 +15,10 @@ export class MultiPagePdfGenerator {
       compress: true,
       quality: 0.95,
       margin: {
-        top: 10,
-        right: 10,
-        bottom: 10,
-        left: 10
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
       },
       ...options
     }
@@ -72,7 +72,7 @@ export class MultiPagePdfGenerator {
 
     for (let i = 0; i < pages.length; i++) {
       const page = pages[i]
-      
+
       try {
         // 临时显示页面（如果被隐藏）
         const originalDisplay = page.style.display
@@ -180,15 +180,15 @@ export class MultiPagePdfGenerator {
   addPageNumber(pdf, currentPage, totalPages, pageWidth, pageHeight) {
     const fontSize = 8
     const text = `${currentPage} / ${totalPages}`
-    
+
     pdf.setFontSize(fontSize)
     pdf.setTextColor(128, 128, 128) // 灰色
-    
+
     // 计算文本宽度并居中
     const textWidth = pdf.getTextWidth(text)
     const x = (pageWidth - textWidth) / 2
     const y = pageHeight - 5 // 距离底部5mm
-    
+
     pdf.text(text, x, y)
   }
 
@@ -228,7 +228,7 @@ export class MultiPagePdfGenerator {
   saveOriginalStyles(element) {
     const styles = {}
     const pages = element.querySelectorAll('.page')
-    
+
     pages.forEach((page, index) => {
       styles[index] = {
         boxShadow: page.style.boxShadow,
@@ -236,7 +236,7 @@ export class MultiPagePdfGenerator {
         margin: page.style.margin
       }
     })
-    
+
     return styles
   }
 
@@ -245,13 +245,13 @@ export class MultiPagePdfGenerator {
    */
   applyPdfOptimizationStyles(element) {
     const pages = element.querySelectorAll('.page')
-    
+
     pages.forEach(page => {
       // 移除阴影和变换效果
       page.style.boxShadow = 'none'
       page.style.transform = 'none'
       page.style.margin = '0'
-      
+
       // 确保背景为白色
       page.style.backgroundColor = '#ffffff'
     })
@@ -262,7 +262,7 @@ export class MultiPagePdfGenerator {
    */
   restoreOriginalStyles(element, originalStyles) {
     const pages = element.querySelectorAll('.page')
-    
+
     pages.forEach((page, index) => {
       if (originalStyles[index]) {
         const styles = originalStyles[index]
@@ -283,7 +283,7 @@ export class MultiPagePdfGenerator {
     }
 
     const pages = element.querySelectorAll('.page')
-    
+
     return {
       pageCount: pages.length,
       isMultiPage: pages.length > 1,
@@ -299,7 +299,7 @@ export class MultiPagePdfGenerator {
     // 基于经验的文件大小估算 (KB)
     const baseSize = 150 // 基础大小
     const perPageSize = 200 // 每页增加的大小
-    
+
     return Math.round(baseSize + (pageCount * perPageSize))
   }
 

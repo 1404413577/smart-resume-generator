@@ -120,10 +120,10 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 <style scoped>
 .finance-template {
   /* 华尔街/投行标准：经典衬线字体，字号偏小，内容紧凑 */
-  font-family: 'Times New Roman', Times, serif;
-  background: var(--background-color, #ffffff);
-  color: var(--text-color, #000000);
-  line-height: 1.35;
+  font-family: var(--resume-font-family, 'Times New Roman', Times, serif);
+  background: var(--resume-background-color, #ffffff);
+  color: var(--resume-text-color, #000000);
+  line-height: var(--resume-line-height, 1.35);
   font-size: 11px;
 }
 
@@ -143,16 +143,16 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .name {
-  font-size: 24px;
+  font-size: var(--resume-name-font-size, 24px);
   font-weight: bold;
   text-transform: uppercase;
   margin: 0 0 5px 0;
   letter-spacing: 1px;
-  color: #1A2B4C; /* 彭博蓝 Bloomberg Blue */
+  color: var(--resume-primary-color, #1A2B4C); /* 彭博蓝 Bloomberg Blue Default */
 }
 
 .contact-info {
-  font-size: 10.5px;
+  font-size: var(--resume-contact-font-size, 10.5px);
 }
 
 .separator {
@@ -166,11 +166,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .section-title {
-  font-size: 13px;
+  font-size: var(--resume-title-font-size, 13px);
   font-weight: bold;
   text-transform: uppercase;
-  color: #1A2B4C;
-  border-bottom: 1.5px solid #1A2B4C; /* 明显的深蓝色分割线 */
+  color: var(--resume-primary-color, #1A2B4C);
+  border-bottom: 1.5px solid var(--resume-primary-color, #1A2B4C); /* 明显的深蓝色分割线 */
   margin: 0 0 8px 0;
   padding-bottom: 2px;
 }
@@ -192,16 +192,16 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .company, .school, .project-name {
-  font-size: 12px;
+  font-size: var(--resume-subtitle-font-size, 12px);
   color: #111;
 }
 
 .location, .date {
-  font-size: 11px;
+  font-size: var(--resume-meta-font-size, 11px);
 }
 
 .position, .degree {
-  font-size: 11.5px;
+  font-size: var(--resume-content-font-size, 11.5px);
   color: #333;
 }
 

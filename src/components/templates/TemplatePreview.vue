@@ -1,18 +1,16 @@
 <template>
-  <div class="template-preview" :style="previewStyle">
-    <div class="preview-container">
+  <div class="template-preview-wrap" :style="wrapStyle">
+    <div class="scale-container" :style="scaleContainerStyle">
       <component
         v-if="template?.component"
         :is="template.component"
         :resume-data="sampleResumeData"
         :template-id="template.id"
-        class="template-content"
+        class="template-inner"
       />
       <div v-else class="preview-placeholder">
-        <div class="placeholder-content">
-          <el-icon><Document /></el-icon>
-          <span>模板预览</span>
-        </div>
+        <el-icon><Document /></el-icon>
+        <span>{{ template?.name || '预览' }}</span>
       </div>
     </div>
   </div>
@@ -29,30 +27,44 @@ const props = defineProps({
   },
   width: {
     type: Number,
-    default: 200
-  },
-  height: {
-    type: Number,
-    default: 280
-  },
-  scale: {
-    type: Number,
-    default: 0.3
+    default: 220 // 卡片宽度 px
   }
 })
 
-// 预览样式
-const previewStyle = computed(() => ({
+// A4 尺寸（96dpi，1mm ≈ 3.7795px）
+const A4_W_PX = 794   // 210mm in px
+const A4_H_PX = 1123  // 297mm in px
+
+// 根据卡片宽度动态计算缩放比例
+const scale = computed(() => props.width / A4_W_PX)
+
+// 缩放后的实际高度
+const scaledHeight = computed(() => Math.round(A4_H_PX * scale.value))
+
+// 外层容器：固定宽高，overflow hidden 裁掉底部
+const wrapStyle = computed(() => ({
   width: `${props.width}px`,
-  height: `${props.height}px`,
+  height: `${scaledHeight.value}px`,
   overflow: 'hidden',
-  border: '1px solid #e5e7eb',
-  borderRadius: '8px',
+  position: 'relative',
   backgroundColor: '#ffffff',
-  position: 'relative'
+  borderRadius: '8px',
+  border: '1px solid #e5e7eb'
 }))
 
-// 示例简历数据
+// 缩放容器：真实 A4 尺寸，transform 缩放到卡片大小
+const scaleContainerStyle = computed(() => ({
+  width: `${A4_W_PX}px`,
+  height: `${A4_H_PX}px`,
+  transformOrigin: 'top left',
+  transform: `scale(${scale.value})`,
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  pointerEvents: 'none'
+}))
+
+// 示例数据 —— 为预览提供真实内容
 const sampleResumeData = {
   personalInfo: {
     name: '张三',
@@ -72,11 +84,8 @@ const sampleResumeData = {
       startDate: '2021-06',
       endDate: '2024-01',
       current: false,
-      description: '负责公司核心产品的前端开发工作',
-      achievements: [
-        '完成了用户管理系统的重构，提升了50%的性能',
-        '参与了移动端应用的开发，获得了用户好评'
-      ]
+      description: '负责公司核心产品的前端开发工作，推动组件库建设和性能优化。',
+      achievements: ['重构用户管理系统，性能提升50%', '参与移动端应用开发，获用户好评']
     }
   ],
   education: [
@@ -96,8 +105,8 @@ const sampleResumeData = {
   skills: [
     { id: '1', name: 'Vue.js', level: '高级', category: 'technical' },
     { id: '2', name: 'JavaScript', level: '高级', category: 'technical' },
-    { id: '3', name: '团队协作', level: '高级', category: 'soft' },
-    { id: '4', name: '英语', level: '中级', category: 'language' }
+    { id: '3', name: 'React', level: '中级', category: 'technical' },
+    { id: '4', name: 'TypeScript', level: '中级', category: 'technical' }
   ],
   projects: [
     {
@@ -108,21 +117,11 @@ const sampleResumeData = {
       url: 'https://example.com',
       startDate: '2023-01',
       endDate: '2023-06',
-      highlights: [
-        '使用Vue 3 Composition API重构了整个前端架构',
-        '实现了动态权限控制系统',
-        '优化了页面加载速度，提升了用户体验'
-      ]
+      highlights: ['使用Vue 3重构前端架构', '实现动态权限控制系统']
     }
   ],
   certifications: [
-    {
-      id: '1',
-      name: 'Vue.js认证开发者',
-      issuer: 'Vue.js官方',
-      date: '2023-03',
-      url: 'https://example.com/cert'
-    }
+    { id: '1', name: 'Vue.js认证开发者', issuer: 'Vue.js官方', date: '2023-03' }
   ],
   languages: [
     { id: '1', name: '中文', level: '母语' },
@@ -133,54 +132,40 @@ const sampleResumeData = {
 </script>
 
 <style scoped>
-.template-preview {
-  position: relative;
+.template-preview-wrap {
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
 }
 
-.template-preview:hover {
-  transform: translateY(-2px);
+.template-preview-wrap:hover {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-.preview-container {
+.scale-container {
+  user-select: none;
+}
+
+.template-inner {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-.template-content {
-  transform: scale(0.3);
-  transform-origin: top left;
-  width: 210mm;
-  min-height: 297mm;
   background: white;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .preview-placeholder {
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f8f9fa;
-  color: #6c757d;
-}
-
-.placeholder-content {
-  display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  font-size: 12px;
+  background: #f8f9fa;
+  color: #909399;
+  font-size: 14px;
 }
 
-.placeholder-content .el-icon {
-  font-size: 24px;
+.preview-placeholder :deep(.el-icon) {
+  font-size: 32px;
 }
 </style>

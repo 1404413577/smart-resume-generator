@@ -63,6 +63,13 @@ export function generateCSSVariables(globalSettings, templateConfig = null) {
     '--text-color': mergedColors.text,
     '--background-color': mergedColors.background,
 
+    // resume- 前缀别名（供新模板使用）
+    '--resume-primary-color': mergedColors.primary,
+    '--resume-secondary-color': mergedColors.secondary,
+    '--resume-accent-color': mergedColors.accent,
+    '--resume-text-color': mergedColors.text,
+    '--resume-background-color': mergedColors.background,
+
     // 字体相关变量
     '--resume-base-font-size': `${typography.baseFontSize}px`,
     '--resume-title-font-size': `${typography.titleFontSize}px`,
@@ -122,7 +129,7 @@ export function applyCSSVariables(element, globalSettings, templateConfig = null
  */
 export function removeCSSVariables(element) {
   if (!element) return
-  
+
   const variableNames = [
     '--resume-base-font-size',
     '--resume-title-font-size',
@@ -145,7 +152,7 @@ export function removeCSSVariables(element) {
     '--resume-content-width',
     '--resume-content-height'
   ]
-  
+
   variableNames.forEach(name => {
     element.style.removeProperty(name)
   })
@@ -193,7 +200,7 @@ export function getFullFontFamily(fontFamily) {
  * @returns {Object} 验证后的设置对象
  */
 export function validateSettings(settings) {
-  
+
   // 验证字体大小范围
   const typography = {
     baseFontSize: Math.max(12, Math.min(16, settings.typography?.baseFontSize || 14)),
@@ -201,7 +208,7 @@ export function validateSettings(settings) {
     subtitleFontSize: Math.max(14, Math.min(20, settings.typography?.subtitleFontSize || 16)),
     fontFamily: settings.typography?.fontFamily || 'system-ui'
   }
-  
+
   // 验证间距范围
   const spacing = {
     pageMargin: {
@@ -213,7 +220,7 @@ export function validateSettings(settings) {
     moduleSpacing: Math.max(5, Math.min(20, settings.spacing?.moduleSpacing || 12)),
     lineHeight: Math.max(1.0, Math.min(2.0, settings.spacing?.lineHeight || 1.5))
   }
-  
+
   return {
     ...settings,
     typography,
@@ -228,76 +235,137 @@ export function validateSettings(settings) {
  */
 export function generatePrintStyles(globalSettings) {
   const variables = generateCSSVariables(globalSettings)
-  const { pageSettings } = globalSettings
+  const spacing = globalSettings?.spacing || {}
+  const marginTop = spacing.pageMargin?.top ?? 15
+  const marginRight = spacing.pageMargin?.right ?? 15
+  const marginBottom = spacing.pageMargin?.bottom ?? 15
+  const marginLeft = spacing.pageMargin?.left ?? 15
 
   return `
+    /* =============================================
+       打印专用样式 (Plan B: @page + page-break)
+       ============================================= */
     @media print {
+
+      /* 1. A4 页面设置：四边留出合理边距 */
       @page {
-        size: A4;
-        margin: ${variables['--resume-page-margin']};
+        size: A4 portrait;
+        margin: ${marginTop}mm ${marginRight}mm ${marginBottom}mm ${marginLeft}mm;
       }
 
+      /* 2. 隐藏所有编辑器 UI 控件 */
+      body > *:not(#print-root),
+      .editor-panel,
+      .sidebar,
+      .nav-panel,
+      .editor-section,
+      .preview-controls,
+      .zoom-controls,
+      .export-btn,
+      .template-selector,
+      .section-toolbar,
+      .el-aside,
+      .el-header,
+      .el-footer,
+      .resume-builder > *:not(.preview-section),
+      .home-view > *:not(.preview-area) {
+        display: none !important;
+      }
+
+      /* 3. 整体重置：去掉滚动/背景/特效 */
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      /* 4. 让预览区撑满整页 */
+      .preview-section,
+      .preview-area,
+      .preview-container,
+      .resume-preview-wrapper {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        transform: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      /* 5. 简历模板本体 */
+      #resume-preview,
       .resume-preview {
-        font-family: ${variables['--resume-font-family']};
-        font-size: ${variables['--resume-base-font-size']};
-        line-height: ${variables['--resume-line-height']};
-        margin: 0;
-        padding: 0;
-        box-shadow: none;
-        border-radius: 0;
-        width: 210mm !important;
-        max-width: 210mm !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: ${variables['--resume-font-family']} !important;
+        font-size: ${variables['--resume-base-font-size']} !important;
+        line-height: ${variables['--resume-line-height']} !important;
+        background: #ffffff !important;
       }
 
-      .resume-section {
-        margin-bottom: ${variables['--resume-module-spacing']};
-        page-break-inside: avoid;
+      /* 6. 通用 section 块：防止 section 整体被截断 */
+      /* -- 通用命名 -- */
+      .section,
+      .resume-section,
+      .startup-section,
+      .section-block,
+      /* -- 具体内容块 -- */
+      .experience-item,
+      .education-item,
+      .project-item,
+      .journey-milestone,
+      .innovation-card,
+      .growth-card,
+      .badge-item,
+      /* -- 标题和内容组合 -- */
+      .section-header + *,
+      .section-title + * {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
 
-      .resume-section-title {
-        font-size: ${variables['--resume-title-font-size']};
-        page-break-after: avoid;
+      /* 7. 标题后紧跟内容，防止"孤行"(orphan) */
+      .section-title,
+      .startup-section > h3:first-child,
+      h2, h3 {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
       }
 
-      .resume-item-title {
-        font-size: ${variables['--resume-subtitle-font-size']};
-      }
-
-      /* 分页控制 */
+      /* 8. 明确分页标记（如果需要手动分页） */
       .page-break-before {
         page-break-before: always !important;
         break-before: page !important;
       }
 
-      .avoid-break {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
+      /* 9. 自定义模板的打印兼容 */
+      .finance-template .resume-container,
+      .developer-template .resume-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        box-shadow: none !important;
       }
 
-      /* 隐藏页码指示器 */
-      .page-numbers {
+      /* 10. 缩放控件隐藏 */
+      .scale-controls,
+      [class*="zoom"],
+      [class*="scale"],
+      .el-slider {
         display: none !important;
       }
-
-      /* 单页模式：限制高度 */
-      ${pageSettings.pageCount === 1 ? `
-      .modern-template,
-      .classic-template,
-      .minimal-template {
-        height: calc(297mm - ${variables['--resume-page-margin-top']} - ${variables['--resume-page-margin-bottom']}) !important;
-        overflow: hidden !important;
-      }
-      ` : ''}
-
-      /* 多页模式：确保分页 */
-      ${pageSettings.pageCount > 1 ? `
-      .modern-template.multi-page,
-      .classic-template.multi-page,
-      .minimal-template.multi-page {
-        height: auto !important;
-        min-height: calc(297mm - ${variables['--resume-page-margin-top']} - ${variables['--resume-page-margin-bottom']}) !important;
-      }
-      ` : ''}
     }
   `
 }
+

@@ -45,7 +45,7 @@
           @click="selectTemplate(template)"
         >
           <div class="template-preview">
-            <TemplatePreview :template="template" :width="200" :height="150" />
+            <TemplatePreview :template="template" :width="220" />
             <div class="preview-overlay">
               <el-button type="primary" size="small">
                 {{ selectedTemplate?.id === template.id ? '已选择' : '选择' }}

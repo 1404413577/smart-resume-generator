@@ -74,6 +74,11 @@
               <el-icon><Sort /></el-icon>
               章节排序
             </el-button>
+
+            <!-- 导出 PDF -->
+            <el-button size="small" type="primary" @click="handlePrintPDF">
+              📄 导出 PDF
+            </el-button>
           </div>
         </div>
 
@@ -145,6 +150,7 @@ import { ElMessage, ElLoading } from 'element-plus'
 import { Setting, Sort, ZoomIn, ZoomOut } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { generatePDF } from '@utils/pdf/pdfGenerator'
+import { printResume } from '@utils/pdf/printResume'
 import {
   generatePersonalSummary,
   optimizeWorkExperience,
@@ -229,6 +235,15 @@ const handleModuleChange = (moduleId) => {
 // 模板切换处理
 const handleTemplateChange = (templateId) => {
   resumeStore.setTemplate(templateId)
+}
+
+// 打印/导出 PDF（Plan B：浏览器打印 + @page CSS）
+const handlePrintPDF = () => {
+  const pageMargin = resumeStore.globalSettings?.spacing?.pageMargin
+  printResume({
+    resumeId: 'resume-preview',
+    margin: pageMargin || { top: 15, right: 15, bottom: 15, left: 15 }
+  })
 }
 
 // 打开模板画廊

@@ -267,18 +267,18 @@ const getSkillClass = (level) => {
 .startup-template {
   width: 210mm;
   min-height: 297mm;
-  height: auto; /* 允许根据内容无限延伸 */
-  background: #f8fafc;
-  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
-  color: #1e293b;
-  line-height: var(--line-height, 1.6);
+  height: auto;
+  background: var(--resume-background-color, #f8fafc);
+  font-family: var(--resume-font-family, 'Helvetica Neue', Arial, sans-serif);
+  color: var(--resume-text-color, #1e293b);
+  line-height: var(--resume-line-height, 1.6);
   margin: 0 auto;
   overflow: visible;
 }
 
 /* 创新头部 (纯色圆角大区块) */
 .startup-header {
-  background: #1e293b; 
+  background: var(--resume-primary-color, #1e293b); 
   color: #ffffff;
   padding: 40px 30px;
   position: relative;
@@ -325,14 +325,14 @@ const getSkillClass = (level) => {
 }
 
 .startup-name {
-  font-size: 42px;
+  font-size: var(--resume-name-font-size, 42px);
   font-weight: 700;
   margin: 0 0 8px 0;
   color: #ffffff;
 }
 
 .startup-role {
-  font-size: 20px;
+  font-size: var(--resume-subtitle-font-size, 20px);
   font-weight: 500;
   margin: 0 0 20px 0;
   color: #94a3b8;
@@ -357,8 +357,8 @@ const getSkillClass = (level) => {
 
 .startup-vision p {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: var(--resume-content-font-size, 15px);
+  line-height: var(--resume-line-height, 1.6);
   color: #f8fafc;
 }
 
@@ -377,7 +377,7 @@ const getSkillClass = (level) => {
   border-radius: 12px;
   text-decoration: none;
   color: #f8fafc;
-  font-size: 13px;
+  font-size: var(--resume-contact-font-size, 13px);
   font-weight: 500;
   transition: background 0.2s ease;
 }
@@ -413,11 +413,11 @@ const getSkillClass = (level) => {
 }
 
 .title-emoji {
-  font-size: 24px;
+  font-size: var(--resume-title-font-size, 24px);
 }
 
 .title-text {
-  font-size: 22px;
+  font-size: var(--resume-title-font-size, 22px);
   font-weight: 700;
   color: #0f172a;
 }
@@ -451,13 +451,13 @@ const getSkillClass = (level) => {
 .skill-master .skill-badge { background: #ffedd5; color: #ea580c; }
 
 .skill-name {
-  font-size: 14px;
+  font-size: var(--resume-skill-font-size, 14px);
 }
 
 .skill-badge {
   padding: 2px 8px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: var(--resume-small-font-size, 11px);
   font-weight: 600;
 }
 
@@ -491,7 +491,7 @@ const getSkillClass = (level) => {
 }
 
 .milestone-featured .marker-dot {
-  background: #3b82f6; /* 主点亮色 */
+  background: var(--resume-primary-color, #3b82f6); /* 主点亮色 */
   box-shadow: 0 0 0 1px #3b82f6;
 }
 
@@ -515,7 +515,7 @@ const getSkillClass = (level) => {
 }
 
 .milestone-period {
-  font-size: 13px;
+  font-size: var(--resume-meta-font-size, 13px);
   color: #64748b;
   font-weight: 500;
 }
@@ -525,19 +525,19 @@ const getSkillClass = (level) => {
   color: #3b82f6;
   padding: 4px 10px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: var(--resume-small-font-size, 11px);
   font-weight: 600;
 }
 
 .milestone-role {
-  font-size: 18px;
+  font-size: var(--resume-subtitle-font-size, 18px);
   font-weight: 600;
   color: #0f172a;
   margin: 0 0 5px 0;
 }
 
 .milestone-company {
-  font-size: 15px;
+  font-size: var(--resume-content-font-size, 15px);
   color: #3b82f6;
   margin: 0 0 15px 0;
   font-weight: 500;
@@ -546,12 +546,12 @@ const getSkillClass = (level) => {
 .milestone-description {
   color: #475569;
   margin: 0 0 15px 0;
-  line-height: 1.6;
-  font-size: 14px;
+  line-height: var(--resume-line-height, 1.6);
+  font-size: var(--resume-content-font-size, 14px);
 }
 
 .achievements-title {
-  font-size: 13px;
+  font-size: var(--resume-content-font-size, 13px);
   font-weight: 600;
   color: #64748b;
   margin-bottom: 10px;
@@ -568,7 +568,7 @@ const getSkillClass = (level) => {
   color: #475569;
   padding: 6px 12px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: var(--resume-small-font-size, 12px);
   font-weight: 500;
 }
 
@@ -593,7 +593,7 @@ const getSkillClass = (level) => {
 }
 
 .project-icon {
-  font-size: 24px;
+  font-size: var(--resume-title-font-size, 24px);
   width: 48px;
   height: 48px;
   background: #ffffff;
@@ -610,14 +610,14 @@ const getSkillClass = (level) => {
 }
 
 .project-title {
-  font-size: 16px;
+  font-size: var(--resume-subtitle-font-size, 16px);
   font-weight: 600;
   color: #0f172a;
   margin: 0 0 4px 0;
 }
 
 .project-timeline {
-  font-size: 12px;
+  font-size: var(--resume-small-font-size, 12px);
   color: #64748b;
   font-weight: 500;
 }
@@ -625,13 +625,13 @@ const getSkillClass = (level) => {
 .project-summary {
   color: #475569;
   margin: 0 0 20px 0;
-  line-height: 1.6;
-  font-size: 13px;
+  line-height: var(--resume-line-height, 1.6);
+  font-size: var(--resume-content-font-size, 13px);
 }
 
 .tech-title,
 .impact-title {
-  font-size: 13px;
+  font-size: var(--resume-content-font-size, 13px);
   font-weight: 600;
   color: #64748b;
   margin-bottom: 10px;
@@ -645,11 +645,11 @@ const getSkillClass = (level) => {
 }
 
 .tech-chip {
-  background: #e0e7ff;
-  color: #4338ca;
+  background: var(--resume-primary-color, #e0e7ff);
+  color: var(--resume-secondary-color, #4338ca);
   padding: 4px 10px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: var(--resume-small-font-size, 11px);
   font-weight: 500;
 }
 
@@ -664,7 +664,7 @@ const getSkillClass = (level) => {
   padding-left: 16px;
   margin-bottom: 8px;
   color: #475569;
-  font-size: 13px;
+  font-size: var(--resume-content-font-size, 13px);
 }
 
 .impact-points li::before {
@@ -694,7 +694,7 @@ const getSkillClass = (level) => {
 }
 
 .growth-year {
-  font-size: 24px;
+  font-size: var(--resume-title-font-size, 24px);
   font-weight: 700;
   color: #94a3b8;
   flex-shrink: 0;
@@ -707,20 +707,20 @@ const getSkillClass = (level) => {
 }
 
 .growth-degree {
-  font-size: 16px;
+  font-size: var(--resume-subtitle-font-size, 16px);
   font-weight: 600;
   color: #0f172a;
   margin: 0 0 4px 0;
 }
 
 .growth-field {
-  font-size: 14px;
-  color: #3b82f6;
+  font-size: var(--resume-content-font-size, 14px);
+  color: var(--resume-primary-color, #3b82f6);
   margin: 0 0 4px 0;
 }
 
 .growth-institution {
-  font-size: 13px;
+  font-size: var(--resume-content-font-size, 13px);
   color: #64748b;
   margin: 0 0 10px 0;
 }
@@ -735,7 +735,7 @@ const getSkillClass = (level) => {
   color: #475569;
   padding: 4px 10px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: var(--resume-small-font-size, 11px);
   font-weight: 500;
   box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
@@ -757,7 +757,7 @@ const getSkillClass = (level) => {
 }
 
 .badge-icon {
-  font-size: 28px;
+  font-size: var(--resume-title-font-size, 28px);
   flex-shrink: 0;
   width: 48px;
   height: 48px;
@@ -774,20 +774,20 @@ const getSkillClass = (level) => {
 }
 
 .badge-name {
-  font-size: 14px;
+  font-size: var(--resume-content-font-size, 14px);
   font-weight: 600;
   color: #0f172a;
   margin-bottom: 2px;
 }
 
 .badge-issuer {
-  font-size: 12px;
+  font-size: var(--resume-small-font-size, 12px);
   color: #64748b;
   margin-bottom: 2px;
 }
 
 .badge-date {
-  font-size: 11px;
+  font-size: var(--resume-small-font-size, 11px);
   color: #94a3b8;
 }
 
@@ -806,19 +806,19 @@ const getSkillClass = (level) => {
 }
 
 .sphere-icon {
-  font-size: 32px;
+  font-size: var(--resume-title-font-size, 32px);
   margin-bottom: 15px;
 }
 
 .lang-name {
-  font-size: 16px;
+  font-size: var(--resume-subtitle-font-size, 16px);
   font-weight: 600;
   color: #0f172a;
   margin-bottom: 4px;
 }
 
 .lang-proficiency {
-  font-size: 13px;
+  font-size: var(--resume-content-font-size, 13px);
   color: #64748b;
 }
 

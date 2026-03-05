@@ -100,7 +100,7 @@
               @click="selectTemplate(template)"
             >
               <div class="template-preview">
-                <TemplateThumbnail :template="template" :width="200" :height="150" />
+                <TemplatePreview :template="template" :width="220" />
                 <div class="preview-overlay">
                   <el-button type="primary" size="small">选择模板</el-button>
                 </div>

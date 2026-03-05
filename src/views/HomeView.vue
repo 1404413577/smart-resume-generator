@@ -1369,7 +1369,7 @@ watch(() => resumeStore.resumeData, () => {
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible; /* 修正长页面截断 Bug, 允许由于内容撑开 */
   width: 210mm; /* A4纸张宽度 */
   max-width: 210mm; /* 限制最大宽度 */
 }

@@ -158,12 +158,13 @@ const toggleFullscreen = () => {
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible; /* 改为 visible 以允许多页或过长内容展示 */
 }
 
 .resume-preview {
   width: 210mm;
   min-height: 297mm;
+  height: auto; /* 更明确地让高度自适应内容 */
   background: white;
 }
 
@@ -247,6 +248,7 @@ const toggleFullscreen = () => {
     transform: none !important;
     box-shadow: none;
     border-radius: 0;
+    overflow: visible;
   }
 }
 </style>

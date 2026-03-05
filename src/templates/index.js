@@ -16,6 +16,7 @@ import StartupTemplate from './components/StartupTemplate.vue'
 import FinanceTemplate from './components/FinanceTemplate.vue'
 import EducationTemplate from './components/EducationTemplate.vue'
 import MarketingTemplate from './components/MarketingTemplate.vue'
+import DeveloperTemplate from './components/DeveloperTemplate.vue'
 
 // 模板注册表
 export const templateRegistry = {
@@ -168,6 +169,16 @@ export const templateRegistry = {
     preview: '/images/templates/marketing-preview.png',
     features: ['杂志排版', '核心指标突出', '大色块', '视觉张力'],
     suitableFor: ['市场经理', '公关专家', '新媒体运营', '活动策划']
+  },
+
+  developer: {
+    name: 'Developer / Geek',
+    component: DeveloperTemplate,
+    description: '极客开发者风格，代码级纯净排版，凸显技术实力',
+    category: 'tech',
+    preview: '/images/templates/tech-preview.png',
+    features: ['极简排版', '代码风格', '技术导向', '结构清晰'],
+    suitableFor: ['前端工程师', '后端架构师', '全栈开发者', '程序员']
   }
 }
 

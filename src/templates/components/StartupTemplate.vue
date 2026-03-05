@@ -267,30 +267,27 @@ const getSkillClass = (level) => {
 .startup-template {
   width: 210mm;
   min-height: 297mm;
-  background: #ffffff;
-  font-family: var(--font-family, 'Poppins, sans-serif');
-  color: var(--theme-text-primary, #1a202c);
+  height: auto; /* 允许根据内容无限延伸 */
+  background: #f8fafc;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
+  color: #1e293b;
   line-height: var(--line-height, 1.6);
   margin: 0 auto;
+  overflow: visible;
 }
 
-/* 创新头部 */
+/* 创新头部 (纯色圆角大区块) */
 .startup-header {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #a8edea 100%);
-  color: white;
+  background: #1e293b; 
+  color: #ffffff;
   padding: 40px 30px;
   position: relative;
-  overflow: hidden;
+  border-radius: 0 0 32px 32px;
+  margin-bottom: 10px;
 }
 
 .header-mesh {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="mesh" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.2)"/><circle cx="5" cy="5" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="15" cy="15" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23mesh)"/></svg>');
-  opacity: 0.4;
+  display: none; /* 移除网格背景 */
 }
 
 .header-content {
@@ -306,37 +303,21 @@ const getSkillClass = (level) => {
 
 .hero-avatar {
   position: relative;
-  width: 140px;
-  height: 140px;
+  width: 130px;
+  height: 130px;
   flex-shrink: 0;
 }
 
 .hero-avatar img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 32px; /* 圆角矩形头像更符合现代扁平风格 */
   object-fit: cover;
-  border: 4px solid rgba(255, 255, 255, 0.3);
+  border: 4px solid rgba(255, 255, 255, 0.1);
 }
 
 .avatar-glow {
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-  }
-  to {
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
-  }
+  display: none; /* 移除发光动画特效 */
 }
 
 .hero-content {
@@ -344,285 +325,235 @@ const getSkillClass = (level) => {
 }
 
 .startup-name {
-  font-size: 48px;
+  font-size: 42px;
   font-weight: 700;
   margin: 0 0 8px 0;
-  background: linear-gradient(45deg, #ffffff, #a8edea);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #ffffff;
 }
 
 .startup-role {
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 500;
   margin: 0 0 20px 0;
-  opacity: 0.9;
+  color: #94a3b8;
   text-transform: uppercase;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
 }
 
 .startup-vision {
   display: flex;
   align-items: flex-start;
   gap: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
+  background: #334155; /* 纯色卡片 */
+  padding: 16px 20px;
   border-radius: 16px;
-  backdrop-filter: blur(10px);
   margin-bottom: 25px;
 }
 
 .vision-icon {
-  font-size: 24px;
+  font-size: 20px;
   flex-shrink: 0;
 }
 
 .startup-vision p {
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
+  color: #f8fafc;
 }
 
 .quick-contact {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 12px;
 }
 
 .contact-link {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  background: #334155;
   padding: 10px 16px;
-  border-radius: 25px;
+  border-radius: 12px;
   text-decoration: none;
-  color: white;
-  font-size: 14px;
+  color: #f8fafc;
+  font-size: 13px;
   font-weight: 500;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  transition: background 0.2s ease;
 }
 
 .contact-link:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  background: #475569;
 }
 
 .link-icon {
   font-size: 16px;
 }
 
-/* 主要内容 */
+/* 主要内容: 白色圆角块容器编排 */
 .startup-content {
-  padding: 40px 30px;
+  padding: 20px 30px 40px;
 }
 
 .startup-section {
-  margin-bottom: 50px;
+  margin-bottom: 30px;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .section-title {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  padding: 15px 0;
-  border-bottom: 2px solid transparent;
-  background: linear-gradient(90deg, #4facfe, #00f2fe) padding-box,
-              linear-gradient(90deg, #4facfe, #00f2fe) border-box;
-  border-image: linear-gradient(90deg, #4facfe, #00f2fe) 1;
+  gap: 12px;
+  margin-bottom: 25px;
+  padding-bottom: 0;
+  border: none;
 }
 
 .title-emoji {
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .title-text {
-  font-size: 26px;
-  font-weight: 600;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-/* 技能矩阵 */
+/* 技能矩阵 (纯色) */
 .skills-matrix {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
+  gap: 10px;
 }
 
 .skill-chip {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 18px;
-  border-radius: 25px;
+  padding: 10px 16px;
+  border-radius: 12px;
   font-weight: 500;
-  transition: all 0.3s ease;
-  cursor: default;
 }
 
-.skill-chip:hover {
-  transform: scale(1.05);
-}
-
-.skill-beginner {
-  background: linear-gradient(135deg, #ffecd2, #fcb69f);
-  color: #8b4513;
-}
-
-.skill-intermediate {
-  background: linear-gradient(135deg, #a8edea, #fed6e3);
-  color: #2d3748;
-}
-
-.skill-advanced {
-  background: linear-gradient(135deg, #d299c2, #fef9d7);
-  color: #553c9a;
-}
-
-.skill-expert {
-  background: linear-gradient(135deg, #89f7fe, #66a6ff);
-  color: #1a365d;
-}
-
-.skill-master {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-}
+/* 全部使用高级莫兰迪/护眼纯色 */
+.skill-beginner { background: #f0fdf4; color: #166534; }
+.skill-beginner .skill-badge { background: #dcfce7; color: #15803d; }
+.skill-intermediate { background: #eff6ff; color: #1e40af; }
+.skill-intermediate .skill-badge { background: #dbeafe; color: #1d4ed8; }
+.skill-advanced { background: #fef2f2; color: #991b1b; }
+.skill-advanced .skill-badge { background: #fee2e2; color: #b91c1c; }
+.skill-expert { background: #fdf4ff; color: #86198f; }
+.skill-expert .skill-badge { background: #fae8ff; color: #a21caf; }
+.skill-master { background: #fff7ed; color: #c2410c; }
+.skill-master .skill-badge { background: #ffedd5; color: #ea580c; }
 
 .skill-name {
   font-size: 14px;
 }
 
 .skill-badge {
-  background: rgba(255, 255, 255, 0.3);
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 11px;
   font-weight: 600;
 }
 
-/* 产品之旅 */
+/* 产品之旅/工作经验 */
 .journey-timeline {
   position: relative;
 }
 
 .journey-milestone {
   display: flex;
-  gap: 30px;
-  margin-bottom: 40px;
+  gap: 25px;
+  margin-bottom: 30px;
 }
 
 .milestone-marker {
   position: relative;
   flex-shrink: 0;
-  width: 20px;
+  width: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .marker-dot {
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  width: 16px;
+  height: 16px;
+  background: #cbd5e1;
   border-radius: 50%;
-  border: 4px solid white;
-  box-shadow: 0 0 0 2px #4facfe;
-  z-index: 2;
+  border: 4px solid #ffffff;
+  box-shadow: 0 0 0 1px #e2e8f0;
 }
 
 .milestone-featured .marker-dot {
-  width: 24px;
-  height: 24px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  box-shadow: 0 0 0 2px #667eea, 0 0 20px rgba(102, 126, 234, 0.3);
+  background: #3b82f6; /* 主点亮色 */
+  box-shadow: 0 0 0 1px #3b82f6;
 }
 
 .marker-line {
   width: 2px;
-  height: 60px;
-  background: linear-gradient(180deg, #4facfe, #00f2fe);
-  margin-top: 10px;
+  height: 100%;
+  background: #e2e8f0;
+  margin-top: 4px;
 }
 
 .milestone-content {
   flex: 1;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.milestone-content:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 25px rgba(79, 172, 254, 0.15);
-}
-
-.milestone-featured .milestone-content {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #f8faff, #f0f9ff);
+  padding-bottom: 10px;
 }
 
 .milestone-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
 }
 
 .milestone-period {
-  font-size: 12px;
-  color: #4facfe;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .milestone-badge {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
+  background: #eff6ff;
+  color: #3b82f6;
+  padding: 4px 10px;
+  border-radius: 8px;
   font-size: 11px;
   font-weight: 600;
 }
 
 .milestone-role {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: #1a202c;
+  color: #0f172a;
   margin: 0 0 5px 0;
 }
 
 .milestone-company {
-  font-size: 16px;
-  color: #4facfe;
+  font-size: 15px;
+  color: #3b82f6;
   margin: 0 0 15px 0;
   font-weight: 500;
 }
 
 .milestone-description {
-  color: #4a5568;
-  margin: 0 0 20px 0;
+  color: #475569;
+  margin: 0 0 15px 0;
   line-height: 1.6;
+  font-size: 14px;
 }
 
 .achievements-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #4facfe;
+  color: #64748b;
   margin-bottom: 10px;
 }
 
@@ -633,45 +564,25 @@ const getSkillClass = (level) => {
 }
 
 .achievement-tag {
-  background: linear-gradient(135deg, #a8edea, #fed6e3);
-  color: #2d3748;
+  background: #f1f5f9;
+  color: #475569;
   padding: 6px 12px;
-  border-radius: 16px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
 }
 
-/* 创新实验室 */
+/* 创新实验室/项目经验 */
 .innovation-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
 }
 
 .innovation-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.innovation-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #4facfe, #00f2fe, #a8edea);
-}
-
-.innovation-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 16px 40px rgba(79, 172, 254, 0.15);
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 24px;
 }
 
 .card-header {
@@ -682,15 +593,16 @@ const getSkillClass = (level) => {
 }
 
 .project-icon {
-  font-size: 32px;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  border-radius: 50%;
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .project-meta {
@@ -698,29 +610,30 @@ const getSkillClass = (level) => {
 }
 
 .project-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #1a202c;
+  color: #0f172a;
   margin: 0 0 4px 0;
 }
 
 .project-timeline {
   font-size: 12px;
-  color: #4facfe;
+  color: #64748b;
   font-weight: 500;
 }
 
 .project-summary {
-  color: #4a5568;
+  color: #475569;
   margin: 0 0 20px 0;
   line-height: 1.6;
+  font-size: 13px;
 }
 
 .tech-title,
 .impact-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #4facfe;
+  color: #64748b;
   margin-bottom: 10px;
 }
 
@@ -732,10 +645,10 @@ const getSkillClass = (level) => {
 }
 
 .tech-chip {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  color: white;
+  background: #e0e7ff;
+  color: #4338ca;
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 11px;
   font-weight: 500;
 }
@@ -748,50 +661,45 @@ const getSkillClass = (level) => {
 
 .impact-points li {
   position: relative;
-  padding-left: 20px;
+  padding-left: 16px;
   margin-bottom: 8px;
-  color: #4a5568;
-  font-size: 14px;
+  color: #475569;
+  font-size: 13px;
 }
 
 .impact-points li::before {
-  content: '⚡';
+  content: '·';
   position: absolute;
   left: 0;
-  color: #4facfe;
-  font-size: 14px;
+  color: #94a3b8;
+  font-size: 24px;
+  line-height: 0.8;
+  top: -2px;
 }
 
-/* 成长轨迹 */
+/* 成长轨迹/教育 */
 .growth-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
 
 .growth-card {
-  background: linear-gradient(135deg, #f8faff, #f0f9ff);
-  border: 1px solid #bfdbfe;
+  background: #f8fafc;
   border-radius: 16px;
-  padding: 25px;
+  padding: 20px;
   display: flex;
   gap: 20px;
   align-items: center;
-  transition: all 0.3s ease;
-}
-
-.growth-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.15);
 }
 
 .growth-year {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
-  color: #4facfe;
+  color: #94a3b8;
   flex-shrink: 0;
   text-align: center;
-  min-width: 80px;
+  min-width: 60px;
 }
 
 .growth-content {
@@ -799,64 +707,66 @@ const getSkillClass = (level) => {
 }
 
 .growth-degree {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #1a202c;
+  color: #0f172a;
   margin: 0 0 4px 0;
 }
 
 .growth-field {
-  font-size: 16px;
-  color: #4facfe;
+  font-size: 14px;
+  color: #3b82f6;
   margin: 0 0 4px 0;
 }
 
 .growth-institution {
-  font-size: 14px;
-  color: #4a5568;
+  font-size: 13px;
+  color: #64748b;
   margin: 0 0 10px 0;
 }
 
 .growth-highlights {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .highlight-item {
-  background: #4facfe;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
+  background: #ffffff;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 8px;
   font-size: 11px;
   font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
 
 /* 成就徽章 */
 .badges-showcase {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
 }
 
 .badge-item {
-  background: linear-gradient(135deg, #fff7ed, #fed7aa);
-  border: 1px solid #fdba74;
+  background: #f8fafc;
   border-radius: 16px;
-  padding: 20px;
+  padding: 15px;
   display: flex;
   align-items: center;
   gap: 15px;
-  transition: all 0.3s ease;
-}
-
-.badge-item:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(251, 146, 60, 0.15);
 }
 
 .badge-icon {
-  font-size: 36px;
+  font-size: 28px;
   flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .badge-info {
@@ -864,41 +774,35 @@ const getSkillClass = (level) => {
 }
 
 .badge-name {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  color: #1a202c;
-  margin-bottom: 4px;
+  color: #0f172a;
+  margin-bottom: 2px;
 }
 
 .badge-issuer {
-  font-size: 14px;
-  color: #ea580c;
-  margin-bottom: 4px;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 2px;
 }
 
 .badge-date {
-  font-size: 12px;
-  color: #9a3412;
+  font-size: 11px;
+  color: #94a3b8;
 }
 
-/* 全球视野 */
+/* 全球视野/语言 */
 .languages-world {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 20px;
 }
 
 .language-sphere {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  color: white;
-  border-radius: 20px;
-  padding: 25px;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 20px;
   text-align: center;
-  transition: all 0.3s ease;
-}
-
-.language-sphere:hover {
-  transform: scale(1.05) rotate(2deg);
 }
 
 .sphere-icon {
@@ -907,14 +811,15 @@ const getSkillClass = (level) => {
 }
 
 .lang-name {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 8px;
+  color: #0f172a;
+  margin-bottom: 4px;
 }
 
 .lang-proficiency {
-  font-size: 14px;
-  opacity: 0.9;
+  font-size: 13px;
+  color: #64748b;
 }
 
 /* 响应式设计 */
@@ -922,46 +827,44 @@ const getSkillClass = (level) => {
   .startup-template {
     width: 100%;
     min-height: auto;
+    background: #ffffff;
   }
 
   .startup-header {
-    padding: 20px 15px;
+    border-radius: 0 0 24px 24px;
+    padding: 30px 20px;
   }
 
   .startup-hero {
     flex-direction: column;
     text-align: center;
-    gap: 25px;
+    gap: 20px;
   }
 
-  .startup-name {
-    font-size: 36px;
+  .quick-contact {
+    justify-content: center;
   }
 
   .startup-content {
     padding: 20px 15px;
   }
 
+  .startup-section {
+    padding: 20px 15px;
+    border-radius: 16px;
+  }
+
   .skills-matrix {
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .journey-milestone {
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
   }
 
   .milestone-marker {
-    flex-direction: row;
-    width: auto;
-    height: 20px;
-  }
-
-  .marker-line {
-    width: 60px;
-    height: 2px;
-    margin-top: 0;
-    margin-left: 10px;
+    display: none;
   }
 
   .innovation-grid,
@@ -977,4 +880,11 @@ const getSkillClass = (level) => {
   }
 }
 
+/* 打印与导出适配 */
+@media print {
+  .startup-template { background: #ffffff; margin: 0; padding: 0; }
+  .startup-header { border-radius: 0; margin-bottom: 20px; }
+  .startup-section { box-shadow: none; border: 1px solid #f1f5f9; padding: 25px; margin-bottom: 20px; page-break-inside: avoid; }
+  .startup-content { padding: 0; width: 100%; }
+}
 </style>

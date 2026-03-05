@@ -13,8 +13,7 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     useCORS: true,
     allowTaint: true,
     backgroundColor: '#ffffff',
-    width: 794, // A4纸宽度像素 (210mm * 3.78 dpi)
-    height: 1123, // A4纸高度像素 (297mm * 3.78 dpi)
+    // 移除写死的高度和宽度，交由下方动态计算以支持多页
     // 优化中文字符渲染 - 移除不支持的参数
     letterRendering: false,
     logging: false,
@@ -38,7 +37,8 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     // 临时调整元素样式以适应PDF - 优化边距和字体渲染
     const originalStyle = element.style.cssText
     element.style.width = '210mm' // A4纸宽度
-    element.style.minHeight = '297mm' // A4纸高度
+    element.style.height = 'auto' // 高度自适应支撑多页
+    element.style.minHeight = '297mm' // A4纸最小高度
     element.style.padding = '0' // 移除边距，避免出现多余空白
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
@@ -66,9 +66,16 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     // 等待样式生效
     await new Promise(resolve => setTimeout(resolve, 200))
 
-    // 使用html2canvas转换为canvas
+    // 使用html2canvas转换为canvas，并动态计算实际滚动总宽长
     console.log('开始生成PDF，元素尺寸:', element.offsetWidth, 'x', element.offsetHeight)
-    const canvas = await html2canvas(element, defaultOptions)
+    const canvasOptions = {
+      ...defaultOptions,
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight
+    }
+    const canvas = await html2canvas(element, canvasOptions)
     console.log('Canvas生成完成，尺寸:', canvas.width, 'x', canvas.height)
 
     // 恢复原始样式和CSS类
@@ -92,9 +99,9 @@ export async function generatePDF(elementId, filename = 'resume.pdf', options = 
     const pdfWidth = 210
     const pdfHeight = 297
 
-    // 直接使用整个页面空间，无边距
+    // 根据真实生成的 canvas 图片比例，推算出全部内容需要的总高度 mm
     const finalWidth = pdfWidth
-    const finalHeight = pdfHeight
+    const finalHeight = (canvas.height * pdfWidth) / canvas.width
     const offsetX = 0
     const offsetY = 0
 
@@ -152,6 +159,7 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
     // 临时调整元素样式
     const originalStyle = element.style.cssText
     element.style.width = '210mm'
+    element.style.height = 'auto'
     element.style.padding = '0' // 移除边距，避免出现多余空白
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
@@ -181,8 +189,10 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
-      width: 794,
-      height: 1123,
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight,
       // 优化中文字符渲染
       letterRendering: false,
       logging: false
@@ -201,9 +211,9 @@ export async function downloadPDFBlob(elementId, filename = 'resume.pdf') {
     const pdfWidth = 210
     const pdfHeight = 297
 
-    // 直接使用整个页面空间，无边距
+    // 动态计算该图像完全填充需要的实际高度
     const finalWidth = pdfWidth
-    const finalHeight = pdfHeight
+    const finalHeight = (canvas.height * pdfWidth) / canvas.width
     const offsetX = 0
     const offsetY = 0
 
@@ -407,15 +417,15 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     // 计算需要多少页
     const totalPages = Math.ceil(actualHeightMm / pageHeight)
 
-    // 添加第一页
-    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight, '', 'FAST')
+    // 添加第一页，传入实际长图高度actualHeightMm而非页面高度，否则JS会挤压！
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, actualHeightMm, '', 'FAST')
 
     // 如果内容超过一页，添加额外的页面
     if (totalPages > 1) {
       for (let i = 1; i < totalPages; i++) {
         pdf.addPage()
         const yOffset = -(i * pageHeight)
-        pdf.addImage(imgData, 'PNG', 0, yOffset, pageWidth, pageHeight, '', 'FAST')
+        pdf.addImage(imgData, 'PNG', 0, yOffset, pageWidth, actualHeightMm, '', 'FAST')
       }
     }
 

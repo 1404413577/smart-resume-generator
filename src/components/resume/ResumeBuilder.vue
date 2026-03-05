@@ -468,7 +468,7 @@ const handleTemplateApplied = (templateData) => {
   max-width: 100vw;
   padding: 0;
   margin: 0;
-  overflow: hidden;
+  overflow: visible; /* 允许整个大模块由于子内容过长自然滚动 */
 }
 
 /* 左侧：模块导航区 (25%) */
@@ -500,7 +500,8 @@ const handleTemplateApplied = (templateData) => {
   transition: all 0.3s ease;
   z-index: 10;
   background: white;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .preview-section.full-width {
@@ -527,7 +528,7 @@ const handleTemplateApplied = (templateData) => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible; /* 修正长页面截断 Bug, 允许容器垂直滚动或展示溢出元素 */
   position: relative;
 }
 
@@ -568,10 +569,10 @@ const handleTemplateApplied = (templateData) => {
 .resume-preview-wrapper {
   flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto; /* 允许水平也能滚动应对极宽情况 */
   background: #f8f9fa;
   padding: 20px;
-  height: 0;
+  height: 100%; /* 放弃固定0高度，改为撑满允许子元素拓展 */
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -588,6 +589,7 @@ const handleTemplateApplied = (templateData) => {
   transform-origin: top center;
   transition: transform 0.2s ease;
   position: relative;
+  margin-bottom: 40px; /* 在底部留出空白，确保完全滚动到底部时依然能看到全貌 */
 }
 
 .template-setting-item {

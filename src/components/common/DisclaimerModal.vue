@@ -96,18 +96,14 @@ import { ref, onMounted } from 'vue'
 
 const visible = ref(false)
 const hasAgreed = ref(false)
-const STORAGE_KEY = 'has_agreed_disclaimer'
 
 onMounted(() => {
-  const agreed = localStorage.getItem(STORAGE_KEY)
-  if (!agreed) {
-    visible.value = true
-  }
+  // 每次打开应用均需重新同意
+  visible.value = true
 })
 
 const handleConfirm = () => {
   if (hasAgreed.value) {
-    localStorage.setItem(STORAGE_KEY, 'true')
     visible.value = false
   }
 }

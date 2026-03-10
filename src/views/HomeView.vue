@@ -155,7 +155,6 @@
           </div>
         </div>
 
-
       </aside>
 
       <!-- 中间编辑区域 -->
@@ -275,7 +274,8 @@
         />
       </el-dialog>
 
-
+      <!-- 可拖拽随机打赏二维码组件 -->
+      <DraggableDonation />
 
     </div>
   </div>
@@ -303,7 +303,8 @@ import {
   Search,
   TrendCharts,
   ChatRound,
-  Upload
+  Upload,
+  Close
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
@@ -321,6 +322,7 @@ import ResumePreview from '@components/resume/ResumePreview.vue'
 import StyleSettings from '@components/settings/StyleSettingsNew.vue'
 import MultiPagePreviewControls from '@components/resume/MultiPagePreviewControls.vue'
 import AITestPanel from '@components/ai/AITestPanel.vue'
+import DraggableDonation from '@components/common/DraggableDonation.vue'
 import { getTemplate } from '@templates'
 
 // 编辑器组件导入
@@ -360,6 +362,7 @@ const showSectionSort = ref(false)
 const currentPreviewPage = ref(1)
 const showAllPages = ref(false)
 const showAITest = ref(false)
+const showDonation = ref(true)
 
 // 开发模式检测
 const isDevelopment = computed(() => {
@@ -809,6 +812,57 @@ watch(() => resumeStore.resumeData, () => {
   align-items: center;
   gap: 8px;
   flex: 1;
+}
+
+.ai-assistant-section .section-header .header-left span {
+  font-weight: 600;
+  color: #3f51b5;
+}
+
+/* 赞助区样式 */
+.donation-section {
+  padding: 15px;
+  background-color: #fafafa;
+  border-top: 1px dashed #e4e7ed;
+  position: relative;
+}
+
+.donation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.donation-text {
+  font-size: 13px;
+  color: #606266;
+  font-weight: 500;
+  margin: 0;
+}
+
+.close-donation {
+  cursor: pointer;
+  color: #909399;
+  font-size: 14px;
+}
+
+.close-donation:hover {
+  color: #f56c6c;
+}
+
+.donation-content {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.donation-qr {
+  width: calc(50% - 5px);
+  max-width: 145px; /* (300px target / 2) - 5px gap */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid #ebeef5;
 }
 
 .ai-status {

@@ -5,6 +5,7 @@ import { useSEO } from '@/composables/useSEO'
 import { printResume } from '@utils/pdf/browserPrint'
 import { ElMessage } from 'element-plus'
 import AppLayout from '@components/layout/AppLayout.vue'
+import DisclaimerModal from '@components/common/DisclaimerModal.vue'
 
 const resumeStore = useResumeStore()
 
@@ -59,6 +60,9 @@ onUnmounted(() => {
   <div id="app">
     <!-- 应用布局 -->
     <AppLayout />
+    
+    <!-- 免责协议弹窗 -->
+    <DisclaimerModal />
   </div>
 </template>
 

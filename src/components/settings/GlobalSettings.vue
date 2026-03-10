@@ -63,11 +63,13 @@
             size="small"
             style="width: 100%"
           >
-            <el-option label="系统默认" value="system-ui" />
-            <el-option label="思源黑体" value="'Source Han Sans SC', sans-serif" />
-            <!-- <el-option label="微软雅黑" value="'Microsoft YaHei', sans-serif" /> -->
-            <el-option label="苹方" value="'PingFang SC', sans-serif" />
-            <!-- <el-option label="宋体" value="SimSun, serif" /> -->
+            <el-option label="系统/默认 (思源黑体)" value='"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif' />
+            <el-option label="思源宋体" value="'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif" />
+            <el-option label="黑体" value="'SimHei', 'Heiti SC', sans-serif" />
+            <el-option label="楷体" value="'KaiTi', 'Kaiti SC', serif" />
+            <el-option label="站酷快乐体" value="'ZCOOL KuaiLe', cursive" />
+            <el-option label="站酷小薇体" value="'ZCOOL XiaoWei', serif" />
+            <el-option label="马善政毛笔楷书" value="'Ma Shan Zheng', cursive" />
             <el-option label="Times New Roman" value="'Times New Roman', serif" />
             <el-option label="Arial" value="Arial, sans-serif" />
           </el-select>

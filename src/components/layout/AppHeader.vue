@@ -99,7 +99,7 @@ const isExporting = ref(false)
 // 导航菜单项
 const navItems = [
   { name: 'Home', path: '/', label: '编辑器', icon: House },
-  { name: 'AIAssistant', path: '/ai-assistant', label: 'AI助手', icon: MagicStick },
+  // { name: 'AIAssistant', path: '/ai-assistant', label: 'AI助手', icon: MagicStick },
   { name: 'Templates', path: '/templates', label: '模板中心', icon: Grid }
 ]
 

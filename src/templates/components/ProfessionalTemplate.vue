@@ -4,7 +4,7 @@
       <!-- 头部信息 -->
       <div class="header-section">
         <div class="header-left">
-          <div class="avatar-section" v-if="resumeData.personalInfo?.photo">
+          <div class="avatar-section" :class="resumeData.personalInfo?.photoPosition || 'left'" v-if="resumeData.personalInfo?.photo">
             <img :src="resumeData.personalInfo.photo" alt="头像" class="avatar" />
           </div>
           <div class="name-section">
@@ -229,6 +229,23 @@ const getSkillWidth = (level) => {
   display: flex;
   align-items: center;
   gap: 25px;
+  flex: 1;
+}
+
+.avatar-section.left {
+  order: -1;
+}
+
+.avatar-section.right {
+  order: 2;
+  margin-left: auto;
+}
+
+.avatar-section.center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 40px;
 }
 
 .avatar {

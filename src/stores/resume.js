@@ -13,8 +13,8 @@ export const useResumeStore = defineStore('resume', () => {
       linkedin: '',
       github: '',
       targetPosition: '', // 期望职位
-      avatar: '', // 头像base64数据
-      avatarPosition: 'left', // 头像位置: 'left' | 'right' | 'center'
+      photo: '', // 头像base64数据
+      photoPosition: 'left', // 头像位置: 'left' | 'right' | 'center'
       customFields: [] // 自定义字段数组
     },
     summary: '',
@@ -70,7 +70,7 @@ export const useResumeStore = defineStore('resume', () => {
       baseFontSize: 14,        // 基础字号 12-16px
       titleFontSize: 18,       // 模块标题字号 16-24px
       subtitleFontSize: 16,    // 一级标题字号 14-20px
-      fontFamily: 'system-ui', // 字体族
+      fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif', // 字体族
       fontWeight: {
         light: 300,
         normal: 400,
@@ -344,26 +344,26 @@ export const useResumeStore = defineStore('resume', () => {
   }
 
   // 头像操作
-  const updateAvatar = (avatarData) => {
-    resumeData.value.personalInfo.avatar = avatarData
+  const updatePhoto = (photoData) => {
+    resumeData.value.personalInfo.photo = photoData
     // 同时保存到localStorage
     try {
-      localStorage.setItem('resume_avatar', avatarData)
+      localStorage.setItem('resume_photo', photoData)
     } catch (error) {
-      console.warn('Failed to save avatar to localStorage:', error)
+      console.warn('Failed to save photo to localStorage:', error)
     }
   }
 
-  const updateAvatarPosition = (position) => {
-    resumeData.value.personalInfo.avatarPosition = position
+  const updatePhotoPosition = (position) => {
+    resumeData.value.personalInfo.photoPosition = position
   }
 
-  const removeAvatar = () => {
-    resumeData.value.personalInfo.avatar = ''
+  const removePhoto = () => {
+    resumeData.value.personalInfo.photo = ''
     try {
-      localStorage.removeItem('resume_avatar')
+      localStorage.removeItem('resume_photo')
     } catch (error) {
-      console.warn('Failed to remove avatar from localStorage:', error)
+      console.warn('Failed to remove photo from localStorage:', error)
     }
   }
 
@@ -624,7 +624,7 @@ export const useResumeStore = defineStore('resume', () => {
             baseFontSize: 14,
             titleFontSize: 18,
             subtitleFontSize: 16,
-            fontFamily: 'system-ui',
+            fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif',
             fontWeight: {
               light: 300,
               normal: 400,
@@ -840,7 +840,7 @@ export const useResumeStore = defineStore('resume', () => {
         baseFontSize: 14,
         titleFontSize: 18,
         subtitleFontSize: 16,
-        fontFamily: 'system-ui',
+        fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif',
         fontWeight: {
           light: 300,
           normal: 400,
@@ -1003,9 +1003,9 @@ export const useResumeStore = defineStore('resume', () => {
 
     // 方法
     updatePersonalInfo,
-    updateAvatar,
-    updateAvatarPosition,
-    removeAvatar,
+    updatePhoto,
+    updatePhotoPosition,
+    removePhoto,
     addCustomField,
     updateCustomField,
     removeCustomField,

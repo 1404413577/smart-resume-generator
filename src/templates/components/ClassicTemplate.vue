@@ -27,7 +27,7 @@
           </div>
         </div>
         
-        <div class="avatar-section" v-if="resumeData.personalInfo?.photo">
+        <div class="avatar-section" :class="resumeData.personalInfo?.photoPosition || 'left'" v-if="resumeData.personalInfo?.photo">
           <img :src="resumeData.personalInfo.photo" alt="头像" class="avatar" />
         </div>
       </div>
@@ -226,6 +226,18 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .avatar-section {
   margin-left: 30px;
+}
+
+.avatar-section.left {
+  order: -1;
+  margin-left: 0;
+  margin-right: 30px;
+}
+
+.avatar-section.center {
+  position: absolute;
+  top: 40px;
+  right: 40px;
 }
 
 .avatar {

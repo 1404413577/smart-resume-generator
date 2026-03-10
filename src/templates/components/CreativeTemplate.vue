@@ -12,7 +12,7 @@
       <!-- Left Column / Aside -->
       <aside class="creative-aside">
         <div class="profile-section glass-card">
-          <div class="avatar-wrapper" v-if="resumeData.personalInfo?.photo">
+          <div class="avatar-wrapper" :class="resumeData.personalInfo?.photoPosition || 'center'" v-if="resumeData.personalInfo?.photo">
             <img :src="resumeData.personalInfo.photo" alt="Profile" class="avatar" />
             <div class="avatar-ring"></div>
           </div>
@@ -280,6 +280,8 @@ const getSkillPercentage = (level) => {
 
 .profile-section {
   text-align: center;
+  padding: 40px 30px;
+  position: relative;
 }
 
 .avatar-wrapper {
@@ -287,6 +289,18 @@ const getSkillPercentage = (level) => {
   width: 140px;
   height: 140px;
   margin: 0 auto 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-wrapper.left {
+  margin-left: 0;
+  justify-content: flex-start;
+}
+
+.avatar-wrapper.right {
+  margin-right: 0;
+  justify-content: flex-end;
 }
 
 .avatar {

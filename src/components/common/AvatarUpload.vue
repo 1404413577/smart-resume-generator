@@ -54,8 +54,8 @@ const resumeStore = useResumeStore()
 const fileInput = ref(null)
 
 // 头像数据
-const avatarUrl = computed(() => resumeStore.resumeData.personalInfo.avatar)
-const avatarPosition = ref(resumeStore.resumeData.personalInfo.avatarPosition || 'left')
+const avatarUrl = computed(() => resumeStore.resumeData.personalInfo.photo)
+const avatarPosition = ref(resumeStore.resumeData.personalInfo.photoPosition || 'left')
 const hasAvatar = computed(() => !!avatarUrl.value)
 
 // 文件限制
@@ -88,7 +88,7 @@ const handleFileSelect = (event) => {
   const reader = new FileReader()
   reader.onload = (e) => {
     const base64Data = e.target.result
-    resumeStore.updateAvatar(base64Data)
+    resumeStore.updatePhoto(base64Data)
     ElMessage.success('头像上传成功')
   }
   reader.onerror = () => {
@@ -102,7 +102,7 @@ const handleFileSelect = (event) => {
 
 // 更新头像位置
 const updatePosition = (position) => {
-  resumeStore.updateAvatarPosition(position)
+  resumeStore.updatePhotoPosition(position)
 }
 
 // 删除头像
@@ -112,7 +112,7 @@ const removeAvatar = () => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    resumeStore.removeAvatar()
+    resumeStore.removePhoto()
     ElMessage.success('头像已删除')
   }).catch(() => {
     // 用户取消删除
@@ -121,7 +121,7 @@ const removeAvatar = () => {
 
 // 组件挂载时同步位置数据
 onMounted(() => {
-  avatarPosition.value = resumeStore.resumeData.personalInfo.avatarPosition || 'left'
+  avatarPosition.value = resumeStore.resumeData.personalInfo.photoPosition || 'left'
 })
 </script>
 

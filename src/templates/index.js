@@ -16,6 +16,12 @@ import StartupTemplate from './components/StartupTemplate.vue'
 import ElegantTemplate from './components/ElegantTemplate.vue'
 import TimelineTemplate from './components/TimelineTemplate.vue'
 
+// 新增极限视觉风模板 (Cyberpunk, Notion, Glass, Vogue)
+import CyberpunkTemplate from './components/CyberpunkTemplate.vue'
+import NotionTemplate from './components/NotionTemplate.vue'
+import GlassTemplate from './components/GlassTemplate.vue'
+import VogueTemplate from './components/VogueTemplate.vue'
+
 // 专业技能详细描述模板
 import DetailedSkillTemplate from './components/DetailedSkillTemplate.vue'
 
@@ -73,13 +79,13 @@ export const templateRegistry = {
     suitableFor: ['学者', '研究人员', '博士生']
   },
   tech: {
-    name: 'Tech',
+    name: 'Silicon Valley / Clean Tech',
     component: TechTemplate,
-    description: '技术代码风格，适合程序员和技术岗位',
+    description: '硅谷前沿技术风格，极简代码符排版',
     category: 'tech',
     preview: '/images/templates/tech-preview.png',
-    features: ['技术导向', '代码风格', '项目突出'],
-    suitableFor: ['程序员', '技术人员', 'IT工程师']
+    features: ['技术导向', '极简主义', '项目突出', 'Mono排版'],
+    suitableFor: ['全栈开发', '资深研发', '架构师']
   },
   minimalist: {
     name: 'Minimalist',
@@ -216,6 +222,47 @@ export const templateRegistry = {
     preview: '/images/templates/tech-preview.png',
     features: ['极简排版', '代码风格', '技术导向', '结构清晰'],
     suitableFor: ['前端工程师', '后端架构师', '全栈开发者', '程序员']
+  },
+
+  // ===== NEW ULTRA-AESTHETIC TEMPLATES =====
+  cyberpunk: {
+    name: 'Cyberpunk Web3',
+    component: CyberpunkTemplate,
+    description: '高反差霓虹赛博朋克风，适合科技发烧友与核心开发者',
+    category: 'cyber',
+    preview: '/images/templates/tech-preview.png',
+    features: ['深色模式', '霓虹高亮', '终端界面', '硬核电竞'],
+    suitableFor: ['Web3开发', '游戏制作', '系统架构', '白帽黑客']
+  },
+
+  notion: {
+    name: 'Notion Minimalist',
+    component: NotionTemplate,
+    description: '基于 Notion 概念的极致纯粹文档流，块状排版',
+    category: 'minimalist',
+    preview: '/images/templates/minimalist-preview.png',
+    features: ['无边框文档', '信息块', 'Emoji修饰', '绝对专注'],
+    suitableFor: ['产品经理', '内容运营', '创作者', '独立开发者']
+  },
+
+  glass: {
+    name: 'UI Glassmorphism',
+    component: GlassTemplate,
+    description: '磨砂毛玻璃叠加流光极光背景，高颜值悬浮设计',
+    category: 'creative',
+    preview: '/images/templates/designer-preview.png',
+    features: ['背景模糊', '流光色彩', '悬浮卡片', '前沿UI'],
+    suitableFor: ['前端开发', 'UI/UX设计师', '插画师', '视觉统筹']
+  },
+
+  vogue: {
+    name: 'Vogue Editorial',
+    component: VogueTemplate,
+    description: '一线时尚大牌杂志高定排版，震撼衬线字体',
+    category: 'fashion',
+    preview: '/images/templates/executive-preview.png',
+    features: ['时尚画报', '大字体排印', '艺术留白', '奢侈品风'],
+    suitableFor: ['时尚公关', '艺术指导', '买手', '新媒体主编']
   }
 }
 
@@ -252,7 +299,9 @@ export const templateCategories = {
   marketing: '市场营销',
   academic: '学术研究',
   tech: '技术开发',
+  cyber: '极客赛博',
   engineering: '工程研发',
   startup: '创业创新',
-  minimalist: '极简主义'
+  minimalist: '极简主义',
+  fashion: '高定时尚'
 }

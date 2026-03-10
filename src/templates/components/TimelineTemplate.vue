@@ -26,7 +26,7 @@
           </div>
         </div>
         
-        <div class="avatar-container" v-if="resumeData.personalInfo?.photo">
+        <div class="avatar-container" :class="resumeData.personalInfo?.photoPosition || 'right'" v-if="resumeData.personalInfo?.photo">
           <img :src="resumeData.personalInfo.photo" />
         </div>
       </header>
@@ -264,6 +264,23 @@ const getSkillPercentage = (level) => {
   margin-left: 30px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   border: 3px solid #ffffff;
+}
+
+.avatar-container.left {
+  order: -1;
+  margin-left: 0;
+  margin-right: 30px;
+}
+
+.avatar-container.center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 40px;
+}
+
+.avatar-container.right {
+  order: 2;
 }
 
 .avatar-container img {

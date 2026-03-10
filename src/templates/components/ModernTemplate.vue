@@ -4,7 +4,7 @@
       <!-- 左侧栏 -->
       <div class="sidebar">
         <!-- 个人头像 -->
-        <div class="avatar-section" v-if="resumeData.personalInfo?.photo">
+        <div class="avatar-section" :class="resumeData.personalInfo?.photoPosition || 'center'" v-if="resumeData.personalInfo?.photo">
           <img :src="resumeData.personalInfo.photo" alt="头像" class="avatar" />
         </div>
 
@@ -231,8 +231,17 @@ const getSkillLevel = (level) => {
 }
 
 .avatar-section {
-  text-align: center;
+  display: flex;
+  justify-content: center;
   margin-bottom: 30px;
+}
+
+.avatar-section.left {
+  justify-content: flex-start;
+}
+
+.avatar-section.right {
+  justify-content: flex-end;
 }
 
 .avatar {

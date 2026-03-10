@@ -1,5 +1,10 @@
 <template>
   <div class="personal-info-editor">
+    <div class="editor-section avatar-upload-section">
+      <h4 class="section-title">个人头像</h4>
+      <AvatarUpload />
+    </div>
+
     <div class="editor-section">
       <h4 class="section-title">基本信息</h4>
       <div class="form-grid">
@@ -36,6 +41,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useResumeStore } from '@stores/resume'
+import AvatarUpload from '@components/common/AvatarUpload.vue'
 
 const emit = defineEmits(['data-updated'])
 const resumeStore = useResumeStore()

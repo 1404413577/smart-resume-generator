@@ -10,7 +10,7 @@
 
         <nav class="main-nav">
           <router-link to="/" class="nav-link">编辑器</router-link>
-          <router-link to="/ai-assistant" class="nav-link">AI助手</router-link>
+          <!-- <router-link to="/ai-assistant" class="nav-link">AI助手</router-link> -->
           <router-link to="/templates" class="nav-link">模板中心</router-link>
         </nav>
       </div>

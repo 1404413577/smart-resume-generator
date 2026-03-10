@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { useResumeStore } from '@stores/resume'
 
 // 路由组件懒加载
@@ -18,7 +18,8 @@ const routes = [
     component: HomeView,
     meta: {
       title: '简历编辑器',
-      description: '在线简历编辑器，创建专业简历',
+      description: '免费在线简历编辑器，提供多种精美开源模板，支持ATS解析，一键导出高清PDF简历。',
+      keywords: '免费简历,在线简历制作,求职简历生成器,ATS友好模板,导出PDF简历',
       requiresResume: false
     }
   },
@@ -29,7 +30,8 @@ const routes = [
     component: AIAssistantView,
     meta: {
       title: 'AI助手',
-      description: 'AI智能简历生成助手',
+      description: '基于AI大模型的智能简历生成助手，自动润色经历描述，匹配职位要求。',
+      keywords: 'AI简历润色,AI智能写简历,职位JD匹配分析,工作经历代写',
       requiresResume: false
     }
   },
@@ -39,7 +41,8 @@ const routes = [
     component: TemplatesView,
     meta: {
       title: '模板中心',
-      description: '选择专业简历模板',
+      description: '海量高质量简历模板，涵盖校招、社招、互联网、传统行业，支持颜色主题深度定制。',
+      keywords: '简历模板下载,好用的简历模板,双语简历模板,高级简历设计',
       requiresResume: false
     }
   },
@@ -105,7 +108,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -121,6 +124,10 @@ router.beforeEach((to, from, next) => {
   // 设置页面标题
   if (to.meta.title) {
     document.title = `${to.meta.title} - 简历编辑器`
+
+    // 更新 OG:Title
+    const ogTitle = document.querySelector('meta[property="og:title"]')
+    if (ogTitle) ogTitle.setAttribute('content', `${to.meta.title} - 专业简历制作平台`)
   }
 
   // 设置meta描述
@@ -129,6 +136,21 @@ router.beforeEach((to, from, next) => {
     if (metaDescription) {
       metaDescription.setAttribute('content', to.meta.description)
     }
+
+    // 更新 OG:Description
+    const ogDescription = document.querySelector('meta[property="og:description"]')
+    if (ogDescription) ogDescription.setAttribute('content', to.meta.description)
+  }
+
+  // 设置meta关键词
+  if (to.meta.keywords) {
+    let metaKeywords = document.querySelector('meta[name="keywords"]')
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta')
+      metaKeywords.setAttribute('name', 'keywords')
+      document.head.appendChild(metaKeywords)
+    }
+    metaKeywords.setAttribute('content', to.meta.keywords)
   }
 
   // 检查是否需要简历数据（可选的路由守卫）

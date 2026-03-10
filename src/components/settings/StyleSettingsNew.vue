@@ -144,11 +144,15 @@
           <label>字体族</label>
           <el-select v-model="currentTypography.fontFamily" @change="handleTypographyChange">
             <el-option label="系统默认" value="system-ui" />
-            <el-option label="宋体" value="SimSun, serif" />
-            <el-option label="黑体" value="SimHei, sans-serif" />
-            <el-option label="微软雅黑" value="Microsoft YaHei, sans-serif" />
+            <!-- <el-option label="苹方/微软雅黑" value="'PingFang SC', 'Microsoft YaHei', sans-serif" /> -->
+            <el-option label="思源黑体" value="'Noto Sans SC', sans-serif" />
+            <el-option label="思源宋体" value="'Noto Serif SC', serif" />
+            <el-option label="站酷快乐体" value="'ZCOOL KuaiLe', cursive" />
+            <el-option label="站酷小薇体" value="'ZCOOL XiaoWei', serif" />
+            <el-option label="马善政毛笔楷书" value="'Ma Shan Zheng', cursive" />
+            <!-- <el-option label="宋体" value="'SimSun', serif" /> -->
+            <el-option label="Times New Roman" value="'Times New Roman', serif" />
             <el-option label="Arial" value="Arial, sans-serif" />
-            <el-option label="Times New Roman" value="Times New Roman, serif" />
           </el-select>
         </div>
         

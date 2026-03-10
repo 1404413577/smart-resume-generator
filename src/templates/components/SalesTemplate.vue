@@ -1,907 +1,593 @@
 <template>
-  <div class="sales-template" :style="templateStyles">
-    <!-- 动态头部 -->
-    <div class="sales-header">
-      <div class="header-pattern"></div>
-      <div class="header-content">
-        <div class="sales-profile">
-          <div class="profile-photo" v-if="resumeData.personalInfo?.photo">
-            <img :src="resumeData.personalInfo.photo" alt="头像" />
-            <div class="photo-border"></div>
-          </div>
-          <div class="profile-info">
-            <h1 class="sales-name">{{ resumeData.personalInfo?.name || '销售专家' }}</h1>
-            <h2 class="sales-title">{{ resumeData.personalInfo?.targetPosition || '销售经理' }}</h2>
-            <div class="sales-motto" v-if="resumeData.summary">
-              <div class="motto-icon">💼</div>
-              <p>{{ resumeData.summary }}</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 联系方式 -->
-        <div class="contact-section">
-          <div class="contact-grid">
-            <div class="contact-item" v-if="resumeData.personalInfo?.email">
-              <div class="contact-icon">📧</div>
-              <div class="contact-details">
-                <div class="contact-label">邮箱</div>
-                <div class="contact-value">{{ resumeData.personalInfo.email }}</div>
-              </div>
-            </div>
-            <div class="contact-item" v-if="resumeData.personalInfo?.phone">
-              <div class="contact-icon">📱</div>
-              <div class="contact-details">
-                <div class="contact-label">电话</div>
-                <div class="contact-value">{{ resumeData.personalInfo.phone }}</div>
-              </div>
-            </div>
-            <div class="contact-item" v-if="resumeData.personalInfo?.address">
-              <div class="contact-icon">📍</div>
-              <div class="contact-details">
-                <div class="contact-label">地址</div>
-                <div class="contact-value">{{ resumeData.personalInfo.address }}</div>
-              </div>
-            </div>
-            <div class="contact-item" v-if="resumeData.personalInfo?.linkedin">
-              <div class="contact-icon">💼</div>
-              <div class="contact-details">
-                <div class="contact-label">LinkedIn</div>
-                <div class="contact-value">{{ resumeData.personalInfo.linkedin }}</div>
-              </div>
-            </div>
-          </div>
+  <div class="sales-template" :style="cssVars">
+
+    <!-- 顶部页眉：姓名 + 职位 + 联系方式 -->
+    <header class="st-header">
+      <div class="st-header-left">
+        <h1 class="st-name">{{ info.name || '姓名' }}</h1>
+        <p class="st-position">{{ info.targetPosition || '销售经理 · Sales Manager' }}</p>
+        <div class="st-tagline" v-if="resumeData.summary">
+          {{ resumeData.summary }}
         </div>
       </div>
-    </div>
-
-    <!-- 主要内容 -->
-    <div class="sales-content">
-      <!-- 核心技能 -->
-      <section v-if="resumeData.skills?.length > 0" class="sales-section skills-performance">
-        <h3 class="section-title">
-          <span class="title-icon">🎯</span>
-          <span class="title-text">核心技能</span>
-        </h3>
-        <div class="skills-dashboard">
-          <div 
-            v-for="skill in resumeData.skills" 
-            :key="skill.id"
-            class="skill-meter"
-          >
-            <div class="skill-info">
-              <div class="skill-name">{{ skill.name }}</div>
-              <div class="skill-level">{{ skill.level }}</div>
-            </div>
-            <div class="skill-bar">
-              <div 
-                class="skill-fill" 
-                :style="{ width: getSkillPercentage(skill.level) }"
-              ></div>
-            </div>
-          </div>
+      <div class="st-header-right">
+        <div class="st-contact-row" v-if="info.phone">
+          <span class="ct-icon">📱</span>
+          <span>{{ info.phone }}</span>
         </div>
-      </section>
+        <div class="st-contact-row" v-if="info.email">
+          <span class="ct-icon">✉</span>
+          <span>{{ info.email }}</span>
+        </div>
+        <div class="st-contact-row" v-if="info.address">
+          <span class="ct-icon">📍</span>
+          <span>{{ info.address }}</span>
+        </div>
+        <div class="st-contact-row" v-if="info.website">
+          <span class="ct-icon">🔗</span>
+          <span>{{ info.website }}</span>
+        </div>
+      </div>
+    </header>
 
-      <!-- 销售业绩 -->
-      <section v-if="resumeData.workExperience?.length > 0" class="sales-section performance-track">
-        <h3 class="section-title">
-          <span class="title-icon">📈</span>
-          <span class="title-text">销售业绩</span>
-        </h3>
-        <div class="performance-timeline">
-          <div 
-            v-for="work in resumeData.workExperience" 
-            :key="work.id"
-            class="performance-item"
-          >
-            <div class="performance-header">
-              <div class="performance-period">
-                <div class="period-badge">{{ work.startDate }} - {{ work.endDate }}</div>
+    <!-- 核心业绩看板 -->
+    <section class="st-kpi" v-if="kpiItems.length">
+      <div class="kpi-card" v-for="(kpi, i) in kpiItems" :key="i">
+        <div class="kpi-value">{{ kpi.value }}</div>
+        <div class="kpi-label">{{ kpi.label }}</div>
+      </div>
+    </section>
+
+    <div class="st-body">
+
+      <!-- 左栏 -->
+      <aside class="st-sidebar">
+
+        <!-- 核心技能 -->
+        <section class="st-section" v-if="resumeData.skills?.length">
+          <h2 class="st-section-title">核心技能</h2>
+          <div class="skill-list">
+            <div class="skill-item" v-for="s in resumeData.skills" :key="s.id">
+              <div class="skill-row">
+                <span class="skill-name">{{ s.name }}</span>
+                <span class="skill-level">{{ s.level }}</span>
               </div>
-              <div class="performance-role">
-                <h4 class="role-title">{{ work.position }}</h4>
-                <h5 class="company-name">{{ work.company }}</h5>
-              </div>
-            </div>
-            <div class="performance-content">
-              <p class="role-description">{{ work.description }}</p>
-              <div class="achievements-grid" v-if="work.achievements?.length">
-                <div 
-                  v-for="achievement in work.achievements" 
-                  :key="achievement"
-                  class="achievement-card"
-                >
-                  <div class="achievement-icon">🏆</div>
-                  <div class="achievement-text">{{ achievement }}</div>
-                </div>
+              <div class="skill-bar-bg">
+                <div class="skill-bar-fill" :style="{ width: levelToWidth(s.level) }"></div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- 重要项目 -->
-      <section v-if="resumeData.projects?.length > 0" class="sales-section projects-showcase">
-        <h3 class="section-title">
-          <span class="title-icon">🚀</span>
-          <span class="title-text">重要项目</span>
-        </h3>
-        <div class="projects-grid">
-          <div 
-            v-for="project in resumeData.projects" 
-            :key="project.id"
-            class="project-card"
-          >
+        <!-- 教育背景 -->
+        <section class="st-section" v-if="resumeData.education?.length">
+          <h2 class="st-section-title">教育背景</h2>
+          <div class="edu-item" v-for="edu in resumeData.education" :key="edu.id">
+            <div class="edu-school">{{ edu.school }}</div>
+            <div class="edu-major">{{ edu.major }} · {{ edu.degree }}</div>
+            <div class="edu-date">{{ edu.startDate }} – {{ edu.endDate || '至今' }}</div>
+            <div class="edu-gpa" v-if="edu.gpa">GPA {{ edu.gpa }}</div>
+          </div>
+        </section>
+
+        <!-- 语言能力 -->
+        <section class="st-section" v-if="resumeData.languages?.length">
+          <h2 class="st-section-title">语言能力</h2>
+          <div class="lang-item" v-for="l in resumeData.languages" :key="l.id">
+            <span class="lang-name">{{ l.name }}</span>
+            <span class="lang-level">{{ l.level }}</span>
+          </div>
+        </section>
+
+        <!-- 证书 -->
+        <section class="st-section" v-if="resumeData.certifications?.length">
+          <h2 class="st-section-title">证书 & 荣誉</h2>
+          <div class="cert-item" v-for="c in resumeData.certifications" :key="c.id">
+            <div class="cert-name">{{ c.name }}</div>
+            <div class="cert-meta">{{ c.issuer }} · {{ c.date }}</div>
+          </div>
+        </section>
+
+      </aside>
+
+      <!-- 右栏（主内容） -->
+      <main class="st-main">
+
+        <!-- 工作经历 -->
+        <section class="st-section" v-if="resumeData.workExperience?.length">
+          <h2 class="st-section-title">销售业绩 &amp; 工作经历</h2>
+          <div class="work-item" v-for="w in resumeData.workExperience" :key="w.id">
+            <div class="work-header">
+              <div class="work-left">
+                <div class="work-position">{{ w.position }}</div>
+                <div class="work-company">{{ w.company }}<span v-if="w.location"> · {{ w.location }}</span></div>
+              </div>
+              <div class="work-date">{{ w.startDate }} – {{ w.current ? '至今' : w.endDate }}</div>
+            </div>
+            <p class="work-desc" v-if="w.description">{{ w.description }}</p>
+            <ul class="work-achievements" v-if="w.achievements?.length">
+              <li v-for="(a, i) in w.achievements" :key="i">{{ a }}</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 项目经历 -->
+        <section class="st-section" v-if="resumeData.projects?.length">
+          <h2 class="st-section-title">重点项目 &amp; 案例</h2>
+          <div class="project-item" v-for="p in resumeData.projects" :key="p.id">
             <div class="project-header">
-              <h4 class="project-name">{{ project.name }}</h4>
-              <div class="project-period">{{ project.startDate }} - {{ project.endDate }}</div>
+              <span class="project-name">{{ p.name }}</span>
+              <span class="project-date" v-if="p.startDate">{{ p.startDate }} – {{ p.endDate || '至今' }}</span>
             </div>
-            <p class="project-description">{{ project.description }}</p>
-            <div class="project-results" v-if="project.highlights?.length">
-              <div class="results-title">项目成果</div>
-              <ul class="results-list">
-                <li v-for="highlight in project.highlights" :key="highlight">
-                  {{ highlight }}
-                </li>
-              </ul>
+            <p class="project-desc" v-if="p.description">{{ p.description }}</p>
+            <div class="project-techs" v-if="p.technologies?.length">
+              <span class="tech-tag" v-for="t in p.technologies" :key="t">{{ t }}</span>
             </div>
-            <div class="project-skills" v-if="project.technologies?.length">
-              <div class="skills-used">
-                <span 
-                  v-for="tech in project.technologies" 
-                  :key="tech"
-                  class="skill-tag"
-                >
-                  {{ tech }}
-                </span>
-              </div>
-            </div>
+            <ul class="project-highlights" v-if="p.highlights?.length">
+              <li v-for="(h, i) in p.highlights" :key="i">{{ h }}</li>
+            </ul>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- 教育背景 -->
-      <section v-if="resumeData.education?.length > 0" class="sales-section education-foundation">
-        <h3 class="section-title">
-          <span class="title-icon">🎓</span>
-          <span class="title-text">教育背景</span>
-        </h3>
-        <div class="education-timeline">
-          <div 
-            v-for="edu in resumeData.education" 
-            :key="edu.id"
-            class="education-item"
-          >
-            <div class="edu-year">{{ edu.endDate }}</div>
-            <div class="edu-content">
-              <h4 class="edu-degree">{{ edu.degree }}</h4>
-              <h5 class="edu-major">{{ edu.major }}</h5>
-              <h6 class="edu-school">{{ edu.school }}</h6>
-              <div class="edu-achievements">
-                <span v-if="edu.gpa" class="gpa-badge">GPA: {{ edu.gpa }}</span>
-                <span v-if="edu.honors" class="honors-badge">{{ edu.honors }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 认证证书 -->
-      <section v-if="resumeData.certifications?.length > 0" class="sales-section certifications-showcase">
-        <h3 class="section-title">
-          <span class="title-icon">🏅</span>
-          <span class="title-text">专业认证</span>
-        </h3>
-        <div class="certifications-grid">
-          <div 
-            v-for="cert in resumeData.certifications" 
-            :key="cert.id"
-            class="certification-badge"
-          >
-            <div class="cert-icon">🏅</div>
-            <div class="cert-details">
-              <div class="cert-name">{{ cert.name }}</div>
-              <div class="cert-issuer">{{ cert.issuer }}</div>
-              <div class="cert-date">{{ cert.date }}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 语言技能 -->
-      <section v-if="resumeData.languages?.length > 0" class="sales-section languages-global">
-        <h3 class="section-title">
-          <span class="title-icon">🌍</span>
-          <span class="title-text">语言能力</span>
-        </h3>
-        <div class="languages-showcase">
-          <div 
-            v-for="lang in resumeData.languages" 
-            :key="lang.id"
-            class="language-card"
-          >
-            <div class="lang-flag">🌐</div>
-            <div class="lang-info">
-              <div class="lang-name">{{ lang.name }}</div>
-              <div class="lang-level">{{ lang.level }}</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      </main>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { useTemplateComponentStyles } from '../../composables/useTemplateStyles'
 
 const props = defineProps({
-  resumeData: {
-    type: Object,
-    required: true
-  },
-  templateId: {
-    type: String,
-    default: 'sales'
-  }
+  resumeData: { type: Object, required: true },
+  templateId: { type: String, default: 'sales' }
 })
 
-// 使用模板样式
-const { templateStyles } = useTemplateComponentStyles(props.templateId)
+const info = computed(() => props.resumeData?.personalInfo || {})
 
-// 获取技能百分比
-const getSkillPercentage = (level) => {
-  const levelMap = {
-    '初级': '25%',
-    '中级': '50%',
-    '高级': '75%',
-    '专家': '90%',
-    '精通': '100%'
+// CSS 变量注入
+const cssVars = computed(() => ({
+  '--primary': 'var(--resume-primary-color, #c0392b)',
+  '--accent':  'var(--resume-accent-color, #e74c3c)',
+  '--text':    'var(--resume-text-color, #1a1a2e)',
+  '--subtle':  '#6b7280',
+  '--bg':      '#ffffff',
+  '--sidebar-bg': '#1a1a2e',
+  '--sidebar-text': '#f0f0f0',
+  '--bar-bg':  'rgba(255,255,255,0.15)',
+  '--bar-fill':'var(--resume-accent-color, #e74c3c)',
+  '--font':    'var(--resume-font-family, "Inter", "PingFang SC", "Microsoft YaHei", sans-serif)',
+  '--base-fs': 'var(--resume-base-font-size, 13px)',
+}))
+
+// 从工作经历第一条抽取核心 KPI（如果achievements里有包含 % 或 数字的条目）
+const kpiItems = computed(() => {
+  const result = []
+  const works = props.resumeData?.workExperience || []
+  // 尝试提取 achievements 里看起来是数字/业绩的内容，最多 4 个
+  for (const w of works) {
+    for (const a of (w.achievements || [])) {
+      const numMatch = a.match(/[\d,.]+[%倍万亿+]/)
+      if (numMatch && result.length < 4) {
+        // 截取数值部分作为 value，其余作为 label（最多12字）
+        const valueReg = a.match(/[\d,.]+[%倍万亿+K]/)
+        const value = valueReg ? valueReg[0] : '—'
+        const label = a.replace(value, '').trim().slice(0, 18) || a.slice(0, 18)
+        result.push({ value, label })
+      }
+    }
+    if (result.length >= 4) break
   }
-  return levelMap[level] || '50%'
+
+  // 如果没有可提取的，提供占位示例
+  if (result.length === 0) {
+    return [
+      { value: '120%', label: '年度业绩完成率' },
+      { value: '500+', label: '累计服务客户' },
+      { value: '¥3,000万', label: '个人年销售额' },
+      { value: '95%', label: '客户续签率' },
+    ]
+  }
+  return result
+})
+
+function levelToWidth(level) {
+  const map = { '专家': '95%', '高级': '85%', '熟练': '70%', '中级': '60%', '初级': '40%', '了解': '30%' }
+  return map[level] || '65%'
 }
 </script>
 
 <style scoped>
+/* ============ 整体 ============ */
 .sales-template {
+  font-family: var(--font);
+  font-size: var(--base-fs);
+  color: var(--text);
+  background: var(--bg);
   width: 210mm;
   min-height: 297mm;
-  background: #ffffff;
-  font-family: var(--font-family, 'Roboto, sans-serif');
-  color: var(--theme-text-primary, #1a202c);
-  line-height: var(--line-height, 1.6);
-  margin: 0 auto;
-}
-
-/* 动态头部 */
-.sales-header {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff9ff3 100%);
-  color: white;
-  padding: 40px 30px;
-  position: relative;
-  overflow: hidden;
-}
-
-.header-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><defs><pattern id="hexagon" width="60" height="60" patternUnits="userSpaceOnUse"><polygon points="30,5 50,20 50,40 30,55 10,40 10,20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="60" height="60" fill="url(%23hexagon)"/></svg>');
-  opacity: 0.3;
-}
-
-.header-content {
-  position: relative;
-  z-index: 2;
-}
-
-.sales-profile {
+  box-sizing: border-box;
   display: flex;
-  align-items: center;
-  gap: 30px;
-  margin-bottom: 30px;
+  flex-direction: column;
 }
 
-.profile-photo {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  flex-shrink: 0;
-}
-
-.profile-photo img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-}
-
-.photo-border {
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  right: -6px;
-  bottom: -6px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  border-top-color: #ffffff;
-  animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.profile-info {
-  flex: 1;
-}
-
-.sales-name {
-  font-size: 42px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.sales-title {
-  font-size: 22px;
-  font-weight: 400;
-  margin: 0 0 20px 0;
-  opacity: 0.9;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.sales-motto {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 15px;
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-}
-
-.motto-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.sales-motto p {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-/* 联系方式 */
-.contact-section {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-}
-
-.contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-}
-
-.contact-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.contact-icon {
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-
-.contact-details {
-  flex: 1;
-}
-
-.contact-label {
-  font-size: 11px;
-  opacity: 0.8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 2px;
-}
-
-.contact-value {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-/* 主要内容 */
-.sales-content {
-  padding: 40px 30px;
-}
-
-.sales-section {
-  margin-bottom: 50px;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 30px;
-  padding-bottom: 12px;
-  border-bottom: 3px solid #ff6b6b;
-}
-
-.title-icon {
-  font-size: 24px;
-}
-
-.title-text {
-  font-size: 24px;
-  font-weight: 600;
-  color: #ff6b6b;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* 技能仪表板 */
-.skills-dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.skill-meter {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #dee2e6;
-  transition: all 0.3s ease;
-}
-
-.skill-meter:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.15);
-}
-
-.skill-info {
+/* ============ 页眉 ============ */
+.st-header {
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  padding: 28px 32px 22px;
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.st-name {
+  font-size: 2em;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  margin: 0 0 4px;
+  color: #fff;
+}
+
+.st-position {
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 10px;
+  letter-spacing: .3px;
+}
+
+.st-tagline {
+  font-size: .82em;
+  color: rgba(255,255,255,.7);
+  line-height: 1.5;
+  max-width: 340px;
+}
+
+.st-header-right {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 180px;
+}
+
+.st-contact-row {
+  display: flex;
   align-items: center;
-  margin-bottom: 12px;
+  gap: 8px;
+  font-size: .82em;
+  color: rgba(255,255,255,.85);
+}
+
+.ct-icon {
+  font-size: 1em;
+  width: 18px;
+  text-align: center;
+}
+
+/* ============ KPI 看板 ============ */
+.st-kpi {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--accent);
+}
+
+.kpi-card {
+  padding: 14px 10px;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.25);
+  color: #fff;
+}
+
+.kpi-card:last-child {
+  border-right: none;
+}
+
+.kpi-value {
+  font-size: 1.5em;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.kpi-label {
+  font-size: .72em;
+  opacity: .9;
+  line-height: 1.3;
+}
+
+/* ============ 主体布局 ============ */
+.st-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 195px 1fr;
+}
+
+/* ============ 侧栏 ============ */
+.st-sidebar {
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.st-sidebar .st-section-title {
+  font-size: .78em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--accent);
+  margin: 0 0 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+/* 技能条 */
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skill-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 3px;
 }
 
 .skill-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a202c;
+  font-size: .82em;
+  font-weight: 500;
 }
 
 .skill-level {
-  font-size: 14px;
-  color: #ff6b6b;
-  font-weight: 500;
+  font-size: .7em;
+  color: var(--accent);
 }
 
-.skill-bar {
-  height: 8px;
-  background: #e9ecef;
-  border-radius: 4px;
+.skill-bar-bg {
+  height: 4px;
+  background: rgba(255,255,255,.15);
+  border-radius: 2px;
   overflow: hidden;
 }
 
-.skill-fill {
+.skill-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ff6b6b, #ee5a24);
-  border-radius: 4px;
-  transition: width 1.5s ease;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width .3s;
 }
 
-/* 业绩时间线 */
-.performance-timeline {
-  position: relative;
+/* 教育 */
+.edu-item {
+  margin-bottom: 12px;
+  font-size: .82em;
 }
 
-.performance-item {
-  background: #ffffff;
-  border: 1px solid #e9ecef;
-  border-radius: 16px;
-  padding: 25px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+.edu-school {
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
 }
 
-.performance-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 25px rgba(255, 107, 107, 0.15);
+.edu-major {
+  color: rgba(255,255,255,.75);
+  margin-bottom: 2px;
 }
 
-.performance-header {
+.edu-date, .edu-gpa {
+  color: rgba(255,255,255,.5);
+  font-size: .9em;
+}
+
+/* 语言 */
+.lang-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: .82em;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  color: rgba(255,255,255,.8);
+}
+
+.lang-name { font-weight: 600; }
+.lang-level { color: var(--accent); font-size: .9em; }
+
+/* 证书 */
+.cert-item {
+  margin-bottom: 10px;
+  font-size: .82em;
+}
+
+.cert-name {
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.cert-meta {
+  color: rgba(255,255,255,.5);
+  font-size: .9em;
+}
+
+/* ============ 主内容区 ============ */
+.st-main {
+  padding: 22px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.st-section-title {
+  font-size: .78em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--primary);
+  margin: 0 0 12px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid var(--accent);
+  display: inline-block;
+  width: 100%;
+}
+
+/* 工作经历 */
+.work-item {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.work-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.work-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
-.period-badge {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+.work-position {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.work-company {
+  font-size: .85em;
+  color: var(--subtle);
+  margin-top: 2px;
+}
+
+.work-date {
+  font-size: .78em;
+  color: var(--primary);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  white-space: nowrap;
+  background: rgba(192,57,43,.08);
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
-.performance-role {
-  text-align: right;
+.work-desc {
+  font-size: .85em;
+  color: #555;
+  line-height: 1.55;
+  margin: 6px 0 6px;
 }
 
-.role-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1a202c;
-  margin: 0 0 4px 0;
-}
-
-.company-name {
-  font-size: 16px;
-  color: #ff6b6b;
+.work-achievements {
   margin: 0;
-  font-weight: 500;
+  padding-left: 16px;
+  list-style: none;
 }
 
-.role-description {
-  color: #4a5568;
-  margin: 0 0 20px 0;
-  line-height: 1.6;
-}
-
-.achievements-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-}
-
-.achievement-card {
-  background: linear-gradient(135deg, #fff5f5, #fed7d7);
-  padding: 15px;
-  border-radius: 12px;
-  border-left: 4px solid #ff6b6b;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.achievement-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.achievement-text {
-  font-size: 14px;
-  color: #2d3748;
+.work-achievements li {
+  font-size: .85em;
+  color: #444;
   line-height: 1.5;
-}
-
-/* 项目展示 */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 25px;
-}
-
-.project-card {
-  background: #ffffff;
-  border: 1px solid #e9ecef;
-  border-radius: 16px;
-  padding: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  padding: 2px 0 2px 12px;
   position: relative;
-  overflow: hidden;
 }
 
-.project-card::before {
-  content: '';
+.work-achievements li::before {
+  content: '▶';
   position: absolute;
-  top: 0;
   left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #ff6b6b, #ee5a24, #ff9ff3);
+  color: var(--accent);
+  font-size: .65em;
+  top: 4px;
 }
 
-.project-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 25px rgba(255, 107, 107, 0.15);
+/* 项目 */
+.project-item {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: #fafafa;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
 }
 
 .project-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 15px;
+  align-items: baseline;
+  margin-bottom: 4px;
 }
 
 .project-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a202c;
-  margin: 0;
+  font-weight: 700;
+  font-size: .92em;
+  color: var(--text);
 }
 
-.project-period {
-  font-size: 12px;
-  color: #ff6b6b;
-  background: #fff5f5;
-  padding: 4px 8px;
-  border-radius: 12px;
+.project-date {
+  font-size: .75em;
+  color: var(--subtle);
 }
 
-.project-description {
-  color: #4a5568;
-  margin: 0 0 15px 0;
-  line-height: 1.6;
+.project-desc {
+  font-size: .82em;
+  color: #555;
+  margin: 4px 0 6px;
+  line-height: 1.5;
 }
 
-.results-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #ff6b6b;
-  margin-bottom: 8px;
-}
-
-.results-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 15px 0;
-}
-
-.results-list li {
-  position: relative;
-  padding-left: 20px;
-  margin-bottom: 6px;
-  color: #4a5568;
-  font-size: 14px;
-}
-
-.results-list li::before {
-  content: '📊';
-  position: absolute;
-  left: 0;
-  font-size: 12px;
-}
-
-.skills-used {
+.project-techs {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
+  margin-bottom: 6px;
 }
 
-.skill-tag {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-/* 教育背景 */
-.education-timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.education-item {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  padding: 20px;
-  border-radius: 12px;
-  border-left: 4px solid #ff6b6b;
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.edu-year {
-  font-size: 28px;
-  font-weight: 700;
-  color: #ff6b6b;
-  flex-shrink: 0;
-  text-align: center;
-  min-width: 80px;
-}
-
-.edu-content {
-  flex: 1;
-}
-
-.edu-degree {
-  font-size: 18px;
+.tech-tag {
+  font-size: .72em;
+  padding: 2px 8px;
+  background: rgba(192,57,43,.1);
+  color: var(--primary);
+  border-radius: 20px;
   font-weight: 600;
-  color: #1a202c;
-  margin: 0 0 4px 0;
 }
 
-.edu-major {
-  font-size: 16px;
-  color: #ff6b6b;
-  margin: 0 0 4px 0;
+.project-highlights {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
 }
 
-.edu-school {
-  font-size: 14px;
-  color: #4a5568;
-  margin: 0 0 8px 0;
+.project-highlights li {
+  font-size: .82em;
+  color: #444;
+  padding: 2px 0;
+  padding-left: 14px;
+  position: relative;
 }
 
-.edu-achievements {
-  display: flex;
-  gap: 10px;
+.project-highlights li::before {
+  content: '●';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-size: .6em;
+  top: 4px;
 }
 
-.gpa-badge,
-.honors-badge {
-  background: #ff6b6b;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-/* 认证展示 */
-.certifications-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.certification-badge {
-  background: linear-gradient(135deg, #fff5f5, #fed7d7);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #fbb6ce;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  transition: all 0.3s ease;
-}
-
-.certification-badge:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.15);
-}
-
-.cert-icon {
-  font-size: 32px;
-  flex-shrink: 0;
-}
-
-.cert-details {
-  flex: 1;
-}
-
-.cert-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a202c;
-  margin-bottom: 4px;
-}
-
-.cert-issuer {
-  font-size: 14px;
-  color: #ff6b6b;
-  margin-bottom: 4px;
-}
-
-.cert-date {
-  font-size: 12px;
-  color: #4a5568;
-}
-
-/* 语言展示 */
-.languages-showcase {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-}
-
-.language-card {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.language-card:hover {
-  transform: scale(1.05);
-}
-
-.lang-flag {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.lang-name {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.lang-level {
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
+/* ============ 打印优化 ============ */
+@media print {
   .sales-template {
-    width: 100%;
-    min-height: auto;
+    width: 100% !important;
+    min-height: auto !important;
   }
-
-  .sales-header {
-    padding: 20px 15px;
-  }
-
-  .sales-profile {
-    flex-direction: column;
-    text-align: center;
-    gap: 20px;
-  }
-
-  .sales-name {
-    font-size: 32px;
-  }
-
-  .contact-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .sales-content {
-    padding: 20px 15px;
-  }
-
-  .skills-dashboard,
-  .projects-grid,
-  .certifications-grid,
-  .languages-showcase {
-    grid-template-columns: 1fr;
-  }
-
-  .performance-header {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .performance-role {
-    text-align: left;
-  }
-
-  .education-item {
-    flex-direction: column;
-    text-align: center;
-  }
+  .st-kpi { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .st-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .st-sidebar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
-
 </style>

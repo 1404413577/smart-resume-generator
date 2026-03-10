@@ -6,7 +6,7 @@ import { GoogleGenAI } from '@google/genai'
 
 // Gemini API配置
 const GEMINI_API_KEY = import.meta?.env?.VITE_GEMINI_API_KEY || 'AIzaSyAqgE78y8_m4nQ09qHaf7xFSC0T_5ppyMU'
-const GEMINI_MODEL = 'gemini-2.0-flash'
+const GEMINI_MODEL = 'gemini-1.5-flash'
 
 // 请求频率限制
 let lastRequestTime = 0
@@ -36,7 +36,7 @@ function getGenAIClient() {
  * @param {string} prompt - 提示词
  * @returns {Promise<string>} 生成的内容
  */
-async function callGeminiAPI(prompt) {
+async function callGeminiAPI(prompt, maxTokens = 1024) {
   // 频率限制检查
   const now = Date.now()
   const timeSinceLastRequest = now - lastRequestTime
@@ -55,7 +55,7 @@ async function callGeminiAPI(prompt) {
         temperature: 0.7,
         topK: 40,
         topP: 0.95,
-        maxOutputTokens: 1024,
+        maxOutputTokens: maxTokens,
       }
     })
 

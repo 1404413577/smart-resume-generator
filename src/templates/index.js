@@ -12,6 +12,13 @@ import DesignerTemplate from './components/DesignerTemplate.vue'
 import SalesTemplate from './components/SalesTemplate.vue'
 import StartupTemplate from './components/StartupTemplate.vue'
 
+// 最新高颜值模板
+import ElegantTemplate from './components/ElegantTemplate.vue'
+import TimelineTemplate from './components/TimelineTemplate.vue'
+
+// 专业技能详细描述模板
+import DetailedSkillTemplate from './components/DetailedSkillTemplate.vue'
+
 // 针对特定行业的新增模板
 import FinanceTemplate from './components/FinanceTemplate.vue'
 import EducationTemplate from './components/EducationTemplate.vue'
@@ -139,6 +146,36 @@ export const templateRegistry = {
     preview: '/images/templates/startup-preview.png',
     features: ['年轻活力', '创新设计', '产品导向', '技术前沿'],
     suitableFor: ['产品经理', '创业者', '互联网从业者', '技术创新者']
+  },
+
+  elegant: {
+    name: 'Elegant / Graceful',
+    component: ElegantTemplate,
+    description: '优雅极简风格，设计感极强，提供舒适的阅读体验和高级感。',
+    category: 'creative',
+    preview: '/images/templates/elegant-preview.png',
+    features: ['优雅排版', '古典气质', '高级感', '大量留白'],
+    suitableFor: ['艺术家', '设计总监', '策展人', '文管运营']
+  },
+
+  timeline: {
+    name: 'Timeline / Tech',
+    component: TimelineTemplate,
+    description: '现代时间轴设计，清晰展现职业生涯发展路径。',
+    category: 'tech',
+    preview: '/images/templates/timeline-preview.png',
+    features: ['时间轴', '动感现代', '结构化突出', '清晰导向'],
+    suitableFor: ['高级工程师', '产品专家', '项目经理', '资深专家']
+  },
+
+  detailed: {
+    name: 'Detailed Tech / Skills',
+    component: DetailedSkillTemplate,
+    description: '专业技能详细描述模板，适合拥有丰富技术栈需要长文案罗列的求职者。',
+    category: 'tech',
+    preview: '/images/templates/detailed-preview.png',
+    features: ['长句排版', '详尽技能', '列表式结构', '专业化'],
+    suitableFor: ['全栈开发', '前后端开发工程师', '资深技术岗']
   },
 
   finance: {

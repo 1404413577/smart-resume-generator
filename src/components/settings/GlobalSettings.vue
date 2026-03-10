@@ -65,9 +65,9 @@
           >
             <el-option label="系统默认" value="system-ui" />
             <el-option label="思源黑体" value="'Source Han Sans SC', sans-serif" />
-            <el-option label="微软雅黑" value="'Microsoft YaHei', sans-serif" />
+            <!-- <el-option label="微软雅黑" value="'Microsoft YaHei', sans-serif" /> -->
             <el-option label="苹方" value="'PingFang SC', sans-serif" />
-            <el-option label="宋体" value="SimSun, serif" />
+            <!-- <el-option label="宋体" value="SimSun, serif" /> -->
             <el-option label="Times New Roman" value="'Times New Roman', serif" />
             <el-option label="Arial" value="Arial, sans-serif" />
           </el-select>

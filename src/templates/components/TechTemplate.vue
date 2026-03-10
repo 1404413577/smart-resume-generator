@@ -1,212 +1,134 @@
 <template>
-  <div class="tech-template" :style="templateStyles">
-    <div class="resume-container">
-      <!-- 头部信息 -->
-      <div class="header-section">
-        <div class="header-content">
-          <div class="name-section">
-            <h1 class="name">{{ resumeData.personalInfo?.name || 'Developer Name' }}</h1>
-            <div class="title-line">
-              <span class="prompt">$</span>
-              <span class="title">{{ resumeData.personalInfo?.targetPosition || resumeData.personalInfo?.title || 'Software Engineer' }}</span>
-              <span class="cursor">_</span>
-            </div>
-          </div>
-          
-          <div class="contact-grid">
-            <div v-if="resumeData.personalInfo?.email" class="contact-item">
-              <span class="label">email:</span>
-              <span class="value">{{ resumeData.personalInfo.email }}</span>
-            </div>
-            <div v-if="resumeData.personalInfo?.phone" class="contact-item">
-              <span class="label">phone:</span>
-              <span class="value">{{ resumeData.personalInfo.phone }}</span>
-            </div>
-            <div v-if="resumeData.personalInfo?.website" class="contact-item">
-              <span class="label">website:</span>
-              <span class="value">{{ resumeData.personalInfo.website }}</span>
-            </div>
-            <div v-if="resumeData.personalInfo?.address" class="contact-item">
-              <span class="label">location:</span>
-              <span class="value">{{ resumeData.personalInfo.address }}</span>
-            </div>
-          </div>
+  <div class="tech-modern-template" :style="templateStyles">
+    <!-- Header -->
+    <header class="tech-header">
+      <div class="header-main">
+        <h1 class="dev-name">{{ resumeData.personalInfo?.name || 'Developer Name' }}</h1>
+        <h2 class="dev-title">
+          <span class="punct">&lt;</span>{{ resumeData.personalInfo?.targetPosition || 'Software Engineer' }} <span class="punct">/&gt;</span>
+        </h2>
+        <p class="dev-summary" v-if="resumeData.summary">
+          {{ resumeData.summary }}
+        </p>
+      </div>
+      
+      <div class="header-meta">
+        <div class="meta-item" v-if="resumeData.personalInfo?.email">
+          <span class="meta-icon">@</span>
+          <span class="meta-text">{{ resumeData.personalInfo.email }}</span>
+        </div>
+        <div class="meta-item" v-if="resumeData.personalInfo?.phone">
+          <span class="meta-icon">#</span>
+          <span class="meta-text">{{ resumeData.personalInfo.phone }}</span>
+        </div>
+        <div class="meta-item" v-if="resumeData.personalInfo?.website">
+          <span class="meta-icon">🔗</span>
+          <span class="meta-text">{{ resumeData.personalInfo.website }}</span>
+        </div>
+        <div class="meta-item" v-if="resumeData.personalInfo?.address">
+          <span class="meta-icon">📍</span>
+          <span class="meta-text">{{ resumeData.personalInfo.address }}</span>
         </div>
       </div>
+    </header>
 
-      <!-- 个人简介 -->
-      <div class="code-section" v-if="resumeData.summary">
-        <div class="section-header">
-          <span class="comment">// Personal Summary</span>
-        </div>
-        <div class="code-block">
-          <span class="keyword">const</span> <span class="variable">summary</span> = <span class="string">"{{ resumeData.summary }}"</span>;
-        </div>
-      </div>
-
-      <!-- 技能特长 -->
-      <div class="code-section" v-if="resumeData.skills?.length">
-        <div class="section-header">
-          <span class="comment">// Technical Skills</span>
-        </div>
-        <div class="code-block">
-          <span class="keyword">const</span> <span class="variable">skills</span> = {<br>
-          <div class="skills-object">
-            <div 
-              v-for="(skill, index) in resumeData.skills" 
-              :key="skill.name"
-              class="skill-line"
-            >
-              <span class="property">"{{ skill.name }}"</span>: 
-              <span class="string">"{{ skill.level }}"</span><span v-if="index < resumeData.skills.length - 1">,</span>
+    <!-- Main Content -->
+    <div class="tech-body">
+      
+      <!-- Left Column: Experience & Projects -->
+      <div class="main-col">
+        
+        <!-- Experience -->
+        <section class="tech-section" v-if="resumeData.workExperience?.length">
+          <h3 class="section-title">
+            <span class="keyword">const</span> <span class="func">Experience</span> <span class="op">=</span> <span class="punct">() => {</span>
+          </h3>
+          <div class="section-content border-left">
+            <div class="exp-item" v-for="work in resumeData.workExperience" :key="work.id">
+              <div class="exp-header">
+                <div class="exp-role-group">
+                  <h4 class="exp-role">{{ work.position }}</h4>
+                  <span class="exp-at">@</span>
+                  <span class="exp-company">{{ work.company }}</span>
+                </div>
+                <div class="exp-date">{{ work.startDate }} — {{ work.endDate }}</div>
+              </div>
+              <p class="exp-desc" v-if="work.description">{{ work.description }}</p>
+              <ul class="exp-tasks" v-if="work.achievements?.length">
+                <li v-for="(ach, i) in work.achievements" :key="i">{{ ach }}</li>
+              </ul>
             </div>
           </div>
-          };
-        </div>
-      </div>
+          <div class="section-footer"><span class="punct">}</span></div>
+        </section>
 
-      <!-- 工作经历 -->
-      <div class="code-section" v-if="resumeData.workExperience?.length">
-        <div class="section-header">
-          <span class="comment">// Work Experience</span>
-        </div>
-        <div class="code-block">
-          <span class="keyword">const</span> <span class="variable">workExperience</span> = [<br>
-          <div class="experience-array">
-            <div 
-              v-for="(work, index) in resumeData.workExperience" 
-              :key="work.id"
-              class="experience-object"
-            >
-              {<br>
-              <div class="object-content">
-                <div class="property-line">
-                  <span class="property">company</span>: <span class="string">"{{ work.company }}"</span>,
+        <!-- Projects -->
+        <section class="tech-section" v-if="resumeData.projects?.length">
+          <h3 class="section-title">
+            <span class="keyword">const</span> <span class="func">Projects</span> <span class="op">=</span> <span class="punct">() => {</span>
+          </h3>
+          <div class="section-content border-left">
+            <div class="project-list">
+              <div class="proj-card" v-for="project in resumeData.projects" :key="project.id">
+                <div class="proj-header">
+                  <h4 class="proj-name">{{ project.name }}</h4>
+                  <span class="proj-date">{{ project.endDate }}</span>
                 </div>
-                <div class="property-line">
-                  <span class="property">position</span>: <span class="string">"{{ work.position }}"</span>,
-                </div>
-                <div class="property-line">
-                  <span class="property">period</span>: <span class="string">"{{ work.startDate }} - {{ work.endDate }}"</span>,
-                </div>
-                <div v-if="work.location" class="property-line">
-                  <span class="property">location</span>: <span class="string">"{{ work.location }}"</span>,
-                </div>
-                <div v-if="work.description" class="property-line">
-                  <span class="property">description</span>: <span class="string">"{{ work.description }}"</span>,
-                </div>
-                <div v-if="work.achievements?.length" class="property-line">
-                  <span class="property">achievements</span>: [<br>
-                  <div class="achievements-array">
-                    <div
-                      v-for="(achievement, achievementIndex) in work.achievements"
-                      :key="achievementIndex"
-                      class="achievement-line"
-                    >
-                      <span class="string">"{{ achievement }}"</span><span v-if="achievementIndex < work.achievements.length - 1">,</span>
-                    </div>
-                  </div>
-                  ]
+                <p class="proj-desc">{{ project.description }}</p>
+                <div class="proj-techs" v-if="project.technologies?.length">
+                  <span class="tech-badge" v-for="tech in project.technologies" :key="tech">{{ tech }}</span>
                 </div>
               </div>
-              }<span v-if="index < resumeData.workExperience.length - 1">,</span><br>
             </div>
           </div>
-          ];
-        </div>
+          <div class="section-footer"><span class="punct">}</span></div>
+        </section>
+
       </div>
 
-      <!-- 项目经历 -->
-      <div class="code-section" v-if="resumeData.projects?.length">
-        <div class="section-header">
-          <span class="comment">// Key Projects</span>
-        </div>
-        <div class="code-block">
-          <span class="keyword">const</span> <span class="variable">projects</span> = [<br>
-          <div class="projects-array">
-            <div 
-              v-for="(project, index) in resumeData.projects" 
-              :key="project.id"
-              class="project-object"
-            >
-              {<br>
-              <div class="object-content">
-                <div class="property-line">
-                  <span class="property">name</span>: <span class="string">"{{ project.name }}"</span>,
-                </div>
-                <div class="property-line">
-                  <span class="property">description</span>: <span class="string">"{{ project.description }}"</span>,
-                </div>
-                <div class="property-line">
-                  <span class="property">duration</span>: <span class="string">"{{ project.startDate }} - {{ project.endDate }}"</span>,
-                </div>
-                <div v-if="project.technologies?.length" class="property-line">
-                  <span class="property">technologies</span>: [<span class="tech-array">{{ project.technologies.map(tech => `"${tech}"`).join(', ') }}</span>]
-                </div>
+      <!-- Right Column: Skills & Education -->
+      <div class="side-col">
+        
+        <!-- Skills -->
+        <section class="tech-section" v-if="resumeData.skills?.length">
+          <h3 class="section-title">
+            <span class="keyword">type</span> <span class="func">Skills</span> <span class="op">=</span> <span class="punct">{</span>
+          </h3>
+          <div class="section-content border-left">
+            <div class="skills-wrap">
+              <div class="skill-block" v-for="skill in resumeData.skills" :key="skill.id">
+                <div class="skill-key">{{ skill.name }}:</div>
+                <div class="skill-val">"{{ skill.level }}"</div>
               </div>
-              }<span v-if="index < resumeData.projects.length - 1">,</span><br>
             </div>
           </div>
-          ];
-        </div>
-      </div>
+          <div class="section-footer"><span class="punct">}</span></div>
+        </section>
 
-      <!-- 教育背景 -->
-      <div class="code-section" v-if="resumeData.education?.length">
-        <div class="section-header">
-          <span class="comment">// Education</span>
-        </div>
-        <div class="code-block">
-          <span class="keyword">const</span> <span class="variable">education</span> = [<br>
-          <div class="education-array">
-            <div 
-              v-for="(edu, index) in resumeData.education" 
-              :key="edu.id"
-              class="education-object"
-            >
-              {<br>
-              <div class="object-content">
-                <div class="property-line">
-                  <span class="property">institution</span>: <span class="string">"{{ edu.school }}"</span>,
-                </div>
-                <div class="property-line">
-                  <span class="property">degree</span>: <span class="string">"{{ edu.degree }} in {{ edu.major }}"</span>,
-                </div>
-                <div class="property-line">
-                  <span class="property">graduation</span>: <span class="string">"{{ edu.endDate }}"</span><span v-if="edu.gpa || edu.honors || edu.description">,</span>
-                </div>
-                <div v-if="edu.gpa" class="property-line">
-                  <span class="property">gpa</span>: <span class="number">{{ edu.gpa }}</span><span v-if="edu.honors || edu.description">,</span>
-                </div>
-                <div v-if="edu.honors" class="property-line">
-                  <span class="property">honors</span>: <span class="string">"{{ edu.honors }}"</span><span v-if="edu.description">,</span>
-                </div>
-                <div v-if="edu.description" class="property-line">
-                  <span class="property">description</span>: <span class="string">"{{ edu.description }}"</span>
-                </div>
-              </div>
-              }<span v-if="index < resumeData.education.length - 1">,</span><br>
+        <!-- Education -->
+        <section class="tech-section" v-if="resumeData.education?.length">
+          <h3 class="section-title">
+            <span class="keyword">interface</span> <span class="func">Education</span> <span class="punct">{</span>
+          </h3>
+          <div class="section-content border-left">
+            <div class="edu-item" v-for="edu in resumeData.education" :key="edu.id">
+              <div class="edu-year">{{ edu.endDate }}</div>
+              <h4 class="edu-degree">{{ edu.degree }}</h4>
+              <div class="edu-major">{{ edu.major }}</div>
+              <div class="edu-school">{{ edu.school }}</div>
             </div>
           </div>
-          ];
-        </div>
+          <div class="section-footer"><span class="punct">}</span></div>
+        </section>
+
       </div>
 
-      <!-- 页脚 -->
-      <div class="footer-section">
-        <div class="terminal-line">
-          <span class="prompt">$</span>
-          <span class="command">git commit -m "Ready for new opportunities"</span>
-        </div>
-        <div class="terminal-line">
-          <span class="output">[main {{ new Date().getFullYear() }}] Resume updated successfully</span>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useTemplateComponentStyles } from '../../composables/useTemplateStyles'
 
 const props = defineProps({
@@ -220,188 +142,374 @@ const props = defineProps({
   }
 })
 
-// 使用新的样式系统
 const { templateStyles } = useTemplateComponentStyles(props.templateId)
 </script>
 
 <style scoped>
-.tech-template {
-  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
-  background: var(--background-color);
-  color: var(--text-color);
-  line-height: 1.6;
-  font-size: 13px;
-}
+/* 
+  Silicon Valley / Clean Developer Theme
+  Aesthetic: Light mode, high readability, monospace accents inspired by Vercel/GitHub
+*/
+.tech-modern-template {
+  --t-bg: #ffffff;
+  --t-text: #334155;     /* Slate 700 */
+  --t-heading: #0f172a;  /* Slate 900 */
+  --t-primary: #0070f3;  /* Tech Blue */
+  --t-border: #e2e8f0;   /* Slate 200 */
+  --t-muted: #64748b;    /* Slate 500 */
+  
+  --t-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --t-font-mono: 'Fira Code', 'SF Mono', Consolas, Menlo, monospace;
 
-.resume-container {
-  max-width: 210mm;
+  font-family: var(--t-font-sans);
+  background-color: var(--t-bg);
+  color: var(--t-text);
+  width: 210mm;
+  min-height: 297mm;
   margin: 0 auto;
-  padding: 30px;
-  background: #1a1a1a;
-  color: #e5e7eb;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  min-height: 100vh;
-}
-
-/* 头部样式 */
-.header-section {
-  background: #2d2d2d;
-  border-radius: 8px;
-  padding: 25px;
-  margin-bottom: 25px;
-  border-left: 4px solid var(--primary-color);
-}
-
-.name {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffffff;
-  margin: 0 0 10px 0;
-  font-family: 'Fira Code', monospace;
-}
-
-.title-line {
-  font-size: 16px;
-  color: var(--primary-color);
-  margin-bottom: 20px;
-  font-family: 'Fira Code', monospace;
-}
-
-.prompt {
-  color: var(--accent-color);
-  font-weight: bold;
-}
-
-.title {
-  color: #ffffff;
-  margin: 0 5px;
-}
-
-.cursor {
-  animation: blink 1s infinite;
-  color: var(--primary-color);
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-.contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-}
-
-.contact-item {
-  font-size: 12px;
-}
-
-.label {
-  color: var(--accent-color);
-  font-weight: bold;
-}
-
-.value {
-  color: #ffffff;
-  margin-left: 5px;
-}
-
-/* 代码块样式 */
-.code-section {
-  background: #2d2d2d;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-left: 4px solid var(--primary-color);
+  padding: 45px 50px;
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
   position: relative;
 }
 
-.section-header {
-  margin-bottom: 15px;
+/* Subtle Grid Background (Optional, adds tech feel) */
+.tech-modern-template::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.comment {
-  color: #6b7280;
-  font-style: italic;
+/* Header */
+.tech-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 2px dashed var(--t-border);
 }
 
-.code-block {
-  font-family: 'Fira Code', monospace;
+.header-main {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.dev-name {
+  font-family: var(--t-font-sans);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--t-heading);
+  margin: 0 0 8px 0;
+  letter-spacing: -1px;
+}
+
+.dev-title {
+  font-family: var(--t-font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--t-primary);
+  margin: 0 0 16px 0;
+}
+
+.punct {
+  color: var(--t-muted);
+  font-weight: normal;
+}
+
+.dev-summary {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--t-text);
+  margin: 0;
+  max-width: 90%;
+}
+
+.header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--t-font-mono);
   font-size: 12px;
-  line-height: 1.8;
+  color: var(--t-muted);
 }
 
-.keyword {
-  color: #f59e0b;
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta-icon {
+  color: var(--t-primary);
   font-weight: bold;
 }
 
-.variable {
-  color: #3b82f6;
+.meta-text {
+  color: var(--t-heading);
 }
 
-.string {
-  color: #10b981;
+/* Body Layout */
+.tech-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
 }
 
-.property {
-  color: #8b5cf6;
+/* Section styling */
+.tech-section {
+  margin-bottom: 35px;
 }
 
-.number {
-  color: #f97316;
+.section-title {
+  font-family: var(--t-font-mono);
+  font-size: 15px;
+  margin: 0 0 10px 0;
+  color: var(--t-heading);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* 对象和数组缩进 */
-.skills-object,
-.experience-array,
-.projects-array,
-.education-array {
-  margin-left: 20px;
+.keyword { color: #d946ef; /* Fuchsia 500 */ }
+.func { color: var(--t-primary); font-weight: 700; }
+.op { color: var(--t-muted); }
+
+.border-left {
+  border-left: 2px solid var(--t-border);
+  padding-left: 20px;
+  margin-left: 6px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
-.object-content {
-  margin-left: 20px;
+.section-footer {
+  font-family: var(--t-font-mono);
+  font-size: 15px;
+  margin-top: 10px;
 }
 
-.property-line,
-.skill-line,
-.achievement-line {
-  margin: 5px 0;
+/* Experience */
+.exp-item {
+  margin-bottom: 25px;
+}
+.exp-item:last-child {
+  margin-bottom: 0;
 }
 
-.achievements-array {
-  margin-left: 20px;
+.exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
 }
 
-.tech-array {
-  color: #10b981;
+.exp-role-group {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
 }
 
-/* 页脚样式 */
-.footer-section {
-  background: #2d2d2d;
+.exp-role {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--t-heading);
+  margin: 0;
+}
+
+.exp-at {
+  color: var(--t-primary);
+  font-family: var(--t-font-mono);
+  font-weight: bold;
+}
+
+.exp-company {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--t-heading);
+}
+
+.exp-date {
+  font-family: var(--t-font-mono);
+  font-size: 12px;
+  color: var(--t-muted);
+}
+
+.exp-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 10px 0;
+}
+
+.exp-tasks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.exp-tasks li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 6px;
+  color: var(--t-text);
+}
+
+.exp-tasks li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  font-family: var(--t-font-mono);
+  color: var(--t-primary);
+  font-weight: bold;
+}
+
+/* Projects */
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.proj-card {
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid var(--t-border);
   border-radius: 8px;
-  padding: 15px;
-  margin-top: 30px;
-  border-left: 4px solid var(--accent-color);
+  padding: 16px;
 }
 
-.terminal-line {
-  font-family: 'Fira Code', monospace;
+.proj-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.proj-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--t-heading);
+  margin: 0;
+}
+
+.proj-date {
+  font-family: var(--t-font-mono);
   font-size: 11px;
-  margin: 5px 0;
+  color: var(--t-muted);
 }
 
-.command {
-  color: #ffffff;
-  margin-left: 5px;
+.proj-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
 }
 
-.output {
-  color: var(--primary-color);
-  margin-left: 5px;
+.proj-techs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
+.tech-badge {
+  font-family: var(--t-font-mono);
+  font-size: 10px;
+  background: var(--t-primary);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* Skills */
+.skills-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--t-font-mono);
+  font-size: 13px;
+}
+
+.skill-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.skill-key {
+  color: var(--t-heading);
+  font-weight: 600;
+}
+
+.skill-val {
+  color: #16a34a; /* Green string color */
+  padding-left: 10px;
+}
+
+/* Education */
+.edu-item {
+  margin-bottom: 20px;
+}
+.edu-item:last-child {
+  margin-bottom: 0;
+}
+
+.edu-year {
+  font-family: var(--t-font-mono);
+  font-size: 12px;
+  color: var(--t-muted);
+  margin-bottom: 4px;
+}
+
+.edu-degree {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--t-heading);
+  margin: 0 0 2px 0;
+}
+
+.edu-major {
+  font-size: 13px;
+  color: var(--t-primary);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.edu-school {
+  font-size: 13px;
+  color: var(--t-text);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tech-modern-template {
+    width: 100%;
+    padding: 20px;
+    height: auto;
+  }
+  
+  .tech-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .header-main {
+    padding-right: 0;
+  }
+  
+  .tech-body {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

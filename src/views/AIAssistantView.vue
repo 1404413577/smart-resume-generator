@@ -294,7 +294,8 @@ const sendMessage = async () => {
     saveChatToHistory()
   } catch (error) {
     console.error('AI对话失败:', error)
-    ElMessage.error('AI服务暂时不可用，请稍后重试')
+    const errMsg = error?.message || 'AI服务暂时不可用，请稍后重试'
+    ElMessage.error(errMsg)
   } finally {
     isThinking.value = false
     await nextTick()

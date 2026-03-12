@@ -1,11 +1,12 @@
 <template>
   <div class="home-view">
     <!-- 三列布局简历编辑器 -->
-    <div class="resume-builder-container">
+    <div class="resume-builder-container" :class="{ 'is-mobile': isMobile }">
       <!-- 左侧导航栏 -->
-      <aside class="left-sidebar">
+      <aside class="left-sidebar" v-if="!isMobile || mobileActiveTab === 'ai'">
         <!-- AI助手区域 -->
         <div class="sidebar-section ai-assistant-section">
+          <!-- ... (keep existing content but maybe wrap it) ... -->
           <div class="section-header" @click="toggleSection('ai')">
             <div class="header-left">
               <el-icon><MagicStick /></el-icon>
@@ -158,7 +159,7 @@
       </aside>
 
       <!-- 中间编辑区域 -->
-      <main class="main-editor">
+      <main class="main-editor" v-if="!isMobile || mobileActiveTab === 'edit'">
         <div class="editor-header">
           <h2 class="editor-title">
             <el-icon><component :is="getCurrentModuleIcon()" /></el-icon>
@@ -175,28 +176,33 @@
       </main>
 
       <!-- 右侧预览区域 -->
-      <aside class="right-preview">
+      <aside class="right-preview" v-if="!isMobile || mobileActiveTab === 'preview'">
         <div class="preview-header">
           <div class="preview-title">
             <h3>简历预览</h3>
-            <div class="zoom-controls">
+            <div class="zoom-controls" v-if="!isMobile">
               <el-button @click="zoomOut" size="small" :icon="ZoomOut" :disabled="previewScale <= 0.5" />
               <span class="zoom-display">{{ Math.round(previewScale * 100) }}%</span>
               <el-button @click="zoomIn" size="small" :icon="ZoomIn" :disabled="previewScale >= 1.5" />
             </div>
           </div>
           <div class="preview-actions">
-            <el-button @click="handleSectionSort" size="small" :icon="Sort">
+            <el-button @click="handleSectionSort" size="small" :icon="Sort" v-if="!isMobile">
               章节排序
             </el-button>
             <el-button @click="handleExportPDF" type="primary" size="small" :icon="Printer" :loading="isExporting">
               导出PDF
             </el-button>
-            <el-button @click="handleExportWord" size="small" :icon="Document" :loading="isExportingWord">
+            <el-dropdown trigger="click" split-button type="default" size="small" @click="handleExportWord" v-if="!isMobile">
               导出Word
-            </el-button>
-            <el-button @click="showTemplateUploader = true" size="small" :icon="Upload" type="success">
-              模板导出
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="showTemplateUploader = true">模板导出</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <el-button @click="handleExportWord" size="small" :icon="Document" :loading="isExportingWord" v-else>
+              Word
             </el-button>
           </div>
         </div>
@@ -229,6 +235,22 @@
           </div>
         </div>
       </aside>
+
+      <!-- 移动端底部切换栏 -->
+      <div v-if="isMobile" class="mobile-tab-bar">
+        <div class="tab-item" :class="{ active: mobileActiveTab === 'ai' }" @click="mobileActiveTab = 'ai'">
+          <el-icon><AIMagic /></el-icon>
+          <span>AI助手</span>
+        </div>
+        <div class="tab-item" :class="{ active: mobileActiveTab === 'edit' }" @click="mobileActiveTab = 'edit'">
+          <el-icon><Edit /></el-icon>
+          <span>编辑</span>
+        </div>
+        <div class="tab-item" :class="{ active: mobileActiveTab === 'preview' }" @click="mobileActiveTab = 'preview'">
+          <el-icon><View /></el-icon>
+          <span>预览</span>
+        </div>
+      </div>
 
       <!-- 弹窗组件 -->
       <AdvancedAIResumeGenerator
@@ -312,6 +334,8 @@ import { generateMultiPageResumePDF } from '@utils/pdf/multiPagePdfGenerator'
 import { createMultiPageManager } from '@/utils/multipage/pageManager'
 import { useGlobalStyles } from '@/composables/useGlobalStyles'
 import { exportResumeToDocx } from '@utils/word/exportDocx'
+import { Edit, View, MagicStick as AIMagic } from '@element-plus/icons-vue'
+import { useWindowSize } from '@vueuse/core'
 
 // 组件导入
 import TemplateUploader from '@components/word/TemplateUploader.vue'
@@ -363,6 +387,11 @@ const currentPreviewPage = ref(1)
 const showAllPages = ref(false)
 const showAITest = ref(false)
 const showDonation = ref(true)
+
+// 响应式设计相关
+const { width: windowWidth } = useWindowSize()
+const isMobile = computed(() => windowWidth.value <= 768)
+const mobileActiveTab = ref('edit') // 'edit', 'preview', 'ai'
 
 // 开发模式检测
 const isDevelopment = computed(() => {
@@ -438,8 +467,12 @@ const toggleSection = (section) => {
   expandedSections.value[section] = !expandedSections.value[section]
 }
 
-const handleModuleChange = (module) => {
-  activeModule.value = module
+const handleModuleChange = (moduleId) => {
+  activeModule.value = moduleId
+  // 移动端优化：点击模块后自动切换到编辑标签页
+  if (isMobile.value) {
+    mobileActiveTab.value = 'edit'
+  }
 }
 
 const handleTemplateManage = () => {
@@ -515,9 +548,19 @@ const resetZoom = () => {
 
 // 计算预览容器的缩放样式（用于显示缩放效果，但不影响导出）
 const getPreviewContainerStyle = computed(() => {
-  // 注意：这里只用于视觉显示，实际导出时不使用这个缩放
+  let scale = previewScale.value
+  
+  // 移动端自动缩放：确保 A4 宽度适应屏幕
+  if (isMobile.value) {
+    const padding = 40 // 左右间距总和
+    const availableWidth = windowWidth.value - padding
+    const a4WidthInPx = 210 * 3.7795 // 210mm 转换为 px
+    const autoScale = availableWidth / a4WidthInPx
+    scale = autoScale
+  }
+
   return {
-    transform: `scale(${previewScale.value})`,
+    transform: `scale(${scale})`,
     transformOrigin: 'top center'
   }
 })
@@ -1447,35 +1490,68 @@ watch(() => resumeStore.resumeData, () => {
 
 @media (max-width: 768px) {
   .resume-builder-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-    height: calc(100vh - 60px);
+    display: block; /* 改为块级布局，配合 v-if 控制单列 */
+    height: calc(100vh - 60px - 60px); /* 减去头部和底部 Tab Bar */
+    overflow-y: auto;
   }
 
-  .left-sidebar {
-    height: auto;
-    max-height: 200px;
-    overflow-x: auto;
-    overflow-y: hidden;
+  .left-sidebar, .main-editor, .right-preview {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    border-right: none;
+    overflow-y: auto;
   }
 
-  .main-editor {
-    min-height: 400px;
-  }
-
-  .right-preview {
-    height: 400px;
+  .preview-content {
+    padding: 10px;
+    background: #f5f7fa;
   }
 
   .preview-container {
-    min-width: calc(100vw - 80px); /* 移动端适配 */
-    max-width: calc(100vw - 80px);
-    min-height: calc((100vw - 80px) * 1.414); /* 保持A4比例 */
+    margin: 0 auto;
+    /* 缩放已经在内联样式中通过 getPreviewContainerStyle 处理 */
   }
 
-  .preview-wrapper {
-    min-height: auto;
+  .mobile-tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #e4e7ed;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+  }
+
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #909399;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    padding: 8px 0;
+  }
+
+  .tab-item.active {
+    color: #409eff;
+  }
+
+  .tab-item .el-icon {
+    font-size: 20px;
+  }
+
+  .tab-item span {
+    font-size: 11px;
+    font-weight: 500;
   }
 }
 </style>

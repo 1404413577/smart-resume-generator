@@ -21,6 +21,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
     "@google/genai": "^1.15.0",
+    "@vueuse/core": "^14.2.1",
     "docx": "^9.5.1",
     "docxtemplater": "^3.65.3",
     "element-plus": "^2.10.7",

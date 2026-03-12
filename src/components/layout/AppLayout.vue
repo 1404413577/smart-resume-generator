@@ -8,13 +8,46 @@
           <span>智能简历生成器</span>
         </router-link>
 
+        <!-- 桌面端导航 -->
         <nav class="main-nav">
-          <router-link to="/" class="nav-link">编辑器</router-link>
-          <!-- <router-link to="/ai-assistant" class="nav-link">AI助手</router-link> -->
-          <router-link to="/templates" class="nav-link">模板中心</router-link>
+          <router-link 
+            v-for="link in navLinks" 
+            :key="link.path" 
+            :to="link.path" 
+            class="nav-link"
+          >
+            {{ link.label }}
+          </router-link>
         </nav>
+
+        <!-- 移动端菜单按钮 -->
+        <div class="mobile-menu-btn" @click="isDrawerVisible = true">
+          <el-icon><Menu /></el-icon>
+        </div>
       </div>
     </header>
+
+    <!-- 移动端抽屉导航 -->
+    <el-drawer
+      v-model="isDrawerVisible"
+      title="菜单"
+      direction="ltr"
+      size="280px"
+      :with-header="true"
+      custom-class="mobile-drawer"
+    >
+      <div class="drawer-nav">
+        <router-link 
+          v-for="link in navLinks" 
+          :key="link.path" 
+          :to="link.path" 
+          class="drawer-link"
+          @click="isDrawerVisible = false"
+        >
+          {{ link.label }}
+        </router-link>
+      </div>
+    </el-drawer>
 
     <!-- 页面内容 -->
     <main class="main-content">
@@ -31,8 +64,16 @@
 </template>
 
 <script setup>
-import { Document } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import { Document, Menu } from '@element-plus/icons-vue'
 import DynamicStyles from '@components/common/DynamicStyles.vue'
+
+const isDrawerVisible = ref(false)
+
+const navLinks = [
+  { path: '/', label: '编辑器' },
+  { path: '/templates', label: '模板中心' }
+]
 </script>
 
 <style scoped>
@@ -135,6 +176,48 @@ import DynamicStyles from '@components/common/DynamicStyles.vue'
 
   .logo {
     font-size: 16px;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: #f5f7fa;
+    cursor: pointer;
+    font-size: 20px;
+    color: #606266;
+  }
+
+  .drawer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 0;
+  }
+
+  .drawer-link {
+    text-decoration: none;
+    color: #303133;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .drawer-link:hover,
+  .drawer-link.router-link-active {
+    color: #409eff;
+    background: rgba(64, 158, 255, 0.1);
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-menu-btn {
+    display: none;
   }
 }
 </style>

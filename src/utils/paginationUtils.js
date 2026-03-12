@@ -67,46 +67,73 @@ export function shouldAvoidPageBreak(element) {
 }
 
 /**
- * 自动分页算法
+ * 智能分页算法 - 考虑元素完整性
  * @param {HTMLElement} container - 容器元素
- * @param {Object} pageSettings - 页面设置
- * @param {Object} pageMargin - 页边距设置
- * @returns {Array} 自动分页点数组
+ * @param {Object} options - 配置项 { pageHeight, avoidSelector }
+ * @returns {Array} 修正后的分页偏移量数组
  */
-export function calculateAutoPageBreaks(container, pageSettings, pageMargin) {
-  if (!container || pageSettings.pagingMode !== 'auto') {
-    return []
-  }
-  
-  const pageHeight = calculatePageContentHeight(pageMargin)
-  const children = Array.from(container.children)
-  const breaks = []
-  let currentHeight = 0
-  let currentPage = 1
-  
-  children.forEach((child, index) => {
-    // 更准确的px到mm转换 (基于CSS标准: 1mm = 3.7795275591px)
-    const childHeight = child.offsetHeight / 3.7795275591
+export function calculateIntelligentPageBreaks(container, options = {}) {
+  const { 
+    pageHeightPx = 1123, // A4 @ 96dpi ≈ 1123px
+    avoidSelector = '.resume-item, .section-title, .resume-module'
+  } = options
 
-    // 检查是否需要分页
-    if (currentHeight + childHeight > pageHeight && currentPage < pageSettings.pageCount) {
-      // 如果当前元素应该避免分页，尝试将其移到下一页
-      if (shouldAvoidPageBreak(child)) {
-        breaks.push(index)
-        currentHeight = childHeight
-        currentPage++
-      } else {
-        // 在当前位置分页
-        breaks.push(index)
-        currentHeight = childHeight
-        currentPage++
+  const breaks = []
+  const elementsToAvoid = container.querySelectorAll(avoidSelector)
+  let lastBreakY = 0
+
+  // 辅助函数：获取相对于容器的偏移
+  const getRelativeOffset = (el) => {
+    const rect = el.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
+    return rect.top - containerRect.top
+  }
+
+  // 遍历所有需要“避免截断”的元素
+  elementsToAvoid.forEach(el => {
+    const top = getRelativeOffset(el)
+    const height = el.offsetHeight
+    const bottom = top + height
+
+    // 计算当前元素在第几页（相对于上一个分页点）
+    const relativeTop = top - lastBreakY
+    const relativeBottom = bottom - lastBreakY
+
+    // 如果元素跨越了分页线
+    if (relativeTop < pageHeightPx && relativeBottom > pageHeightPx) {
+      // 只有当元素不是太长（比如超过半页）时才推到下一页
+      // 如果元素本身就比一页还长，那只能任其截断（或者进一步拆分内部）
+      if (height < pageHeightPx * 0.8) {
+        const gap = pageHeightPx - relativeTop
+        breaks.push({
+          afterY: top,
+          gapHeight: gap,
+          element: el
+        })
+        lastBreakY = top // 更新逻辑上的分页点
       }
-    } else {
-      currentHeight += childHeight
     }
   })
-  
+
   return breaks
+}
+
+/**
+ * 在 DOM 中应用智能分页间隔
+ * @param {HTMLElement} container - 容器克隆体
+ * @param {Array} breaks - 分页建议
+ */
+export function applyIntelligentGaps(container, breaks) {
+  // 从后往前插入，避免索引偏移问题（虽然这里用的是绝对位置，但插入 DOM 会影响后续位置）
+  // 最佳方案其实是直接在元素前插入 spacer
+  breaks.reverse().forEach(b => {
+    const spacer = document.createElement('div')
+    spacer.className = 'pdf-page-spacer'
+    spacer.style.height = `${b.gapHeight}px`
+    spacer.style.width = '100%'
+    spacer.style.backgroundColor = 'transparent'
+    b.element.parentNode.insertBefore(spacer, b.element)
+  })
 }
 
 /**

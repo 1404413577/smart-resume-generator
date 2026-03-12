@@ -151,6 +151,16 @@
                 <strong>Technologies Used:</strong>
                 <span class="tech-list">{{ project.technologies.join(', ') }}</span>
               </div>
+              <div v-if="project.url || project.github" class="project-links">
+                <div v-if="project.url" class="project-link-item">
+                  <strong>Demo:</strong>
+                  <a :href="project.url" target="_blank" class="project-link-full">{{ project.url }}</a>
+                </div>
+                <div v-if="project.github" class="project-link-item">
+                  <strong>Repo:</strong>
+                  <a :href="project.github" target="_blank" class="project-link-full">{{ project.github }}</a>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -589,6 +599,54 @@ const getSkillWidth = (level) => {
 .tech-list {
   color: var(--accent-color);
   font-weight: 500;
+}
+
+.project-links {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.project-link {
+  font-size: 12px;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.project-link:hover {
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
+}
+
+.project-links {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.project-link-item {
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.project-link-item strong {
+  color: var(--primary-color);
+  white-space: nowrap;
+}
+
+.project-link-full {
+  color: var(--primary-color);
+  text-decoration: underline;
+  word-break: break-all;
+  line-height: 1.4;
 }
 
 /* 成就列表 */

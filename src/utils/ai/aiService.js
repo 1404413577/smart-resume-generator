@@ -36,7 +36,7 @@ function getGenAIClient() {
  * @param {string} prompt - 提示词
  * @returns {Promise<string>} 生成的内容
  */
-async function callGeminiAPI(prompt, maxTokens = 1024) {
+export async function callGeminiAPI(prompt, maxTokens = 1024) {
   // 频率限制检查
   const now = Date.now()
   const timeSinceLastRequest = now - lastRequestTime
@@ -530,11 +530,55 @@ export async function checkAPIAvailability() {
 }
 
 /**
- * 智能对话式简历生成
- * @param {Object} conversationData - 对话数据
- * @returns {Promise<Object>} AI回复和建议
+ * 调用Gemini API生成内容（流式）
+ * @param {string} prompt - 提示词
+ * @param {Function} onStream - 流式回调，接收文本块
+ * @returns {Promise<string>} 最终生成的完整内容
  */
-export async function generateConversationalResponse(conversationData) {
+async function callGeminiAPIStream(prompt, onStream, maxTokens = 2048) {
+  // 频率限制检查
+  const now = Date.now()
+  const timeSinceLastRequest = now - lastRequestTime
+  if (timeSinceLastRequest < REQUEST_INTERVAL) {
+    await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL - timeSinceLastRequest))
+  }
+  lastRequestTime = Date.now()
+
+  try {
+    const ai = getGenAIClient()
+    const model = ai.getGenerativeModel({ model: GEMINI_MODEL })
+
+    const result = await model.generateContentStream({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.7,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: maxTokens,
+      }
+    })
+
+    let fullText = ''
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text()
+      fullText += chunkText
+      if (onStream) onStream(chunkText)
+    }
+
+    return fullText
+  } catch (error) {
+    console.error('Gemini Streaming API Error:', error)
+    throw new Error(`AI服务流式连接失败: ${error.message}`)
+  }
+}
+
+/**
+ * 智能对话式简历生成（支持流式响应内容字段）
+ * @param {Object} conversationData - 对话数据
+ * @param {Function} onResponseStream - 仅针对 "response" 字段文本流的回调
+ * @returns {Promise<Object>} AI回复和建议的完整JSON
+ */
+export async function generateConversationalResponse(conversationData, onResponseStream = null) {
   const { messages, currentStep, userProfile } = conversationData
 
   const prompt = `
@@ -553,21 +597,47 @@ ${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
 2. 如果信息足够，生成相应的简历内容
 3. 质量评估和改进建议
 
-返回JSON格式：
+**非常重要：请必须返回标准的 JSON 格式！**
+结构如下：
 {
-  "response": "AI回复内容",
+  "response": "AI回复内容（请尽量详细）",
   "suggestions": ["建议1", "建议2"],
   "questions": ["问题1", "问题2"],
   "resumeContent": {
     "section": "章节名称",
-    "content": "生成的内容"
+    "content": "根据当前对话新生成的或修改的简历JSON对象"
   },
   "qualityScore": 85,
   "improvements": ["改进建议1", "改进建议2"]
 }
 `
 
-  const result = await callGeminiAPI(prompt)
+  let fullResponse = ''
+  
+  // 如果提供了流回调，我们尝试通过简单的字符串匹配来提取 response 字段的增量内容进行流式显示
+  const wrappedOnStream = (chunk) => {
+    if (onResponseStream) {
+      fullResponse += chunk
+      // 这是一个简单的启发式提取逻辑：
+      // 如果我们能检测到 "response": " 开头，就开始把之后的内容传给回调，直到遇到下一个字段名或 JSON 结尾
+      // 注意：这在 JSON 复杂时可能不完美，但在大多数情况下能提供秒级的视觉反馈
+      const responseMatch = fullResponse.match(/"response"\s*:\s*"(.*?)(?:"\s*,|"\s*$)/s)
+      if (responseMatch?.[1]) {
+        // 由于是流式的，我们需要记录已经发送出去的长度
+        if (!this._lastSentLen) this._lastSentLen = 0
+        const currentText = responseMatch[1]
+        const newText = currentText.substring(this._lastSentLen)
+        if (newText) {
+          onResponseStream(newText)
+          this._lastSentLen = currentText.length
+        }
+      }
+    }
+  }
+
+  // 重置状态
+  const streamContext = { _lastSentLen: 0 }
+  const result = await callGeminiAPIStream(prompt, wrappedOnStream.bind(streamContext))
 
   try {
     // 尝试直接解析JSON
@@ -837,4 +907,22 @@ export function getSupportedCareers() {
     name: CAREER_TEMPLATES[key].name,
     skills: CAREER_TEMPLATES[key].skills
   }))
+}
+
+/**
+ * 导出 AI 服务对象供命名空间式调用
+ */
+export const aiService = {
+  callGeminiAPI,
+  generatePersonalSummary,
+  optimizeWorkExperience,
+  recommendSkills,
+  enhanceProjectDescription,
+  generateCompleteResume,
+  checkAPIAvailability,
+  generateConversationalResponse,
+  analyzeResumeQuality,
+  analyzeJobMatch,
+  optimizeContent,
+  getSupportedCareers
 }

@@ -9,6 +9,15 @@
       <p class="ai-description">对话式AI，智能生成个性化简历</p>
     </div>
 
+    <!-- OCR图片导入按钮 -->
+    <div class="ocr-import-section">
+      <el-button @click="$emit('ocr-import')" type="primary" size="default" class="ocr-button">
+        <el-icon><Picture /></el-icon>
+        图片导入简历
+      </el-button>
+      <p class="ocr-description">识别简历照片，自动提取信息</p>
+    </div>
+
     <!-- 模板中心按钮 -->
     <div class="template-manage-section">
       <el-button @click="$emit('template-manage')" type="primary" size="default" class="template-button">
@@ -21,9 +30,9 @@
 </template>
 
 <script setup>
-import { MagicStick, Document } from '@element-plus/icons-vue'
+import { MagicStick, Document, Picture } from '@element-plus/icons-vue'
 
-defineEmits(['ai-generate', 'template-manage'])
+defineEmits(['ai-generate', 'template-manage', 'ocr-import'])
 </script>
 
 <style scoped>
@@ -104,6 +113,41 @@ defineEmits(['ai-generate', 'template-manage'])
 }
 
 .template-manage-section .template-description {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #909399;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* OCR导入按钮区域样式 */
+.ocr-import-section {
+  padding: 16px;
+  border-bottom: 1px solid #e4e7ed;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.ocr-import-section .ocr-button {
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(135deg, #409eff 0%, #3a8ee6 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.ocr-import-section .ocr-button:hover {
+  background: linear-gradient(135deg, #3a8ee6 0%, #409eff 100%);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.ocr-import-section .ocr-description {
   margin: 8px 0 0 0;
   font-size: 12px;
   color: #909399;

@@ -1,0 +1,31 @@
+{
+  "name": "创意多列 (JSON)",
+  "description": "极具个性的多栏布局，适合设计师或创意岗位",
+  "theme": {
+    "primary": "#9b59b6",
+    "secondary": "#34495e"
+  },
+  "layout": [
+    { "type": "header", "style": "left-aligned" },
+    {
+      "type": "grid",
+      "columns": [
+        {
+          "width": "30%",
+          "modules": ["personalInfo", "skills", "education"],
+          "style": { "borderRight": "1px solid #eee" }
+        },
+        {
+          "width": "70%",
+          "modules": ["summary", "workExperience", "projects"],
+          "style": { "paddingLeft": "20px" }
+        }
+      ],
+      "gap": "15px"
+    }
+  ],
+  "moduleSettings": {
+    "personalInfo": { "showTitle": false },
+    "skills": { "title": "能力模型" }
+  }
+}

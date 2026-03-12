@@ -146,6 +146,16 @@
                 <span class="tech-label">技术栈：</span>
                 <span class="tech-list">{{ project.technologies.join(', ') }}</span>
               </div>
+              <div class="project-links" v-if="project.url || project.github">
+                <div v-if="project.url" class="project-link-item">
+                  <i class="icon">🌐</i>
+                  <a :href="project.url" target="_blank" class="project-link-full">{{ project.url }}</a>
+                </div>
+                <div v-if="project.github" class="project-link-item">
+                  <i class="icon">🐙</i>
+                  <a :href="project.github" target="_blank" class="project-link-full">{{ project.github }}</a>
+                </div>
+              </div>
             </div>
           </div>
         </template>
@@ -437,6 +447,62 @@ const getSkillLevel = (level) => {
 
 .tech-list {
   color: var(--secondary-color);
+}
+
+.project-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.project-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.project-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.project-link .icon {
+  font-size: 14px;
+}
+
+.project-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.project-link-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.project-link-full {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.project-link-full:hover {
+  text-decoration: underline;
+}
+
+.project-link-item .icon {
+  font-size: 14px;
 }
 
 /* PDF导出专用样式 - 最小化边距 */

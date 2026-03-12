@@ -1,5 +1,6 @@
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { calculateIntelligentPageBreaks, applyIntelligentGaps } from '../paginationUtils'
 
 /**
  * 生成PDF文件
@@ -360,6 +361,28 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       }
     }
 
+    // --- 智能分页处理开始 ---
+    // 1. 克隆一个用于计算的元素（避免影响当前显示）
+    const clone = element.cloneNode(true)
+    clone.style.position = 'absolute'
+    clone.style.left = '-9999px'
+    clone.style.top = '0'
+    clone.style.width = '210mm'
+    clone.style.visibility = 'hidden'
+    document.body.appendChild(clone)
+
+    // 2. 计算智能分页点
+    // A4 高度推算: 1mm = 3.78px => 297mm = 1122.6px
+    const pageHeightPx = 1123 
+    const breaks = calculateIntelligentPageBreaks(clone, { pageHeightPx })
+    
+    // 3. 将建议的分页点应用到实际要导出的 element 上
+    // 注意：如果是直接在 element 上操作，记得完成后还原
+    applyIntelligentGaps(element, breaks)
+    
+    document.body.removeChild(clone)
+    // --- 智能分页处理结束 ---
+
     // 等待样式应用
     await new Promise(resolve => setTimeout(resolve, 500))
 
@@ -383,8 +406,17 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       scrollY: 0,
       windowWidth: pixelWidth,
       windowHeight: pixelHeight,
-      letterRendering: false, // 禁用letterRendering以避免中文字符间距问题
-      logging: false // 关闭日志以提高性能
+      letterRendering: false,
+      logging: false,
+      onclone: (clonedDoc) => {
+        // 补强 SVG 渲染：确保所有 SVG 元素都有明确的宽高，并修复潜在的透明度问题
+        const svgs = clonedDoc.querySelectorAll('svg');
+        svgs.forEach(svg => {
+          if (!svg.getAttribute('width')) svg.setAttribute('width', svg.getBoundingClientRect().width);
+          if (!svg.getAttribute('height')) svg.setAttribute('height', svg.getBoundingClientRect().height);
+          svg.style.opacity = '1';
+        });
+      }
     })
 
     // 恢复原始样式和CSS类
@@ -428,6 +460,9 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
         pdf.addImage(imgData, 'PNG', 0, yOffset, pageWidth, actualHeightMm, '', 'FAST')
       }
     }
+
+    // 清理分页间隔（还原 DOM）
+    element.querySelectorAll('.pdf-page-spacer').forEach(s => s.remove())
 
     // 保存PDF
     const pdfBlob = pdf.output('blob')

@@ -1,651 +1,396 @@
 <template>
-  <div class="style-settings">
-    <!-- 主题设置 -->
-    <div class="setting-group">
-      <h4 class="group-title">
-        <el-icon><Edit /></el-icon>
-        主题配色
-      </h4>
-      
-      <!-- 主题预设 -->
-      <div class="theme-presets">
-        <div
-          v-for="(preset, key) in availableThemePresets"
-          :key="key"
-          class="theme-preset"
-          :class="{ active: currentTheme?.preset === key }"
-          @click="handleApplyThemePreset(key)"
-        >
-          <div class="preset-preview">
-            <div 
-              class="color-dot primary" 
-              :style="{ backgroundColor: preset.primary }"
-            ></div>
-            <div 
-              class="color-dot secondary" 
-              :style="{ backgroundColor: preset.secondary }"
-            ></div>
-            <div 
-              class="color-dot accent" 
-              :style="{ backgroundColor: preset.accent }"
-            ></div>
-          </div>
-          <span class="preset-name">{{ getPresetName(key) }}</span>
-        </div>
-      </div>
-
-      <!-- 自定义颜色 -->
-      <div class="custom-colors">
-        <h5>自定义颜色</h5>
-        <div class="color-controls">
-          <div class="color-grid">
-            <div class="color-item">
-              <label class="color-label">主色调</label>
-              <div class="color-picker-wrapper">
-                <el-color-picker
-                  v-model="currentTheme.primary"
-                  @change="handleColorChange('primary', $event)"
-                  show-alpha
-                  size="small"
-                />
-                <span class="color-value">{{ currentTheme.primary }}</span>
-              </div>
-            </div>
-            <div class="color-item">
-              <label class="color-label">辅助色</label>
-              <div class="color-picker-wrapper">
-                <el-color-picker
-                  v-model="currentTheme.secondary"
-                  @change="handleColorChange('secondary', $event)"
-                  show-alpha
-                  size="small"
-                />
-                <span class="color-value">{{ currentTheme.secondary }}</span>
-              </div>
-            </div>
-            <div class="color-item">
-              <label class="color-label">强调色</label>
-              <div class="color-picker-wrapper">
-                <el-color-picker
-                  v-model="currentTheme.accent"
-                  @change="handleColorChange('accent', $event)"
-                  show-alpha
-                  size="small"
-                />
-                <span class="color-value">{{ currentTheme.accent }}</span>
-              </div>
-            </div>
-            <div class="color-item">
-              <label class="color-label">文字颜色</label>
-              <div class="color-picker-wrapper">
-                <el-color-picker
-                  v-model="currentTheme.textPrimary"
-                  @change="handleColorChange('textPrimary', $event)"
-                  show-alpha
-                  size="small"
-                />
-                <span class="color-value">{{ currentTheme.textPrimary }}</span>
-              </div>
-            </div>
-            <div class="color-item">
-              <label class="color-label">背景颜色</label>
-              <div class="color-picker-wrapper">
-                <el-color-picker
-                  v-model="currentTheme.background"
-                  @change="handleColorChange('background', $event)"
-                  show-alpha
-                  size="small"
-                />
-                <span class="color-value">{{ currentTheme.background }}</span>
-              </div>
-            </div>
-            <div class="color-item">
-              <label class="color-label">边框颜色</label>
-              <div class="color-picker-wrapper">
-                <el-color-picker
-                  v-model="currentTheme.border"
-                  @change="handleColorChange('border', $event)"
-                  show-alpha
-                  size="small"
-                />
-                <span class="color-value">{{ currentTheme.border }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 颜色快速操作 -->
-          <div class="color-actions">
-            <el-button size="small" @click="generateRandomColors">
-              <el-icon><Refresh /></el-icon>
-              随机配色
-            </el-button>
-            <el-button size="small" @click="resetColors">
-              <el-icon><RefreshLeft /></el-icon>
-              重置颜色
-            </el-button>
-            <el-button size="small" @click="copyColorScheme">
-              <el-icon><Document /></el-icon>
-              复制配色
-            </el-button>
-          </div>
-        </div>
+  <div class="style-revamp-container">
+    <!-- 侧边导航栏 -->
+    <div class="glass-sidebar">
+      <div 
+        v-for="tab in tabs" 
+        :key="tab.id"
+        class="nav-tab"
+        :class="{ active: activeTab === tab.id }"
+        @click="activeTab = tab.id"
+      >
+        <el-icon><component :is="tab.icon" /></el-icon>
+        <span>{{ tab.name }}</span>
       </div>
     </div>
 
-    <!-- 字体设置 -->
-    <div class="setting-group">
-      <h4 class="group-title">
-        <el-icon><Document /></el-icon>
-        字体设置
-      </h4>
-      
-      <div class="font-controls">
-        <div class="control-item">
-          <label>字体族</label>
-          <el-select v-model="currentTypography.fontFamily" @change="handleTypographyChange">
-            <el-option label="系统/默认 (思源黑体)" value='"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif' />
-            <el-option label="思源宋体" value="'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif" />
-            <el-option label="黑体" value="'SimHei', 'Heiti SC', sans-serif" />
-            <el-option label="楷体" value="'KaiTi', 'Kaiti SC', serif" />
-            <el-option label="站酷快乐体" value="'ZCOOL KuaiLe', cursive" />
-            <el-option label="站酷小薇体" value="'ZCOOL XiaoWei', serif" />
-            <el-option label="马善政毛笔楷书" value="'Ma Shan Zheng', cursive" />
-            <el-option label="Times New Roman" value="'Times New Roman', serif" />
-            <el-option label="Arial" value="Arial, sans-serif" />
-          </el-select>
-        </div>
-        
-        <div class="control-item">
-          <label>基础字号 ({{ currentTypography.baseFontSize }}px)</label>
-          <el-slider 
-            v-model="currentTypography.baseFontSize" 
-            :min="12" 
-            :max="18" 
-            @change="handleTypographyChange"
-          />
-        </div>
-        
-        <div class="control-item">
-          <label>标题字号 ({{ currentTypography.titleFontSize }}px)</label>
-          <el-slider 
-            v-model="currentTypography.titleFontSize" 
-            :min="16" 
-            :max="28" 
-            @change="handleTypographyChange"
-          />
-        </div>
-        
-        <div class="control-item">
-          <label>行高 ({{ currentSpacing.lineHeight }})</label>
-          <el-slider 
-            v-model="currentSpacing.lineHeight" 
-            :min="1.2" 
-            :max="2.0" 
-            :step="0.1" 
-            @change="handleSpacingChange"
-          />
-        </div>
-      </div>
-    </div>
+    <!-- 主内容面板 -->
+    <div class="content-panel">
+      <Transition name="fade-slide" mode="out-in">
+        <!-- 配色方案 Tab -->
+        <div v-if="activeTab === 'theme'" class="tab-content" key="theme">
+          <div class="section-header">
+            <h3>主题方案</h3>
+            <p>选择精心设计的专业色调，一键提升简历质感</p>
+          </div>
 
-    <!-- 间距设置 -->
-    <div class="setting-group">
-      <h4 class="group-title">
-        <el-icon><Grid /></el-icon>
-        间距设置
-      </h4>
-      
-      <div class="spacing-controls">
-        <div class="control-item">
-          <label>页面边距 ({{ currentSpacing.pageMargin.top }}px)</label>
-          <el-slider 
-            v-model="currentSpacing.pageMargin.top" 
-            :min="10" 
-            :max="40" 
-            @change="handlePageMarginChange"
-          />
-        </div>
-        
-        <div class="control-item">
-          <label>模块间距 ({{ currentSpacing.moduleSpacing }}px)</label>
-          <el-slider 
-            v-model="currentSpacing.moduleSpacing" 
-            :min="8" 
-            :max="24" 
-            @change="handleSpacingChange"
-          />
-        </div>
-        
-        <div class="control-item">
-          <label>章节间距 ({{ currentSpacing.sectionSpacing }}px)</label>
-          <el-slider 
-            v-model="currentSpacing.sectionSpacing" 
-            :min="8" 
-            :max="24" 
-            @change="handleSpacingChange"
-          />
-        </div>
-      </div>
-    </div>
+          <div class="palette-grid">
+            <div
+              v-for="(preset, key) in premiumPresets"
+              :key="key"
+              class="palette-card"
+              :class="{ active: currentTheme.preset === key }"
+              @click="handleApplyThemePreset(key)"
+            >
+              <div class="palette-preview" :style="{ background: `linear-gradient(135deg, ${preset.primary}, ${preset.secondary})` }">
+                <div class="accent-dot" :style="{ backgroundColor: preset.accent }"></div>
+              </div>
+              <span class="palette-name">{{ getPresetName(key) }}</span>
+            </div>
+          </div>
 
-    <!-- 布局设置 -->
-    <div class="setting-group">
-      <h4 class="group-title">
-        <el-icon><Grid /></el-icon>
-        布局设置
-      </h4>
-
-      <div class="layout-controls">
-        <!-- 布局方向 -->
-        <div class="control-item">
-          <label class="control-label">布局方向</label>
-          <el-radio-group v-model="currentLayout.orientation" @change="handleLayoutChange">
-            <el-radio value="vertical">
-              <el-icon><ArrowDown /></el-icon>
-              纵向布局
-            </el-radio>
-            <el-radio value="horizontal">
-              <el-icon><ArrowRight /></el-icon>
-              横向布局
-            </el-radio>
-          </el-radio-group>
+          <div class="custom-section">
+            <div class="section-title-row">
+              <h4>自定义调色盘</h4>
+              <el-button link type="primary" size="small" @click="resetColors">重置颜色</el-button>
+            </div>
+            <div class="color-rows">
+              <div class="color-row-item" v-for="field in colorFields" :key="field.key">
+                <div class="field-info">
+                  <span class="label">{{ field.label }}</span>
+                  <span class="hex">{{ currentTheme[field.key] }}</span>
+                </div>
+                <el-color-picker
+                  v-model="currentTheme[field.key]"
+                  @change="handleColorChange"
+                  show-alpha
+                  size="default"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- 列数设置（横向布局时显示） -->
-        <div v-if="currentLayout.orientation === 'horizontal'" class="control-item">
-          <label class="control-label">列数 ({{ currentLayout.columns }}列)</label>
-          <el-slider
-            v-model="currentLayout.columns"
-            :min="2"
-            :max="4"
-            :step="1"
-            @change="handleLayoutChange"
-          />
+        <!-- 字体排版 Tab -->
+        <div v-else-if="activeTab === 'font'" class="tab-content" key="font">
+          <div class="section-header">
+            <h3>文字美化</h3>
+            <p>优选职场字体，精调间距，让内容更易阅读</p>
+          </div>
+
+          <div class="premium-card">
+            <div class="field-label">字体家族</div>
+            <el-select v-model="currentTypography.fontFamily" @change="handleTypographyChange" class="premium-select">
+              <el-option v-for="font in fontOptions" :key="font.value" :label="font.label" :value="font.value">
+                <span :style="{ fontFamily: font.value }">{{ font.label }}</span>
+              </el-option>
+            </el-select>
+          </div>
+
+          <div class="sliders-group">
+            <div class="slider-card">
+              <div class="slider-header">
+                <label>基础字号</label>
+                <span class="value-badge">{{ currentTypography.baseFontSize }}px</span>
+              </div>
+              <el-slider v-model="currentTypography.baseFontSize" :min="10" :max="20" @change="handleTypographyChange" />
+            </div>
+
+            <div class="slider-card">
+              <div class="slider-header">
+                <label>标题强度</label>
+                <span class="value-badge">{{ currentTypography.titleFontSize }}px</span>
+              </div>
+              <el-slider v-model="currentTypography.titleFontSize" :min="14" :max="32" @change="handleTypographyChange" />
+            </div>
+
+            <div class="slider-card">
+              <div class="slider-header">
+                <label>文本行高</label>
+                <span class="value-badge">{{ currentSpacing.lineHeight }}</span>
+              </div>
+              <el-slider v-model="currentSpacing.lineHeight" :min="1.0" :max="2.5" :step="0.1" @change="handleSpacingChange" />
+            </div>
+          </div>
         </div>
 
-        <!-- 列间距（横向布局时显示） -->
-        <div v-if="currentLayout.orientation === 'horizontal'" class="control-item">
-          <label class="control-label">列间距 ({{ currentLayout.columnGap }}px)</label>
-          <el-slider
-            v-model="currentLayout.columnGap"
-            :min="10"
-            :max="40"
-            @change="handleLayoutChange"
-          />
-        </div>
+        <!-- 布局框架 Tab -->
+        <div v-else-if="activeTab === 'layout'" class="tab-content" key="layout">
+          <div class="section-header">
+            <h3>空间布局</h3>
+            <p>科学规划内容结构，适配不同职业展示需求</p>
+          </div>
 
-        <!-- 对齐方式 -->
-        <div class="control-item">
-          <label class="control-label">内容对齐</label>
-          <el-radio-group v-model="currentLayout.alignment" @change="handleLayoutChange">
-            <el-radio value="left">左对齐</el-radio>
-            <el-radio value="center">居中</el-radio>
-            <el-radio value="right">右对齐</el-radio>
-          </el-radio-group>
-        </div>
-
-        <!-- 标题对齐 -->
-        <div class="control-item">
-          <label class="control-label">标题对齐</label>
-          <el-radio-group v-model="currentLayout.titleAlignment" @change="handleLayoutChange">
-            <el-radio value="left">左对齐</el-radio>
-            <el-radio value="center">居中</el-radio>
-            <el-radio value="right">右对齐</el-radio>
-          </el-radio-group>
-        </div>
-
-        <!-- 布局预设 -->
-        <div class="control-item">
-          <label class="control-label">布局预设</label>
-          <div class="layout-presets">
-            <el-button
-              size="small"
-              :type="currentLayout.preset === 'traditional' ? 'primary' : ''"
+          <div class="layout-visual-grid">
+            <div 
+              class="layout-visual-card" 
+              :class="{ active: currentLayout.preset === 'traditional' }"
               @click="applyLayoutPreset('traditional')"
             >
-              传统单列
-            </el-button>
-            <el-button
-              size="small"
-              :type="currentLayout.preset === 'modern' ? 'primary' : ''"
+              <div class="visual-box traditional">
+                <div class="v-line full"></div>
+                <div class="v-line full"></div>
+                <div class="v-line full"></div>
+              </div>
+              <span>传统单列</span>
+            </div>
+            <div 
+              class="layout-visual-card" 
+              :class="{ active: currentLayout.preset === 'modern' }"
               @click="applyLayoutPreset('modern')"
             >
-              现代双列
-            </el-button>
-            <el-button
-              size="small"
-              :type="currentLayout.preset === 'creative' ? 'primary' : ''"
+              <div class="visual-box modern">
+                <div class="v-line side"></div>
+                <div class="v-line main"></div>
+              </div>
+              <span>专业双列</span>
+            </div>
+            <div 
+              class="layout-visual-card" 
+              :class="{ active: currentLayout.preset === 'creative' }"
               @click="applyLayoutPreset('creative')"
             >
-              创意多列
-            </el-button>
+              <div class="visual-box creative">
+                <div class="v-line side"></div>
+                <div class="v-line main"></div>
+                <div class="v-line extra"></div>
+              </div>
+              <span>创意三列</span>
+            </div>
+          </div>
+
+          <div class="detail-controls">
+            <div class="premium-card">
+              <div class="field-label">内容对齐方式</div>
+              <el-radio-group v-model="currentLayout.alignment" @change="handleLayoutChange" class="premium-radio-group">
+                <el-radio-button label="left">左对齐</el-radio-button>
+                <el-radio-button label="center">居中对齐</el-radio-button>
+                <el-radio-button label="right">右对齐</el-radio-button>
+              </el-radio-group>
+            </div>
+            
+            <div class="slider-card" v-if="currentLayout.columns > 1">
+              <div class="slider-header">
+                <label>列间距</label>
+                <span class="value-badge">{{ currentLayout.columnGap }}px</span>
+              </div>
+              <el-slider v-model="currentLayout.columnGap" :min="10" :max="50" @change="handleLayoutChange" />
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- 页面设置 -->
-    <div class="setting-group">
-      <h4 class="group-title">
-        <el-icon><Document /></el-icon>
-        页面设置
-      </h4>
-
-      <div class="page-controls">
-        <div class="control-item">
-          <label>页面模式</label>
-          <el-radio-group v-model="currentPageSettings.pageCount" @change="handlePageSettingsChange">
-            <el-radio :label="1">单页</el-radio>
-            <el-radio :label="2">双页</el-radio>
-            <el-radio :label="3">三页</el-radio>
-          </el-radio-group>
-        </div>
-
-        <div v-if="currentPageSettings.pageCount > 1" class="control-item">
-          <label>分页模式</label>
-          <el-radio-group v-model="currentPageSettings.pagingMode" @change="handlePageSettingsChange">
-            <el-radio label="auto">自动分页</el-radio>
-            <el-radio label="manual">手动分页</el-radio>
-          </el-radio-group>
-        </div>
-
-        <div v-if="currentPageSettings.pageCount > 1" class="control-item">
-          <el-checkbox
-            v-model="currentPageSettings.showPageNumbers"
-            @change="handlePageSettingsChange"
-          >
-            显示页码
-          </el-checkbox>
-        </div>
-
-        <!-- 内容溢出分析 -->
-        <div v-if="contentAnalysis" class="content-analysis">
-          <div class="analysis-title">内容分析</div>
-          <div class="analysis-result" :class="{ warning: contentAnalysis.isOverflowing }">
-            <el-icon v-if="contentAnalysis.isOverflowing"><Warning /></el-icon>
-            <el-icon v-else><CircleCheck /></el-icon>
-            <span>{{ contentAnalysis.recommendation }}</span>
+        <!-- 页面设置 Tab -->
+        <div v-else-if="activeTab === 'page'" class="tab-content" key="page">
+          <div class="section-header">
+            <h3>打印与导出</h3>
+            <p>针对 PDF 导出和分段打印进行极致优化</p>
           </div>
-          <div v-if="contentAnalysis.isOverflowing" class="analysis-suggestion">
-            <el-button
-              size="small"
-              type="primary"
-              @click="applySuggestedPages"
+
+          <div class="page-mode-grid">
+            <div 
+              class="page-mode-card" 
+              v-for="n in 3" 
+              :key="n"
+              :class="{ active: currentPageSettings.pageCount === n }"
+              @click="currentPageSettings.pageCount = n; handlePageSettingsChange()"
             >
-              应用建议 ({{ contentAnalysis.suggestedPages }}页)
+              <div class="page-icon-stack">
+                <el-icon v-for="i in n" :key="i" class="stacked-doc"><Document /></el-icon>
+              </div>
+              <span class="page-label">{{ n === 1 ? '精炼单页' : n === 2 ? '标准双页' : '详实三页' }}</span>
+            </div>
+          </div>
+
+          <div class="slider-card">
+            <div class="slider-header">
+              <label>全局页边距</label>
+              <span class="value-badge">{{ currentSpacing.pageMargin.top }}px</span>
+            </div>
+            <el-slider 
+              v-model="currentSpacing.pageMargin.top" 
+              :min="0" 
+              :max="60" 
+              @change="handlePageMarginChange"
+            />
+            <p class="slider-hint">调节边距可改善阅读时的“呼吸感”</p>
+          </div>
+
+          <div class="action-footer">
+            <el-button type="danger" round plain @click="handleResetSettings" :icon="RefreshLeft">
+              重置所有样式
             </el-button>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- 重置按钮 -->
-    <div class="setting-group">
-      <el-button
-        type="danger"
-        :icon="RefreshLeft"
-        @click="handleResetSettings"
-        plain
-      >
-        重置为默认设置
-      </el-button>
+      </Transition>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, reactive, watch, onMounted } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import { useResumeStore } from '@stores/resume'
 import { ElMessage } from 'element-plus'
 import {
+  Brush,
   Edit,
-  Document,
   Grid,
-  RefreshLeft,
-  Warning,
-  CircleCheck,
-  Refresh,
-  ArrowDown,
-  ArrowRight
+  Monitor,
+  Document,
+  RefreshLeft
 } from '@element-plus/icons-vue'
-import { createMultiPageManager } from '@/utils/multipage/pageManager'
 
 const resumeStore = useResumeStore()
+const activeTab = ref('theme')
 
-// 获取数据，提供默认值
-const globalSettings = computed(() => resumeStore.globalSettings?.value || {})
-const themePresets = computed(() => resumeStore.themePresets?.value || {})
+const tabs = [
+  { id: 'theme', name: '配色方案', icon: Brush },
+  { id: 'font', name: '文字排版', icon: Edit },
+  { id: 'layout', name: '空间布局', icon: Grid },
+  { id: 'page', name: '页面设置', icon: Monitor }
+]
 
-// 当前设置的响应式副本
+const colorFields = [
+  { key: 'primary', label: '主题主色 (标题、边框)' },
+  { key: 'secondary', label: '辅助色 (副标题、图标)' },
+  { key: 'accent', label: '强调色 (链接、重点)' },
+  { key: 'textPrimary', label: '正文文字颜色' },
+  { key: 'background', label: '页面背景底色' }
+]
+
+const fontOptions = [
+  { label: '系统黑体 (默认)', value: 'var(--font-family-base)' },
+  { label: '思源黑体 (更均衡)', value: '"Noto Sans SC", sans-serif' },
+  { label: '思源宋体 (典雅)', value: '"Noto Serif SC", serif' },
+  { label: '官方楷体 (传统)', value: 'KaiTi, "STKaiti", serif' },
+  { label: 'Helvetica / Arial', value: 'Helvetica, Arial, sans-serif' }
+]
+
+const premiumPresets = {
+  professional: {
+    primary: '#1e293b',
+    secondary: '#475569',
+    accent: '#3b82f6',
+    textPrimary: '#1e293b',
+    background: '#ffffff',
+    name: '职场经典'
+  },
+  tech: {
+    primary: '#0f172a',
+    secondary: '#334155',
+    accent: '#06b6d4',
+    textPrimary: '#0f172a',
+    background: '#f8fafc',
+    name: '极客蓝'
+  },
+  creative: {
+    primary: '#4c1d95',
+    secondary: '#7c3aed',
+    accent: '#f43f5e',
+    textPrimary: '#2e1065',
+    background: '#ffffff',
+    name: '艺术创意'
+  },
+  nature: {
+    primary: '#064e3b',
+    secondary: '#059669',
+    accent: '#10b981',
+    textPrimary: '#064e3b',
+    background: '#f0fdf4',
+    name: '清新自然'
+  },
+  minimal: {
+    primary: '#000000',
+    secondary: '#404040',
+    accent: '#737373',
+    textPrimary: '#000000',
+    background: '#ffffff',
+    name: '极致简约'
+  }
+}
+
+// 获取 Store 数据
+const globalSettings = computed(() => resumeStore.globalSettings || {})
+
+// 实例化响应式副本
 const currentTheme = reactive({
-  primary: '#409eff',
-  secondary: '#67c23a',
-  accent: '#e6a23c',
+  primary: '#1e293b',
+  secondary: '#475569',
+  accent: '#3b82f6',
+  textPrimary: '#1e293b',
+  background: '#ffffff',
   preset: 'professional',
-  ...globalSettings.value?.theme
+  ...globalSettings.value.theme
 })
 
 const currentTypography = reactive({
   baseFontSize: 14,
   titleFontSize: 18,
-  fontFamily: 'system-ui',
-  ...globalSettings.value?.typography
+  fontFamily: 'var(--font-family-base)',
+  ...globalSettings.value.typography
 })
 
 const currentSpacing = reactive({
-  pageMargin: { top: 20, right: 20, bottom: 20, left: 20 },
-  moduleSpacing: 12,
-  lineHeight: 1.5,
-  sectionSpacing: 16,
-  ...globalSettings.value?.spacing
+  pageMargin: { top: 24, right: 24, bottom: 24, left: 24 },
+  moduleSpacing: 16,
+  lineHeight: 1.6,
+  ...globalSettings.value.spacing
 })
 
 const currentPageSettings = reactive({
   pageCount: 1,
   pagingMode: 'auto',
-  showPageNumbers: true,
-  pageBreaks: [],
-  ...globalSettings.value?.pageSettings
+  ...globalSettings.value.pageSettings
 })
 
 const currentLayout = reactive({
   orientation: 'vertical',
-  columns: 2,
-  columnGap: 20,
-  alignment: 'left',
-  titleAlignment: 'left',
+  columns: 1,
+  columnGap: 24,
   preset: 'traditional',
-  ...globalSettings.value?.layout
+  alignment: 'left',
+  ...globalSettings.value.layout
 })
 
-// 可用的主题预设
-const availableThemePresets = computed(() => {
-  return themePresets.value || {
-    professional: {
-      primary: '#2c3e50',
-      secondary: '#3498db',
-      accent: '#e74c3c'
-    },
-    creative: {
-      primary: '#9b59b6',
-      secondary: '#e67e22',
-      accent: '#f39c12'
-    },
-    minimal: {
-      primary: '#34495e',
-      secondary: '#95a5a6',
-      accent: '#2ecc71'
-    }
-  }
-})
+// UI 方法
+const getPresetName = (key) => premiumPresets[key]?.name || key
 
-// 获取预设名称
-const getPresetName = (key) => {
-  const names = {
-    professional: '专业',
-    creative: '创意',
-    minimal: '简约'
-  }
-  return names[key] || key
-}
-
-// 内容分析
-const contentAnalysis = computed(() => {
-  try {
-    const pageManager = createMultiPageManager(resumeStore.resumeData, currentPageSettings)
-    return pageManager.analyzeContentOverflow()
-  } catch (error) {
-    console.warn('内容分析失败:', error)
-    return null
-  }
-})
-
-// 事件处理函数
-const handleApplyThemePreset = (presetKey) => {
-  const preset = availableThemePresets.value[presetKey]
+const handleApplyThemePreset = (key) => {
+  const preset = premiumPresets[key]
   if (preset) {
-    Object.assign(currentTheme, preset, { preset: presetKey })
-    updateGlobalSettings()
-    ElMessage.success(`已应用${getPresetName(presetKey)}主题`)
+    Object.assign(currentTheme, { ...preset, preset: key })
+    updateAllSettings()
+    ElMessage.success({ message: `已应用 ${preset.name} 主题`, plain: true })
   }
 }
 
-const handleColorChange = (colorKey, value) => {
-  currentTheme[colorKey] = value
+const handleColorChange = () => {
   currentTheme.preset = 'custom'
-  updateGlobalSettings()
+  updateAllSettings()
 }
 
-const handleTypographyChange = () => {
-  updateGlobalSettings()
-}
-
-const handleSpacingChange = () => {
-  updateGlobalSettings()
-}
+const handleTypographyChange = () => updateAllSettings()
+const handleSpacingChange = () => updateAllSettings()
+const handleLayoutChange = () => updateAllSettings()
+const handlePageSettingsChange = () => updateAllSettings()
 
 const handlePageMarginChange = () => {
-  // 同步所有边距
-  const margin = currentSpacing.pageMargin.top
-  currentSpacing.pageMargin = {
-    top: margin,
-    right: margin,
-    bottom: margin,
-    left: margin
-  }
-  updateGlobalSettings()
-}
-
-const handlePageSettingsChange = () => {
-  updateGlobalSettings()
-}
-
-const applySuggestedPages = () => {
-  if (contentAnalysis.value) {
-    currentPageSettings.pageCount = contentAnalysis.value.suggestedPages
-    updateGlobalSettings()
-    ElMessage.success(`已应用${contentAnalysis.value.suggestedPages}页布局`)
-  }
-}
-
-const handleResetSettings = () => {
-  resumeStore.resetGlobalSettings()
-  // 重新加载当前设置
-  Object.assign(currentTheme, globalSettings.value?.theme || {})
-  Object.assign(currentTypography, globalSettings.value?.typography || {})
-  Object.assign(currentSpacing, globalSettings.value?.spacing || {})
-  Object.assign(currentPageSettings, globalSettings.value?.pageSettings || {})
-  ElMessage.success('已重置为默认设置')
-}
-
-// 颜色相关方法
-const generateRandomColors = () => {
-  const colors = [
-    '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
-    '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#f1c40f'
-  ]
-
-  currentTheme.primary = colors[Math.floor(Math.random() * colors.length)]
-  currentTheme.secondary = colors[Math.floor(Math.random() * colors.length)]
-  currentTheme.accent = colors[Math.floor(Math.random() * colors.length)]
-
-  updateGlobalSettings()
-  ElMessage.success('已生成随机配色')
-}
-
-const resetColors = () => {
-  currentTheme.primary = '#2c3e50'
-  currentTheme.secondary = '#3498db'
-  currentTheme.accent = '#e74c3c'
-  currentTheme.textPrimary = '#333333'
-  currentTheme.background = '#ffffff'
-  currentTheme.border = '#e0e0e0'
-
-  updateGlobalSettings()
-  ElMessage.success('已重置颜色')
-}
-
-const copyColorScheme = async () => {
-  const colorScheme = {
-    primary: currentTheme.primary,
-    secondary: currentTheme.secondary,
-    accent: currentTheme.accent,
-    textPrimary: currentTheme.textPrimary,
-    background: currentTheme.background,
-    border: currentTheme.border
-  }
-
-  try {
-    await navigator.clipboard.writeText(JSON.stringify(colorScheme, null, 2))
-    ElMessage.success('配色方案已复制到剪贴板')
-  } catch (error) {
-    ElMessage.error('复制失败')
-  }
-}
-
-// 布局相关方法
-const handleLayoutChange = () => {
-  updateGlobalSettings()
+  const m = currentSpacing.pageMargin.top
+  currentSpacing.pageMargin = { top: m, right: m, bottom: m, left: m }
+  updateAllSettings()
 }
 
 const applyLayoutPreset = (preset) => {
-  const presets = {
-    traditional: {
-      orientation: 'vertical',
-      columns: 1,
-      columnGap: 0,
-      alignment: 'left',
-      titleAlignment: 'left',
-      preset: 'traditional'
-    },
-    modern: {
-      orientation: 'horizontal',
-      columns: 2,
-      columnGap: 20,
-      alignment: 'left',
-      titleAlignment: 'left',
-      preset: 'modern'
-    },
-    creative: {
-      orientation: 'horizontal',
-      columns: 3,
-      columnGap: 15,
-      alignment: 'center',
-      titleAlignment: 'center',
-      preset: 'creative'
-    }
+  const templatesMap = {
+    traditional: 'modern',
+    modern: 'json-modern-dual',
+    creative: 'json-creative-multi'
+  }
+  
+  const layoutConfigs = {
+    traditional: { columns: 1, orientation: 'vertical' },
+    modern: { columns: 2, orientation: 'horizontal' },
+    creative: { columns: 2, orientation: 'horizontal' }
   }
 
-  const presetConfig = presets[preset]
-  if (presetConfig) {
-    Object.assign(currentLayout, presetConfig)
-    updateGlobalSettings()
-    ElMessage.success(`已应用${preset === 'traditional' ? '传统' : preset === 'modern' ? '现代' : '创意'}布局`)
-  }
+  currentLayout.preset = preset
+  Object.assign(currentLayout, layoutConfigs[preset])
+  
+  resumeStore.setTemplate(templatesMap[preset])
+  updateAllSettings()
+  ElMessage.success({ message: '布局结构已更新', type: 'success' })
 }
 
-// 更新全局设置
-const updateGlobalSettings = () => {
+const updateAllSettings = () => {
   resumeStore.updateGlobalSettings({
     theme: { ...currentTheme },
     typography: { ...currentTypography },
@@ -655,295 +400,394 @@ const updateGlobalSettings = () => {
   })
 }
 
-// 监听全局设置变化，同步到本地状态
-watch(globalSettings, (newSettings) => {
-  if (newSettings?.theme) {
-    Object.assign(currentTheme, newSettings.theme)
-  }
-  if (newSettings?.typography) {
-    Object.assign(currentTypography, newSettings.typography)
-  }
-  if (newSettings?.spacing) {
-    Object.assign(currentSpacing, newSettings.spacing)
-  }
-  if (newSettings?.pageSettings) {
-    Object.assign(currentPageSettings, newSettings.pageSettings)
-  }
-  if (newSettings?.layout) {
-    Object.assign(currentLayout, newSettings.layout)
-  }
-}, { deep: true })
+const resetColors = () => {
+  const def = premiumPresets.professional
+  Object.assign(currentTheme, { ...def, preset: 'professional' })
+  updateAllSettings()
+}
 
-// 组件挂载时初始化
+const handleResetSettings = () => {
+  resumeStore.resetGlobalSettings()
+  location.reload()
+}
+
 onMounted(() => {
-  // 确保数据同步
-  if (globalSettings.value?.theme) {
-    Object.assign(currentTheme, globalSettings.value.theme)
-  }
-  if (globalSettings.value?.typography) {
-    Object.assign(currentTypography, globalSettings.value.typography)
-  }
-  if (globalSettings.value?.spacing) {
-    Object.assign(currentSpacing, globalSettings.value.spacing)
-  }
-  if (globalSettings.value?.pageSettings) {
-    Object.assign(currentPageSettings, globalSettings.value.pageSettings)
-  }
-  if (globalSettings.value?.layout) {
-    Object.assign(currentLayout, globalSettings.value.layout)
-  }
+  // 初始化逻辑可在此补充
 })
 </script>
 
 <style scoped>
-.style-settings {
-  padding: 20px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.setting-group {
-  margin-bottom: 32px;
-  padding: 20px;
+.style-revamp-container {
+  display: flex;
+  height: 650px;
   background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
 }
 
-.group-title {
+/* 侧边导航 */
+.glass-sidebar {
+  width: 90px;
+  background: #f8fafc;
   display: flex;
+  flex-direction: column;
+  padding: 30px 0;
+  gap: 10px;
+  border-right: 1px solid #f1f5f9;
+}
+
+.nav-tab {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin: 0 0 20px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #374151;
-}
-
-/* 主题预设 */
-.theme-presets {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.theme-preset {
-  padding: 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-.theme-preset:hover {
-  border-color: #409eff;
-  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.15);
-}
-
-.theme-preset.active {
-  border-color: #409eff;
-  background: #f0f9ff;
-}
-
-.preset-preview {
-  display: flex;
   justify-content: center;
-  gap: 4px;
-  margin-bottom: 8px;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #94a3b8;
+  gap: 6px;
+  position: relative;
 }
 
-.color-dot {
+.nav-tab .el-icon {
+  font-size: 24px;
+}
+
+.nav-tab span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nav-tab:hover {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.nav-tab.active {
+  color: #3b82f6;
+  background: #ffffff;
+}
+
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 15%;
+  height: 70%;
+  width: 4px;
+  background: #3b82f6;
+  border-radius: 4px 0 0 4px;
+}
+
+/* 主内容区 */
+.content-panel {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.section-header h3 {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: #0f172a;
+}
+
+.section-header p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 主题选择卡片 */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+}
+
+.palette-card {
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 2px solid #f1f5f9;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.palette-card:hover {
+  transform: translateY(-4px);
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.palette-card.active {
+  border-color: #3b82f6;
+  background: #f0f7ff;
+}
+
+.palette-preview {
+  height: 80px;
+  border-radius: 12px;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.accent-dot {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1px solid #e5e7eb;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.preset-name {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-/* 自定义颜色 */
-.custom-colors h5 {
-  margin: 0 0 16px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.color-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.color-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
-}
-
-.color-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.color-label {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.color-picker-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.color-value {
-  font-size: 11px;
-  color: #9ca3af;
-  font-family: monospace;
-  background: #f3f4f6;
-  padding: 2px 6px;
-  border-radius: 4px;
-  min-width: 70px;
-  text-align: center;
-}
-
-.color-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-
-.color-actions .el-button {
-  flex: 1;
-  min-width: 100px;
-}
-
-/* 布局设置 */
-.layout-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.layout-presets {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.layout-presets .el-button {
-  flex: 1;
-  min-width: 80px;
-}
-
-/* 控制项 */
-.font-controls,
-.spacing-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.control-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.control-item label {
-  font-size: 14px;
-  color: #374151;
-  font-weight: 500;
-}
-
-.control-item .el-select {
-  width: 100%;
-}
-
-/* 页面设置样式 */
-.page-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.content-analysis {
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.analysis-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 12px;
-}
-
-.analysis-result {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.palette-name {
   font-size: 13px;
-  color: #059669;
-  margin-bottom: 12px;
-}
-
-.analysis-result.warning {
-  color: #d97706;
-}
-
-.analysis-suggestion {
+  font-weight: 700;
+  color: #334155;
+  display: block;
   text-align: center;
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .style-settings {
-    padding: 16px;
-  }
-
-  .setting-group {
-    padding: 16px;
-    margin-bottom: 24px;
-  }
-
-  .theme-presets {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .color-controls {
-    grid-template-columns: 1fr;
-  }
+/* 自定义部分 */
+.custom-section {
+  margin-top: 10px;
+  padding-top: 25px;
+  border-top: 1px solid #f1f5f9;
 }
 
-/* 滚动条样式 */
-.style-settings::-webkit-scrollbar {
-  width: 6px;
+.section-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.style-settings::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.section-title-row h4 {
+  font-size: 16px;
+  margin: 0;
+  color: #0f172a;
+}
+
+.color-rows {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.color-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: #f8fafc;
+  border-radius: 14px;
+}
+
+.field-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-info .label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.field-info .hex {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* 字体排版系统 */
+.premium-card {
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.premium-select :deep(.el-input__wrapper) {
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02) inset;
+  padding: 8px 16px;
+}
+
+.slider-card {
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.slider-header label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.value-badge {
+  background: #3b82f6;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.slider-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 10px;
+}
+
+/* 布局可视化 */
+.layout-visual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.layout-visual-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 20px;
+  border: 2.5px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.layout-visual-card.active {
+  border-color: #3b82f6;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+}
+
+.visual-box {
+  width: 80px;
+  height: 100px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  gap: 6px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+}
+
+.v-line {
+  background: #e2e8f0;
   border-radius: 3px;
 }
 
-.style-settings::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+.visual-box.traditional { flex-direction: column; }
+.visual-box.traditional .v-line.full { height: 12px; width: 100%; margin-bottom: 6px; }
+
+.visual-box.modern .side { width: 35%; height: 100%; background: #cbd5e1; }
+.visual-box.modern .main { width: 60%; height: 100%; }
+
+.visual-box.creative .side { width: 20%; height: 100%; background: #94a3b8; }
+.visual-box.creative .main { width: 50%; height: 100%; }
+.visual-box.creative .extra { width: 20%; height: 100%; background: #cbd5e1; }
+
+/* 页面模式 */
+.page-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-.style-settings::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+.page-mode-card {
+  padding: 30px 20px;
+  background: #f8fafc;
+  border-radius: 20px;
+  border: 2.5px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
 }
+
+.page-mode-card.active {
+  border-color: #3b82f6;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.page-icon-stack {
+  display: flex;
+  gap: -10px;
+}
+
+.stacked-doc {
+  font-size: 36px;
+  color: #cbd5e1;
+  margin-right: -15px;
+}
+
+.active .stacked-doc { color: #3b82f6; opacity: 0.8; }
+.active .stacked-doc:last-child { opacity: 1; }
+
+/* 转场动画 */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+
+/* 页脚 */
+.action-footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 滚动条定制 */
+.content-panel::-webkit-scrollbar { width: 8px; }
+.content-panel::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+.content-panel::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 </style>

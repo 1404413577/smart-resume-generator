@@ -41,6 +41,9 @@
       @change="handleFileSelect"
       style="display: none"
     />
+
+    <!-- 裁剪容器 -->
+    <ImageCropper ref="imageCropperRef" @confirm="handleCropperConfirm" />
   </div>
 </template>
 
@@ -49,9 +52,11 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
+import ImageCropper from './ImageCropper.vue'
 
 const resumeStore = useResumeStore()
 const fileInput = ref(null)
+const imageCropperRef = ref(null)
 
 // 头像数据
 const avatarUrl = computed(() => resumeStore.resumeData.personalInfo.photo)
@@ -59,7 +64,7 @@ const avatarPosition = ref(resumeStore.resumeData.personalInfo.photoPosition || 
 const hasAvatar = computed(() => !!avatarUrl.value)
 
 // 文件限制
-const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 放大到 5MB，因为我们会后期压缩
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
 
 // 触发文件选择
@@ -80,16 +85,15 @@ const handleFileSelect = (event) => {
 
   // 验证文件大小
   if (file.size > MAX_FILE_SIZE) {
-    ElMessage.error('图片大小不能超过 2MB')
+    ElMessage.error('图片大小不能超过 5MB')
     return
   }
 
-  // 读取文件并转换为base64
+  // 读取文件并打开裁剪器
   const reader = new FileReader()
   reader.onload = (e) => {
     const base64Data = e.target.result
-    resumeStore.updatePhoto(base64Data)
-    ElMessage.success('头像上传成功')
+    imageCropperRef.value.open(base64Data)
   }
   reader.onerror = () => {
     ElMessage.error('图片读取失败，请重试')
@@ -98,6 +102,12 @@ const handleFileSelect = (event) => {
 
   // 清空input值，允许重复选择同一文件
   event.target.value = ''
+}
+
+// 处理裁剪确认
+const handleCropperConfirm = (croppedData) => {
+  resumeStore.updatePhoto(croppedData)
+  ElMessage.success('头像处理成功')
 }
 
 // 更新头像位置

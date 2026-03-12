@@ -78,6 +78,16 @@
                 <div class="proj-techs" v-if="project.technologies?.length">
                   <span class="tech-badge" v-for="tech in project.technologies" :key="tech">{{ tech }}</span>
                 </div>
+                <div class="proj-links" v-if="project.url || project.github">
+                  <div v-if="project.url" class="proj-link-item">
+                    <span class="punct">./</span>demo:
+                    <a :href="project.url" target="_blank" class="proj-link-full">{{ project.url }}</a>
+                  </div>
+                  <div v-if="project.github" class="proj-link-item">
+                    <span class="punct">cat</span> repo:
+                    <a :href="project.github" target="_blank" class="proj-link-full">{{ project.github }}</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -430,6 +440,48 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   padding: 2px 8px;
   border-radius: 4px;
   font-weight: 600;
+}
+
+.proj-links {
+  margin-top: 12px;
+  display: flex;
+  gap: 15px;
+}
+
+.proj-link {
+  font-family: var(--t-font-mono);
+  font-size: 11px;
+  color: var(--t-primary);
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  gap: 4px;
+}
+
+.proj-link:hover {
+  text-decoration: underline;
+}
+
+.proj-links {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.proj-link-item {
+  font-family: var(--t-font-mono);
+  font-size: 11px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.proj-link-full {
+  color: var(--t-primary);
+  text-decoration: underline;
+  word-break: break-all;
+  line-height: 1.4;
 }
 
 /* Skills */

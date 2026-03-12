@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useResumeStore } from '@stores/resume'
 import { useSEO } from '@/composables/useSEO'
+import { useFontOptimizer } from '@/composables/useFontOptimizer'
 import { printResume } from '@utils/pdf/browserPrint'
 import { ElMessage } from 'element-plus'
 import AppLayout from '@components/layout/AppLayout.vue'
@@ -11,6 +12,9 @@ const resumeStore = useResumeStore()
 
 // SEO优化
 const { applyPageSEO, setAppStructuredData } = useSEO()
+
+// 字体极致优化
+useFontOptimizer()
 
 // 处理键盘快捷键
 const handleKeyboardShortcut = (event) => {

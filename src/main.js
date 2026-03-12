@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { registerSW } from 'virtual:pwa-register'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -27,3 +28,13 @@ app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
 app.mount('#app')
+
+// 注册PWA服务工作线程
+registerSW({
+  onNeedRefresh() {
+    console.log('有新内容可用，请刷新页面')
+  },
+  onOfflineReady() {
+    console.log('应用已准备好离线使用')
+  }
+})

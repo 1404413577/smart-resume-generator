@@ -43,9 +43,18 @@
           class="template-card"
           :class="{ 'selected': selectedTemplate?.id === template.id }"
           @click="selectTemplate(template)"
+          v-lazy-load
+          :data-template-id="template.id"
         >
-          <div class="template-preview">
-            <TemplatePreview :template="template" :width="220" />
+          <div class="template-preview-container">
+            <TemplatePreview 
+              v-if="template.isVisible"
+              :template="template" 
+              :width="220" 
+            />
+            <div v-else class="preview-placeholder">
+              <el-icon class="is-loading"><Loading /></el-icon>
+            </div>
             <div class="preview-overlay">
               <el-button type="primary" size="small">
                 {{ selectedTemplate?.id === template.id ? '已选择' : '选择' }}
@@ -99,9 +108,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search } from '@element-plus/icons-vue'
+import { Search, Loading } from '@element-plus/icons-vue'
 import { getAllTemplates } from '@templates'
 import { useResumeStore } from '@stores/resume'
 import TemplatePreview from './TemplatePreview.vue'
@@ -128,14 +137,49 @@ const selectedCategory = ref('')
 const selectedTemplate = ref(null)
 const templates = ref([])
 
+// 自定义指令：懒加载监视
+const vLazyLoad = {
+  mounted: (el) => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const templateId = el.dataset.templateId
+          const template = templates.value.find(t => t.id === templateId)
+          if (template && !template.isVisible) {
+            template.isVisible = true
+            observer.unobserve(el)
+          }
+        }
+      })
+    }, { threshold: 0.1 })
+    el.__observer = observer
+    observer.observe(el)
+  },
+  unmounted: (el) => {
+    if (el.__observer) {
+      el.__observer.disconnect()
+      delete el.__observer
+    }
+  }
+}
+
 // 初始化模板数据
 const initTemplates = () => {
+  if (templates.value.length > 0) return // 避免重复初始化
+
   try {
-    templates.value = getAllTemplates()
+    const rawTemplates = getAllTemplates()
+    templates.value = rawTemplates.map(t => ({
+      ...t,
+      isVisible: false
+    }))
+    
     // 默认选择当前使用的模板
-    const currentTemplate = templates.value.find(t => t.id === resumeStore.selectedTemplate)
-    if (currentTemplate) {
-      selectedTemplate.value = currentTemplate
+    if (!selectedTemplate.value) {
+      const currentTemplate = templates.value.find(t => t.id === resumeStore.selectedTemplate)
+      if (currentTemplate) {
+        selectedTemplate.value = currentTemplate
+      }
     }
   } catch (error) {
     console.error('加载模板失败:', error)
@@ -261,9 +305,22 @@ const handleClose = () => {
   box-shadow: 0 4px 12px rgba(64, 158, 255, 0.25);
 }
 
-.template-preview {
+.template-preview-container {
   position: relative;
+  min-height: 310px; /* 预留 A4 比例预览图高度 */
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+}
+
+.preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #909399;
+  font-size: 24px;
 }
 
 .preview-overlay {

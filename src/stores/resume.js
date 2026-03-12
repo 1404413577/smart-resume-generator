@@ -1,5 +1,12 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { 
+  saveResumeToDB, 
+  getResumeById, 
+  getAllResumes, 
+  saveSettings, 
+  getSettings 
+} from '@utils/db'
 
 export const useResumeStore = defineStore('resume', () => {
   // 状态
@@ -31,6 +38,8 @@ export const useResumeStore = defineStore('resume', () => {
   const isPreviewMode = ref(false)
   const lastSaveTime = ref(null)
   const isAutoSaveEnabled = ref(false)
+  const currentResumeId = ref(null)
+  const isDataLoaded = ref(false)
 
   // 模板设置
   const templateSettings = ref({
@@ -510,39 +519,67 @@ export const useResumeStore = defineStore('resume', () => {
     resumeData.value.languages = resumeData.value.languages.filter(lang => lang.id !== id)
   }
 
-  // 本地存储
-  const saveToLocalStorage = () => {
-    localStorage.setItem('resumeData', JSON.stringify(resumeData.value))
-    localStorage.setItem('selectedTemplate', selectedTemplate.value)
-    localStorage.setItem('templateSettings', JSON.stringify(templateSettings.value))
-    localStorage.setItem('globalSettings', JSON.stringify(globalSettings.value))
-    lastSaveTime.value = new Date()
-  }
-
-  // 自动保存定时器
-  let autoSaveTimer = null
-
-  // 启动自动保存
-  const startAutoSave = () => {
-    if (autoSaveTimer) {
-      clearInterval(autoSaveTimer)
+  // 数据持久化
+  const persistData = async () => {
+    if (!isDataLoaded.value) {
+      console.warn('数据尚未加载完成，静默跳过保存')
+      return
     }
+    try {
+      // 保存到 IndexedDB
+      const id = await saveResumeToDB(resumeData.value, currentResumeId.value)
+      if (!currentResumeId.value) {
+        currentResumeId.value = id
+      }
 
-    isAutoSaveEnabled.value = true
-    autoSaveTimer = setInterval(() => {
-      saveToLocalStorage()
-      console.log('自动保存完成:', new Date().toLocaleTimeString())
-    }, 10000) // 每10秒自动保存
-  }
+      // 保存全局设置
+      await saveSettings('selectedTemplate', selectedTemplate.value)
+      await saveSettings('templateSettings', templateSettings.value)
+      await saveSettings('globalSettings', globalSettings.value)
+      await saveSettings('sectionOrder', sectionOrder.value)
+      await saveSettings('currentResumeId', currentResumeId.value)
 
-  // 停止自动保存
-  const stopAutoSave = () => {
-    if (autoSaveTimer) {
-      clearInterval(autoSaveTimer)
-      autoSaveTimer = null
-      isAutoSaveEnabled.value = false
+      // 同时也保留一份在 localStorage 作为双重保险（可选，但目前先保留以维持稳定性）
+      localStorage.setItem('resumeData', JSON.stringify(resumeData.value))
+      localStorage.setItem('selectedTemplate', selectedTemplate.value)
+      localStorage.setItem('templateSettings', JSON.stringify(templateSettings.value))
+      localStorage.setItem('globalSettings', JSON.stringify(globalSettings.value))
+      localStorage.setItem('currentResumeId', currentResumeId.value.toString())
+      
+      lastSaveTime.value = new Date()
+    } catch (error) {
+      console.error('持久化数据失败:', error)
     }
   }
+
+
+  // 自动保存逻辑（实时响应式）
+  const debouncedSave = (() => {
+    let timeout = null
+    return (ms = 1500) => {
+      if (timeout) clearTimeout(timeout)
+      timeout = setTimeout(async () => {
+        await persistData()
+        console.log('实时数据已同步到数据库:', new Date().toLocaleTimeString())
+      }, ms)
+    }
+  })()
+
+  // 监听所有核心状态，实现实时保存
+  watch(
+    [resumeData, selectedTemplate, templateSettings, globalSettings, sectionOrder],
+    () => {
+      if (isDataLoaded.value) {
+        debouncedSave()
+      }
+    },
+    { deep: true }
+  )
+
+  // 兼容旧名的别名
+  const saveToLocalStorage = debouncedSave
+  const startAutoSave = () => { isAutoSaveEnabled.value = true }
+  const stopAutoSave = () => { isAutoSaveEnabled.value = false }
 
   const loadFromLocalStorage = () => {
     const saved = localStorage.getItem('resumeData')
@@ -723,7 +760,8 @@ export const useResumeStore = defineStore('resume', () => {
   // 章节排序方法
   const updateSectionOrder = (newOrder) => {
     sectionOrder.value = [...newOrder]
-    localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder.value))
+    saveSettings('sectionOrder', sectionOrder.value)
+    persistData() // 触发整体保存
   }
 
   const moveSectionUp = (index) => {
@@ -969,9 +1007,63 @@ export const useResumeStore = defineStore('resume', () => {
     }
   }
 
+  /**
+   * 加载数据（核心逻辑）
+   */
+  const loadData = async () => {
+    try {
+      // 1. 尝试从 IndexedDB 加载
+      const savedResumes = await getAllResumes()
+      const savedId = await getSettings('currentResumeId')
+
+      if (savedResumes.length > 0) {
+        const targetId = savedId || savedResumes[0].id
+        const resume = await getResumeById(targetId)
+        if (resume) {
+          resumeData.value = resume.data
+          currentResumeId.value = resume.id
+          
+          // 加载其他设置
+          const st = await getSettings('selectedTemplate')
+          if (st) selectedTemplate.value = st
+          
+          const ts = await getSettings('templateSettings')
+          if (ts) templateSettings.value = ts
+          
+          const gs = await getSettings('globalSettings')
+          if (gs) globalSettings.value = gs
+          
+          const so = await getSettings('sectionOrder')
+          if (so) sectionOrder.value = so
+          
+          isDataLoaded.value = true
+          return
+        }
+      }
+
+      // 2. 如果 IndexedDB 没有数据，则尝试从 localStorage 迁移
+      console.log('未发现 IndexedDB 数据，尝试从 localStorage 迁移...')
+      loadFromLocalStorage()
+      
+      // 迁移后标记为已加载，以便可以保存
+      isDataLoaded.value = true
+      
+      // 迁移后立即保存到 IndexedDB
+      if (resumeData.value.personalInfo.name || resumeData.value.summary) {
+        await persistData()
+        console.log('localStorage 数据已成功迁移到 IndexedDB')
+      }
+    } catch (error) {
+      console.error('加载数据失败:', error)
+      // 兜底方案：尝试从 localStorage 加载
+      loadFromLocalStorage()
+      isDataLoaded.value = true
+    }
+  }
+
   // 初始化
-  const init = () => {
-    loadFromLocalStorage()
+  const init = async () => {
+    await loadData()
 
     // 启动自动保存
     startAutoSave()
@@ -989,6 +1081,7 @@ export const useResumeStore = defineStore('resume', () => {
     isPreviewMode,
     lastSaveTime,
     isAutoSaveEnabled,
+    currentResumeId,
     templateSettings,
     sectionOrder,
     sectionConfig,

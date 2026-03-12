@@ -7,6 +7,7 @@
       @module-change="handleModuleChange"
       @template-manage="handleTemplateManage"
       @ai-generate="handleAIGenerate"
+      @ocr-import="handleOCRImport"
     />
 
     <!-- 中间：内容编辑区 -->
@@ -41,7 +42,8 @@
       @template-applied="handleTemplateApplied"
     />
 
-
+    <!-- OCR 导入对话框 -->
+    <OCRImport ref="ocrImportRef" />
   </div>
 </template>
 
@@ -56,6 +58,8 @@ import NavigationPanel from '@components/navigation/NavigationPanel.vue'
 import EditorPanel from '@components/resume/EditorPanel.vue'
 import PreviewPanel from '@components/resume/PreviewPanel.vue'
 import AIResumeGenerator from '@components/ai/AIResumeGenerator.vue'
+import OCRImport from '@components/resume/OCRImport.vue'
+import TemplateManager from '@components/templates/TemplateManager.vue'
 
 const resumeStore = useResumeStore()
 
@@ -64,6 +68,7 @@ const activeModule = ref('personalInfo')
 const previewScale = ref(1)
 const showAIGenerator = ref(false)
 const showTemplateManager = ref(false)
+const ocrImportRef = ref(null)
 
 
 // 计算属性
@@ -80,6 +85,10 @@ const handleTemplateManage = () => {
 
 const handleAIGenerate = () => {
   showAIGenerator.value = true
+}
+
+const handleOCRImport = () => {
+  ocrImportRef.value?.show()
 }
 
 

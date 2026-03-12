@@ -3,6 +3,9 @@ import { defineAsyncComponent } from 'vue'
 
 // 使用 Vite 的 import.meta.glob 自动发现 components 目录下的所有 .vue 模板
 const templateComponents = import.meta.glob('./components/*.vue')
+const templateConfigs = import.meta.glob('./configs/*.json', { eager: true })
+
+import SchemaRenderer from './engine/SchemaRenderer.vue'
 
 /**
  * 辅助函数：根据文件名寻找对应的异步组件
@@ -353,6 +356,24 @@ export const templateRegistry = {
     suitableFor: ['CEO/总裁', 'CFO/财务总监', 'COO/运营总监', '高级副总裁', '企业高管']
   }
 }
+
+// 自动加载 JSON 模板配置
+Object.entries(templateConfigs).forEach(([path, config]) => {
+  const id = path.split('/').pop().replace('.json', '')
+  if (!templateRegistry[id]) {
+    templateRegistry[id] = {
+      name: config.name,
+      component: SchemaRenderer, // 使用通用的 Schema 渲染组件
+      isSchema: true,
+      config: config,
+      description: `${config.name} (动态配置模板)`,
+      category: config.category?.toLowerCase() || 'minimalist',
+      preview: '/images/templates/minimalist-preview.png', // 默认预览图
+      features: ['动态布局', '高度可定制'],
+      suitableFor: ['通用职位']
+    }
+  }
+})
 
 // 获取所有模板
 export function getAllTemplates() {

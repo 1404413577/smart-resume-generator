@@ -1,0 +1,30 @@
+{
+  "name": "现代双列 (JSON)",
+  "description": "专业双栏布局，左侧核心经历，右侧侧边栏展示技能与教育",
+  "theme": {
+    "primary": "#3498db",
+    "secondary": "#2c3e50"
+  },
+  "layout": [
+    { "type": "header", "style": "centered" },
+    {
+      "type": "grid",
+      "columns": [
+        {
+          "width": "65%",
+          "modules": ["summary", "workExperience", "projects"]
+        },
+        {
+          "width": "35%",
+          "modules": ["skills", "education"],
+          "style": { "background": "#f8f9fa", "padding": "15px", "borderRadius": "8px" }
+        }
+      ],
+      "gap": "25px"
+    }
+  ],
+  "moduleSettings": {
+    "skills": { "title": "专业技能", "showBar": true },
+    "workExperience": { "title": "职业历程" }
+  }
+}

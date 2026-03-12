@@ -4,6 +4,7 @@
     <AIActionButtons
       @ai-generate="$emit('ai-generate')"
       @template-manage="$emit('template-manage')"
+      @ocr-import="$emit('ocr-import')"
     />
 
     <!-- 模块导航 -->
@@ -32,7 +33,8 @@ defineProps({
 defineEmits([
   'module-change',
   'template-manage',
-  'ai-generate'
+  'ai-generate',
+  'ocr-import'
 ])
 </script>
 

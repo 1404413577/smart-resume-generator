@@ -399,32 +399,49 @@ const formatMessage = (content) => {
 const sendMessage = async () => {
   if (!userInput.value.trim() || isThinking.value) return
 
+  const userText = userInput.value
   // 添加用户消息
   messages.value.push({
     role: 'user',
-    content: userInput.value
+    content: userText
   })
 
   userInput.value = ''
   isThinking.value = true
 
-  try {
-    // 调用AI对话服务
-    const response = await generateConversationalResponse({
-      messages: messages.value,
-      currentStep: getCurrentStep(),
-      userProfile: userProfile.value
-    })
+  // 创建一个占位消息用于流式显示 AI 回复
+  const assistantMessageIndex = messages.value.length
+  messages.value.push({
+    role: 'assistant',
+    content: '',
+    isStreaming: true
+  })
 
-    // 添加AI回复
-    messages.value.push({
+  try {
+    // 调用AI对话服务（带流式回调）
+    const response = await generateConversationalResponse(
+      {
+        messages: messages.value.filter(m => !m.isStreaming), // 过滤掉占位符
+        currentStep: getCurrentStep(),
+        userProfile: userProfile.value
+      },
+      (chunk) => {
+        // 流式回调：更新占位消息的内容
+        messages.value[assistantMessageIndex].content += chunk
+        scrollToBottom()
+      }
+    )
+
+    // 完整的 JSON 响应返回后，更新占位消息为完整数据
+    messages.value[assistantMessageIndex] = {
       role: 'assistant',
       content: response.response,
       suggestions: response.suggestions,
       questions: response.questions,
       qualityScore: response.qualityScore,
-      improvements: response.improvements
-    })
+      improvements: response.improvements,
+      isStreaming: false
+    }
 
     // 更新质量评分
     if (response.qualityScore) {
@@ -441,6 +458,8 @@ const sendMessage = async () => {
     scrollToBottom()
   } catch (error) {
     console.error('AI对话失败:', error)
+    // 如果出错，移除占位符
+    messages.value.splice(assistantMessageIndex, 1)
     ElMessage.error('AI服务暂时不可用，请稍后重试')
   } finally {
     isThinking.value = false

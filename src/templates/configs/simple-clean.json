@@ -1,0 +1,37 @@
+{
+  "name": "极简清新 (Schema)",
+  "category": "Minimalist",
+  "layout": [
+    {
+      "type": "header",
+      "align": "left",
+      "showPhoto": true
+    },
+    {
+      "type": "grid",
+      "columns": "1.5fr 1fr",
+      "children": [
+        [
+          "summary",
+          "workExperience",
+          "projects"
+        ],
+        [
+          "skills",
+          "education"
+        ]
+      ]
+    }
+  ],
+  "moduleSettings": {
+    "summary": { "title": "个人陈述" },
+    "workExperience": { "title": "工作履历" }
+  },
+  "styles": {
+    "primary": "#409eff",
+    "secondary": "#606266",
+    "background": "#ffffff",
+    "text": "#303133",
+    "fontFamily": "'Inter', -apple-system, sans-serif"
+  }
+}

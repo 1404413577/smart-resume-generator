@@ -8,7 +8,7 @@ const TemplatesView = () => import('../views/TemplatesView.vue')
 const SettingsView = () => import('../views/SettingsView.vue')
 const AboutView = () => import('../views/AboutView.vue')
 const NotFoundView = () => import('../views/NotFoundView.vue')
-const TestRandomStyleView = () => import('../views/TestRandomStyleView.vue')
+const DesignView = () => import('../views/DesignView.vue')
 const PrintView = () => import('../views/PrintView.vue')
 
 const routes = [
@@ -21,6 +21,16 @@ const routes = [
       description: '免费在线简历编辑器，提供多种精美开源模板，支持ATS解析，一键导出高清PDF简历。',
       keywords: '免费简历,在线简历制作,求职简历生成器,ATS友好模板,导出PDF简历',
       requiresResume: false
+    }
+  },
+  {
+    path: '/design',
+    name: 'Design',
+    component: DesignView,
+    meta: {
+      title: '设计工作室',
+      description: '个性化定制您的简历视觉风格。',
+      requiresResume: true
     }
   },
 
@@ -73,16 +83,6 @@ const routes = [
     meta: {
       title: '编辑简历',
       description: '编辑您的简历',
-      requiresResume: false
-    }
-  },
-  {
-    path: '/test-random-style',
-    name: 'TestRandomStyle',
-    component: TestRandomStyleView,
-    meta: {
-      title: '随机风格测试',
-      description: '测试随机简历风格生成功能',
       requiresResume: false
     }
   },

@@ -49,6 +49,10 @@
                   <el-icon><TrendCharts /></el-icon>
                   <span>质量检查</span>
                 </div>
+                <div class="quick-action-item" @click="handleOCRImport">
+                  <el-icon><Picture /></el-icon>
+                  <span>图片导入</span>
+                </div>
                 <div class="quick-action-item" @click="handleAIGenerate">
                   <el-icon><ChatRound /></el-icon>
                   <span>AI对话</span>
@@ -142,17 +146,15 @@
           </div>
         </div>
 
-        <!-- 样式设置 -->
+        <!-- 样式设置入口 -->
         <div class="sidebar-section">
-          <div class="section-header" @click="toggleSection('style')">
-            <el-icon><Tools /></el-icon>
-            <span>样式设置</span>
-            <el-icon class="expand-icon" :class="{ expanded: expandedSections.style }">
-              <ArrowRight />
-            </el-icon>
-          </div>
-          <div v-show="expandedSections.style" class="section-content">
-            <StyleSettings />
+          <div class="action-item design-action" @click="router.push('/design')">
+            <el-icon class="action-icon"><Brush /></el-icon>
+            <div class="action-info">
+              <div class="action-name">设计与样式</div>
+              <div class="action-desc">定制简历视觉风格与布局</div>
+            </div>
+            <el-icon class="action-arrow"><ArrowRight /></el-icon>
           </div>
         </div>
 
@@ -260,6 +262,8 @@
         @resume-generated="handleResumeGenerated"
       />
 
+      <OCRImport ref="ocrImportRef" />
+
       <TemplateManager
         v-model="showTemplateManager"
         @close="showTemplateManager = false"
@@ -326,7 +330,8 @@ import {
   TrendCharts,
   ChatRound,
   Upload,
-  Close
+  Close,
+  Brush
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
@@ -343,10 +348,8 @@ import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.
 import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
 import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
-import StyleSettings from '@components/settings/StyleSettingsNew.vue'
-import MultiPagePreviewControls from '@components/resume/MultiPagePreviewControls.vue'
-import AITestPanel from '@components/ai/AITestPanel.vue'
-import DraggableDonation from '@components/common/DraggableDonation.vue'
+import OCRImport from '@components/resume/OCRImport.vue'
+import { useRouter } from 'vue-router'
 import { getTemplate } from '@templates'
 
 // 编辑器组件导入
@@ -358,6 +361,7 @@ import SkillsEditor from '@components/resume/editors/SkillsEditor.vue'
 import ProjectsEditor from '@components/resume/editors/ProjectsEditor.vue'
 
 const resumeStore = useResumeStore()
+const router = useRouter()
 
 // 启用全局样式管理，实现实时预览
 useGlobalStyles()
@@ -386,6 +390,7 @@ const showSectionSort = ref(false)
 const currentPreviewPage = ref(1)
 const showAllPages = ref(false)
 const showAITest = ref(false)
+const ocrImportRef = ref(null)
 const showDonation = ref(true)
 
 // 响应式设计相关
@@ -481,6 +486,10 @@ const handleTemplateManage = () => {
 
 const handleAIGenerate = () => {
   showAIGenerator.value = true
+}
+
+const handleOCRImport = () => {
+  ocrImportRef.value?.show()
 }
 
 
@@ -1206,6 +1215,24 @@ watch(() => resumeStore.resumeData, () => {
 
 .template-action:hover .action-arrow {
   color: #eab308;
+}
+
+/* 设计操作特殊样式 */
+.design-action:hover {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+.design-action:hover .action-icon {
+  color: #db2777;
+}
+
+.design-action:hover .action-name {
+  color: #db2777;
+}
+
+.design-action:hover .action-arrow {
+  color: #db2777;
 }
 
 .section-desc {

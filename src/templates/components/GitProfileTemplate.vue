@@ -86,6 +86,16 @@
                   <span class="language-color"></span> {{ project.technologies[0] }}
                   <span class="text-muted ml-3" v-if="project.technologies.length > 1">+ {{ project.technologies.slice(1).join(', ') }}</span>
                 </div>
+                <div class="repo-links" v-if="project.url || project.github">
+                  <div v-if="project.url" class="repo-link-item">
+                    <span class="link-icon">🔗</span>
+                    <a :href="project.url" target="_blank" class="repo-link-full">{{ project.url }}</a>
+                  </div>
+                  <div v-if="project.github" class="repo-link-item">
+                    <span class="link-icon">🍴</span>
+                    <a :href="project.github" target="_blank" class="repo-link-full">{{ project.github }}</a>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -276,6 +286,57 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   background-color: #41b883; /* Vue Green as default */
   margin-right: 6px;
 }
+
+.repo-links {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.repo-link {
+  font-size: 11px;
+  color: var(--git-link);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.repo-link:hover {
+  text-decoration: underline;
+}
+
+.repo-links {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.repo-link-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.repo-link-full {
+  color: var(--git-link);
+  text-decoration: none;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.repo-link-full:hover {
+  text-decoration: underline;
+}
+
+.link-icon {
+  font-size: 12px;
+}
+
 .ml-3 { margin-left: 12px; }
 
 /* Education */

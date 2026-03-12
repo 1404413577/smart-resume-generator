@@ -532,7 +532,7 @@ export const useResumeStore = defineStore('resume', () => {
     autoSaveTimer = setInterval(() => {
       saveToLocalStorage()
       console.log('自动保存完成:', new Date().toLocaleTimeString())
-    }, 3000) // 每3秒自动保存
+    }, 10000) // 每10秒自动保存
   }
 
   // 停止自动保存

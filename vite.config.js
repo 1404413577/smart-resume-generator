@@ -16,11 +16,25 @@ export default defineConfig({
       '@api': resolve(__dirname, 'src/api')
     }
   },
+  css: {
+    modules: {
+      // 生产环境混淆类名，开发环境保留语义
+      generateScopedName: process.env.NODE_ENV === 'production'
+        ? '_[hash:base64:6]'
+        : '[name]__[local]__[hash:base64:4]'
+    }
+  },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
     minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: false // 故意保留 debugger 以便后续安全脚本埋雷
+      }
+    },
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {

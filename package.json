@@ -16,7 +16,7 @@
     "seo:audit": "lighthouse --output=html --output-path=./reports/lighthouse.html --view",
     "performance:test": "node scripts/performance-test.js",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist -r https://github.com/1404413577/smart-resume-generator.git"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",

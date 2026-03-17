@@ -14,6 +14,7 @@
         :page-content="page"
         :page-number="index + 1"
         :is-single-page="false"
+        v-bind="props.templateConfig ? { config: props.templateConfig } : {}"
       />
     </PageContainer>
   </div>
@@ -36,6 +37,10 @@ const props = defineProps({
   isPrintMode: {
     type: Boolean,
     default: false
+  },
+  templateConfig: {
+    type: Object,
+    default: null
   }
 })
 

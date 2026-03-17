@@ -6,7 +6,7 @@
         :is="template.component"
         :resume-data="sampleResumeData"
         :template-id="template.id"
-        :config="template.config || {}"
+        v-bind="template.config ? { config: template.config } : {}"
         class="template-inner"
       />
       <div v-else class="preview-placeholder">

@@ -1,7 +1,7 @@
 <template>
   <div class="schema-template" :style="templateStyles">
     <div class="resume-container">
-      <template v-for="(section, index) in config.layout" :key="index">
+      <template v-for="(section, index) in (config?.layout || [])" :key="index">
         <!-- 头部区域 -->
         <header v-if="section.type === 'header'" :class="['section-header', section.align]">
           <div class="header-main">
@@ -18,11 +18,20 @@
           </div>
         </header>
 
-        <!-- 栅格布局区域 -->
-        <div v-if="section.type === 'grid'" class="section-grid" :style="{ gridTemplateColumns: section.columns }">
+        <!-- 栅格布局区域（columns 为 CSS 字符串，children 为二维数组） -->
+        <div v-if="section.type === 'grid' && typeof section.columns === 'string'" class="section-grid" :style="{ gridTemplateColumns: section.columns }">
           <div v-for="(col, colIdx) in section.children" :key="colIdx" class="grid-column">
             <template v-for="(child, childIdx) in col" :key="childIdx">
               <render-module :type="child" :resume-data="resumeData" :config="config" />
+            </template>
+          </div>
+        </div>
+
+        <!-- 栅格布局区域（columns 为对象数组，每项含 width/modules） -->
+        <div v-if="section.type === 'grid' && Array.isArray(section.columns)" class="section-grid" :style="{ gridTemplateColumns: section.columns.map(c => c.width || '1fr').join(' '), gap: section.gap || '30px' }">
+          <div v-for="(col, colIdx) in section.columns" :key="colIdx" class="grid-column" :style="typeof col.style === 'object' ? col.style : {}">
+            <template v-for="(mod, modIdx) in col.modules" :key="modIdx">
+              <render-module :type="mod" :resume-data="resumeData" :config="config" />
             </template>
           </div>
         </div>
@@ -45,7 +54,7 @@ import RenderModule from './RenderModule.vue'
 const props = defineProps({
   resumeData: { type: Object, required: true },
   templateId: { type: String, required: true },
-  config: { type: Object, required: true }
+  config: { type: Object, default: () => ({}) }
 })
 
 const { templateStyles } = useTemplateComponentStyles(props.templateId)

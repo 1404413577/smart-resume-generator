@@ -99,7 +99,7 @@ const hasAgreed = ref(false)
 
 onMounted(() => {
   // 每次打开应用均需重新同意
-  visible.value = true
+  visible.value = false
 })
 
 const handleConfirm = () => {

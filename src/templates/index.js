@@ -1,5 +1,5 @@
 // 模板注册和配置
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, markRaw } from 'vue'
 
 // 使用 Vite 的 import.meta.glob 自动发现 components 目录下的所有 .vue 模板
 const templateComponents = import.meta.glob('./components/*.vue')
@@ -41,7 +41,7 @@ const getAsyncComponent = (key) => {
 
   for (const path of patterns) {
     if (templateComponents[path]) {
-      return defineAsyncComponent(templateComponents[path])
+      return markRaw(defineAsyncComponent(templateComponents[path]))
     }
   }
 
@@ -358,12 +358,14 @@ export const templateRegistry = {
 }
 
 // 自动加载 JSON 模板配置
-Object.entries(templateConfigs).forEach(([path, config]) => {
+Object.entries(templateConfigs).forEach(([path, module]) => {
   const id = path.split('/').pop().replace('.json', '')
+  // import.meta.glob 返回 ES module 对象，JSON 内容在 .default 属性中
+  const config = module.default || module
   if (!templateRegistry[id]) {
     templateRegistry[id] = {
       name: config.name,
-      component: SchemaRenderer, // 使用通用的 Schema 渲染组件
+      component: markRaw(SchemaRenderer), // 使用通用的 Schema 渲染组件
       isSchema: true,
       config: config,
       description: `${config.name} (动态配置模板)`,

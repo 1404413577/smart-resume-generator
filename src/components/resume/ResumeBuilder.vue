@@ -94,6 +94,7 @@
               :is="currentTemplate"
               :resume-data="resumeStore.resumeData"
               :is-single-page="true"
+              v-bind="currentTemplateConfig ? { config: currentTemplateConfig } : {}"
             />
 
             <!-- 多页模式 -->
@@ -102,6 +103,7 @@
               :template-component="currentTemplate"
               :resume-data="resumeStore.resumeData"
               :is-print-mode="false"
+              :template-config="currentTemplateConfig"
             />
           </div>
         </div>
@@ -221,11 +223,14 @@ const templates = computed(() => {
   }
 })
 
+// 当前选中的模板对象
+const currentTemplateObj = computed(() => getTemplate(resumeStore.selectedTemplate))
+
 // 当前选中的模板组件
-const currentTemplate = computed(() => {
-  const template = getTemplate(resumeStore.selectedTemplate)
-  return template?.component || null
-})
+const currentTemplate = computed(() => currentTemplateObj.value?.component || null)
+
+// 当前模板的 config（JSON/Schema 模板需要）
+const currentTemplateConfig = computed(() => currentTemplateObj.value?.config || null)
 
 // 模块切换处理
 const handleModuleChange = (moduleId) => {

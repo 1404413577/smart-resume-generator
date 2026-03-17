@@ -1,6 +1,7 @@
 <template>
   <div 
     v-if="visible"
+    ref="el"
     class="draggable-donation" 
     :style="positionStyle"
     @mousedown="handleMouseDown"
@@ -17,10 +18,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onBeforeUnmount } from 'vue'
+import { ref, onMounted, computed, onBeforeUnmount, nextTick } from 'vue'
 import { Close } from '@element-plus/icons-vue'
 import qrCode1 from '@/assets/zhibao (1).jpg'
 import qrCode2 from '@/assets/zhibao (2).jpg'
+
+const el = ref(null)
 
 const visible = ref(true)
 const position = ref({ x: 0, y: 0 })
@@ -29,17 +32,37 @@ const dragStart = ref({ x: 0, y: 0 })
 const initialPosition = ref({ x: 0, y: 0 })
 
 // 生成随机位置
-onMounted(() => {
-  // 假设弹窗宽度约为 320px，高度约为 200px
-  const maxX = window.innerWidth - 320
-  const maxY = window.innerHeight - 200
+onMounted(async () => {
+  await nextTick()
+  if (!el.value) return
+
+  const width = el.value.offsetWidth
+  const height = el.value.offsetHeight
   
-  // 随机在右半边或者下半边出现，避免遮挡主要工作区
+  const maxX = window.innerWidth - width
+  const maxY = window.innerHeight - height
+  
+  // 在全屏范围内随机生成位置，并留出少量边距
   position.value = {
-    x: Math.max(0, Math.floor(Math.random() * (maxX - 100)) + 100),
-    y: Math.max(0, Math.floor(Math.random() * (maxY - 100)) + 100)
+    x: Math.max(10, Math.floor(Math.random() * (maxX - 20)) + 10),
+    y: Math.max(10, Math.floor(Math.random() * (maxY - 20)) + 10)
   }
+
+  window.addEventListener('resize', handleResize)
 })
+
+const handleResize = () => {
+  if (!el.value) return
+  const width = el.value.offsetWidth
+  const height = el.value.offsetHeight
+  
+  const maxX = window.innerWidth - width
+  const maxY = window.innerHeight - height
+  
+  // 确保窗口缩小时组件不会超出边界
+  position.value.x = Math.max(0, Math.min(position.value.x, maxX))
+  position.value.y = Math.max(0, Math.min(position.value.y, maxY))
+}
 
 const positionStyle = computed(() => ({
   left: `${position.value.x}px`,
@@ -63,7 +86,7 @@ const handleMouseDown = (e) => {
 }
 
 const handleMouseMove = (e) => {
-  if (!isDragging.value) return
+  if (!isDragging.value || !el.value) return
   
   const deltaX = e.clientX - dragStart.value.x
   const deltaY = e.clientY - dragStart.value.y
@@ -71,9 +94,9 @@ const handleMouseMove = (e) => {
   let newX = initialPosition.value.x + deltaX
   let newY = initialPosition.value.y + deltaY
   
-  // 边界检查
-  const maxX = window.innerWidth - 320
-  const maxY = window.innerHeight - 200
+  // 使用实际尺寸进行边界检查
+  const maxX = window.innerWidth - el.value.offsetWidth
+  const maxY = window.innerHeight - el.value.offsetHeight
   
   newX = Math.max(0, Math.min(newX, maxX))
   newY = Math.max(0, Math.min(newY, maxY))
@@ -90,6 +113,7 @@ const handleMouseUp = () => {
 onBeforeUnmount(() => {
   document.removeEventListener('mousemove', handleMouseMove)
   document.removeEventListener('mouseup', handleMouseUp)
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 

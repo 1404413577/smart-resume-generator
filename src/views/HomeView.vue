@@ -346,9 +346,11 @@ import { useWindowSize } from '@vueuse/core'
 import TemplateUploader from '@components/word/TemplateUploader.vue'
 import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.vue'
 import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
+import AITestPanel from '@components/ai/AITestPanel.vue'
 import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
 import OCRImport from '@components/resume/OCRImport.vue'
+import DraggableDonation from '@components/common/DraggableDonation.vue'
 import { useRouter } from 'vue-router'
 import { getTemplate } from '@templates'
 
@@ -853,7 +855,6 @@ watch(() => resumeStore.resumeData, () => {
 }
 
 .ai-assistant-section .section-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   margin: 0;
   border-radius: 0;
@@ -955,14 +956,12 @@ watch(() => resumeStore.resumeData, () => {
 }
 
 .ai-action.primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .ai-action.primary:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }

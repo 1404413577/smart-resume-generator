@@ -7,6 +7,7 @@ import {
   saveSettings, 
   getSettings 
 } from '@utils/db'
+import { defaultResumeData } from '@/data'
 
 export const useResumeStore = defineStore('resume', () => {
   // 状态
@@ -1008,6 +1009,17 @@ export const useResumeStore = defineStore('resume', () => {
   }
 
   /**
+   * 使用默认数据填充简历
+   */
+  const fillWithDefaultData = () => {
+    // 深拷贝默认数据以避免引用问题
+    const defaultData = JSON.parse(JSON.stringify(defaultResumeData))
+    resumeData.value = defaultData
+    persistData()
+    return true
+  }
+
+  /**
    * 加载数据（核心逻辑）
    */
   const loadData = async () => {
@@ -1158,6 +1170,9 @@ export const useResumeStore = defineStore('resume', () => {
     // 高级章节配置操作
     updateSectionConfigAdvanced,
     toggleSectionVisibility,
-    updateFieldVisibility
+    updateFieldVisibility,
+
+    // 默认数据填充
+    fillWithDefaultData
   }
 })

@@ -3,6 +3,19 @@
     <div class="editor-header">
       <h3 class="editor-title">{{ getModuleTitle(activeModule) }}</h3>
       <div class="editor-actions">
+        <el-popconfirm
+          title="使用默认数据"
+          description="这将使用示例数据填充整个简历，是否继续？"
+          confirm-button-text="确认"
+          cancel-button-text="取消"
+          @confirm="handleFillDefault"
+        >
+          <template #reference>
+            <el-button type="warning" size="small" :icon="DocumentCopy">
+              填充示例
+            </el-button>
+          </template>
+        </el-popconfirm>
         <el-button @click="$emit('ai-generate')" type="success" size="small" :icon="MagicStick">
           AI助手
         </el-button>
@@ -21,7 +34,9 @@
 
 <script setup>
 import { computed } from 'vue'
-import { MagicStick } from '@element-plus/icons-vue'
+import { MagicStick, DocumentCopy } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import { useResumeStore } from '@stores/resume'
 
 // 编辑器组件导入
 import PersonalInfoEditor from './editors/PersonalInfoEditor.vue'
@@ -39,6 +54,18 @@ const props = defineProps({
 })
 
 defineEmits(['ai-generate'])
+
+const resumeStore = useResumeStore()
+
+const handleFillDefault = () => {
+  try {
+    resumeStore.fillWithDefaultData()
+    ElMessage.success('已成功填充默认数据！')
+  } catch (error) {
+    console.error('填充默认数据失败:', error)
+    ElMessage.error('填充默认数据失败')
+  }
+}
 
 // 模块标题映射
 const moduleTitles = {

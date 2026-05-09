@@ -29,6 +29,20 @@ app.use(router)
 app.use(ElementPlus)
 app.mount('#app')
 
+// 全局快捷键：Ctrl+Shift+D 快速填充默认数据
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyD') {
+    e.preventDefault()
+    const store = pinia._s.get('resume')
+    if (store) {
+      if (confirm('是否填充默认数据？（现有数据将被覆盖）')) {
+        store.fillWithDefaultData()
+        console.log('✓ 已填充默认数据')
+      }
+    }
+  }
+})
+
 // 注册PWA服务工作线程
 registerSW({
   onNeedRefresh() {

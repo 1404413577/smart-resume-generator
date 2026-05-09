@@ -91,6 +91,7 @@ const modules = computed(() => [
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  min-height: 0;
 }
 
 .navigation-header {

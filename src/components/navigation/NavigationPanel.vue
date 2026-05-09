@@ -1,20 +1,26 @@
 <template>
   <div class="navigation-panel">
     <!-- AI功能区域 -->
-    <AIActionButtons
-      @ai-generate="$emit('ai-generate')"
-      @template-manage="$emit('template-manage')"
-      @ocr-import="$emit('ocr-import')"
-    />
+    <div class="ai-section">
+      <AIActionButtons
+        @ai-generate="$emit('ai-generate')"
+        @template-manage="$emit('template-manage')"
+        @ocr-import="$emit('ocr-import')"
+      />
+    </div>
 
     <!-- 模块导航 -->
-    <ModuleNavigation
-      :active-module="activeModule"
-      @module-change="$emit('module-change', $event)"
-    />
+    <div class="module-section">
+      <ModuleNavigation
+        :active-module="activeModule"
+        @module-change="$emit('module-change', $event)"
+      />
+    </div>
 
     <!-- 底部操作按钮 -->
-    <ActionButtons />
+    <div class="action-section">
+      <ActionButtons />
+    </div>
   </div>
 </template>
 
@@ -49,9 +55,26 @@ defineEmits([
   overflow: hidden;
 }
 
+.ai-section {
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.module-section {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.action-section {
+  flex-shrink: 0;
+  border-top: 1px solid #e4e7ed;
+}
+
 @media (max-width: 1200px) {
   .navigation-panel {
-    width: 240px; /* 保持固定宽度，但稍微缩小 */
+    width: 240px;
     height: 100%;
     flex-direction: column;
     overflow-y: auto;

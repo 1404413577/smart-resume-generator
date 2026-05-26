@@ -242,6 +242,49 @@ onMounted(() => {
   font-size: 14px;
   color: #666;
   font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* 头像位置单选按钮组样式修复 */
+.avatar-position-selector :deep(.el-radio-group) {
+  display: inline-flex;
+  flex-wrap: nowrap;
+}
+
+.avatar-position-selector :deep(.el-radio-button) {
+  margin: 0;
+}
+
+.avatar-position-selector :deep(.el-radio-button__inner) {
+  padding: 8px 16px;
+  font-size: 13px;
+  border: 1px solid #dcdfe6;
+  border-radius: 0;
+  background: #ffffff;
+  color: #606266;
+  transition: all 0.2s;
+}
+
+.avatar-position-selector :deep(.el-radio-button:first-child .el-radio-button__inner) {
+  border-radius: 4px 0 0 4px;
+}
+
+.avatar-position-selector :deep(.el-radio-button:last-child .el-radio-button__inner) {
+  border-radius: 0 4px 4px 0;
+}
+
+.avatar-position-selector :deep(.el-radio-button__inner:hover) {
+  color: #409eff;
+}
+
+.avatar-position-selector :deep(.el-radio-button.is-active .el-radio-button__inner) {
+  background: #409eff;
+  border-color: #409eff;
+  color: #ffffff;
+}
+
+.avatar-position-selector :deep(.el-radio-button:not(:last-child) .el-radio-button__inner) {
+  border-right: none;
 }
 
 /* 响应式设计 */
@@ -250,11 +293,16 @@ onMounted(() => {
     width: 100px;
     height: 100px;
   }
-  
+
   .avatar-position-selector {
     flex-direction: column;
     gap: 8px;
     text-align: center;
+  }
+
+  .avatar-position-selector :deep(.el-radio-button__inner) {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }
 </style>

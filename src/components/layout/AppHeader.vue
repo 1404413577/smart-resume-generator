@@ -8,7 +8,6 @@
           <h1 class="app-title">智能简历生成器</h1>
         </router-link>
       </div>
-
       <!-- 中间：导航菜单 -->
       <nav class="header-nav">
         <router-link
@@ -37,6 +36,21 @@
         </div>
 
         <!-- 快捷操作 -->
+        <el-popconfirm
+          title="使用默认数据"
+          description="这将用示例数据填充整个简历，是否继续？"
+          confirm-button-text="确认"
+          cancel-button-text="取消"
+          @confirm="handleFillDefault"
+        >
+          <template #reference>
+            <el-button type="warning" size="small">
+              <el-icon><DocumentCopy /></el-icon>
+              填充示例
+            </el-button>
+          </template>
+        </el-popconfirm>
+
         <el-button @click="handleExportPDF" type="primary" size="small" :loading="isExporting">
           <el-icon><Download /></el-icon>
           导出PDF
@@ -85,7 +99,8 @@ import {
   RefreshLeft,
   House,
   MagicStick,
-  Grid
+  Grid,
+  DocumentCopy
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
@@ -143,6 +158,17 @@ const handleExportPDF = async () => {
 // 切换预览模式
 const togglePreviewMode = () => {
   resumeStore.togglePreviewMode()
+}
+
+// 填充默认数据
+const handleFillDefault = async () => {
+  try {
+    resumeStore.fillWithDefaultData()
+    ElMessage.success('已成功填充默认数据！')
+  } catch (error) {
+    console.error('填充默认数据失败:', error)
+    ElMessage.error('填充默认数据失败')
+  }
 }
 
 // 重置数据

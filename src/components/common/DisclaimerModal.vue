@@ -97,14 +97,25 @@ import { ref, onMounted } from 'vue'
 const visible = ref(false)
 const hasAgreed = ref(false)
 
+const checkDisclaimer = () => {
+  // 检查是否已在当前会话中同意过
+  const disclaimerAccepted = sessionStorage.getItem('disclaimerAccepted')
+  if (!disclaimerAccepted) {
+    visible.value = true
+  }
+}
+
 onMounted(() => {
-  // 每次打开应用均需重新同意
-  visible.value = false
+  // 每次打开应用时检查是否需要显示免责协议
+  checkDisclaimer()
 })
 
 const handleConfirm = () => {
   if (hasAgreed.value) {
+    // 保存用户的同意状态到sessionStorage（当前会话有效）
+    sessionStorage.setItem('disclaimerAccepted', 'true')
     visible.value = false
+    hasAgreed.value = false
   }
 }
 </script>

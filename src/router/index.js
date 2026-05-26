@@ -169,8 +169,9 @@ router.beforeEach((to, from, next) => {
 
 // 全局后置钩子
 router.afterEach((to, from) => {
-  // 页面访问统计或其他后置处理
-  console.log(`Navigated from ${from.name} to ${to.name}`)
+  if (import.meta.env.DEV) {
+    console.log(`Navigated from ${from.name} to ${to.name}`)
+  }
 })
 
 export default router

@@ -25,7 +25,7 @@
               <div class="feature-icon">
                 <el-icon><MagicStick /></el-icon>
               </div>
-              <h3>AI智能助手</h3>
+              <h3>AI智能生成</h3>
               <p>对话式AI交互，智能生成个性化简历内容，提供专业建议和优化方案。</p>
             </div>
             
@@ -98,7 +98,7 @@
               <span class="tech-desc">PDF生成</span>
             </div>
             <div class="tech-item">
-              <span class="tech-name">OpenAI API</span>
+              <span class="tech-name">Gemini API</span>
               <span class="tech-desc">AI服务</span>
             </div>
           </div>
@@ -192,11 +192,6 @@
           <p class="copyright">
             © 2024 智能简历生成器. All rights reserved.
           </p>
-          <div class="footer-links">
-            <a href="#" @click.prevent>隐私政策</a>
-            <a href="#" @click.prevent>服务条款</a>
-            <a href="#" @click.prevent>帮助中心</a>
-          </div>
         </div>
       </div>
     </div>
@@ -220,7 +215,7 @@ import {
 } from '@element-plus/icons-vue'
 
 // 应用版本
-const version = ref('1.2.0')
+const version = ref('2.0.0')
 </script>
 
 <style scoped>
@@ -466,23 +461,6 @@ const version = ref('1.2.0')
   margin: 0 0 15px 0;
 }
 
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.footer-links a {
-  font-size: 14px;
-  color: #667eea;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-  color: #764ba2;
-}
-
 /* 响应式设计 */
 @media (max-width: 768px) {
   .page-content {
@@ -540,9 +518,5 @@ const version = ref('1.2.0')
     grid-template-columns: 1fr;
   }
   
-  .footer-links {
-    flex-direction: column;
-    gap: 10px;
-  }
 }
 </style>

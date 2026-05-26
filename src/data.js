@@ -99,9 +99,3 @@ export const fillWithDefaultData = (resumeStore) => {
     Object.assign(resumeStore.resumeData, defaultData)
   }
 }
-
-// 如果需要在浏览器环境中直接使用
-if (typeof window !== 'undefined') {
-  window.defaultResumeData = defaultResumeData
-  window.fillWithDefaultData = fillWithDefaultData
-}

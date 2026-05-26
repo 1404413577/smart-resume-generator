@@ -574,7 +574,7 @@ export const useResumeStore = defineStore('resume', () => {
       if (timeout) clearTimeout(timeout)
       timeout = setTimeout(async () => {
         await persistData()
-        console.log('实时数据已同步到数据库:', new Date().toLocaleTimeString())
+        if (import.meta.env.DEV) console.log('实时数据已同步到数据库:', new Date().toLocaleTimeString())
       }, ms)
     }
   })()
@@ -1068,7 +1068,7 @@ export const useResumeStore = defineStore('resume', () => {
       }
 
       // 2. 如果 IndexedDB 没有数据，则尝试从 localStorage 迁移
-      console.log('未发现 IndexedDB 数据，尝试从 localStorage 迁移...')
+      if (import.meta.env.DEV) console.log('未发现 IndexedDB 数据，尝试从 localStorage 迁移...')
       loadFromLocalStorage()
       
       // 迁移后标记为已加载，以便可以保存
@@ -1077,7 +1077,7 @@ export const useResumeStore = defineStore('resume', () => {
       // 迁移后立即保存到 IndexedDB
       if (resumeData.value.personalInfo.name || resumeData.value.summary) {
         await persistData()
-        console.log('localStorage 数据已成功迁移到 IndexedDB')
+        if (import.meta.env.DEV) console.log('localStorage 数据已成功迁移到 IndexedDB')
       }
     } catch (error) {
       console.error('加载数据失败:', error)

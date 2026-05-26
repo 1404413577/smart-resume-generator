@@ -41,7 +41,6 @@ document.addEventListener('keydown', (e) => {
     if (store) {
       if (confirm('是否填充默认数据？（现有数据将被覆盖）')) {
         store.fillWithDefaultData()
-        console.log('✓ 已填充默认数据')
       }
     }
   }

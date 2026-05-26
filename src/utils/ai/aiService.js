@@ -5,9 +5,8 @@
 import { GoogleGenAI } from '@google/genai'
 
 // Gemini API配置
-const GEMINI_API_KEY = import.meta?.env?.VITE_GEMINI_API_KEY
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
-// 验证 API Key 是否存在
 if (!GEMINI_API_KEY) {
   console.error('[AI Service] 未配置 VITE_GEMINI_API_KEY 环境变量，AI 功能将不可用')
 }
@@ -15,24 +14,42 @@ const GEMINI_MODEL = 'gemini-1.5-flash'
 
 // 请求频率限制
 let lastRequestTime = 0
-const REQUEST_INTERVAL = 1000 // 1秒间隔
+const REQUEST_INTERVAL = 1000
 
 // 初始化 Gemini AI 客户端
 let genAI = null
 
-/**
- * 获取或初始化 Gemini AI 客户端
- * @returns {GoogleGenAI} Gemini AI 客户端实例
- */
+// ---- 工具函数 ----
+
+/** 安全解析 AI 返回的 JSON，自动清理 markdown 代码块等常见格式问题 */
+function safeJsonParse(text, fallback) {
+  try {
+    return JSON.parse(text)
+  } catch {
+    let cleaned = text.trim()
+    cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '')
+    const start = cleaned.indexOf('{')
+    const end = cleaned.lastIndexOf('}')
+    if (start !== -1 && end > start) {
+      try { return JSON.parse(cleaned.slice(start, end + 1)) } catch {}
+    }
+    const arrStart = cleaned.indexOf('[')
+    const arrEnd = cleaned.lastIndexOf(']')
+    if (arrStart !== -1 && arrEnd > arrStart) {
+      try { return JSON.parse(cleaned.slice(arrStart, arrEnd + 1)) } catch {}
+    }
+    console.warn('[safeJsonParse] 解析失败，使用 fallback')
+    return fallback
+  }
+}
+
 function getGenAIClient() {
   if (!GEMINI_API_KEY) {
     throw new Error('AI服务未配置，请联系管理员配置API密钥')
   }
-
   if (!genAI) {
     genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY })
   }
-
   return genAI
 }
 
@@ -137,18 +154,9 @@ export async function optimizeWorkExperience(workExperience) {
 `
 
   const result = await callGeminiAPI(prompt)
-
-  try {
-    // 尝试解析JSON
-    const parsed = JSON.parse(result)
-    if (Array.isArray(parsed)) {
-      return parsed
-    }
-  } catch (parseError) {
-    console.warn('AI返回内容不是有效JSON，尝试文本解析:', parseError)
-  }
-
-  // 如果JSON解析失败，尝试文本解析
+  const parsed = safeJsonParse(result, null)
+  if (Array.isArray(parsed)) return parsed
+  // 文本行 fallback
   const lines = result.split('\n').filter(line => line.trim())
   return lines.map(line => line.replace(/^[-•\d.]\s*/, '').trim()).filter(line => line)
 }
@@ -189,22 +197,8 @@ export async function recommendSkills(industry = '', position = '', currentSkill
 `
 
   const result = await callGeminiAPI(prompt)
-
-  try {
-    const parsed = JSON.parse(result)
-    return {
-      technical: parsed.technical || [],
-      soft: parsed.soft || [],
-      language: parsed.language || []
-    }
-  } catch (parseError) {
-    console.warn('技能推荐JSON解析失败:', parseError)
-    return {
-      technical: [],
-      soft: [],
-      language: []
-    }
-  }
+  const parsed = safeJsonParse(result, { technical: [], soft: [], language: [] })
+  return { technical: parsed.technical || [], soft: parsed.soft || [], language: parsed.language || [] }
 }
 
 /**
@@ -240,20 +234,8 @@ export async function enhanceProjectDescription(project) {
 `
 
   const result = await callGeminiAPI(prompt)
-
-  try {
-    const parsed = JSON.parse(result)
-    return {
-      description: parsed.description || project.description || '',
-      highlights: parsed.highlights || []
-    }
-  } catch (parseError) {
-    console.warn('项目描述JSON解析失败:', parseError)
-    return {
-      description: project.description || '',
-      highlights: []
-    }
-  }
+  const parsed = safeJsonParse(result, { description: project.description || '', highlights: [] })
+  return { description: parsed.description || project.description || '', highlights: parsed.highlights || [] }
 }
 
 /**
@@ -418,15 +400,10 @@ export async function generateCompleteResume(options) {
 `
 
   const result = await callGeminiAPI(prompt)
-
-  try {
-    const resumeData = JSON.parse(result)
-    // 验证和补充数据
-    return validateAndEnhanceResumeData(resumeData, template)
-  } catch (parseError) {
-    console.warn('AI返回内容不是有效JSON，使用模板生成:', parseError)
-    return generateResumeFromTemplate(options, template)
-  }
+  const resumeData = safeJsonParse(result, null)
+  if (resumeData) return validateAndEnhanceResumeData(resumeData, template)
+  console.warn('AI返回内容不是有效JSON，使用模板生成')
+  return generateResumeFromTemplate(options, template)
 }
 
 /**
@@ -618,169 +595,27 @@ ${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
 `
 
   let fullResponse = ''
-  
-  // 如果提供了流回调，我们尝试通过简单的字符串匹配来提取 response 字段的增量内容进行流式显示
+  const streamCtx = { sentLen: 0 }
+
   const wrappedOnStream = (chunk) => {
     if (onResponseStream) {
       fullResponse += chunk
-      // 这是一个简单的启发式提取逻辑：
-      // 如果我们能检测到 "response": " 开头，就开始把之后的内容传给回调，直到遇到下一个字段名或 JSON 结尾
-      // 注意：这在 JSON 复杂时可能不完美，但在大多数情况下能提供秒级的视觉反馈
       const responseMatch = fullResponse.match(/"response"\s*:\s*"(.*?)(?:"\s*,|"\s*$)/s)
       if (responseMatch?.[1]) {
-        // 由于是流式的，我们需要记录已经发送出去的长度
-        if (!this._lastSentLen) this._lastSentLen = 0
         const currentText = responseMatch[1]
-        const newText = currentText.substring(this._lastSentLen)
+        const newText = currentText.substring(streamCtx.sentLen)
         if (newText) {
           onResponseStream(newText)
-          this._lastSentLen = currentText.length
+          streamCtx.sentLen = currentText.length
         }
       }
     }
   }
 
-  // 重置状态
-  const streamContext = { _lastSentLen: 0 }
-  const result = await callGeminiAPIStream(prompt, wrappedOnStream.bind(streamContext))
+  const result = await callGeminiAPIStream(prompt, wrappedOnStream)
 
-  try {
-    // 尝试直接解析JSON
-    return JSON.parse(result)
-  } catch (parseError) {
-    console.warn('对话式生成JSON解析失败，尝试清理格式:', parseError)
-    console.log('原始响应:', result)
-
-    try {
-      // 尝试清理常见的JSON格式问题
-      let cleanedResult = result.trim()
-
-      // 移除可能的markdown代码块标记
-      cleanedResult = cleanedResult.replace(/^```json\s*/i, '').replace(/\s*```$/i, '')
-      cleanedResult = cleanedResult.replace(/^```\s*/i, '').replace(/\s*```$/i, '')
-
-      // 移除可能的其他文本前缀
-      cleanedResult = cleanedResult.replace(/^[^{]*/, '')
-      cleanedResult = cleanedResult.replace(/[^}]*$/, '')
-
-      // 尝试找到JSON对象的开始和结束
-      const jsonStart = cleanedResult.indexOf('{')
-      const jsonEnd = cleanedResult.lastIndexOf('}')
-
-      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
-        cleanedResult = cleanedResult.substring(jsonStart, jsonEnd + 1)
-        console.log('清理后的JSON:', cleanedResult)
-        return JSON.parse(cleanedResult)
-      }
-
-      // 如果还是失败，尝试提取可能的JSON内容
-      const jsonMatch = cleanedResult.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        console.log('匹配到的JSON:', jsonMatch[0])
-        return JSON.parse(jsonMatch[0])
-      }
-
-      throw new Error('无法提取有效的JSON')
-
-    } catch (secondParseError) {
-      console.warn('JSON清理后仍然解析失败:', secondParseError)
-      console.log('清理失败的内容:', result)
-
-      // 尝试从响应中提取有用信息
-      const extractedResponse = extractResponseFromText(result)
-      return extractedResponse
-    }
-  }
-}
-
-/**
- * 从文本中提取响应信息的辅助函数
- * @param {string} text - 原始文本响应
- * @returns {Object} 提取的响应对象
- */
-function extractResponseFromText(text) {
-  console.log('尝试从文本中提取响应:', text.substring(0, 200) + '...')
-
-  // 首先尝试移除markdown代码块并重新解析
-  let cleanText = text.trim()
-  cleanText = cleanText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '')
-  cleanText = cleanText.replace(/^```\s*/i, '').replace(/\s*```$/i, '')
-
-  // 再次尝试JSON解析
-  try {
-    const parsed = JSON.parse(cleanText)
-    console.log('成功解析清理后的JSON:', parsed)
-    return parsed
-  } catch (e) {
-    console.log('清理后仍无法解析JSON，继续提取字段')
-  }
-
-  // 如果文本看起来像JSON但解析失败，尝试提取主要内容
-  if (text.includes('"response"') || text.includes('"suggestions"')) {
-    // 尝试提取response字段 - 改进正则表达式以处理多行内容
-    const responseMatch = text.match(/"response"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/)
-    const response = responseMatch ? responseMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n') : text
-
-    // 尝试提取suggestions
-    const suggestionsMatch = text.match(/"suggestions"\s*:\s*\[(.*?)\]/s)
-    let suggestions = []
-    if (suggestionsMatch) {
-      try {
-        const suggestionsStr = '[' + suggestionsMatch[1] + ']'
-        suggestions = JSON.parse(suggestionsStr)
-      } catch (e) {
-        // 如果解析失败，尝试简单的字符串分割
-        suggestions = suggestionsMatch[1].split(',').map(s => s.trim().replace(/"/g, ''))
-      }
-    }
-
-    // 尝试提取questions
-    const questionsMatch = text.match(/"questions"\s*:\s*\[(.*?)\]/s)
-    let questions = []
-    if (questionsMatch) {
-      try {
-        const questionsStr = '[' + questionsMatch[1] + ']'
-        questions = JSON.parse(questionsStr)
-      } catch (e) {
-        questions = questionsMatch[1].split(',').map(s => s.trim().replace(/"/g, ''))
-      }
-    }
-
-    // 尝试提取qualityScore
-    const scoreMatch = text.match(/"qualityScore"\s*:\s*(\d+)/)
-    const qualityScore = scoreMatch ? parseInt(scoreMatch[1]) : 0
-
-    // 尝试提取improvements
-    const improvementsMatch = text.match(/"improvements"\s*:\s*\[(.*?)\]/s)
-    let improvements = []
-    if (improvementsMatch) {
-      try {
-        const improvementsStr = '[' + improvementsMatch[1] + ']'
-        improvements = JSON.parse(improvementsStr)
-      } catch (e) {
-        improvements = improvementsMatch[1].split(',').map(s => s.trim().replace(/"/g, ''))
-      }
-    }
-
-    return {
-      response,
-      suggestions,
-      questions,
-      resumeContent: null,
-      qualityScore,
-      improvements
-    }
-  }
-
-  // 如果不是JSON格式，直接返回文本作为response
-  return {
-    response: text,
-    suggestions: [],
-    questions: [],
-    resumeContent: null,
-    qualityScore: 0,
-    improvements: []
-  }
+  const fallback = { response: result, suggestions: [], questions: [], resumeContent: null, qualityScore: 0, improvements: [] }
+  return safeJsonParse(result, fallback)
 }
 
 /**
@@ -821,20 +656,11 @@ ${JSON.stringify(resumeData, null, 2)}
 `
 
   const result = await callGeminiAPI(prompt)
-  try {
-    return JSON.parse(result)
-  } catch (parseError) {
-    console.warn('简历质量分析JSON解析失败:', parseError)
-    return {
-      overallScore: 0,
-      scores: { completeness: 0, relevance: 0, clarity: 0, impact: 0, formatting: 0 },
-      strengths: [],
-      weaknesses: [],
-      improvements: [],
-      keywords: [],
-      missingElements: []
-    }
-  }
+  return safeJsonParse(result, {
+    overallScore: 0,
+    scores: { completeness: 0, relevance: 0, clarity: 0, impact: 0, formatting: 0 },
+    strengths: [], weaknesses: [], improvements: [], keywords: [], missingElements: []
+  })
 }
 
 /**
@@ -882,19 +708,11 @@ ${jobDescription}
 `
 
   const result = await callGeminiAPI(prompt)
-  try {
-    return JSON.parse(result)
-  } catch (parseError) {
-    console.warn('JD匹配度分析JSON解析失败:', parseError)
-    return {
-      matchScore: 0,
-      matchedSkills: [],
-      missingSkills: [],
-      recommendations: [],
-      keywordOptimization: [],
-      sectionPriority: {}
-    }
-  }
+  return safeJsonParse(result, {
+    matchScore: 0,
+    matchedSkills: [], missingSkills: [], recommendations: [], keywordOptimization: [],
+    sectionPriority: {}
+  })
 }
 
 /**
@@ -924,19 +742,10 @@ export async function optimizeContent(params) {
 `
 
   const result = await callGeminiAPI(prompt)
-  try {
-    return JSON.parse(result)
-  } catch (parseError) {
-    console.warn('智能内容优化JSON解析失败:', parseError)
-    return {
-      optimizedContent: content,
-      improvements: [],
-      alternatives: [],
-      keywords: [],
-      tone: 'professional',
-      impactScore: 0
-    }
-  }
+  return safeJsonParse(result, {
+    optimizedContent: content, improvements: [], alternatives: [], keywords: [],
+    tone: 'professional', impactScore: 0
+  })
 }
 
 /**

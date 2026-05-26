@@ -7,7 +7,7 @@
         <!-- AI助手区域 -->
         <div class="sidebar-section ai-assistant-section">
           <!-- ... (keep existing content but maybe wrap it) ... -->
-          <div class="section-header" @click="toggleSection('ai')">
+          <!-- <div class="section-header" @click="toggleSection('ai')">
             <div class="header-left">
               <el-icon><MagicStick /></el-icon>
               <span>AI智能助手</span>
@@ -19,27 +19,8 @@
             <el-icon class="expand-icon" :class="{ expanded: expandedSections.ai }">
               <ArrowRight />
             </el-icon>
-          </div>
+          </div> -->
           <div v-show="expandedSections.ai" class="section-content">
-            <!-- 主要AI功能 -->
-            <div class="ai-main-actions">
-              <div class="action-item ai-action primary" @click="handleAIGenerate">
-                <el-icon class="action-icon"><MagicStick /></el-icon>
-                <div class="action-info">
-                  <div class="action-name">智能对话助手</div>
-                  <div class="action-desc">与AI对话，生成个性化简历</div>
-                </div>
-                <div class="action-badge">AI</div>
-              </div>
-            </div>
-
-            <!-- 快速操作 -->
-            <div class="ai-quick-actions">
-              <div class="quick-actions-title">快速操作</div>
-              <div class="quick-actions-grid">
-              </div>
-            </div>
-
             <!-- 智能推荐 -->
             <div class="ai-recommendations" v-if="aiRecommendations.length > 0">
               <div class="recommendations-title">
@@ -225,13 +206,6 @@
       </div>
 
       <!-- 弹窗组件 -->
-      <AdvancedAIResumeGenerator
-        :visible="showAIGenerator"
-        @update:visible="showAIGenerator = $event"
-        @close="showAIGenerator = false"
-        @resume-generated="handleResumeGenerated"
-      />
-
       <OCRImport ref="ocrImportRef" />
 
       <TemplateManager
@@ -303,7 +277,6 @@ import { useWindowSize } from '@vueuse/core'
 
 // 组件导入
 import TemplateUploader from '@components/word/TemplateUploader.vue'
-import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.vue'
 import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
 import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
@@ -344,7 +317,6 @@ const currentPageManager = computed(() => {
 // 响应式数据
 const activeModule = ref('personalInfo')
 const previewScale = ref(0.8)
-const showAIGenerator = ref(false)
 const showTemplateManager = ref(false)
 const showSectionSort = ref(false)
 const currentPreviewPage = ref(1)
@@ -441,10 +413,6 @@ const handleModuleChange = (moduleId) => {
 
 const handleTemplateManage = () => {
   showTemplateManager.value = true
-}
-
-const handleAIGenerate = () => {
-  showAIGenerator.value = true
 }
 
 const handleOCRImport = () => {
@@ -617,8 +585,7 @@ const handleTemplateExportError = (error) => {
 }
 
 const handleResumeGenerated = (resumeData) => {
-  ElMessage.success('AI简历已应用，您可以继续编辑和完善！')
-  showAIGenerator.value = false
+  ElMessage.success('简历已更新，您可以继续编辑和完善！')
   activeModule.value = 'personalInfo'
 }
 
@@ -661,16 +628,14 @@ const handleRecommendation = (recommendation) => {
         activeModule.value = 'workExperience'
         ElMessage.info('请先添加工作经历')
       } else {
-        showAIGenerator.value = true
-        ElMessage.info('正在启动工作经历优化...')
+        ElMessage.info('工作经历优化')
       }
       break
     case 'skill-match':
-      showAIGenerator.value = true
-      ElMessage.info('正在启动技能匹配分析...')
+      ElMessage.info('技能匹配分析')
       break
     default:
-      showAIGenerator.value = true
+      ElMessage.info('处理建议')
   }
 }
 

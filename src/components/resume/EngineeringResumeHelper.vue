@@ -128,7 +128,6 @@
 
       <!-- 快速操作 -->
       <div class="quick-actions">
-        <h4>快速操作</h4>
         <div class="actions-grid">
           <el-button 
             size="small" 

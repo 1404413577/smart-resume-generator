@@ -5,7 +5,12 @@
 import { GoogleGenAI } from '@google/genai'
 
 // Gemini API配置
-const GEMINI_API_KEY = import.meta?.env?.VITE_GEMINI_API_KEY || 'AIzaSyAqgE78y8_m4nQ09qHaf7xFSC0T_5ppyMU'
+const GEMINI_API_KEY = import.meta?.env?.VITE_GEMINI_API_KEY
+
+// 验证 API Key 是否存在
+if (!GEMINI_API_KEY) {
+  console.error('[AI Service] 未配置 VITE_GEMINI_API_KEY 环境变量，AI 功能将不可用')
+}
 const GEMINI_MODEL = 'gemini-1.5-flash'
 
 // 请求频率限制
@@ -816,7 +821,20 @@ ${JSON.stringify(resumeData, null, 2)}
 `
 
   const result = await callGeminiAPI(prompt)
-  return JSON.parse(result)
+  try {
+    return JSON.parse(result)
+  } catch (parseError) {
+    console.warn('简历质量分析JSON解析失败:', parseError)
+    return {
+      overallScore: 0,
+      scores: { completeness: 0, relevance: 0, clarity: 0, impact: 0, formatting: 0 },
+      strengths: [],
+      weaknesses: [],
+      improvements: [],
+      keywords: [],
+      missingElements: []
+    }
+  }
 }
 
 /**
@@ -864,7 +882,19 @@ ${jobDescription}
 `
 
   const result = await callGeminiAPI(prompt)
-  return JSON.parse(result)
+  try {
+    return JSON.parse(result)
+  } catch (parseError) {
+    console.warn('JD匹配度分析JSON解析失败:', parseError)
+    return {
+      matchScore: 0,
+      matchedSkills: [],
+      missingSkills: [],
+      recommendations: [],
+      keywordOptimization: [],
+      sectionPriority: {}
+    }
+  }
 }
 
 /**
@@ -894,7 +924,19 @@ export async function optimizeContent(params) {
 `
 
   const result = await callGeminiAPI(prompt)
-  return JSON.parse(result)
+  try {
+    return JSON.parse(result)
+  } catch (parseError) {
+    console.warn('智能内容优化JSON解析失败:', parseError)
+    return {
+      optimizedContent: content,
+      improvements: [],
+      alternatives: [],
+      keywords: [],
+      tone: 'professional',
+      impactScore: 0
+    }
+  }
 }
 
 /**

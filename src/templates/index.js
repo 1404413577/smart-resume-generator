@@ -354,6 +354,15 @@ export const templateRegistry = {
     preview: '/images/templates/executive-preview.png',
     features: ['权威设计', '执行摘要', '核心能力', '成果导向'],
     suitableFor: ['CEO/总裁', 'CFO/财务总监', 'COO/运营总监', '高级副总裁', '企业高管']
+  },
+  freshModern: {
+    name: 'Fresh Modern',
+    component: getAsyncComponent('freshModern'),
+    description: '清新现代渐变风格，卡片式布局搭配渐变紫色调点缀，适合互联网及创意行业',
+    category: 'professional',
+    preview: '/images/templates/modern-preview.png',
+    features: ['渐变点缀', '卡片布局', '清新配色', '双栏排版'],
+    suitableFor: ['互联网从业者', '产品经理', '设计师', '全栈开发', '通用岗位']
   }
 }
 

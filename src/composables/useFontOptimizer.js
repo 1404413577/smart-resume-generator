@@ -53,8 +53,8 @@ export function useFontOptimizer() {
     const chars = extractUsedCharacters()
     if (!chars) return
 
-    // 如果字符数太少，可能在加载中
-    if (decodeURIComponent(chars).length < 2) return
+    // 如果字符数为空则跳过
+    if (decodeURIComponent(chars).length === 0) return
 
     const fontId = 'dynamic-subset-font'
     let link = document.getElementById(fontId)

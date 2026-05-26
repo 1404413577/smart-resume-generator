@@ -6,6 +6,7 @@ import './style.css'
 import './styles/print.css'
 import App from './App.vue'
 import router from './router'
+import { useResumeStore } from '@stores/resume'
 
 // 按需加载 Element Plus 和图标
 import { registerElementComponents, ElMessage } from './utils/elementPlus/index.js'
@@ -35,7 +36,8 @@ app.mount('#app')
 document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyD') {
     e.preventDefault()
-    const store = pinia._s.get('resume')
+    // 通过 Pinia 的公共 API 获取 store 实例，避免直接访问私有属性
+    const store = useResumeStore()
     if (store) {
       if (confirm('是否填充默认数据？（现有数据将被覆盖）')) {
         store.fillWithDefaultData()

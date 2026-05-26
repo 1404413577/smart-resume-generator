@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useResumeStore } from '@stores/resume'
+import { ElMessage } from 'element-plus'
 
 // 路由组件懒加载
 const HomeView = () => import('../views/HomeView.vue')
@@ -157,8 +158,9 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresResume) {
     const resumeStore = useResumeStore()
     if (!resumeStore.hasResumeData) {
-      // 可以重定向到首页或显示提示
-      console.warn('No resume data found, redirecting to home')
+      ElMessage.warning('请先填写简历基本信息')
+      next({ name: 'Home' })
+      return
     }
   }
 

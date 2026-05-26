@@ -315,44 +315,39 @@ export async function previewPDF(elementId) {
  * @param {string} filename - 文件名
  */
 export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
+  const element = document.getElementById(elementId)
+  if (!element) {
+    throw new Error(`找不到ID为 ${elementId} 的元素`)
+  }
+
+  const isModernTemplate = element.querySelector('.modern-template')
+  if (isModernTemplate) {
+    isModernTemplate.classList.add('pdf-export')
+  }
+
+  const originalStyle = element.style.cssText
+  let clone = null
+
   try {
-    const element = document.getElementById(elementId)
-    if (!element) {
-      throw new Error(`找不到ID为 ${elementId} 的元素`)
-    }
-
-    // 检测是否为Modern模板并添加PDF导出专用CSS类
-    const isModernTemplate = element.querySelector('.modern-template')
-    if (isModernTemplate) {
-      isModernTemplate.classList.add('pdf-export')
-    }
-
-    // 保存原始样式
-    const originalStyle = element.style.cssText
-
-    // 设置PDF样式 - 保持与屏幕显示的一致性，确保没有缩放
+    // 设置PDF样式
     element.style.width = '210mm'
-    element.style.height = 'auto' // 让高度自动适应内容
+    element.style.height = 'auto'
     element.style.minHeight = 'auto'
     element.style.maxWidth = '210mm'
-    element.style.padding = '0' // 移除强制边距，依靠内容本身边距
+    element.style.padding = '0'
     element.style.margin = '0'
     element.style.boxSizing = 'border-box'
     element.style.backgroundColor = '#ffffff'
-    element.style.transform = 'none' // 确保没有缩放
+    element.style.transform = 'none'
     element.style.position = 'relative'
     element.style.overflow = 'visible'
     element.style.display = 'block'
-
-    // 优化字体渲染设置，特别针对中文字符
     element.style.webkitFontSmoothing = 'antialiased'
     element.style.mozOsxFontSmoothing = 'grayscale'
     element.style.textRendering = 'optimizeLegibility'
 
-    // 安全地设置字体回退链
     const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
     if (!currentFontFamily.includes('Microsoft YaHei') && !currentFontFamily.includes('SimSun')) {
-      // 确保字体名称格式正确
       const safeFontFamily = currentFontFamily.trim()
       if (safeFontFamily) {
         element.style.fontFamily = `${safeFontFamily}, "Microsoft YaHei", "SimSun", sans-serif`
@@ -361,9 +356,8 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       }
     }
 
-    // --- 智能分页处理开始 ---
-    // 1. 克隆一个用于计算的元素（避免影响当前显示）
-    const clone = element.cloneNode(true)
+    // 智能分页处理
+    clone = element.cloneNode(true)
     clone.style.position = 'absolute'
     clone.style.left = '-9999px'
     clone.style.top = '0'
@@ -371,37 +365,24 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     clone.style.visibility = 'hidden'
     document.body.appendChild(clone)
 
-    // 2. 计算智能分页点
-    // A4 高度推算: 1mm = 3.78px => 297mm = 1122.6px
-    const pageHeightPx = 1123 
+    const pageHeightPx = 1123
     const breaks = calculateIntelligentPageBreaks(clone, { pageHeightPx })
-    
-    // 3. 将建议的分页点应用到实际要导出的 element 上
-    // 注意：如果是直接在 element 上操作，记得完成后还原
     applyIntelligentGaps(element, breaks)
-    
-    document.body.removeChild(clone)
-    // --- 智能分页处理结束 ---
 
-    // 等待样式应用
     await new Promise(resolve => setTimeout(resolve, 500))
 
-    // 获取实际的内容高度
     const contentHeight = element.scrollHeight
     const contentWidth = element.scrollWidth
-
-    // 计算像素尺寸 (1mm ≈ 3.78px)
     const pixelWidth = Math.ceil(contentWidth)
     const pixelHeight = Math.ceil(contentHeight)
 
-    // 优化canvas配置 - 平衡质量和一致性，特别优化中文字符渲染
     const canvas = await html2canvas(element, {
-      scale: 2, // 适中的分辨率，避免过度放大导致的差异
+      scale: 2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
-      width: pixelWidth, // 使用实际宽度
-      height: pixelHeight, // 使用实际高度
+      width: pixelWidth,
+      height: pixelHeight,
       scrollX: 0,
       scrollY: 0,
       windowWidth: pixelWidth,
@@ -409,21 +390,14 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       letterRendering: false,
       logging: false,
       onclone: (clonedDoc) => {
-        // 补强 SVG 渲染：确保所有 SVG 元素都有明确的宽高，并修复潜在的透明度问题
-        const svgs = clonedDoc.querySelectorAll('svg');
+        const svgs = clonedDoc.querySelectorAll('svg')
         svgs.forEach(svg => {
-          if (!svg.getAttribute('width')) svg.setAttribute('width', svg.getBoundingClientRect().width);
-          if (!svg.getAttribute('height')) svg.setAttribute('height', svg.getBoundingClientRect().height);
-          svg.style.opacity = '1';
-        });
+          if (!svg.getAttribute('width')) svg.setAttribute('width', svg.getBoundingClientRect().width)
+          if (!svg.getAttribute('height')) svg.setAttribute('height', svg.getBoundingClientRect().height)
+          svg.style.opacity = '1'
+        })
       }
     })
-
-    // 恢复原始样式和CSS类
-    element.style.cssText = originalStyle
-    if (isModernTemplate) {
-      isModernTemplate.classList.remove('pdf-export')
-    }
 
     // 创建PDF
     const imgData = canvas.toDataURL('image/png', 1.0)
@@ -480,5 +454,15 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
   } catch (error) {
     console.error('优化PDF生成失败:', error)
     throw error
+  } finally {
+    // 确保样式和DOM始终恢复
+    element.style.cssText = originalStyle
+    if (isModernTemplate) {
+      isModernTemplate.classList.remove('pdf-export')
+    }
+    element.querySelectorAll('.pdf-page-spacer').forEach(s => s.remove())
+    if (clone && clone.parentNode) {
+      clone.parentNode.removeChild(clone)
+    }
   }
 }

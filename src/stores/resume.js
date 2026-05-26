@@ -9,6 +9,15 @@ import {
 } from '@utils/db'
 import { defaultResumeData } from '@/data'
 
+// 生成唯一 ID，避免 Date.now() 在高频调用时的冲突
+let _idCounter = 0
+const generateId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return `${Date.now().toString(36)}-${(++_idCounter).toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+}
+
 export const useResumeStore = defineStore('resume', () => {
   // 状态
   const resumeData = ref({
@@ -293,6 +302,10 @@ export const useResumeStore = defineStore('resume', () => {
   })
 
   // 计算属性
+  const hasResumeData = computed(() => {
+    return !!(resumeData.value.personalInfo.name || resumeData.value.summary)
+  })
+
   const isResumeComplete = computed(() => {
     const { personalInfo, workExperience, education } = resumeData.value
     return !!(
@@ -381,7 +394,7 @@ export const useResumeStore = defineStore('resume', () => {
   const addCustomField = (field) => {
     const newField = {
       ...field,
-      id: Date.now().toString()
+      id: generateId()
     }
     resumeData.value.personalInfo.customFields.push(newField)
   }
@@ -416,7 +429,7 @@ export const useResumeStore = defineStore('resume', () => {
   const addWorkExperience = (experience) => {
     const newExperience = {
       ...experience,
-      id: Date.now().toString()
+      id: generateId()
     }
     resumeData.value.workExperience.push(newExperience)
   }
@@ -439,7 +452,7 @@ export const useResumeStore = defineStore('resume', () => {
   const addEducation = (education) => {
     const newEducation = {
       ...education,
-      id: Date.now().toString()
+      id: generateId()
     }
     resumeData.value.education.push(newEducation)
   }
@@ -462,7 +475,7 @@ export const useResumeStore = defineStore('resume', () => {
   const addSkill = (skill) => {
     const newSkill = {
       ...skill,
-      id: Date.now().toString()
+      id: generateId()
     }
     resumeData.value.skills.push(newSkill)
   }
@@ -475,7 +488,7 @@ export const useResumeStore = defineStore('resume', () => {
   const addProject = (project) => {
     const newProject = {
       ...project,
-      id: Date.now().toString()
+      id: generateId()
     }
     resumeData.value.projects.push(newProject)
   }
@@ -498,7 +511,7 @@ export const useResumeStore = defineStore('resume', () => {
   const addCertification = (certification) => {
     const newCertification = {
       ...certification,
-      id: Date.now().toString()
+      id: generateId()
     }
     resumeData.value.certifications.push(newCertification)
   }
@@ -511,7 +524,7 @@ export const useResumeStore = defineStore('resume', () => {
   const addLanguage = (language) => {
     const newLanguage = {
       ...language,
-      id: Date.now().toString()
+      id: generateId()
     }
     resumeData.value.languages.push(newLanguage)
   }
@@ -598,9 +611,9 @@ export const useResumeStore = defineStore('resume', () => {
     }
 
     // 单独加载头像数据（可能很大）
-    const savedAvatar = localStorage.getItem('resume_avatar')
-    if (savedAvatar) {
-      resumeData.value.personalInfo.avatar = savedAvatar
+    const savedPhoto = localStorage.getItem('resume_photo')
+    if (savedPhoto) {
+      resumeData.value.personalInfo.photo = savedPhoto
     }
 
     const savedTemplate = localStorage.getItem('selectedTemplate')
@@ -754,7 +767,8 @@ export const useResumeStore = defineStore('resume', () => {
       skills: [],
       projects: [],
       certifications: [],
-      languages: []
+      languages: [],
+      customModulesData: {}
     }
   }
 
@@ -820,7 +834,7 @@ export const useResumeStore = defineStore('resume', () => {
   const addCustomModule = (module) => {
     const newModule = {
       ...module,
-      id: Date.now().toString(),
+      id: generateId(),
       createdAt: new Date().toISOString()
     }
     globalSettings.value.customModules.push(newModule)
@@ -1101,6 +1115,7 @@ export const useResumeStore = defineStore('resume', () => {
     themePresets,
 
     // 计算属性
+    hasResumeData,
     isResumeComplete,
     currentThemeColors,
     cssVariables,

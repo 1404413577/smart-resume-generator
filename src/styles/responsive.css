@@ -1,0 +1,290 @@
+/**
+ * 响应式设计 CSS Mixins 和工具类
+ */
+
+/* ============ 响应式布局工具 ============ */
+
+/* 容器查询 */
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* 超小屏 (≤576px) */
+@media (max-width: 575px) {
+  .container {
+    max-width: 100%;
+    padding: 0 12px;
+  }
+}
+
+/* 小屏 (≥576px) */
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+    padding: 0 16px;
+  }
+}
+
+/* 中屏 (≥768px) */
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+    padding: 0 16px;
+  }
+}
+
+/* 大屏 (≥992px) */
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+    padding: 0 16px;
+  }
+}
+
+/* 超大屏 (≥1200px) */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+    padding: 0 16px;
+  }
+}
+
+/* 2K屏 (≥1408px) */
+@media (min-width: 1408px) {
+  .container {
+    max-width: 1320px;
+    padding: 0 16px;
+  }
+}
+
+/* ============ 栅格系统 ============ */
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+/* 响应式列 */
+.col {
+  grid-column: span 12;
+}
+
+@media (min-width: 576px) {
+  .col-sm { grid-column: span 12; }
+  .col-sm-1 { grid-column: span 1; }
+  .col-sm-2 { grid-column: span 2; }
+  .col-sm-3 { grid-column: span 3; }
+  .col-sm-4 { grid-column: span 4; }
+  .col-sm-6 { grid-column: span 6; }
+  .col-sm-12 { grid-column: span 12; }
+}
+
+@media (min-width: 768px) {
+  .col-md { grid-column: span 12; }
+  .col-md-1 { grid-column: span 1; }
+  .col-md-2 { grid-column: span 2; }
+  .col-md-3 { grid-column: span 3; }
+  .col-md-4 { grid-column: span 4; }
+  .col-md-6 { grid-column: span 6; }
+  .col-md-12 { grid-column: span 12; }
+}
+
+@media (min-width: 992px) {
+  .col-lg { grid-column: span 12; }
+  .col-lg-1 { grid-column: span 1; }
+  .col-lg-2 { grid-column: span 2; }
+  .col-lg-3 { grid-column: span 3; }
+  .col-lg-4 { grid-column: span 4; }
+  .col-lg-6 { grid-column: span 6; }
+  .col-lg-8 { grid-column: span 8; }
+  .col-lg-12 { grid-column: span 12; }
+}
+
+/* ============ 排版响应式 ============ */
+
+/* 标题 */
+h1 {
+  font-size: 28px;
+  line-height: 1.2;
+  margin: 16px 0 12px 0;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 1.3;
+  margin: 14px 0 10px 0;
+}
+
+h3 {
+  font-size: 20px;
+  line-height: 1.4;
+  margin: 12px 0 8px 0;
+}
+
+h4 {
+  font-size: 18px;
+  line-height: 1.4;
+  margin: 10px 0 6px 0;
+}
+
+h5 {
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 8px 0 4px 0;
+}
+
+h6 {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 6px 0 4px 0;
+}
+
+p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+@media (min-width: 768px) {
+  h1 { font-size: 32px; }
+  h2 { font-size: 28px; }
+  h3 { font-size: 24px; }
+  h4 { font-size: 20px; }
+  h5 { font-size: 16px; }
+  h6 { font-size: 14px; }
+  p { font-size: 16px; }
+}
+
+@media (min-width: 992px) {
+  h1 { font-size: 36px; }
+  h2 { font-size: 30px; }
+  h3 { font-size: 24px; }
+  h4 { font-size: 20px; }
+}
+
+/* ============ 间距响应式 ============ */
+
+.p-2 { padding: 8px; }
+.p-4 { padding: 16px; }
+.p-6 { padding: 24px; }
+
+.m-2 { margin: 8px; }
+.m-4 { margin: 16px; }
+.m-6 { margin: 24px; }
+
+@media (max-width: 575px) {
+  .p-2 { padding: 6px; }
+  .p-4 { padding: 12px; }
+  .p-6 { padding: 16px; }
+
+  .m-2 { margin: 6px; }
+  .m-4 { margin: 12px; }
+  .m-6 { margin: 16px; }
+}
+
+/* ============ 显示/隐藏工具 ============ */
+
+/* 在移动端隐藏 */
+.hidden-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hidden-mobile {
+    display: block;
+  }
+}
+
+/* 在桌面端隐藏 */
+.hidden-desktop {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .hidden-desktop {
+    display: none;
+  }
+}
+
+/* ============ Flex 布局响应式 ============ */
+
+.flex-mobile-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .flex-mobile-column {
+    flex-direction: row;
+    gap: 16px;
+  }
+}
+
+.flex-mobile-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (min-width: 576px) {
+  .flex-mobile-responsive {
+    flex-direction: row;
+    gap: 12px;
+  }
+}
+
+/* ============ 字体大小响应式 ============ */
+
+.text-responsive-lg {
+  font-size: 16px;
+}
+
+@media (min-width: 768px) {
+  .text-responsive-lg {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 992px) {
+  .text-responsive-lg {
+    font-size: 20px;
+  }
+}
+
+/* ============ 触摸友好 ============ */
+
+/* 增大移动端按钮点击区域 */
+@media (max-width: 575px) {
+  button, .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input, select, textarea {
+    min-height: 44px;
+    font-size: 16px; /* 防止 iOS 自动放大 */
+  }
+}
+
+/* ============ 打印样式响应式 ============ */
+
+@media print {
+  .no-print {
+    display: none;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  a {
+    text-decoration: none;
+    color: black;
+  }
+}

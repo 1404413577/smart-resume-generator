@@ -193,7 +193,7 @@ class PerformanceMonitor {
       mutations.forEach((mutation) => {
         if (mutation.type === 'childList') {
           const appElement = document.querySelector('#app > div')
-          if (appElement && !appElement.id === 'loading') {
+          if (appElement && appElement.id !== 'loading') {
             const mountTime = performance.now()
             this.metrics.vueMountTime = mountTime
             this.reportMetric('VUE_MOUNT_TIME', { value: mountTime })

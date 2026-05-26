@@ -161,8 +161,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   font-family: var(--font-family, 'Noto Serif SC', 'SimSun', serif);
   background: var(--background-color, #ffffff);
   color: var(--text-color, #2c3e50);
-  line-height: 1.8;
-  font-size: 14px;
+  line-height: var(--line-height, 1.8);
+  font-size: var(--font-size-base, 14px);
 }
 
 .resume-container {
@@ -192,7 +192,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 400;
   color: var(--secondary-color, #7f8c8d);
   letter-spacing: 2px;
@@ -201,7 +201,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .contact-info {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--text-color, #34495e);
   display: flex;
   justify-content: center;
@@ -220,7 +220,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: 600;
   letter-spacing: 2px;
   color: var(--primary-color, #2c3e50);
@@ -251,7 +251,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .primary-title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 600;
   color: var(--text-color, #2c3e50);
   margin: 0;
@@ -259,20 +259,20 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .secondary-title {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--primary-color, #34495e);
   margin-left: 10px;
   font-style: italic;
 }
 
 .item-meta {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color, #7f8c8d);
   text-align: right;
 }
 
 .description-text {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--text-color, #34495e);
   margin: 0 0 10px 0;
   text-align: justify;
@@ -282,7 +282,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   margin: 0;
   padding-left: 18px;
   color: var(--text-color, #34495e);
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
 }
 
 .bullet-points li {
@@ -297,7 +297,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .skill-category {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--text-color, #2c3e50);
 }
 
@@ -318,7 +318,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .tech-item {
   display: inline-block;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   padding: 2px 8px;
   border: 1px solid var(--border-color, #bdc3c7);
   border-radius: 3px;

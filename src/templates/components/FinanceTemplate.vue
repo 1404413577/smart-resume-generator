@@ -120,11 +120,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 <style scoped>
 .finance-template {
   /* 华尔街/投行标准：经典衬线字体，字号偏小，内容紧凑 */
-  font-family: var(--resume-font-family, 'Times New Roman', Times, serif);
+  font-family: var(--font-family, 'Times New Roman', Times, serif);
   background: var(--resume-background-color, #ffffff);
   color: var(--resume-text-color, #000000);
-  line-height: var(--resume-line-height, 1.35);
-  font-size: 11px;
+  line-height: var(--line-height, 1.35);
+  font-size: var(--font-size-base, 11px);
 }
 
 .resume-container {
@@ -152,7 +152,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .contact-info {
-  font-size: var(--resume-contact-font-size, 10.5px);
+  font-size: var(--font-size-base, 10.5px);
 }
 
 .separator {
@@ -166,7 +166,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .section-title {
-  font-size: var(--resume-title-font-size, 13px);
+  font-size: var(--font-size-title, 13px);
   font-weight: bold;
   text-transform: uppercase;
   color: var(--resume-primary-color, #1A2B4C);
@@ -192,16 +192,16 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .company, .school, .project-name {
-  font-size: var(--resume-subtitle-font-size, 12px);
+  font-size: var(--font-size-subtitle, 12px);
   color: #111;
 }
 
 .location, .date {
-  font-size: var(--resume-meta-font-size, 11px);
+  font-size: var(--font-size-base, 11px);
 }
 
 .position, .degree {
-  font-size: var(--resume-content-font-size, 11.5px);
+  font-size: var(--font-size-base, 11.5px);
   color: #333;
 }
 
@@ -224,7 +224,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 /* 技能与额外信息 */
 .skills-content {
-  line-height: 1.6;
+  line-height: var(--line-height, 1.6);
 }
 
 .skill-line {

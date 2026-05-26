@@ -133,11 +133,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 <style scoped>
 .artistic-portfolio-template {
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: var(--font-family, 'Georgia', 'Times New Roman', serif);
   background: var(--background-color);
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 14px;
+  line-height: var(--line-height, 1.6);
+  font-size: var(--font-size-base, 14px);
 }
 
 .resume-container {
@@ -201,13 +201,13 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .title {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   color: var(--secondary-color);
   margin: 0 0 30px 0;
   font-weight: 400;
   letter-spacing: 2px;
   text-transform: uppercase;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .contact-line {
@@ -219,10 +219,10 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .contact-item {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color);
   font-weight: 300;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 /* 章节样式 */
@@ -231,7 +231,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .section-title {
-  font-size: 22px;
+  font-size: var(--font-size-title, 22px);
   font-weight: 300;
   color: var(--primary-color);
   margin: 0 0 30px 0;
@@ -239,7 +239,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   letter-spacing: 4px;
   text-align: center;
   position: relative;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .section-title::after {
@@ -260,22 +260,22 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .statement-title {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   color: var(--primary-color);
   margin: 0 0 20px 0;
   text-align: center;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
   letter-spacing: 2px;
 }
 
 .statement-content {
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: var(--font-size-base, 16px);
+  line-height: var(--line-height, 1.8);
   color: var(--text-color);
   margin: 0;
   font-style: italic;
   text-align: justify;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 /* 作品集网格 */
@@ -305,27 +305,27 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .portfolio-title {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   font-weight: 400;
   color: var(--primary-color);
   margin: 0 0 8px 0;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--font-family, 'Playfair Display', Georgia, serif);
 }
 
 .portfolio-meta {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
   font-weight: 300;
   letter-spacing: 1px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .portfolio-description {
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height, 1.6);
   color: var(--text-color);
   margin: 15px 0;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 /* 媒介标签 */
@@ -337,14 +337,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .medium-tag {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--primary-color);
   font-weight: 400;
   letter-spacing: 0.5px;
   padding: 4px 12px;
   background: rgba(64, 158, 255, 0.1);
   border-radius: 15px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 /* 教育背景 */
@@ -361,19 +361,19 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .degree {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 400;
   color: var(--primary-color);
   margin: 0 0 5px 0;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--font-family, 'Playfair Display', Georgia, serif);
 }
 
 .school-meta {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color);
   font-weight: 300;
   letter-spacing: 0.5px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 /* 技能分类 */
@@ -390,10 +390,10 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .skill-name {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--primary-color);
   margin: 0 0 10px 0;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
   letter-spacing: 1px;
 }
 
@@ -425,19 +425,19 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .exhibition-title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 400;
   color: var(--primary-color);
   margin: 0 0 8px 0;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--font-family, 'Playfair Display', Georgia, serif);
 }
 
 .exhibition-meta {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
   font-weight: 300;
   letter-spacing: 0.5px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .exhibition-list {
@@ -447,13 +447,13 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .exhibition-list li {
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height, 1.6);
   margin-bottom: 8px;
   color: var(--text-color);
   position: relative;
   padding-left: 20px;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 .exhibition-list li::before {
@@ -491,7 +491,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   }
   
   .section-title {
-    font-size: 18px;
+    font-size: var(--font-size-title, 18px);
     letter-spacing: 3px;
   }
 }

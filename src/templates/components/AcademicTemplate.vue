@@ -233,11 +233,11 @@ const getSkillsByCategory = (category) => {
 
 <style scoped>
 .academic-template {
-  font-family: 'Times New Roman', serif;
+  font-family: var(--font-family, 'Times New Roman', serif);
   background: var(--background-color);
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 12px;
+  line-height: var(--line-height, 1.6);
+  font-size: var(--font-size-base, 12px);
 }
 
 .resume-container {
@@ -267,7 +267,7 @@ const getSkillsByCategory = (category) => {
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   color: var(--secondary-color);
   margin: 0 0 20px 0;
   font-weight: normal;
@@ -278,7 +278,7 @@ const getSkillsByCategory = (category) => {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
 }
 
 .contact-row {
@@ -297,7 +297,7 @@ const getSkillsByCategory = (category) => {
 }
 
 .section-title {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: bold;
   color: var(--primary-color);
   margin: 0 0 15px 0;
@@ -309,8 +309,8 @@ const getSkillsByCategory = (category) => {
 
 /* 个人简介 */
 .summary-text {
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: var(--font-size-base, 12px);
+  line-height: var(--line-height, 1.7);
   text-align: justify;
   margin: 0;
 }
@@ -334,14 +334,14 @@ const getSkillsByCategory = (category) => {
 }
 
 .degree {
-  font-size: 13px;
+  font-size: var(--font-size-subtitle, 13px);
   font-weight: bold;
   color: var(--text-color);
   margin: 0 0 3px 0;
 }
 
 .institution {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--primary-color);
   font-weight: normal;
   margin: 0;
@@ -350,7 +350,7 @@ const getSkillsByCategory = (category) => {
 
 .education-meta {
   text-align: right;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
 }
 
@@ -364,7 +364,7 @@ const getSkillsByCategory = (category) => {
 }
 
 .thesis, .advisor {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   margin-top: 5px;
   color: var(--text-color);
 }
@@ -388,7 +388,7 @@ const getSkillsByCategory = (category) => {
 }
 
 .position {
-  font-size: 13px;
+  font-size: var(--font-size-subtitle, 13px);
   font-weight: bold;
   color: var(--text-color);
   margin: 0 0 3px 0;
@@ -396,7 +396,7 @@ const getSkillsByCategory = (category) => {
 
 .experience-meta {
   text-align: right;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
 }
 
@@ -408,12 +408,12 @@ const getSkillsByCategory = (category) => {
 .responsibilities {
   margin: 0;
   padding-left: 15px;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
 }
 
 .responsibilities li {
   margin-bottom: 4px;
-  line-height: 1.5;
+  line-height: var(--line-height, 1.5);
 }
 
 /* 研究项目 */
@@ -435,27 +435,27 @@ const getSkillsByCategory = (category) => {
 }
 
 .project-title {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: bold;
   color: var(--text-color);
   margin: 0;
 }
 
 .project-period {
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   color: var(--secondary-color);
   font-style: italic;
 }
 
 .project-description {
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: var(--font-size-base, 11px);
+  line-height: var(--line-height, 1.5);
   margin: 0 0 6px 0;
   text-align: justify;
 }
 
 .funding, .collaborators {
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   color: var(--secondary-color);
   margin-top: 4px;
 }
@@ -468,8 +468,8 @@ const getSkillsByCategory = (category) => {
 }
 
 .publication-item {
-  font-size: 11px;
-  line-height: 1.4;
+  font-size: var(--font-size-base, 11px);
+  line-height: var(--line-height, 1.4);
 }
 
 .publication-authors {
@@ -488,7 +488,7 @@ const getSkillsByCategory = (category) => {
 }
 
 .publication-doi {
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   color: var(--secondary-color);
   margin-top: 2px;
 }
@@ -505,7 +505,7 @@ const getSkillsByCategory = (category) => {
 }
 
 .category-title {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: bold;
   color: var(--primary-color);
   margin: 0 0 8px 0;
@@ -518,7 +518,7 @@ const getSkillsByCategory = (category) => {
 }
 
 .skill-item {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--text-color);
   padding: 2px 6px;
   border: 1px solid var(--secondary-color);
@@ -536,7 +536,7 @@ const getSkillsByCategory = (category) => {
 .language-item {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   padding: 4px 0;
   border-bottom: 1px dotted var(--secondary-color);
 }
@@ -562,7 +562,7 @@ const getSkillsByCategory = (category) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   padding: 6px 0;
   border-bottom: 1px dotted var(--secondary-color);
 }

@@ -122,11 +122,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 <style scoped>
 .minimalist-template {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
   background: var(--background-color);
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 14px;
+  line-height: var(--line-height, 1.6);
+  font-size: var(--font-size-base, 14px);
 }
 
 .resume-container {
@@ -152,7 +152,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   color: var(--secondary-color);
   margin: 0 0 30px 0;
   font-weight: 300;
@@ -167,7 +167,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .contact-item {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color);
   font-weight: 300;
 }
@@ -178,7 +178,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: 300;
   color: var(--primary-color);
   margin: 0 0 30px 0;
@@ -201,8 +201,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 /* 个人简介 */
 .summary {
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: var(--font-size-base, 16px);
+  line-height: var(--line-height, 1.8);
   color: var(--text-color);
   margin: 0;
   text-align: center;
@@ -226,14 +226,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .item-title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 400;
   color: var(--primary-color);
   margin: 0 0 5px 0;
 }
 
 .item-meta {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
   font-weight: 300;
   letter-spacing: 0.5px;
@@ -248,8 +248,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .item-list li {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
   margin-bottom: 8px;
   color: var(--text-color);
   font-weight: 300;
@@ -265,8 +265,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .item-description {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
   color: var(--text-color);
   margin: 15px auto 0;
   font-weight: 300;
@@ -284,7 +284,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .skill-tag {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--text-color);
   font-weight: 300;
   letter-spacing: 1px;
@@ -304,7 +304,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .tech-tag {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
   font-weight: 300;
   letter-spacing: 0.5px;

@@ -133,11 +133,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 <style scoped>
 .corporate-executive-template {
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: var(--font-family, 'Georgia', 'Times New Roman', serif);
   background: var(--background-color);
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 14px;
+  line-height: var(--line-height, 1.6);
+  font-size: var(--font-size-base, 14px);
 }
 
 .resume-container {
@@ -169,12 +169,12 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .title {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   color: var(--secondary-color);
   margin: 0;
   font-weight: 400;
   letter-spacing: 1px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .contact-info {
@@ -196,19 +196,19 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .contact-label {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .contact-value {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--text-color);
   font-weight: 400;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 /* 章节样式 */
@@ -218,14 +218,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .section-title {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   font-weight: 400;
   color: var(--primary-color);
   margin: 0 0 20px 0;
   text-transform: uppercase;
   letter-spacing: 3px;
   position: relative;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .section-title::after {
@@ -240,11 +240,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 /* 执行摘要 */
 .executive-summary .summary-content {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: var(--font-size-base, 15px);
+  line-height: var(--line-height, 1.7);
   color: var(--text-color);
   margin: 0;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
   text-align: justify;
 }
 
@@ -269,11 +269,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .competency-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--primary-color);
   font-weight: 600;
   letter-spacing: 0.5px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 /* 职业经历 */
@@ -301,25 +301,25 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .position {
-  font-size: 17px;
+  font-size: var(--font-size-subtitle, 17px);
   font-weight: 400;
   color: var(--primary-color);
   margin: 0 0 5px 0;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 .company {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--secondary-color);
   font-weight: 400;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .date-range {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color);
   font-weight: 400;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
   min-width: 120px;
   text-align: right;
 }
@@ -344,10 +344,10 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .achievement-text {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height, 1.5);
   color: var(--text-color);
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 /* 教育背景 */
@@ -364,18 +364,18 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .degree {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 400;
   color: var(--primary-color);
   margin: 0 0 5px 0;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 .institution {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--secondary-color);
   font-weight: 400;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 .education-details {
@@ -384,10 +384,10 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .graduation-date {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color);
   font-weight: 400;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 /* 专业认证 */
@@ -404,26 +404,26 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .certification-name {
-  font-size: 15px;
+  font-size: var(--font-size-base, 15px);
   font-weight: 400;
   color: var(--primary-color);
   margin: 0 0 10px 0;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 .certification-description {
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height, 1.6);
   color: var(--text-color);
   margin: 0 0 10px 0;
-  font-family: 'Georgia', serif;
+  font-family: var(--font-family, 'Georgia', serif);
 }
 
 .certification-date {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color);
   font-weight: 400;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
 }
 
 /* 响应式设计 */
@@ -461,7 +461,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   }
   
   .section-title {
-    font-size: 18px;
+    font-size: var(--font-size-title, 18px);
     letter-spacing: 2px;
   }
 }

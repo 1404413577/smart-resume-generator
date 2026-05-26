@@ -69,6 +69,14 @@ const dynamicCSS = computed(() => {
       --spacing-section: ${spacing.sectionSpacing}px;
       --spacing-item: ${spacing.itemSpacing}px;
       --spacing-paragraph: ${spacing.paragraphSpacing}px;
+
+      /* resume-* 别名（兼容旧模板使用的变量名） */
+      --resume-base-font-size: ${typography.baseFontSize}px;
+      --resume-title-font-size: ${typography.titleFontSize}px;
+      --resume-subtitle-font-size: ${typography.subtitleFontSize}px;
+      --resume-font-family: ${typography.fontFamily};
+      --resume-line-height: ${spacing.lineHeight};
+      --resume-module-spacing: ${spacing.moduleSpacing}px;
       
       /* 布局变量 */
       --text-align-global: ${layout.alignment.global};
@@ -95,6 +103,23 @@ const dynamicCSS = computed(() => {
       color: var(--theme-text-primary);
       background-color: var(--theme-background);
       padding: var(--spacing-page-margin-top) var(--spacing-page-margin-right) var(--spacing-page-margin-bottom) var(--spacing-page-margin-left);
+    }
+
+    /* #resume-preview 覆盖所有模板的基础排版（ID 选择器特异性高于 scoped class） */
+    #resume-preview {
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height);
+      color: var(--theme-text-primary);
+    }
+
+    #resume-preview .section-title {
+      font-size: var(--font-size-title);
+    }
+
+    #resume-preview h2,
+    #resume-preview .subsection-title {
+      font-size: var(--font-size-subtitle);
     }
 
     /* 标题样式 */

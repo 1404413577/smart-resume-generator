@@ -211,11 +211,11 @@ const getSkillWidth = (level) => {
 
 <style scoped>
 .professional-template {
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: var(--font-family, 'Georgia', 'Times New Roman', serif);
   background: var(--background-color);
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 14px;
+  line-height: var(--line-height, 1.6);
+  font-size: var(--font-size-base, 14px);
 }
 
 .resume-container {
@@ -275,7 +275,7 @@ const getSkillWidth = (level) => {
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   color: var(--secondary-color);
   margin: 0;
   font-weight: normal;
@@ -299,7 +299,7 @@ const getSkillWidth = (level) => {
 }
 
 .contact-label {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
   font-weight: bold;
   text-transform: uppercase;
@@ -307,7 +307,7 @@ const getSkillWidth = (level) => {
 }
 
 .contact-value {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--text-color);
   font-weight: 500;
 }
@@ -343,7 +343,7 @@ const getSkillWidth = (level) => {
 }
 
 .sidebar-title {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   font-weight: bold;
   color: var(--primary-color);
   margin: 0 0 15px 0;
@@ -352,8 +352,8 @@ const getSkillWidth = (level) => {
 }
 
 .summary-text {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
   color: var(--text-color);
   margin: 0;
   text-align: justify;
@@ -379,13 +379,13 @@ const getSkillWidth = (level) => {
 }
 
 .skill-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 600;
   color: var(--text-color);
 }
 
 .skill-level {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
   font-weight: 500;
 }
@@ -417,33 +417,33 @@ const getSkillWidth = (level) => {
 }
 
 .education-degree {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle, 14px);
   font-weight: bold;
   color: var(--text-color);
   margin-bottom: 2px;
 }
 
 .education-major {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--accent-color);
   font-weight: 500;
   margin-bottom: 4px;
 }
 
 .education-school {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
   margin-bottom: 2px;
 }
 
 .education-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
   font-style: italic;
 }
 
 .education-gpa {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--accent-color);
   font-weight: 600;
   margin-top: 4px;
@@ -465,13 +465,13 @@ const getSkillWidth = (level) => {
 }
 
 .language-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 500;
   color: var(--text-color);
 }
 
 .language-level {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
   font-style: italic;
 }
@@ -482,7 +482,7 @@ const getSkillWidth = (level) => {
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: bold;
   color: var(--primary-color);
   margin: 0 0 20px 0;
@@ -511,14 +511,14 @@ const getSkillWidth = (level) => {
 }
 
 .job-title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: bold;
   color: var(--text-color);
   margin: 0 0 4px 0;
 }
 
 .company-name {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--accent-color);
   font-weight: 600;
   margin: 0;
@@ -529,13 +529,13 @@ const getSkillWidth = (level) => {
 }
 
 .work-period {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
   font-weight: 600;
 }
 
 .work-location {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
   font-style: italic;
   margin-top: 2px;
@@ -548,8 +548,8 @@ const getSkillWidth = (level) => {
 
 .responsibilities li {
   margin-bottom: 6px;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
   text-align: justify;
 }
 
@@ -572,27 +572,27 @@ const getSkillWidth = (level) => {
 }
 
 .project-name {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: bold;
   color: var(--text-color);
   margin: 0;
 }
 
 .project-period {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--secondary-color);
   font-style: italic;
 }
 
 .project-description {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
   margin: 0 0 10px 0;
   text-align: justify;
 }
 
 .project-technologies {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
 }
 
@@ -609,7 +609,7 @@ const getSkillWidth = (level) => {
 }
 
 .project-link {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--primary-color);
   text-decoration: none;
   font-weight: 600;
@@ -630,7 +630,7 @@ const getSkillWidth = (level) => {
 }
 
 .project-link-item {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #64748b;
   display: flex;
   gap: 6px;
@@ -646,7 +646,7 @@ const getSkillWidth = (level) => {
   color: var(--primary-color);
   text-decoration: underline;
   word-break: break-all;
-  line-height: 1.4;
+  line-height: var(--line-height, 1.4);
 }
 
 /* 成就列表 */
@@ -657,8 +657,8 @@ const getSkillWidth = (level) => {
 
 .achievements-list li {
   margin-bottom: 8px;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
 }
 
 

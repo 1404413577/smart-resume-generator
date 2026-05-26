@@ -124,11 +124,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 <style scoped>
 .education-template {
   /* 温暖、结构化、圆润亲和力的设计 */
-  font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-family, 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
   background: var(--background-color, #f4f6f8);
   color: var(--text-color, #2c3e50);
-  line-height: 1.6;
-  font-size: 13px;
+  line-height: var(--line-height, 1.6);
+  font-size: var(--font-size-base, 13px);
 }
 
 .resume-container {
@@ -176,11 +176,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   font-weight: 800;
   color: #34495e;
   margin: 0 0 5px 0;
-  line-height: 1.2;
+  line-height: var(--line-height, 1.2);
 }
 
 .title {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   color: #d35400; /* 暖橙色 */
   font-weight: 600;
   margin: 0;
@@ -191,7 +191,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .side-title {
-  font-size: 15px;
+  font-size: var(--font-size-title, 15px);
   text-transform: uppercase;
   color: #7f8c8d;
   font-weight: 700;
@@ -209,14 +209,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .contact-list li {
   margin-bottom: 10px;
-  font-size: 12.5px;
+  font-size: var(--font-size-base, 12.5px);
   display: flex;
   align-items: center;
 }
 
 .contact-list span {
   margin-right: 8px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
 }
 
 .skills-tags {
@@ -230,7 +230,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   color: #34495e;
   padding: 5px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 600;
   border: 1px solid #e8dcd0;
   box-shadow: 0 2px 5px rgba(0,0,0,0.02);
@@ -246,13 +246,13 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 .lang-level {
   color: #7f8c8d;
   font-style: italic;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 /* 右侧主内容 */
@@ -263,7 +263,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .main-title {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   font-weight: 800;
   color: #2c3e50;
   margin: 0 0 15px 0;
@@ -320,14 +320,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .position-title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   color: #2c3e50;
   margin: 0 0 4px 0;
 }
 
 .org-name {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 600;
   color: #7f8c8d;
   margin: 0;
@@ -338,14 +338,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   color: #d35400;
   padding: 4px 10px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   font-weight: 700;
 }
 
 .description-text {
   margin: 0 0 10px 0;
   color: #555;
-  font-size: 12.5px;
+  font-size: var(--font-size-base, 12.5px);
 }
 
 .bullet-points {
@@ -356,7 +356,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .bullet-points li {
   margin-bottom: 6px;
-  font-size: 12.5px;
+  font-size: var(--font-size-base, 12.5px);
   color: #444;
   display: flex;
   align-items: flex-start;
@@ -364,7 +364,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .bullet-icon {
   margin-right: 8px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   margin-top: 2px;
 }
 
@@ -383,28 +383,28 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .edu-year {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #e67e22;
   font-weight: 800;
   margin-bottom: 5px;
 }
 
 .program-name {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle, 14px);
   font-weight: 700;
   color: #2c3e50;
   margin: 0 0 4px 0;
-  line-height: 1.3;
+  line-height: var(--line-height, 1.3);
 }
 
 .school-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #7f8c8d;
   margin: 0 0 5px 0;
 }
 
 .edu-meta {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #95a5a6;
   margin: 0;
   font-weight: 600;
@@ -430,7 +430,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .cert-icon {
-  font-size: 20px;
+  font-size: var(--font-size-base, 20px);
   margin-right: 12px;
   background: #f4f6f8;
   width: 36px;
@@ -443,13 +443,13 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .cert-info strong {
   display: block;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #2c3e50;
 }
 
 .cert-org {
   display: block;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #95a5a6;
   margin-top: 2px;
 }

@@ -135,11 +135,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 <style scoped>
 .developer-template {
-  font-family: var(--resume-font-family, "Helvetica Neue", Helvetica, Arial, sans-serif);
-  line-height: var(--resume-line-height, 1.4);
+  font-family: var(--font-family, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  line-height: var(--line-height, 1.4);
   color: var(--resume-text-color, #333);
   background-color: var(--resume-background-color, #fafafa);
-  font-size: var(--resume-base-font-size, 14px);
+  font-size: var(--font-size-base, 14px);
 }
 
 .resume-container {
@@ -166,7 +166,7 @@ h1.name {
 .contact-info {
   font-size: 1em;
   color: #666;
-  line-height: 1.6;
+  line-height: var(--line-height, 1.6);
 }
 
 section {
@@ -174,7 +174,7 @@ section {
 }
 
 h2 {
-  font-size: var(--resume-title-font-size, 1.4em);
+  font-size: var(--font-size-title, 1.4em);
   border-bottom: 2px solid var(--resume-primary-color, #444);
   padding-bottom: 5px;
   margin-bottom: 15px;
@@ -183,7 +183,7 @@ h2 {
 }
 
 h3 {
-  font-size: var(--resume-subtitle-font-size, 1.1em);
+  font-size: var(--font-size-subtitle, 1.1em);
   margin-bottom: 8px;
   color: var(--resume-primary-color, #333);
   font-weight: bold;
@@ -191,7 +191,7 @@ h3 {
 
 .position-title {
   font-weight: normal;
-  font-size: var(--resume-content-font-size, 0.95em);
+  font-size: var(--font-size-base, 0.95em);
   color: #444;
 }
 
@@ -199,7 +199,7 @@ h3 {
   color: #666;
   font-style: italic;
   margin-bottom: 10px;
-  font-size: var(--resume-meta-font-size, 0.95em);
+  font-size: var(--font-size-base, 0.95em);
 }
 
 ul {
@@ -241,7 +241,7 @@ p {
 }
 
 .edu-details {
-  font-size: var(--resume-content-font-size, 0.95em);
+  font-size: var(--font-size-base, 0.95em);
   color: #555;
   margin-top: 4px;
 }

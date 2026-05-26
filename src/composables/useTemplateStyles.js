@@ -26,13 +26,14 @@ export function useTemplateStyles(templateId = null) {
       currentTemplateConfig.value
     )
 
-    // 调试信息
-    console.log('Template styles merged:', {
-      templateId: templateId || resumeStore.selectedTemplate,
-      templateColors: currentTemplateConfig.value?.colors,
-      globalTheme: resumeStore.globalSettings.theme,
-      mergedResult: merged
-    })
+    if (import.meta.env.DEV) {
+      console.log('Template styles merged:', {
+        templateId: templateId || resumeStore.selectedTemplate,
+        templateColors: currentTemplateConfig.value?.colors,
+        globalTheme: resumeStore.globalSettings.theme,
+        mergedResult: merged
+      })
+    }
 
     return merged
   })

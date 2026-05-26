@@ -121,11 +121,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 <style scoped>
 .marketing-template {
   /* 现代、时尚、具有冲击力的排版 */
-  font-family: 'Oswald', 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family, 'Oswald', 'Montserrat', 'Helvetica Neue', Arial, sans-serif);
   background: var(--background-color, #ffffff);
   color: var(--text-color, #1a1a1a);
-  line-height: 1.5;
-  font-size: 13px;
+  line-height: var(--line-height, 1.5);
+  font-size: var(--font-size-base, 13px);
 }
 
 .resume-container {
@@ -163,11 +163,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   text-transform: uppercase;
   letter-spacing: 2px;
   margin: 0 0 5px 0;
-  line-height: 1.1;
+  line-height: var(--line-height, 1.1);
 }
 
 .title {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   font-weight: 500;
   color: #f1c40f; /* 亮黄色职业描述 */
   text-transform: uppercase;
@@ -192,8 +192,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  font-size: 11px;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-size: var(--font-size-base, 11px);
+  font-family: var(--font-family, 'Helvetica Neue', sans-serif);
   letter-spacing: 1px;
   color: #aaaaaa;
 }
@@ -220,7 +220,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .module-title {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   font-weight: 800;
   text-transform: uppercase;
   color: #111;
@@ -239,9 +239,9 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .summary-text {
-  font-family: 'Helvetica Neue', sans-serif;
-  font-size: 13.5px;
-  line-height: 1.8;
+  font-family: var(--font-family, 'Helvetica Neue', sans-serif);
+  font-size: var(--font-size-base, 13.5px);
+  line-height: var(--line-height, 1.8);
   color: #444;
   text-align: justify;
 }
@@ -259,29 +259,29 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .job-role {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   margin: 0;
   text-transform: uppercase;
 }
 
 .company {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 600;
   color: #f39c12;
   margin: 0;
 }
 
 .exp-date {
-  font-size: 11px;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-size: var(--font-size-base, 11px);
+  font-family: var(--font-family, 'Helvetica Neue', sans-serif);
   color: #7f8c8d;
   font-weight: bold;
 }
 
 .exp-desc {
-  font-family: 'Helvetica Neue', sans-serif;
-  font-size: 12.5px;
+  font-family: var(--font-family, 'Helvetica Neue', sans-serif);
+  font-size: var(--font-size-base, 12.5px);
   color: #555;
   margin: 0 0 10px 0;
 }
@@ -290,14 +290,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: var(--font-family, 'Helvetica Neue', sans-serif);
 }
 
 .metric-item {
   background: #fdfbf7;
   padding: 8px 12px;
   border-left: 3px solid #111;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #333;
   display: flex;
   align-items: flex-start;
@@ -321,7 +321,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .side-title {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   font-weight: 800;
   text-transform: uppercase;
   color: #111;
@@ -340,7 +340,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   background: #111;
   color: #fff;
   padding: 6px 10px;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -351,22 +351,22 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .proj-name, .edu-degree {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle, 14px);
   font-weight: 700;
   margin: 0 0 3px 0;
   color: #111;
 }
 
 .proj-desc, .edu-major, .edu-school {
-  font-family: 'Helvetica Neue', sans-serif;
-  font-size: 12px;
+  font-family: var(--font-family, 'Helvetica Neue', sans-serif);
+  font-size: var(--font-size-base, 12px);
   color: #555;
   margin: 0 0 3px 0;
 }
 
 .proj-date, .edu-year {
-  font-family: 'Helvetica Neue', sans-serif;
-  font-size: 10px;
+  font-family: var(--font-family, 'Helvetica Neue', sans-serif);
+  font-size: var(--font-size-base, 10px);
   color: #999;
   font-weight: bold;
 }

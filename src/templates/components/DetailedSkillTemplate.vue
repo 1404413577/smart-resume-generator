@@ -177,8 +177,8 @@ const isTypicalLevel = (lvl) => {
   font-family: var(--font-family, 'PingFang SC', 'Microsoft YaHei', sans-serif);
   background: var(--background-color, #ffffff);
   color: var(--text-color, #333333);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height, 1.6);
 }
 
 .resume-container {
@@ -214,7 +214,7 @@ const isTypicalLevel = (lvl) => {
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   color: var(--text-color, #4a5568);
   margin: 0;
   font-weight: 500;
@@ -222,7 +222,7 @@ const isTypicalLevel = (lvl) => {
 
 .contact-box {
   text-align: right;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color, #718096);
 }
 
@@ -247,7 +247,7 @@ const isTypicalLevel = (lvl) => {
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: 700;
   color: var(--primary-color, #2b6cb0);
   margin: 0 0 15px 0;
@@ -275,9 +275,9 @@ const isTypicalLevel = (lvl) => {
 .summary-text {
   margin: 0;
   color: var(--text-color, #2d3748);
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   text-align: justify;
-  line-height: 1.7;
+  line-height: var(--line-height, 1.7);
 }
 
 /* ★ 技能列表（长句核心） ★ */
@@ -294,7 +294,7 @@ const isTypicalLevel = (lvl) => {
 
 .skill-content {
   color: var(--text-color, #2d3748);
-  line-height: 1.6;
+  line-height: var(--line-height, 1.6);
 }
 
 .skill-level-badge {
@@ -327,28 +327,28 @@ const isTypicalLevel = (lvl) => {
 }
 
 .item-company {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   color: var(--text-color, #1a202c);
   margin-right: 15px;
 }
 
 .item-position {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 500;
   color: var(--primary-color, #2b6cb0);
   flex: 1; /* 撑开中间，将date推向右侧 */
 }
 
 .item-date {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color, #718096);
   text-align: right;
   margin-left: 10px;
 }
 
 .item-location {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color, #a0aec0);
   margin-left: 10px;
 }
@@ -360,7 +360,7 @@ const isTypicalLevel = (lvl) => {
 .item-desc {
   margin: 0 0 6px 0;
   color: var(--text-color, #4a5568);
-  line-height: 1.6;
+  line-height: var(--line-height, 1.6);
 }
 
 .item-achievements {
@@ -380,7 +380,7 @@ const isTypicalLevel = (lvl) => {
 /* 技术栈微调 */
 .tech-stack {
   margin-top: 8px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--text-color, #4a5568);
 }
 
@@ -391,7 +391,7 @@ const isTypicalLevel = (lvl) => {
   margin-right: 6px;
   margin-bottom: 4px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--primary-color, #2b6cb0);
 }
 
@@ -399,6 +399,6 @@ const isTypicalLevel = (lvl) => {
   display: inline-block;
   margin-left: 10px;
   color: var(--accent-color, #dd6b20);
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 </style>

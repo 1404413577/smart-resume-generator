@@ -163,11 +163,11 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 <style scoped>
 .classic-template {
-  font-family: 'Times New Roman', serif;
+  font-family: var(--font-family, 'Times New Roman', serif);
   background: var(--background-color);
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 14px;
+  line-height: var(--line-height, 1.6);
+  font-size: var(--font-size-base, 14px);
 }
 
 .resume-container {
@@ -201,7 +201,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   color: var(--secondary-color);
   margin: 0 0 20px 0;
   font-weight: normal;
@@ -220,7 +220,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .contact-item {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--text-color);
 }
 
@@ -257,7 +257,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 /* 章节标题 */
 .section-title {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   font-weight: bold;
   color: var(--primary-color);
   margin: 30px 0 20px 0;
@@ -269,8 +269,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 /* 个人简介 */
 .summary-text {
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height, 1.7);
   color: var(--text-color);
   margin: 0;
   text-align: justify;
@@ -295,14 +295,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .job-title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: bold;
   color: var(--text-color);
   margin: 0 0 4px 0;
 }
 
 .company-name {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--primary-color);
   font-weight: normal;
   margin: 0;
@@ -311,7 +311,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .date-location {
   text-align: right;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
 }
 
@@ -327,8 +327,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .responsibilities li {
   margin-bottom: 6px;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
   text-align: justify;
 }
 
@@ -350,14 +350,14 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .degree {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: bold;
   color: var(--text-color);
   margin: 0 0 4px 0;
 }
 
 .school {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--primary-color);
   font-weight: normal;
   margin: 0;
@@ -366,7 +366,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .edu-date {
   text-align: right;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
 }
 
@@ -396,7 +396,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .skill-level {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
   font-style: italic;
 }
@@ -420,27 +420,27 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .project-name {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: bold;
   color: var(--text-color);
   margin: 0;
 }
 
 .project-date {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
   font-style: italic;
 }
 
 .project-description {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
   margin: 0 0 8px 0;
   text-align: justify;
 }
 
 .project-tech {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
 }
 
@@ -465,7 +465,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .language-level {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
   font-style: italic;
 }

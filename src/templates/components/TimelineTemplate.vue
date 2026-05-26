@@ -195,8 +195,8 @@ const getSkillPercentage = (level) => {
   font-family: var(--font-family, 'Noto Sans SC', sans-serif);
   background: var(--background-color, #f8f9fa);
   color: var(--text-color, #333333);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height, 1.6);
 }
 
 .resume-container {
@@ -232,7 +232,7 @@ const getSkillPercentage = (level) => {
 }
 
 .title {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   color: var(--primary-color, #3b82f6);
   font-weight: 500;
   margin: 0 0 20px 0;
@@ -242,7 +242,7 @@ const getSkillPercentage = (level) => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--secondary-color, #6b7280);
 }
 
@@ -295,7 +295,7 @@ const getSkillPercentage = (level) => {
 }
 
 .section-title {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   font-weight: 700;
   color: var(--text-color, #1f2937);
   margin: 0 0 25px 0;
@@ -304,7 +304,7 @@ const getSkillPercentage = (level) => {
 }
 
 .section-title span {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 800;
   color: var(--primary-color, #3b82f6);
   letter-spacing: 4px;
@@ -312,7 +312,7 @@ const getSkillPercentage = (level) => {
 }
 
 .summary-text {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--text-color, #4b5563);
   text-align: justify;
   background: var(--background-secondary, #f3f4f6);
@@ -358,14 +358,14 @@ const getSkillPercentage = (level) => {
 }
 
 .primary-title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   color: var(--text-color, #1f2937);
   margin: 0 0 4px 0;
 }
 
 .secondary-title {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 500;
   color: var(--secondary-color, #6b7280);
 }
@@ -373,14 +373,14 @@ const getSkillPercentage = (level) => {
 .date-badge {
   background: var(--primary-light-color, #eff6ff);
   color: var(--primary-color, #2563eb);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 20px;
 }
 
 .item-body .desc {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--text-color, #4b5563);
   margin: 0 0 10px 0;
 }
@@ -389,7 +389,7 @@ const getSkillPercentage = (level) => {
   margin: 0;
   padding-left: 18px;
   color: var(--text-color, #4b5563);
-  font-size: 13.5px;
+  font-size: var(--font-size-base, 13.5px);
 }
 
 .item-body .bullets li {
@@ -407,7 +407,7 @@ const getSkillPercentage = (level) => {
 .tag {
   background: var(--background-secondary, #f3f4f6);
   color: var(--secondary-color, #4b5563);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   padding: 3px 8px;
   border-radius: 4px;
   font-weight: 500;
@@ -428,11 +428,11 @@ const getSkillPercentage = (level) => {
 
 .skill-name {
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
 }
 
 .skill-level {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color, #6b7280);
 }
 

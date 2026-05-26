@@ -216,11 +216,11 @@ const getSkillLevel = (level) => {
 
 <style scoped>
 .modern-template {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-family, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
   background: var(--background-color);
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 14px;
+  line-height: var(--line-height, 1.6);
+  font-size: var(--font-size-base, 14px);
 }
 
 .resume-container {
@@ -263,7 +263,7 @@ const getSkillLevel = (level) => {
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   font-weight: 600;
   margin-bottom: 15px;
   padding-bottom: 8px;
@@ -280,7 +280,7 @@ const getSkillLevel = (level) => {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 .contact-item .icon {
@@ -297,7 +297,7 @@ const getSkillLevel = (level) => {
 }
 
 .skill-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   margin-bottom: 5px;
   font-weight: 500;
 }
@@ -320,7 +320,7 @@ const getSkillLevel = (level) => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 /* 右侧主内容样式 */
@@ -344,14 +344,14 @@ const getSkillLevel = (level) => {
 }
 
 .title {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   color: var(--secondary-color);
   margin: 0;
   font-weight: 400;
 }
 
 .main-content .section-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: 600;
   color: var(--primary-color);
   margin: 30px 0 20px 0;
@@ -371,8 +371,8 @@ const getSkillLevel = (level) => {
 }
 
 .summary-text {
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height, 1.7);
   color: var(--text-color);
   margin: 0;
 }
@@ -395,14 +395,14 @@ const getSkillLevel = (level) => {
 }
 
 .job-title, .degree, .project-name {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 600;
   color: var(--text-color);
   margin: 0 0 4px 0;
 }
 
 .company-name, .school {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--primary-color);
   font-weight: 500;
   margin: 0;
@@ -410,7 +410,7 @@ const getSkillLevel = (level) => {
 
 .date-location, .edu-date, .project-date {
   text-align: right;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--secondary-color);
 }
 
@@ -426,18 +426,18 @@ const getSkillLevel = (level) => {
 
 .responsibilities li {
   margin-bottom: 6px;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
 }
 
 .project-description {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--font-size-base, 13px);
+  line-height: var(--line-height, 1.6);
   margin: 0 0 10px 0;
 }
 
 .project-tech {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .tech-label {
@@ -459,7 +459,7 @@ const getSkillLevel = (level) => {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--primary-color);
   text-decoration: none;
   font-weight: 500;
@@ -486,7 +486,7 @@ const getSkillLevel = (level) => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .project-link-full {
@@ -494,7 +494,7 @@ const getSkillLevel = (level) => {
   text-decoration: none;
   font-weight: 500;
   word-break: break-all;
-  line-height: 1.4;
+  line-height: var(--line-height, 1.4);
 }
 
 .project-link-full:hover {

@@ -1,13 +1,15 @@
 import { createApp } from 'vue'
 import { registerSW } from 'virtual:pwa-register'
 import { createPinia } from 'pinia'
-import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import './style.css'
 import './styles/print.css'
 import App from './App.vue'
 import router from './router'
+
+// 按需加载 Element Plus 和图标
+import { registerElementComponents, ElMessage } from './utils/elementPlus/index.js'
+import { registerCommonIcons } from './utils/icons/index.js'
 
 // 导入性能监控与安全防御
 import './utils/performance/performance.js'
@@ -19,14 +21,14 @@ setupAntiScrape();
 const app = createApp(App)
 const pinia = createPinia()
 
-// 注册Element Plus图标
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component)
-}
+// 按需注册 Element Plus 组件
+registerElementComponents(app)
+
+// 按需注册常用图标
+registerCommonIcons(app)
 
 app.use(pinia)
 app.use(router)
-app.use(ElementPlus)
 app.mount('#app')
 
 // 全局快捷键：Ctrl+Shift+D 快速填充默认数据

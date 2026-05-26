@@ -78,7 +78,7 @@ export default defineConfig({
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: false // 故意保留 debugger 以便后续安全脚本埋雷
+        drop_debugger: process.env.NODE_ENV === 'production' // 生产环境移除 debugger
       }
     },
     chunkSizeWarningLimit: 1000,

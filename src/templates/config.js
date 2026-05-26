@@ -257,6 +257,66 @@ export const templateConfig = {
         secondary: 'Roboto, sans-serif'
       }
     },
+
+    medicalHealthcare: {
+      colors: {
+        primary: '#0077B6',
+        secondary: '#48CAE4',
+        accent: '#90E0EF'
+      },
+      fonts: {
+        primary: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+        secondary: 'system-ui, sans-serif'
+      }
+    },
+
+    legalLaw: {
+      colors: {
+        primary: '#1B2A4A',
+        secondary: '#2C3E50',
+        accent: '#C9A962'
+      },
+      fonts: {
+        primary: '"Times New Roman", Georgia, "Songti SC", serif',
+        secondary: 'Arial, sans-serif'
+      }
+    },
+
+    dataScienceAI: {
+      colors: {
+        primary: '#7B2FBE',
+        secondary: '#3B82F6',
+        accent: '#a78bfa'
+      },
+      fonts: {
+        primary: '"Inter", -apple-system, sans-serif',
+        secondary: '"Fira Code", "SF Mono", Consolas, monospace'
+      }
+    },
+
+    luxuryPremium: {
+      colors: {
+        primary: '#0A0A0A',
+        secondary: '#1a1a1a',
+        accent: '#D4AF37'
+      },
+      fonts: {
+        primary: '"Cormorant Garamond", "Playfair Display", Georgia, serif',
+        secondary: '"Playfair Display", Georgia, serif'
+      }
+    },
+
+    freelancerCreative: {
+      colors: {
+        primary: '#C17A4E',
+        secondary: '#7D9B76',
+        accent: '#E8B48C'
+      },
+      fonts: {
+        primary: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+        secondary: 'system-ui, sans-serif'
+      }
+    },
   }
 }
 

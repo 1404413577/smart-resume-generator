@@ -37,6 +37,11 @@ const getAsyncComponent = (key) => {
     key === 'education' ? './components/EducationTemplate.vue' : null,
     key === 'marketing' ? './components/MarketingTemplate.vue' : null,
     key === 'developer' ? './components/DeveloperTemplate.vue' : null,
+    key === 'medicalHealthcare' ? './components/MedicalHealthcareTemplate.vue' : null,
+    key === 'legalLaw' ? './components/LegalLawTemplate.vue' : null,
+    key === 'dataScienceAI' ? './components/DataScienceAITemplate.vue' : null,
+    key === 'luxuryPremium' ? './components/LuxuryPremiumTemplate.vue' : null,
+    key === 'freelancerCreative' ? './components/FreelancerCreativeTemplate.vue' : null,
   ].filter(Boolean)
 
   for (const path of patterns) {
@@ -363,6 +368,51 @@ export const templateRegistry = {
     preview: '/images/templates/modern-preview.png',
     features: ['渐变点缀', '卡片布局', '清新配色', '双栏排版'],
     suitableFor: ['互联网从业者', '产品经理', '设计师', '全栈开发', '通用岗位']
+  },
+  medicalHealthcare: {
+    name: 'Medical Healthcare',
+    component: getAsyncComponent('medicalHealthcare'),
+    description: '医疗健康行业专业模板，干净清爽的蓝白配色，突出临床经验、执业资格和学术发表',
+    category: 'healthcare',
+    preview: '/images/templates/modern-preview.png',
+    features: ['医疗专业', '执照突出', '临床经验', '清晰模块', 'ATS友好'],
+    suitableFor: ['医生', '护士', '医学研究员', '医疗管理人员', '公共卫生']
+  },
+  legalLaw: {
+    name: 'Legal Law',
+    component: getAsyncComponent('legalLaw'),
+    description: '法律法务行业正式模板，传统权威的藏蓝金配色，突出执业资质和专业领域',
+    category: 'legal',
+    preview: '/images/templates/classic-preview.png',
+    features: ['传统权威', '金色点缀', '执业资格', '专业领域', '正式排版'],
+    suitableFor: ['律师', '法务顾问', '合伙人', '合规官', '法官助理']
+  },
+  dataScienceAI: {
+    name: 'Data Science & AI',
+    component: getAsyncComponent('dataScienceAI'),
+    description: '数据科学与AI专业模板，深色科技风搭配紫蓝渐变，代码风格排版，突出技术栈和项目经验',
+    category: 'tech',
+    preview: '/images/templates/tech-preview.png',
+    features: ['深色科技风', '代码风格', '项目卡片', '技术栈展示', '时间轴'],
+    suitableFor: ['数据科学家', 'AI工程师', '机器学习研究员', '数据分析师', '算法工程师']
+  },
+  luxuryPremium: {
+    name: 'Luxury Premium',
+    component: getAsyncComponent('luxuryPremium'),
+    description: '高端奢华深色模板，香槟金点缀配合优雅衬线字体，适合高级管理及奢侈品牌从业者',
+    category: 'business',
+    preview: '/images/templates/executive-preview.png',
+    features: ['奢华深色', '金色点缀', '衬线字体', '极简留白', '高端质感'],
+    suitableFor: ['高级总裁', '奢侈品牌', '酒店管理', '私人银行', '首席顾问']
+  },
+  freelancerCreative: {
+    name: 'Freelancer Creative',
+    component: getAsyncComponent('freelancerCreative'),
+    description: '自由职业者创意模板，温暖陶土色调搭配鼠尾草绿，个人品牌卡片设计，突出项目组合和服务能力',
+    category: 'freelancer',
+    preview: '/images/templates/designer-preview.png',
+    features: ['个人品牌', '暖色调', '项目展示', '技能云', '服务导向'],
+    suitableFor: ['自由设计师', '独立开发者', '自由撰稿人', '咨询顾问', '数字游民']
   }
 }
 
@@ -423,5 +473,8 @@ export const templateCategories = {
   engineering: '工程研发',
   startup: '创业创新',
   minimalist: '极简主义',
-  fashion: '高定时尚'
+  fashion: '高定时尚',
+  healthcare: '医疗健康',
+  legal: '法律法务',
+  freelancer: '自由职业'
 }

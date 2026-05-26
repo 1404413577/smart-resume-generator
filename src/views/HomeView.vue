@@ -37,26 +37,6 @@
             <div class="ai-quick-actions">
               <div class="quick-actions-title">快速操作</div>
               <div class="quick-actions-grid">
-                <div class="quick-action-item" @click="handleQuickOptimize">
-                  <el-icon><Promotion /></el-icon>
-                  <span>智能优化</span>
-                </div>
-                <div class="quick-action-item" @click="handleJobMatch">
-                  <el-icon><Search /></el-icon>
-                  <span>职位匹配</span>
-                </div>
-                <div class="quick-action-item" @click="handleQualityCheck">
-                  <el-icon><TrendCharts /></el-icon>
-                  <span>质量检查</span>
-                </div>
-                <div class="quick-action-item" @click="handleOCRImport">
-                  <el-icon><Picture /></el-icon>
-                  <span>图片导入</span>
-                </div>
-                <div class="quick-action-item" @click="handleAIGenerate">
-                  <el-icon><ChatRound /></el-icon>
-                  <span>AI对话</span>
-                </div>
               </div>
             </div>
 
@@ -669,28 +649,6 @@ const handleApplySuggestedPaging = (analysis) => {
 }
 
 // AI助手相关方法
-const handleQuickOptimize = () => {
-  if (!resumeStore.resumeData.personalInfo.name) {
-    ElMessage.warning('请先填写基本信息')
-    return
-  }
-  showAIGenerator.value = true
-  ElMessage.info('正在启动AI智能优化...')
-}
-
-const handleJobMatch = () => {
-  showAIGenerator.value = true
-  ElMessage.info('正在启动职位匹配分析...')
-}
-
-const handleQualityCheck = () => {
-  if (!resumeStore.resumeData.personalInfo.name) {
-    ElMessage.warning('请先填写基本信息')
-    return
-  }
-  showAIGenerator.value = true
-  ElMessage.info('正在启动简历质量检查...')
-}
 
 const handleRecommendation = (recommendation) => {
   switch (recommendation.action) {

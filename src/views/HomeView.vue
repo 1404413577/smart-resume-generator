@@ -84,17 +84,7 @@
               </div>
             </div>
 
-            <!-- 开发模式下的AI测试按钮 -->
-            <div v-if="isDevelopment" class="ai-dev-section">
-              <div class="action-item ai-test-action" @click="showAITest = true">
-                <el-icon class="action-icon"><Tools /></el-icon>
-                <div class="action-info">
-                  <div class="action-name">AI功能测试</div>
-                  <div class="action-desc">测试API连接和功能</div>
-                </div>
-                <div class="action-badge dev">DEV</div>
-              </div>
-            </div>
+
           </div>
         </div>
 
@@ -276,17 +266,6 @@
         @order-changed="handleSectionOrderChanged"
       />
 
-      <!-- AI测试面板对话框 (仅开发模式) -->
-      <el-dialog
-        v-model="showAITest"
-        title="AI功能测试面板"
-        width="90%"
-        :before-close="() => showAITest = false"
-        v-if="isDevelopment"
-      >
-        <AITestPanel />
-      </el-dialog>
-
       <!-- 模板上传对话框 -->
       <el-dialog
         v-model="showTemplateUploader"
@@ -346,7 +325,6 @@ import { useWindowSize } from '@vueuse/core'
 import TemplateUploader from '@components/word/TemplateUploader.vue'
 import AdvancedAIResumeGenerator from '@components/ai/AdvancedAIResumeGenerator.vue'
 import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
-import AITestPanel from '@components/ai/AITestPanel.vue'
 import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
 import OCRImport from '@components/resume/OCRImport.vue'
@@ -391,7 +369,6 @@ const showTemplateManager = ref(false)
 const showSectionSort = ref(false)
 const currentPreviewPage = ref(1)
 const showAllPages = ref(false)
-const showAITest = ref(false)
 const ocrImportRef = ref(null)
 const showDonation = ref(true)
 

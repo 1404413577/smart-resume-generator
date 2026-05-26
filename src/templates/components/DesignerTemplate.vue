@@ -183,7 +183,7 @@ const splitName = (name) => {
   padding-bottom: 15px;
   margin-bottom: 40px;
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   font-weight: 700;
   letter-spacing: 1px;
 }
@@ -261,7 +261,7 @@ const splitName = (name) => {
 
 /* Common Section Label */
 .section-label {
-  font-size: 12px;
+  font-size: var(--font-size-title, 12px);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -278,7 +278,7 @@ const splitName = (name) => {
 
 .summary-text {
   font-family: 'Georgia', serif; /* Elegant serif for body copy contrast */
-  font-size: 24px;
+  font-size: var(--font-size-base, 24px);
   line-height: 1.5;
   margin: 0;
   color: var(--d-text);
@@ -310,7 +310,7 @@ const splitName = (name) => {
 }
 
 .work-number {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 700;
   color: var(--d-gray);
   width: 40px;
@@ -330,7 +330,7 @@ const splitName = (name) => {
 }
 
 .work-title {
-  font-size: 20px;
+  font-size: var(--font-size-subtitle, 20px);
   font-weight: 800;
   margin: 0;
   text-transform: uppercase;
@@ -338,13 +338,13 @@ const splitName = (name) => {
 }
 
 .work-year {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 600;
   color: var(--d-gray);
 }
 
 .work-desc {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   margin: 0 0 16px 0;
   color: var(--d-text);
@@ -357,7 +357,7 @@ const splitName = (name) => {
 }
 
 .w-tag {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   font-weight: 600;
   text-transform: uppercase;
   border: 1px solid var(--d-border);
@@ -390,7 +390,7 @@ const splitName = (name) => {
 .exp-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 700;
   text-transform: uppercase;
   border-top: 1px solid var(--d-border);
@@ -406,14 +406,14 @@ const splitName = (name) => {
 }
 
 .exp-role {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   font-weight: 800;
   margin: 0 0 10px 0;
   letter-spacing: -0.5px;
 }
 
 .exp-desc {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   margin: 0 0 12px 0;
 }
@@ -427,7 +427,7 @@ const splitName = (name) => {
 .exp-achievements li {
   position: relative;
   padding-left: 16px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.5;
   margin-bottom: 6px;
   color: var(--d-gray);
@@ -450,7 +450,7 @@ const splitName = (name) => {
 .skill-row {
   display: flex;
   align-items: center;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -489,28 +489,28 @@ const splitName = (name) => {
 }
 
 .edu-year {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 700;
   margin-bottom: 6px;
   color: var(--d-gray);
 }
 
 .edu-degree {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle, 14px);
   font-weight: 800;
   margin: 0 0 4px 0;
   text-transform: uppercase;
 }
 
 .edu-major {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--d-accent);
   margin-bottom: 4px;
   font-weight: 600;
 }
 
 .edu-school {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--d-text);
 }
 
@@ -528,7 +528,7 @@ const splitName = (name) => {
 .lang-item {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 600;
   text-transform: uppercase;
 }

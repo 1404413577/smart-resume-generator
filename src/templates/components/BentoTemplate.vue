@@ -129,8 +129,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .profile-left { flex: 1; }
 .bento-name { font-size: 32px; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -1px; }
-.bento-title { font-size: 18px; color: #6b7280; margin: 0 0 16px 0; font-weight: 500; }
-.bento-contact { display: flex; gap: 16px; font-size: 13px; color: #4b5563; flex-wrap: wrap; }
+.bento-title { font-size: var(--font-size-subtitle, 18px); color: #6b7280; margin: 0 0 16px 0; font-weight: 500; }
+.bento-contact { display: flex; gap: 16px; font-size: var(--font-size-base, 13px); color: #4b5563; flex-wrap: wrap; }
 
 .bento-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
@@ -144,30 +144,30 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 .col-span-2 { grid-column: span 2; }
 .col-span-3 { grid-column: span 3; }
 
-.bento-card-title { font-size: 16px; font-weight: 700; margin: 0 0 16px 0; color: #111827; }
-.bento-text { font-size: 14px; line-height: 1.6; color: #4b5563; margin: 0; }
+.bento-card-title { font-size: var(--font-size-title, 16px); font-weight: 700; margin: 0 0 16px 0; color: #111827; }
+.bento-text { font-size: var(--font-size-base, 14px); line-height: 1.6; color: #4b5563; margin: 0; }
 
 .bento-pills { display: flex; flex-wrap: wrap; gap: 8px; }
-.bento-pill { background-color: #f3f4f6; color: #374151; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; }
+.bento-pill { background-color: #f3f4f6; color: #374151; font-size: var(--font-size-base, 12px); font-weight: 600; padding: 6px 12px; border-radius: 20px; }
 
 .bento-list-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #f3f4f6; }
 .bento-list-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
 .item-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-.item-primary { font-size: 16px; font-weight: 700; color: #111827; }
-.item-date { font-size: 12px; color: #6b7280; font-weight: 500; }
-.item-sub { font-size: 14px; color: #3b82f6; font-weight: 500; margin-bottom: 8px; }
-.item-bullets { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: #4b5563; }
+.item-primary { font-size: var(--font-size-title, 16px); font-weight: 700; color: #111827; }
+.item-date { font-size: var(--font-size-base, 12px); color: #6b7280; font-weight: 500; }
+.item-sub { font-size: var(--font-size-base, 14px); color: #3b82f6; font-weight: 500; margin-bottom: 8px; }
+.item-bullets { margin: 0; padding-left: 18px; font-size: var(--font-size-base, 13px); line-height: 1.6; color: #4b5563; }
 .item-bullets li { margin-bottom: 4px; }
 
 .bento-proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .bento-proj-card { background-color: #f9fafb; border-radius: 16px; padding: 16px; }
-.proj-name { font-size: 15px; font-weight: 700; margin: 0 0 8px 0; }
-.proj-desc { font-size: 12px; line-height: 1.5; color: #4b5563; margin: 0 0 12px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.proj-name { font-size: var(--font-size-subtitle, 15px); font-weight: 700; margin: 0 0 8px 0; }
+.proj-desc { font-size: var(--font-size-base, 12px); line-height: 1.5; color: #4b5563; margin: 0 0 12px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .proj-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.proj-tag { font-size: 10px; font-weight: 600; color: #6b7280; background: #fff; border: 1px solid #e5e7eb; padding: 2px 6px; border-radius: 6px; }
+.proj-tag { font-size: var(--font-size-base, 10px); font-weight: 600; color: #6b7280; background: #fff; border: 1px solid #e5e7eb; padding: 2px 6px; border-radius: 6px; }
 
 .bento-edu-item { margin-bottom: 16px; }
-.edu-school { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.edu-detail { font-size: 12px; color: #4b5563; margin-bottom: 4px; }
-.edu-year { font-size: 11px; color: #9ca3af; font-weight: 500; }
+.edu-school { font-size: var(--font-size-base, 14px); font-weight: 700; margin-bottom: 4px; }
+.edu-detail { font-size: var(--font-size-base, 12px); color: #4b5563; margin-bottom: 4px; }
+.edu-year { font-size: var(--font-size-base, 11px); color: #9ca3af; font-weight: 500; }
 </style>

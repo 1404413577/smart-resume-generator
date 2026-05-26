@@ -165,7 +165,7 @@ const getPercent = (level) => {
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 300;
   color: var(--accent-color, #D4AF37);
   margin: 0;
@@ -180,18 +180,18 @@ const getPercent = (level) => {
   align-items: center;
   gap: 16px;
   margin: 20px 0;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #999;
   letter-spacing: 1px;
 }
 
-.contact-dot { color: var(--accent-color, #D4AF37); font-size: 16px; }
+.contact-dot { color: var(--accent-color, #D4AF37); font-size: var(--font-size-subtitle, 16px); }
 
 /* 区块 */
 .section-block { margin-bottom: 30px; }
 
 .section-title {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: 400;
   color: var(--accent-color, #D4AF37);
   margin: 0 0 16px 0;
@@ -202,7 +202,7 @@ const getPercent = (level) => {
 
 /* 个人简介 */
 .summary-text {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.8;
   color: #b0b0b0;
   margin: 0;
@@ -231,7 +231,7 @@ const getPercent = (level) => {
 }
 
 .exp-position {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 400;
   color: #f5f5f5;
   margin: 0 0 4px 0;
@@ -239,14 +239,14 @@ const getPercent = (level) => {
 }
 
 .exp-company {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--accent-color, #D4AF37);
   font-weight: 300;
   letter-spacing: 1px;
 }
 
 .exp-date {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #777;
   white-space: nowrap;
   font-weight: 300;
@@ -259,7 +259,7 @@ const getPercent = (level) => {
 }
 
 .exp-achievements li {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.7;
   color: #b0b0b0;
   margin-bottom: 5px;
@@ -282,7 +282,7 @@ const getPercent = (level) => {
 .edu-item:last-child { margin-bottom: 0; }
 
 .edu-school {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 400;
   color: #f5f5f5;
   margin: 0 0 3px 0;
@@ -291,13 +291,13 @@ const getPercent = (level) => {
 
 .edu-degree {
   display: block;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #999;
   margin-bottom: 2px;
 }
 
 .edu-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #666;
   letter-spacing: 0.5px;
 }
@@ -310,7 +310,7 @@ const getPercent = (level) => {
 .expertise-item:last-child { margin-bottom: 0; }
 
 .expertise-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #d4d4d4;
   display: block;
   margin-bottom: 6px;
@@ -341,7 +341,7 @@ const getPercent = (level) => {
 .honor-item:last-child { margin-bottom: 0; }
 
 .honor-year {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--accent-color, #D4AF37);
   font-weight: 400;
   letter-spacing: 1px;
@@ -350,7 +350,7 @@ const getPercent = (level) => {
 }
 
 .honor-name {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 400;
   color: #f5f5f5;
   margin: 0 0 3px 0;
@@ -358,7 +358,7 @@ const getPercent = (level) => {
 }
 
 .honor-desc {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #999;
   margin: 0;
   line-height: 1.5;

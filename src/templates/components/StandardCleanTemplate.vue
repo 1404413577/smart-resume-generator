@@ -182,7 +182,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .sc-contact {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--sc-text-light);
   display: flex;
   justify-content: center;
@@ -193,7 +193,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 .divider { color: #cccccc; }
 .sc-section { margin-bottom: 25px; }
 .sc-section-title {
-  font-size: 15px;
+  font-size: var(--font-size-title, 15px);
   font-weight: bold;
   text-transform: uppercase;
   border-bottom: 1px solid #000000;
@@ -204,15 +204,15 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 .sc-item { margin-bottom: 15px; }
 .sc-item:last-child { margin-bottom: 0; }
 .sc-item-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-.sc-item-main { font-size: 14px; }
-.sc-item-date { font-size: 13px; color: var(--sc-text-light); }
-.sc-item-sub { font-size: 14px; font-style: italic; color: var(--sc-text-light); }
-.tech-inline { font-size: 13px; color: var(--sc-text-light); font-weight: normal; }
-.sc-text { font-size: 13.5px; line-height: 1.5; margin: 0; }
+.sc-item-main { font-size: var(--font-size-base, 14px); }
+.sc-item-date { font-size: var(--font-size-base, 13px); color: var(--sc-text-light); }
+.sc-item-sub { font-size: var(--font-size-base, 14px); font-style: italic; color: var(--sc-text-light); }
+.tech-inline { font-size: var(--font-size-base, 13px); color: var(--sc-text-light); font-weight: normal; }
+.sc-text { font-size: var(--font-size-base, 13.5px); line-height: 1.5; margin: 0; }
 .italic-desc { font-style: italic; margin-bottom: 6px; }
 .mt-1 { margin-top: 4px; }
-.sc-list { margin: 4px 0 0 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; }
+.sc-list { margin: 4px 0 0 0; padding-left: 18px; font-size: var(--font-size-base, 13.5px); line-height: 1.5; }
 .sc-list li { margin-bottom: 4px; }
 .sc-skills-inline { display: flex; flex-wrap: wrap; gap: 15px 30px; }
-.sc-skill-line { font-size: 14px; }
+.sc-skill-line { font-size: var(--font-size-base, 14px); }
 </style>

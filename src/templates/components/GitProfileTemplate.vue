@@ -155,7 +155,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .nav-left { display: flex; align-items: center; gap: 10px; }
-.icon-git { font-size: 24px; }
+.icon-git { font-size: var(--font-size-base, 24px); }
 .username { color: var(--git-link); font-weight: 600; }
 .slash { color: var(--git-muted); margin: 0 4px; }
 .reponame { font-weight: 600; }
@@ -164,7 +164,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   border: 1px solid var(--git-border);
   border-radius: 2em;
   padding: 2px 10px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--git-muted);
 }
 
@@ -193,26 +193,26 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 64px;
+  font-size: var(--font-size-base, 64px);
   color: var(--git-muted);
 }
 
 .vcard-names { margin: 0 0 16px 0; display: flex; flex-direction: column; }
 .p-name { font-size: 24px; font-weight: 600; color: #c9d1d9; line-height: 1.25; }
-.p-nickname { font-size: 20px; font-weight: 300; color: var(--git-muted); line-height: 1.25; }
+.p-nickname { font-size: var(--font-size-subtitle, 20px); font-weight: 300; color: var(--git-muted); line-height: 1.25; }
 
-.vcard-bio { font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
-.vcard-details { list-style: none; padding: 0; margin: 0 0 16px 0; font-size: 14px; color: #c9d1d9; }
+.vcard-bio { font-size: var(--font-size-base, 14px); margin-bottom: 16px; line-height: 1.5; }
+.vcard-details { list-style: none; padding: 0; margin: 0 0 16px 0; font-size: var(--font-size-base, 14px); color: #c9d1d9; }
 .vcard-details li { margin-bottom: 6px; }
 
 .border-bottom { border-bottom: 1px solid var(--git-border); margin: 16px 0; }
-.h4-title { font-size: 16px; font-weight: 600; margin: 0 0 12px 0; }
+.h4-title { font-size: var(--font-size-title, 16px); font-weight: 600; margin: 0 0 12px 0; }
 
 .topic-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .topic-tag {
   background-color: rgba(56, 139, 253, 0.15);
   color: var(--git-link);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 500;
   padding: 4px 10px;
   border-radius: 2em;
@@ -231,15 +231,15 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   padding: 12px 16px;
   background-color: #161b22;
   border-bottom: 1px solid var(--git-border);
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 600;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
 }
 
-.markdown-body { padding: 32px; font-size: 14px; line-height: 1.6; }
+.markdown-body { padding: 32px; font-size: var(--font-size-base, 14px); line-height: 1.6; }
 .markdown-body h2 {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   border-bottom: 1px solid var(--git-border);
   padding-bottom: 8px;
   margin-top: 24px;
@@ -261,8 +261,8 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   border: 2px solid var(--git-bg);
   border-radius: 50%;
 }
-.commit-header { font-size: 15px; margin-bottom: 8px; }
-.float-right { float: right; color: var(--git-muted); font-size: 13px; }
+.commit-header { font-size: var(--font-size-subtitle, 15px); margin-bottom: 8px; }
+.float-right { float: right; color: var(--git-muted); font-size: var(--font-size-base, 13px); }
 .commit-body p { margin: 0 0 8px 0; color: var(--git-muted); }
 .commit-body ul { margin: 0; padding-left: 20px; color: var(--git-muted); }
 .commit-body li { margin-bottom: 4px; }
@@ -276,9 +276,9 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   display: flex;
   flex-direction: column;
 }
-.repo-title { font-size: 15px; color: var(--git-link); margin-bottom: 8px; }
-.repo-desc { font-size: 12px; color: var(--git-muted); flex: 1; margin: 0 0 16px 0; }
-.repo-meta { font-size: 12px; color: var(--git-muted); display: flex; align-items: center; }
+.repo-title { font-size: var(--font-size-subtitle, 15px); color: var(--git-link); margin-bottom: 8px; }
+.repo-desc { font-size: var(--font-size-base, 12px); color: var(--git-muted); flex: 1; margin: 0 0 16px 0; }
+.repo-meta { font-size: var(--font-size-base, 12px); color: var(--git-muted); display: flex; align-items: center; }
 .language-color {
   display: inline-block;
   width: 12px; height: 12px;
@@ -295,7 +295,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .repo-link {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--git-link);
   text-decoration: none;
   display: flex;
@@ -319,7 +319,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .repo-link-full {
@@ -334,7 +334,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .link-icon {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .ml-3 { margin-left: 12px; }

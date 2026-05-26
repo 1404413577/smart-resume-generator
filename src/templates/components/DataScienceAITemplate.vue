@@ -161,7 +161,7 @@ const getLevelPercent = (level) => {
   height: 56px;
   background: linear-gradient(135deg, #7B2FBE 0%, #3B82F6 100%);
   color: #ffffff;
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -181,7 +181,7 @@ const getLevelPercent = (level) => {
 }
 
 .role {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 500;
   background: linear-gradient(135deg, #a78bfa, #60a5fa);
   -webkit-background-clip: text;
@@ -203,7 +203,7 @@ const getLevelPercent = (level) => {
 }
 
 .contact-item {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #94a3b8;
   display: flex;
   align-items: center;
@@ -211,13 +211,13 @@ const getLevelPercent = (level) => {
   font-family: 'Fira Code', 'SF Mono', monospace;
 }
 
-.contact-icon { color: #7B2FBE; font-weight: 700; font-size: 14px; }
+.contact-icon { color: #7B2FBE; font-weight: 700; font-size: var(--font-size-base, 14px); }
 
 /* 区块 */
 .section-block { margin-bottom: 26px; }
 
 .section-label {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 700;
   color: #7B2FBE;
   margin-bottom: 14px;
@@ -227,7 +227,7 @@ const getLevelPercent = (level) => {
 
 /* 个人简介 */
 .summary-text {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.7;
   color: #cbd5e1;
   margin: 0;
@@ -252,7 +252,7 @@ const getLevelPercent = (level) => {
 }
 
 .stack-name {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #e2e8f0;
   font-weight: 600;
   white-space: nowrap;
@@ -297,21 +297,21 @@ const getLevelPercent = (level) => {
 }
 
 .proj-name {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: 700;
   color: #f1f5f9;
   margin: 0;
 }
 
 .proj-date {
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   color: #64748b;
   font-family: 'Fira Code', 'SF Mono', monospace;
   white-space: nowrap;
 }
 
 .proj-desc {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   line-height: 1.55;
   color: #94a3b8;
   margin: 0 0 10px 0;
@@ -324,7 +324,7 @@ const getLevelPercent = (level) => {
 }
 
 .tech-dot {
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   color: #a78bfa;
   background: rgba(123, 47, 190, 0.15);
   padding: 2px 8px;
@@ -373,20 +373,20 @@ const getLevelPercent = (level) => {
 }
 
 .tl-position {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 700;
   color: #f1f5f9;
   margin: 0 0 2px 0;
 }
 
 .tl-company {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #a78bfa;
   font-weight: 500;
 }
 
 .tl-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #64748b;
   font-family: 'Fira Code', 'SF Mono', monospace;
   white-space: nowrap;
@@ -398,7 +398,7 @@ const getLevelPercent = (level) => {
 }
 
 .tl-details li {
-  font-size: 12.5px;
+  font-size: var(--font-size-base, 12.5px);
   line-height: 1.6;
   color: #94a3b8;
   margin-bottom: 4px;
@@ -417,7 +417,7 @@ const getLevelPercent = (level) => {
 .edu-item:last-child { margin-bottom: 0; }
 
 .edu-year {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #a78bfa;
   font-family: 'Fira Code', 'SF Mono', monospace;
   padding: 4px 10px;
@@ -427,14 +427,14 @@ const getLevelPercent = (level) => {
 }
 
 .edu-school {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: 700;
   color: #f1f5f9;
   margin: 0 0 2px 0;
 }
 
 .edu-degree {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #94a3b8;
 }
 

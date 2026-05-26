@@ -113,11 +113,19 @@ const dynamicCSS = computed(() => {
       color: var(--theme-text-primary);
     }
 
+    /* 强制所有后代继承 font-family 和 line-height，覆盖模板 scoped 硬编码 */
+    #resume-preview * {
+      font-family: inherit;
+      line-height: inherit;
+    }
+
     #resume-preview .section-title {
       font-size: var(--font-size-title);
     }
 
     #resume-preview h2,
+    #resume-preview h3,
+    #resume-preview h4,
     #resume-preview .subsection-title {
       font-size: var(--font-size-subtitle);
     }

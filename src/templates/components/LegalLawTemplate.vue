@@ -156,7 +156,7 @@ const hasMultipleContacts = computed(() => {
 }
 
 .title {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 400;
   color: var(--primary-color, #1B2A4A);
   margin: 0;
@@ -171,21 +171,21 @@ const hasMultipleContacts = computed(() => {
   align-items: center;
   gap: 14px;
   margin-bottom: 32px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #555;
   letter-spacing: 0.3px;
 }
 
 .contact-sep {
   color: var(--accent-color, #C9A962);
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
 }
 
 /* 区块 */
 .section-block { margin-bottom: 26px; }
 
 .section-title {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: 700;
   color: var(--primary-color, #1B2A4A);
   margin: 0 0 14px 0;
@@ -197,7 +197,7 @@ const hasMultipleContacts = computed(() => {
 
 /* 个人简介 */
 .summary-text {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.7;
   color: #333;
   margin: 0;
@@ -229,20 +229,20 @@ const hasMultipleContacts = computed(() => {
 }
 
 .exp-position {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 2px 0;
 }
 
 .exp-firm {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--primary-color, #1B2A4A);
   font-style: italic;
 }
 
 .exp-date {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #888;
   white-space: nowrap;
   font-weight: 400;
@@ -254,7 +254,7 @@ const hasMultipleContacts = computed(() => {
 }
 
 .exp-details li {
-  font-size: 12.5px;
+  font-size: var(--font-size-base, 12.5px);
   line-height: 1.65;
   color: #444;
   margin-bottom: 4px;
@@ -272,20 +272,20 @@ const hasMultipleContacts = computed(() => {
 .edu-item:last-child { margin-bottom: 0; }
 
 .edu-school {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 2px 0;
 }
 
 .edu-degree {
-  font-size: 12.5px;
+  font-size: var(--font-size-base, 12.5px);
   color: #555;
   font-style: italic;
 }
 
 .edu-date {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #888;
   white-space: nowrap;
 }
@@ -301,21 +301,21 @@ const hasMultipleContacts = computed(() => {
 .admission-item:last-child { margin-bottom: 0; }
 
 .admission-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 3px 0;
 }
 
 .admission-desc {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #666;
   margin: 0 0 4px 0;
   line-height: 1.4;
 }
 
 .admission-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #999;
 }
 
@@ -331,12 +331,12 @@ const hasMultipleContacts = computed(() => {
 
 .practice-bullet {
   color: var(--accent-color, #C9A962);
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   line-height: 1;
 }
 
 .practice-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #333;
   font-weight: 400;
 }

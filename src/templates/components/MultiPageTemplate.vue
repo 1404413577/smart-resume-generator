@@ -283,7 +283,7 @@ const showPageHeader = computed(() => {
 }
 
 .header-title {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--theme-text-secondary, #606266);
 }
 
@@ -301,7 +301,7 @@ const showPageHeader = computed(() => {
 }
 
 .page-number {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--theme-text-secondary, #606266);
 }
 
@@ -344,7 +344,7 @@ const showPageHeader = computed(() => {
 }
 
 .title {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   font-weight: 500;
   color: var(--theme-primary, #409eff);
   margin: 0;
@@ -374,12 +374,12 @@ const showPageHeader = computed(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--theme-text-secondary, #606266);
 }
 
 .contact-icon {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
 }
 
 /* 工作经历样式 */
@@ -396,14 +396,14 @@ const showPageHeader = computed(() => {
 }
 
 .work-position {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   font-weight: 600;
   color: var(--theme-text-primary, #303133);
   margin: 0 0 4px 0;
 }
 
 .work-company {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 500;
   color: var(--theme-primary, #409eff);
   margin: 0;
@@ -411,7 +411,7 @@ const showPageHeader = computed(() => {
 
 .work-meta {
   text-align: right;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--theme-text-secondary, #606266);
 }
 
@@ -422,7 +422,7 @@ const showPageHeader = computed(() => {
 
 .work-description {
   margin-bottom: 12px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--theme-text-secondary, #606266);
 }
 
@@ -436,7 +436,7 @@ const showPageHeader = computed(() => {
   position: relative;
   padding-left: 16px;
   margin-bottom: 6px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--theme-text-secondary, #606266);
 }
 
@@ -462,26 +462,26 @@ const showPageHeader = computed(() => {
 }
 
 .project-name {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 600;
   color: var(--theme-text-primary, #303133);
   margin: 0;
 }
 
 .project-date {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--theme-text-secondary, #606266);
 }
 
 .project-description {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--theme-text-secondary, #606266);
   margin: 0 0 8px 0;
 }
 
 .project-tech {
   margin-bottom: 8px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 .tech-label {
@@ -507,7 +507,7 @@ const showPageHeader = computed(() => {
   padding: 8px 12px;
   background: var(--theme-background-secondary, #f8f9fa);
   border-radius: 6px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 .skill-name {
@@ -517,7 +517,7 @@ const showPageHeader = computed(() => {
 
 .skill-level {
   color: var(--theme-primary, #409eff);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 /* 响应式设计 */

@@ -237,7 +237,7 @@ const getSkillBar = (level) => {
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 500;
   color: rgba(255,255,255,0.9);
 }
@@ -247,7 +247,7 @@ const getSkillBar = (level) => {
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 4px 10px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
 }
 
 /* Header */
@@ -291,14 +291,14 @@ const getSkillBar = (level) => {
 }
 
 .glass-role {
-  font-size: 20px;
+  font-size: var(--font-size-subtitle, 20px);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.8);
   margin: 0 0 16px 0;
 }
 
 .glass-summary {
-  font-size: 15px;
+  font-size: var(--font-size-base, 15px);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.75);
   margin: 0;
@@ -332,7 +332,7 @@ const getSkillBar = (level) => {
 }
 
 .c-item {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
@@ -353,7 +353,7 @@ const getSkillBar = (level) => {
 
 /* Sections */
 .glass-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: 600;
   color: #fff;
   margin: 0 0 20px 0;
@@ -373,19 +373,19 @@ const getSkillBar = (level) => {
 }
 
 .exp-role {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   font-weight: 600;
   margin: 0 0 4px 0;
 }
 
 .exp-company {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
 }
 
 .exp-desc {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.7);
   margin: 0 0 16px 0;
@@ -401,7 +401,7 @@ const getSkillBar = (level) => {
   position: relative;
   padding-left: 16px;
   margin-bottom: 8px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.5;
   color: rgba(255,255,255,0.75);
 }
@@ -425,13 +425,13 @@ const getSkillBar = (level) => {
 }
 
 .proj-name {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 600;
   margin: 0;
 }
 
 .proj-desc {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: rgba(255,255,255,0.7);
   line-height: 1.5;
   margin: 0 0 16px 0;
@@ -459,12 +459,12 @@ const getSkillBar = (level) => {
 }
 
 .sk-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 500;
 }
 
 .sk-level {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: rgba(255,255,255,0.6);
 }
 
@@ -485,13 +485,13 @@ const getSkillBar = (level) => {
 
 /* Education */
 .edu-degree {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 600;
   margin: 12px 0 4px 0;
 }
 
 .edu-school {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: rgba(255,255,255,0.7);
 }
 

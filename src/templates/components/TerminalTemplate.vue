@@ -187,13 +187,13 @@ const currentDate = computed(() => {
   left: 50%;
   transform: translateX(-50%);
   color: #aaaaaa;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .term-body {
   padding: 20px 25px;
   color: var(--term-text);
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.6;
 }
 
@@ -257,7 +257,7 @@ h1 {
 .proj-tech {
   padding-left: 25px;
   color: var(--term-purple);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 .exp-tasks {
   list-style: none;

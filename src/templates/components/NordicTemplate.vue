@@ -164,7 +164,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .role {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 400;
   color: var(--n-text-muted);
   text-transform: uppercase;
@@ -177,7 +177,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .side-title {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 800;
   letter-spacing: 2px;
   color: var(--n-accent);
@@ -190,7 +190,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 .contact-list li {
@@ -216,7 +216,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 .n-tag {
   background-color: #e4e4e7;
   color: var(--n-text-dark);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   padding: 4px 10px;
   border-radius: 4px;
   font-weight: 600;
@@ -227,19 +227,19 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .edu-year {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--n-text-muted);
   margin-bottom: 2px;
 }
 
 .edu-degree {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 600;
   margin-bottom: 2px;
 }
 
 .edu-school {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--n-text-muted);
 }
 
@@ -255,7 +255,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .main-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: 800;
   letter-spacing: 1.5px;
   color: var(--n-accent);
@@ -275,7 +275,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .summary-text {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.7;
   color: var(--n-text-muted);
   margin: 0;
@@ -298,26 +298,26 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .n-item-title {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   font-weight: 700;
   margin: 0;
 }
 
 .n-item-date {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--n-text-muted);
   font-weight: 600;
 }
 
 .n-item-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 600;
   color: var(--n-text-muted);
   margin-bottom: 8px;
 }
 
 .n-item-desc {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   color: var(--n-text-muted);
   margin: 0 0 10px 0;
@@ -327,7 +327,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   margin: 0;
   padding-left: 18px;
   color: var(--n-text-muted);
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
 }
 
@@ -343,7 +343,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .tech-text {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--n-text-dark);
   font-weight: 600;
   opacity: 0.6;

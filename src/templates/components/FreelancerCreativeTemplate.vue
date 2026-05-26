@@ -169,7 +169,7 @@ const hasContact = computed(() => {
   border-radius: 50%;
   background: var(--primary-color, #C17A4E);
   color: #ffffff;
-  font-size: 36px;
+  font-size: var(--font-size-title, 36px);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -186,14 +186,14 @@ const hasContact = computed(() => {
 }
 
 .tagline {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 500;
   color: var(--primary-color, #C17A4E);
   margin: 0 0 14px 0;
 }
 
 .card-summary {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.7;
   color: #6b5e52;
   margin: 0 auto;
@@ -211,20 +211,20 @@ const hasContact = computed(() => {
 }
 
 .cc-item {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #8b7355;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.cc-icon { font-style: normal; font-size: 13px; color: var(--primary-color, #C17A4E); }
+.cc-icon { font-style: normal; font-size: var(--font-size-base, 13px); color: var(--primary-color, #C17A4E); }
 
 /* 区块 */
 .section-block { margin-bottom: 28px; }
 
 .section-title {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: 700;
   color: var(--secondary-color, #7D9B76);
   margin: 0 0 16px 0;
@@ -260,14 +260,14 @@ const hasContact = computed(() => {
 }
 
 .port-title {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 700;
   color: #2d2015;
   margin: 0 0 8px 0;
 }
 
 .port-desc {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   line-height: 1.6;
   color: #6b5e52;
   margin: 0 0 12px 0;
@@ -281,14 +281,14 @@ const hasContact = computed(() => {
 }
 
 .port-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #a09080;
 }
 
 .port-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .port-tag {
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   font-weight: 600;
   color: var(--secondary-color, #7D9B76);
   background: #f0f5ee;
@@ -328,20 +328,20 @@ const hasContact = computed(() => {
 }
 
 .exp-role {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 700;
   color: #2d2015;
   margin: 0;
 }
 
 .exp-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #a09080;
   white-space: nowrap;
 }
 
 .exp-client {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--primary-color, #C17A4E);
   font-weight: 500;
   display: block;
@@ -354,7 +354,7 @@ const hasContact = computed(() => {
 }
 
 .exp-details li {
-  font-size: 12.5px;
+  font-size: var(--font-size-base, 12.5px);
   line-height: 1.6;
   color: #6b5e52;
   margin-bottom: 3px;
@@ -370,7 +370,7 @@ const hasContact = computed(() => {
 }
 
 .skill-bubble {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 600;
   color: var(--primary-color, #C17A4E);
   background: #ffffff;
@@ -387,7 +387,7 @@ const hasContact = computed(() => {
 .edu-item:last-child { margin-bottom: 0; }
 
 .edu-school {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 700;
   color: #2d2015;
   margin: 0 0 2px 0;
@@ -395,13 +395,13 @@ const hasContact = computed(() => {
 
 .edu-major {
   display: block;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #6b5e52;
   margin-bottom: 2px;
 }
 
 .edu-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #a09080;
 }
 

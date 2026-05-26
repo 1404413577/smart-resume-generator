@@ -351,7 +351,7 @@ const getSkillClass = (level) => {
 }
 
 .vision-icon {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   flex-shrink: 0;
 }
 
@@ -387,7 +387,7 @@ const getSkillClass = (level) => {
 }
 
 .link-icon {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
 }
 
 /* 主要内容: 白色圆角块容器编排 */
@@ -672,7 +672,7 @@ const getSkillClass = (level) => {
   position: absolute;
   left: 0;
   color: #94a3b8;
-  font-size: 24px;
+  font-size: var(--font-size-title, 24px);
   line-height: 0.8;
   top: -2px;
 }

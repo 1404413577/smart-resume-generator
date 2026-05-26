@@ -285,7 +285,7 @@ const getSkillLevel = (level) => {
 
 .contact-item .icon {
   margin-right: 10px;
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
 }
 
 .skills-section {
@@ -472,7 +472,7 @@ const getSkillLevel = (level) => {
 }
 
 .project-link .icon {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
 }
 
 .project-links {
@@ -502,7 +502,7 @@ const getSkillLevel = (level) => {
 }
 
 .project-link-item .icon {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
 }
 
 /* PDF导出专用样式 - 最小化边距 */

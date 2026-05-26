@@ -138,7 +138,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 .gf-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.5;
 }
 
@@ -189,7 +189,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   align-items: center;
   justify-content: center;
   color: #999;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
 }
 
 /* 内部区块样式 */

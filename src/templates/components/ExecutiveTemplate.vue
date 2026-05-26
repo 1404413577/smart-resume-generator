@@ -225,7 +225,7 @@ const getSkillWidth = (level) => {
 }
 
 .exec-title {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 600;
   color: var(--exec-secondary);
   letter-spacing: 2px;
@@ -257,7 +257,7 @@ const getSkillWidth = (level) => {
   gap: 20px;
   margin-bottom: 30px;
   font-family: 'Arial', sans-serif;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--exec-secondary);
   justify-content: flex-start;
 }
@@ -271,12 +271,12 @@ const getSkillWidth = (level) => {
 .contact-item i {
   font-style: normal;
   color: var(--exec-primary);
-  font-size: 15px;
+  font-size: var(--font-size-base, 15px);
 }
 
 /* Summary */
 .exec-summary {
-  font-size: 15px;
+  font-size: var(--font-size-base, 15px);
   line-height: 1.8;
   color: var(--exec-primary);
   margin-bottom: 40px;
@@ -302,7 +302,7 @@ const getSkillWidth = (level) => {
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: 700;
   color: var(--exec-primary);
   text-transform: uppercase;
@@ -343,7 +343,7 @@ const getSkillWidth = (level) => {
 }
 
 .skill-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 600;
   color: var(--exec-primary);
   text-transform: uppercase;
@@ -385,21 +385,21 @@ const getSkillWidth = (level) => {
 }
 
 .exp-position {
-  font-size: 17px;
+  font-size: var(--font-size-subtitle, 17px);
   font-weight: 700;
   margin: 0;
   color: var(--exec-primary);
 }
 
 .exp-company {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 600;
   color: var(--exec-gold);
   font-family: 'Arial', sans-serif;
 }
 
 .exp-date {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--exec-secondary);
   font-family: 'Arial', sans-serif;
   text-align: right;
@@ -414,7 +414,7 @@ const getSkillWidth = (level) => {
 }
 
 .exp-desc {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--exec-secondary);
   margin: 0 0 12px 0;
   line-height: 1.6;
@@ -431,7 +431,7 @@ const getSkillWidth = (level) => {
   display: flex;
   align-items: flex-start;
   margin-bottom: 8px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
 }
 
@@ -459,14 +459,14 @@ const getSkillWidth = (level) => {
 }
 
 .proj-name {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   color: var(--exec-primary);
   margin: 0;
 }
 
 .proj-desc {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--exec-secondary);
   margin: 0 0 10px 0;
   line-height: 1.6;
@@ -481,7 +481,7 @@ const getSkillWidth = (level) => {
 }
 
 .highlight-label {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 700;
   text-transform: uppercase;
   color: var(--exec-primary);
@@ -497,7 +497,7 @@ const getSkillWidth = (level) => {
 .highlight-list li {
   position: relative;
   padding-left: 15px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--exec-secondary);
   margin-bottom: 6px;
 }
@@ -524,7 +524,7 @@ const getSkillWidth = (level) => {
 
 .edu-year, .cert-year {
   font-family: 'Arial', sans-serif;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 600;
   color: var(--exec-primary);
   width: 80px;
@@ -536,14 +536,14 @@ const getSkillWidth = (level) => {
 }
 
 .edu-degree, .cert-name {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 700;
   margin: 0 0 4px 0;
   color: var(--exec-primary);
 }
 
 .edu-school, .cert-issuer {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--exec-secondary);
   font-family: 'Arial', sans-serif;
 }

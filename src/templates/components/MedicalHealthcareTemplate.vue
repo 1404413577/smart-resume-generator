@@ -168,7 +168,7 @@ const hasContact = computed(() => {
 }
 
 .role {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 500;
   color: var(--primary-color, #0077B6);
   margin: 0;
@@ -182,7 +182,7 @@ const hasContact = computed(() => {
 }
 
 .badge-text {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 600;
   color: var(--primary-color, #0077B6);
   letter-spacing: 0.5px;
@@ -200,7 +200,7 @@ const hasContact = computed(() => {
 }
 
 .contact-item {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #475569;
   display: flex;
   align-items: center;
@@ -209,7 +209,7 @@ const hasContact = computed(() => {
 
 .contact-icon {
   font-style: normal;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   opacity: 0.6;
 }
 
@@ -219,7 +219,7 @@ const hasContact = computed(() => {
 }
 
 .section-title {
-  font-size: 15px;
+  font-size: var(--font-size-title, 15px);
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 16px 0;
@@ -238,7 +238,7 @@ const hasContact = computed(() => {
   height: 22px;
   background: var(--primary-color, #0077B6);
   color: #ffffff;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 700;
   border-radius: 4px;
   flex-shrink: 0;
@@ -246,7 +246,7 @@ const hasContact = computed(() => {
 
 /* 个人简介 */
 .summary-text {
-  font-size: 13.5px;
+  font-size: var(--font-size-base, 13.5px);
   line-height: 1.75;
   color: #475569;
   margin: 0;
@@ -280,20 +280,20 @@ const hasContact = computed(() => {
 }
 
 .exp-position {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 2px 0;
 }
 
 .exp-company {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--primary-color, #0077B6);
   font-weight: 600;
 }
 
 .exp-date {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #94a3b8;
   font-weight: 500;
   white-space: nowrap;
@@ -305,7 +305,7 @@ const hasContact = computed(() => {
 }
 
 .exp-duties li {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.65;
   color: #475569;
   margin-bottom: 5px;
@@ -324,7 +324,7 @@ const hasContact = computed(() => {
 .edu-item:last-child { margin-bottom: 0; }
 
 .edu-year {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 700;
   color: var(--primary-color, #0077B6);
   background: #f0f9ff;
@@ -336,14 +336,14 @@ const hasContact = computed(() => {
 }
 
 .edu-degree {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 2px 0;
 }
 
 .edu-school {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #64748b;
 }
 
@@ -359,21 +359,21 @@ const hasContact = computed(() => {
 .cert-item:last-child { margin-bottom: 0; }
 
 .cert-name {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 4px 0;
 }
 
 .cert-desc {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   line-height: 1.5;
   color: #64748b;
   margin: 0 0 6px 0;
 }
 
 .cert-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #94a3b8;
   font-weight: 500;
 }
@@ -386,7 +386,7 @@ const hasContact = computed(() => {
 }
 
 .skill-tag {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 600;
   color: var(--primary-color, #0077B6);
   background: #f0f9ff;

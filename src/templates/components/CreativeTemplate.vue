@@ -337,7 +337,7 @@ const getSkillPercentage = (level) => {
 }
 
 .profile-title {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle, 14px);
   font-weight: 500;
   color: var(--c-text-muted);
   text-transform: uppercase;
@@ -356,7 +356,7 @@ const getSkillPercentage = (level) => {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--c-text);
   word-break: break-all;
 }
@@ -371,12 +371,12 @@ const getSkillPercentage = (level) => {
   background: rgba(255, 255, 255, 0.05);
   color: var(--c-primary);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   flex-shrink: 0;
 }
 
 .aside-title {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -409,7 +409,7 @@ const getSkillPercentage = (level) => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 6px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 .skill-name {
@@ -418,7 +418,7 @@ const getSkillPercentage = (level) => {
 
 .skill-level-text {
   color: var(--c-text-muted);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .skill-track {
@@ -448,20 +448,20 @@ const getSkillPercentage = (level) => {
 }
 
 .edu-year {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--c-primary);
   font-weight: 600;
   margin-bottom: 4px;
 }
 
 .edu-degree {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle, 14px);
   font-weight: 600;
   margin: 0 0 4px 0;
 }
 
 .edu-school {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--c-text-muted);
 }
 
@@ -473,7 +473,7 @@ const getSkillPercentage = (level) => {
 }
 
 .section-title {
-  font-size: 32px;
+  font-size: var(--font-size-title, 32px);
   font-weight: 800;
   margin: 0 0 24px 0;
   letter-spacing: -1px;
@@ -489,7 +489,7 @@ const getSkillPercentage = (level) => {
 }
 
 .summary-text {
-  font-size: 15px;
+  font-size: var(--font-size-base, 15px);
   line-height: 1.8;
   color: var(--c-text-muted);
   margin: 0;
@@ -546,28 +546,28 @@ const getSkillPercentage = (level) => {
 }
 
 .position {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   font-weight: 700;
   margin: 0;
   color: var(--c-text);
 }
 
 .date {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--c-secondary);
   font-weight: 500;
   flex-shrink: 0;
 }
 
 .company {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--c-tertiary);
   font-weight: 500;
   margin-bottom: 12px;
 }
 
 .description {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   color: var(--c-text-muted);
   margin: 0 0 12px 0;
@@ -582,7 +582,7 @@ const getSkillPercentage = (level) => {
 .achievements li {
   position: relative;
   padding-left: 20px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   color: var(--c-text-muted);
   margin-bottom: 6px;
@@ -593,7 +593,7 @@ const getSkillPercentage = (level) => {
   position: absolute;
   left: 0;
   color: var(--c-primary);
-  font-size: 16px;
+  font-size: var(--font-size-base, 16px);
 }
 
 /* Projects Grid */
@@ -616,19 +616,19 @@ const getSkillPercentage = (level) => {
 }
 
 .project-name {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   margin: 0;
   color: var(--c-text);
 }
 
 .project-date {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--c-tertiary);
 }
 
 .project-desc {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--c-text-muted);
   line-height: 1.6;
   flex: 1;
@@ -642,7 +642,7 @@ const getSkillPercentage = (level) => {
 }
 
 .tag {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   padding: 4px 10px;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.05);

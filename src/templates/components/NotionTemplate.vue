@@ -201,7 +201,7 @@ const getSkillWidth = (level) => {
   position: absolute;
   top: 130px; /* Overlaps cover */
   left: 90px;
-  font-size: 78px;
+  font-size: var(--font-size-title, 78px);
   line-height: 1;
   background: var(--n-bg);
   border-radius: 8px;
@@ -234,7 +234,7 @@ const getSkillWidth = (level) => {
   display: flex;
   padding: 6px 0;
   align-items: center;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
 }
 
 .prop-key {
@@ -266,7 +266,7 @@ const getSkillWidth = (level) => {
   height: 20px;
   padding: 0 6px;
   border-radius: 3px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1;
 }
 
@@ -292,7 +292,7 @@ const getSkillWidth = (level) => {
 }
 
 .h2-block {
-  font-size: 24px;
+  font-size: var(--font-size-title, 24px);
   font-weight: 600;
   margin: 32px 0 16px 0;
   color: var(--n-text);
@@ -300,7 +300,7 @@ const getSkillWidth = (level) => {
 }
 
 .text-block {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   line-height: 1.6;
   margin: 0 0 10px 0;
   white-space: pre-wrap;
@@ -324,13 +324,13 @@ const getSkillWidth = (level) => {
   align-items: center;
   padding: 4px 6px;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 600;
   margin-left: -6px; /* Align text exactly with margin */
 }
 
 .t-arrow {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   margin-right: 8px;
   color: var(--n-gray);
   width: 16px;
@@ -343,7 +343,7 @@ const getSkillWidth = (level) => {
 }
 
 .t-date {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   color: var(--n-gray);
   font-weight: 400;
 }
@@ -364,12 +364,12 @@ const getSkillWidth = (level) => {
   display: flex;
   align-items: flex-start;
   margin-bottom: 6px;
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   line-height: 1.6;
 }
 
 .bullet {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   line-height: 0.8;
   margin-right: 8px;
   color: var(--n-text);
@@ -400,13 +400,13 @@ const getSkillWidth = (level) => {
 }
 
 .card-title {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: 600;
   margin-bottom: 8px;
 }
 
 .card-desc {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--n-gray);
   margin-bottom: 12px;
   line-height: 1.4;
@@ -433,7 +433,7 @@ const getSkillWidth = (level) => {
 .skill-row {
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
 }
 
 .s-name {
@@ -471,17 +471,17 @@ const getSkillWidth = (level) => {
 
 .c-title {
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   margin-bottom: 4px;
 }
 
 .c-sub {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   margin-bottom: 4px;
 }
 
 .c-meta {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--n-gray);
 }
 

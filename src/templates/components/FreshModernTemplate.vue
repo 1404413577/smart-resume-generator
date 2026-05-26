@@ -217,7 +217,7 @@ const getSkillPercent = (level) => {
 }
 
 .role {
-  font-size: 17px;
+  font-size: var(--font-size-subtitle, 17px);
   font-weight: 500;
   color: #667eea;
   margin: 0;
@@ -253,7 +253,7 @@ const getSkillPercent = (level) => {
 }
 
 .contact-item {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #475569;
   display: flex;
   align-items: center;
@@ -262,7 +262,7 @@ const getSkillPercent = (level) => {
 
 .contact-icon {
   font-style: normal;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   opacity: 0.7;
 }
 
@@ -272,7 +272,7 @@ const getSkillPercent = (level) => {
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 18px 0;
@@ -293,7 +293,7 @@ const getSkillPercent = (level) => {
 
 /* ========== 个人简介 ========== */
 .summary-text {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.8;
   color: #475569;
   margin: 0;
@@ -324,20 +324,20 @@ const getSkillPercent = (level) => {
 }
 
 .exp-position {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 4px 0;
 }
 
 .exp-company {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #667eea;
   font-weight: 600;
 }
 
 .exp-date {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #94a3b8;
   font-weight: 500;
   white-space: nowrap;
@@ -347,7 +347,7 @@ const getSkillPercent = (level) => {
 }
 
 .exp-desc {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.7;
   color: #64748b;
   margin: 0 0 12px 0;
@@ -359,7 +359,7 @@ const getSkillPercent = (level) => {
 }
 
 .exp-achievements li {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.7;
   color: #475569;
   margin-bottom: 6px;
@@ -393,13 +393,13 @@ const getSkillPercent = (level) => {
 }
 
 .skill-name {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-weight: 600;
   color: #334155;
 }
 
 .skill-level {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #94a3b8;
   font-weight: 500;
 }
@@ -439,20 +439,20 @@ const getSkillPercent = (level) => {
 }
 
 .proj-name {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle, 14px);
   font-weight: 700;
   color: #0f172a;
   margin: 0;
 }
 
 .proj-date {
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: #94a3b8;
   white-space: nowrap;
 }
 
 .proj-desc {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   line-height: 1.6;
   color: #64748b;
   margin: 0 0 10px 0;
@@ -465,7 +465,7 @@ const getSkillPercent = (level) => {
 }
 
 .tech-badge {
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   font-weight: 600;
   color: #667eea;
   background: #eef2ff;
@@ -492,7 +492,7 @@ const getSkillPercent = (level) => {
 
 .edu-date-badge {
   display: inline-block;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 600;
   color: #667eea;
   background: #eef2ff;
@@ -505,14 +505,14 @@ const getSkillPercent = (level) => {
 }
 
 .edu-school {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 4px 0;
 }
 
 .edu-major {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #64748b;
 }
 
@@ -532,7 +532,7 @@ const getSkillPercent = (level) => {
   }
 
   .role {
-    font-size: 14px;
+    font-size: var(--font-size-base, 14px);
   }
 
   .header-avatar {

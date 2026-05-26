@@ -225,7 +225,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .dev-title {
   font-family: var(--t-font-mono);
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 600;
   color: var(--t-primary);
   margin: 0 0 16px 0;
@@ -237,7 +237,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .dev-summary {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   color: var(--t-text);
   margin: 0;
@@ -249,7 +249,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   flex-direction: column;
   gap: 10px;
   font-family: var(--t-font-mono);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--t-muted);
 }
 
@@ -284,7 +284,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .section-title {
   font-family: var(--t-font-mono);
-  font-size: 15px;
+  font-size: var(--font-size-title, 15px);
   margin: 0 0 10px 0;
   color: var(--t-heading);
   display: flex;
@@ -306,7 +306,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .section-footer {
   font-family: var(--t-font-mono);
-  font-size: 15px;
+  font-size: var(--font-size-base, 15px);
   margin-top: 10px;
 }
 
@@ -332,7 +332,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .exp-role {
-  font-size: 17px;
+  font-size: var(--font-size-subtitle, 17px);
   font-weight: 700;
   color: var(--t-heading);
   margin: 0;
@@ -345,19 +345,19 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .exp-company {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 600;
   color: var(--t-heading);
 }
 
 .exp-date {
   font-family: var(--t-font-mono);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--t-muted);
 }
 
 .exp-desc {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   margin: 0 0 10px 0;
 }
@@ -371,7 +371,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 .exp-tasks li {
   position: relative;
   padding-left: 18px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.6;
   margin-bottom: 6px;
   color: var(--t-text);
@@ -408,7 +408,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .proj-name {
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   font-weight: 700;
   color: var(--t-heading);
   margin: 0;
@@ -416,12 +416,12 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .proj-date {
   font-family: var(--t-font-mono);
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--t-muted);
 }
 
 .proj-desc {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.5;
   margin: 0 0 12px 0;
 }
@@ -434,7 +434,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .tech-badge {
   font-family: var(--t-font-mono);
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   background: var(--t-primary);
   color: #fff;
   padding: 2px 8px;
@@ -450,7 +450,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .proj-link {
   font-family: var(--t-font-mono);
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   color: var(--t-primary);
   text-decoration: none;
   font-weight: 600;
@@ -471,7 +471,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .proj-link-item {
   font-family: var(--t-font-mono);
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   display: flex;
   gap: 8px;
   align-items: flex-start;
@@ -490,7 +490,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   flex-direction: column;
   gap: 12px;
   font-family: var(--t-font-mono);
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 .skill-block {
@@ -519,27 +519,27 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 
 .edu-year {
   font-family: var(--t-font-mono);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--t-muted);
   margin-bottom: 4px;
 }
 
 .edu-degree {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle, 14px);
   font-weight: 700;
   color: var(--t-heading);
   margin: 0 0 2px 0;
 }
 
 .edu-major {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--t-primary);
   margin-bottom: 4px;
   font-weight: 500;
 }
 
 .edu-school {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--t-text);
 }
 

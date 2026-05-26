@@ -119,7 +119,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   left: 80px;
   width: 80px;
   height: 80px;
-  font-size: 60px;
+  font-size: var(--font-size-title, 60px);
   line-height: 80px;
   text-align: center;
   background: transparent;
@@ -146,18 +146,18 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .notion-callout-icon {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   margin-right: 12px;
 }
 
 .notion-callout-text {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   line-height: 1.5;
 }
 
 .contact-line {
   color: #787774;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   display: inline-block;
   margin-top: 4px;
 }
@@ -168,7 +168,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   border-left: 3px solid #37352f;
   padding: 4px 16px;
   margin: 0 0 30px 0;
-  font-size: 15px;
+  font-size: var(--font-size-subtitle, 15px);
   line-height: 1.6;
   color: #37352f;
 }
@@ -178,7 +178,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 }
 
 .notion-h2 {
-  font-size: 20px;
+  font-size: var(--font-size-title, 20px);
   font-weight: 600;
   margin: 0 0 15px 0;
   padding-bottom: 4px;
@@ -189,18 +189,18 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
 .notion-item:last-child { margin-bottom: 0; }
 
 .notion-item-header {
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   margin-bottom: 4px;
 }
 
-.notion-gray { color: #787774; font-size: 14px; }
-.notion-date { margin-bottom: 8px; font-size: 13px; }
-.notion-paragraph { margin: 0 0 8px 0; font-size: 14px; line-height: 1.6; }
+.notion-gray { color: #787774; font-size: var(--font-size-base, 14px); }
+.notion-date { margin-bottom: 8px; font-size: var(--font-size-base, 13px); }
+.notion-paragraph { margin: 0 0 8px 0; font-size: var(--font-size-base, 14px); line-height: 1.6; }
 
 .notion-bullet-list {
   margin: 0;
   padding-left: 20px;
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
 }
 .notion-bullet-list li { margin-bottom: 4px; }
@@ -218,9 +218,9 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
 
-.notion-card-title { font-size: 15px; margin: 0 0 4px 0; font-weight: 600; }
-.notion-card-desc { font-size: 13px; margin: 8px 0; line-height: 1.5; color: #37352f;}
-.text-sm { font-size: 12px; }
+.notion-card-title { font-size: var(--font-size-subtitle, 15px); margin: 0 0 4px 0; font-weight: 600; }
+.notion-card-desc { font-size: var(--font-size-base, 13px); margin: 8px 0; line-height: 1.5; color: #37352f;}
+.text-sm { font-size: var(--font-size-base, 12px); }
 
 .notion-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .notion-tag {
@@ -228,7 +228,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   color: #37352f;
   padding: 2px 6px;
   border-radius: 3px;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .notion-inline-skills {
@@ -242,7 +242,7 @@ const { templateStyles } = useTemplateComponentStyles(props.templateId)
   color: #eb5757;
   padding: 3px 6px;
   border-radius: 3px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 }
 </style>

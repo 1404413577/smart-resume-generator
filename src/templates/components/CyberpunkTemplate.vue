@@ -260,7 +260,7 @@ const getSkillHex = (level) => {
 }
 
 .neon-role {
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   color: var(--cy-cyan);
   margin: 0 0 20px 0;
   font-weight: 600;
@@ -272,7 +272,7 @@ const getSkillHex = (level) => {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
 }
 
 .terminal-line {
@@ -326,7 +326,7 @@ const getSkillHex = (level) => {
 
 /* Headings */
 .cyber-title {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   color: var(--cy-yellow);
   margin: 0 0 16px 0;
   letter-spacing: 2px;
@@ -349,7 +349,7 @@ const getSkillHex = (level) => {
 }
 
 .matrix-text {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.6;
   margin: 0;
   color: var(--cy-text);
@@ -389,7 +389,7 @@ const getSkillHex = (level) => {
 }
 
 .node-title {
-  font-size: 18px;
+  font-size: var(--font-size-title, 18px);
   font-weight: bold;
   color: #fff;
   margin: 0 0 4px 0;
@@ -400,7 +400,7 @@ const getSkillHex = (level) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .company-badge {
@@ -415,7 +415,7 @@ const getSkillHex = (level) => {
 }
 
 .node-desc {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.5;
   margin: 0 0 10px 0;
 }
@@ -430,7 +430,7 @@ const getSkillHex = (level) => {
   position: relative;
   padding-left: 15px;
   margin-bottom: 6px;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: #aaa;
 }
 
@@ -472,14 +472,14 @@ const getSkillHex = (level) => {
 }
 
 .proj-name {
-  font-size: 16px;
+  font-size: var(--font-size-title, 16px);
   color: var(--cy-cyan);
   margin: 0 0 8px 0;
   text-transform: uppercase;
 }
 
 .proj-desc {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   margin: 0 0 12px 0;
   color: #aaa;
 }
@@ -491,7 +491,7 @@ const getSkillHex = (level) => {
 }
 
 .tech-tag {
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   border: 1px solid var(--cy-magenta);
   color: var(--cy-magenta);
   padding: 2px 6px;
@@ -509,7 +509,7 @@ const getSkillHex = (level) => {
 .skill-row {
   display: flex;
   align-items: center;
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
 }
 
 .sk-name {
@@ -547,13 +547,13 @@ const getSkillHex = (level) => {
 }
 
 .edu-year {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: var(--cy-yellow);
   margin-bottom: 4px;
 }
 
 .edu-degree {
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: bold;
   color: #fff;
   margin: 0 0 4px 0;
@@ -561,7 +561,7 @@ const getSkillHex = (level) => {
 }
 
 .edu-school {
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   color: #aaa;
 }
 

@@ -220,7 +220,7 @@ const hasContactInfo = computed(() => {
 
 .v-issue {
   font-family: var(--f-sans);
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   font-weight: 700;
   letter-spacing: 4px;
   color: var(--v-muted);
@@ -241,14 +241,14 @@ const hasContactInfo = computed(() => {
 .v-role {
   font-family: var(--f-serif);
   font-style: italic;
-  font-size: 20px;
+  font-size: var(--font-size-subtitle, 20px);
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .v-contact {
   font-family: var(--f-sans);
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--v-muted);
@@ -269,7 +269,7 @@ const hasContactInfo = computed(() => {
 /* Common Section Heading */
 .section-heading {
   font-family: var(--f-sans);
-  font-size: 14px;
+  font-size: var(--font-size-title, 14px);
   font-weight: 900;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -283,7 +283,7 @@ const hasContactInfo = computed(() => {
 .section-heading span {
   font-family: var(--f-serif);
   font-style: italic;
-  font-size: 16px;
+  font-size: var(--font-size-base, 16px);
   font-weight: 400;
   color: var(--v-accent);
   margin-right: 8px;
@@ -301,7 +301,7 @@ const hasContactInfo = computed(() => {
 
 .drop-cap {
   font-family: var(--f-serif);
-  font-size: 15px;
+  font-size: var(--font-size-base, 15px);
   line-height: 1.8;
   color: var(--v-text);
   margin: 0;
@@ -310,7 +310,7 @@ const hasContactInfo = computed(() => {
 
 .drop-cap::first-letter {
   font-family: var(--f-serif);
-  font-size: 64px;
+  font-size: var(--font-size-base, 64px);
   font-weight: 900;
   float: left;
   line-height: 0.8;
@@ -333,7 +333,7 @@ const hasContactInfo = computed(() => {
 
 .exp-title {
   font-family: var(--f-serif);
-  font-size: 18px;
+  font-size: var(--font-size-subtitle, 18px);
   font-weight: 700;
   margin: 0;
   text-transform: uppercase;
@@ -342,7 +342,7 @@ const hasContactInfo = computed(() => {
 
 .exp-brand {
   font-family: var(--f-sans);
-  font-size: 12px;
+  font-size: var(--font-size-base, 12px);
   font-weight: 900;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -351,7 +351,7 @@ const hasContactInfo = computed(() => {
 
 .exp-season {
   font-family: var(--f-sans);
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--v-muted);
@@ -360,7 +360,7 @@ const hasContactInfo = computed(() => {
 }
 
 .exp-prose {
-  font-size: 14px;
+  font-size: var(--font-size-base, 14px);
   line-height: 1.6;
   text-align: justify;
   margin: 0 0 12px 0;
@@ -375,7 +375,7 @@ const hasContactInfo = computed(() => {
 .exp-details li {
   position: relative;
   padding-left: 20px;
-  font-size: 13.5px;
+  font-size: var(--font-size-base, 13.5px);
   line-height: 1.6;
   margin-bottom: 8px;
   color: var(--v-text);
@@ -412,7 +412,7 @@ const hasContactInfo = computed(() => {
 
 .img-caption {
   font-family: var(--f-sans);
-  font-size: 9px;
+  font-size: var(--font-size-base, 9px);
   font-weight: 700;
   letter-spacing: 2px;
   text-align: right;
@@ -434,7 +434,7 @@ const hasContactInfo = computed(() => {
 
 .proj-num {
   font-family: var(--f-serif);
-  font-size: 20px;
+  font-size: var(--font-size-base, 20px);
   font-weight: 900;
   color: var(--v-accent);
   line-height: 1;
@@ -446,14 +446,14 @@ const hasContactInfo = computed(() => {
 
 .proj-title {
   font-family: var(--f-serif);
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   text-transform: uppercase;
   margin: 0 0 6px 0;
 }
 
 .proj-prose {
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   line-height: 1.5;
   margin: 0 0 10px 0;
 }
@@ -466,7 +466,7 @@ const hasContactInfo = computed(() => {
 
 .v-tag {
   font-family: var(--f-sans);
-  font-size: 9px;
+  font-size: var(--font-size-base, 9px);
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -490,7 +490,7 @@ const hasContactInfo = computed(() => {
 
 .edu-degree {
   font-family: var(--f-serif);
-  font-size: 16px;
+  font-size: var(--font-size-subtitle, 16px);
   font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 4px;
@@ -498,7 +498,7 @@ const hasContactInfo = computed(() => {
 
 .edu-major {
   font-family: var(--f-sans);
-  font-size: 11px;
+  font-size: var(--font-size-base, 11px);
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--v-accent);
@@ -508,7 +508,7 @@ const hasContactInfo = computed(() => {
 
 .edu-univ {
   font-style: italic;
-  font-size: 13px;
+  font-size: var(--font-size-base, 13px);
   color: var(--v-muted);
 }
 
@@ -522,7 +522,7 @@ const hasContactInfo = computed(() => {
 
 .skill-badge {
   font-family: var(--f-sans);
-  font-size: 10px;
+  font-size: var(--font-size-base, 10px);
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;

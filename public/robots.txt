@@ -3,8 +3,9 @@ Allow: /
 
 # 允许搜索引擎访问主要页面
 Allow: /templates
-Allow: /features
-Allow: /help
+Allow: /design
+Allow: /ai-assistant
+Allow: /settings
 Allow: /about
 
 # 禁止访问私人数据和临时文件
@@ -15,7 +16,7 @@ Disallow: /*.json$
 Disallow: /*?preview=*
 
 # 网站地图位置
-Sitemap: https://resume-editor.example.com/sitemap.xml
+Sitemap: https://smart-resume-generator-lac.vercel.app/sitemap.xml
 
 # 爬取延迟（可选）
 Crawl-delay: 1

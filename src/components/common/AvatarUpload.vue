@@ -25,11 +25,17 @@
       <!-- 头像位置选择 -->
       <div class="avatar-position-selector">
         <label class="position-label">头像位置：</label>
-        <el-radio-group v-model="avatarPosition" @change="updatePosition" size="small">
-          <el-radio-button label="left">左侧</el-radio-button>
-          <el-radio-button label="center">居中</el-radio-button>
-          <el-radio-button label="right">右侧</el-radio-button>
-        </el-radio-group>
+        <el-button-group class="position-button-group">
+          <el-button
+            v-for="option in avatarPositionOptions"
+            :key="option.value"
+            size="small"
+            :type="avatarPosition === option.value ? 'primary' : 'default'"
+            @click="avatarPosition = option.value"
+          >
+            {{ option.label }}
+          </el-button>
+        </el-button-group>
       </div>
     </div>
 
@@ -48,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Edit, Delete } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
@@ -57,10 +63,24 @@ import ImageCropper from './ImageCropper.vue'
 const resumeStore = useResumeStore()
 const fileInput = ref(null)
 const imageCropperRef = ref(null)
+const AVATAR_POSITIONS = ['left', 'center', 'right']
+const avatarPositionOptions = [
+  { label: '左侧', value: 'left' },
+  { label: '居中', value: 'center' },
+  { label: '右侧', value: 'right' }
+]
 
 // 头像数据
 const avatarUrl = computed(() => resumeStore.resumeData.personalInfo.photo)
-const avatarPosition = ref(resumeStore.resumeData.personalInfo.photoPosition || 'left')
+const avatarPosition = computed({
+  get: () => {
+    const position = resumeStore.resumeData.personalInfo.photoPosition
+    return AVATAR_POSITIONS.includes(position) ? position : 'center'
+  },
+  set: (position) => {
+    resumeStore.updatePhotoPosition(position)
+  }
+})
 const hasAvatar = computed(() => !!avatarUrl.value)
 
 // 文件限制
@@ -110,11 +130,6 @@ const handleCropperConfirm = (croppedData) => {
   ElMessage.success('头像处理成功')
 }
 
-// 更新头像位置
-const updatePosition = (position) => {
-  resumeStore.updatePhotoPosition(position)
-}
-
 // 删除头像
 const removeAvatar = () => {
   ElMessageBox.confirm('确定要删除头像吗？', '确认删除', {
@@ -129,10 +144,6 @@ const removeAvatar = () => {
   })
 }
 
-// 组件挂载时同步位置数据
-onMounted(() => {
-  avatarPosition.value = resumeStore.resumeData.personalInfo.photoPosition || 'left'
-})
 </script>
 
 <style scoped>
@@ -245,46 +256,17 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-/* 头像位置单选按钮组样式修复 */
-.avatar-position-selector :deep(.el-radio-group) {
+/* 头像位置按钮组 */
+.position-button-group {
   display: inline-flex;
   flex-wrap: nowrap;
 }
 
-.avatar-position-selector :deep(.el-radio-button) {
-  margin: 0;
-}
-
-.avatar-position-selector :deep(.el-radio-button__inner) {
+.position-button-group :deep(.el-button) {
+  min-width: 56px;
   padding: 8px 16px;
   font-size: 13px;
-  border: 1px solid #dcdfe6;
-  border-radius: 0;
-  background: #ffffff;
-  color: #606266;
-  transition: all 0.2s;
-}
-
-.avatar-position-selector :deep(.el-radio-button:first-child .el-radio-button__inner) {
-  border-radius: 4px 0 0 4px;
-}
-
-.avatar-position-selector :deep(.el-radio-button:last-child .el-radio-button__inner) {
-  border-radius: 0 4px 4px 0;
-}
-
-.avatar-position-selector :deep(.el-radio-button__inner:hover) {
-  color: #409eff;
-}
-
-.avatar-position-selector :deep(.el-radio-button.is-active .el-radio-button__inner) {
-  background: #409eff;
-  border-color: #409eff;
-  color: #ffffff;
-}
-
-.avatar-position-selector :deep(.el-radio-button:not(:last-child) .el-radio-button__inner) {
-  border-right: none;
+  font-weight: 500;
 }
 
 /* 响应式设计 */
@@ -300,7 +282,8 @@ onMounted(() => {
     text-align: center;
   }
 
-  .avatar-position-selector :deep(.el-radio-button__inner) {
+  .position-button-group :deep(.el-button) {
+    min-width: 48px;
     padding: 6px 12px;
     font-size: 12px;
   }

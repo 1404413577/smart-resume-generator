@@ -54,6 +54,11 @@ export function generateCSSVariables(globalSettings, templateConfig = null) {
 
   // 合并颜色样式
   const mergedColors = mergeTemplateStyles(globalSettings, templateConfig)
+  const userTheme = globalSettings?.theme || {}
+  const textSecondary = userTheme.textSecondary || '#606266'
+  const backgroundSecondary = userTheme.backgroundSecondary || '#f5f7fa'
+  const borderColor = userTheme.border || '#dcdfe6'
+  const primaryLight = userTheme.primaryLight || mergedColors.secondary
 
   return {
     // 颜色相关变量（统一命名，兼容模板和全局系统）
@@ -61,7 +66,11 @@ export function generateCSSVariables(globalSettings, templateConfig = null) {
     '--secondary-color': mergedColors.secondary,
     '--accent-color': mergedColors.accent,
     '--text-color': mergedColors.text,
+    '--text-primary': mergedColors.text,
+    '--text-secondary': textSecondary,
     '--background-color': mergedColors.background,
+    '--background-secondary': backgroundSecondary,
+    '--border-color': borderColor,
 
     // resume- 前缀别名（供新模板使用）
     '--resume-primary-color': mergedColors.primary,
@@ -69,12 +78,18 @@ export function generateCSSVariables(globalSettings, templateConfig = null) {
     '--resume-accent-color': mergedColors.accent,
     '--resume-text-color': mergedColors.text,
     '--resume-background-color': mergedColors.background,
+    '--resume-border-color': borderColor,
 
     // 字体相关变量
     '--resume-base-font-size': `${typography.baseFontSize}px`,
     '--resume-title-font-size': `${typography.titleFontSize}px`,
     '--resume-subtitle-font-size': `${typography.subtitleFontSize}px`,
     '--resume-font-family': typography.fontFamily,
+    '--font-family': typography.fontFamily,
+    '--font-size-base': `${typography.baseFontSize}px`,
+    '--font-size-title': `${typography.titleFontSize}px`,
+    '--font-size-subtitle': `${typography.subtitleFontSize}px`,
+    '--line-height': spacing.lineHeight,
 
     // 扩展字体大小变量
     '--resume-name-font-size': `${Math.round(typography.baseFontSize * 2.5)}px`, // 姓名字体
@@ -92,6 +107,11 @@ export function generateCSSVariables(globalSettings, templateConfig = null) {
     '--resume-page-margin-left': `${spacing.pageMargin.left}mm`,
     '--resume-module-spacing': `${spacing.moduleSpacing}mm`,
     '--resume-line-height': spacing.lineHeight,
+    '--spacing-module': `${spacing.moduleSpacing}mm`,
+    '--spacing-page-margin-top': `${spacing.pageMargin.top}mm`,
+    '--spacing-page-margin-right': `${spacing.pageMargin.right}mm`,
+    '--spacing-page-margin-bottom': `${spacing.pageMargin.bottom}mm`,
+    '--spacing-page-margin-left': `${spacing.pageMargin.left}mm`,
 
     // 页面相关变量
     '--resume-page-count': pageSettings.pageCount,
@@ -103,7 +123,98 @@ export function generateCSSVariables(globalSettings, templateConfig = null) {
     // 计算得出的变量
     '--resume-page-margin': `${spacing.pageMargin.top}mm ${spacing.pageMargin.right}mm ${spacing.pageMargin.bottom}mm ${spacing.pageMargin.left}mm`,
     '--resume-content-width': `calc(210mm - ${spacing.pageMargin.left}mm - ${spacing.pageMargin.right}mm)`,
-    '--resume-content-height': `calc(297mm - ${spacing.pageMargin.top}mm - ${spacing.pageMargin.bottom}mm)`
+    '--resume-content-height': `calc(297mm - ${spacing.pageMargin.top}mm - ${spacing.pageMargin.bottom}mm)`,
+
+    // 常见模板私有变量别名。部分历史模板在根选择器里定义私有变量，
+    // 这里用内联变量覆盖它们，让设计工作室的基础配色能跨模板生效。
+    '--primary': mergedColors.primary,
+    '--accent': mergedColors.accent,
+    '--secondary': mergedColors.secondary,
+    '--text': mergedColors.text,
+    '--bg': mergedColors.background,
+    '--subtle': textSecondary,
+    '--sidebar-bg': mergedColors.primary,
+    '--sidebar-text': mergedColors.background,
+    '--bar-fill': mergedColors.accent,
+
+    '--c-bg': mergedColors.background,
+    '--c-surface': backgroundSecondary,
+    '--c-text': mergedColors.text,
+    '--c-text-muted': textSecondary,
+    '--c-primary': mergedColors.primary,
+    '--c-secondary': mergedColors.accent,
+    '--c-tertiary': mergedColors.secondary,
+    '--c-border': borderColor,
+
+    '--t-bg': mergedColors.background,
+    '--t-text': mergedColors.text,
+    '--t-heading': mergedColors.primary,
+    '--t-primary': mergedColors.primary,
+    '--t-border': borderColor,
+    '--t-muted': textSecondary,
+    '--t-font-sans': typography.fontFamily,
+
+    '--term-bg': mergedColors.background,
+    '--term-text': mergedColors.text,
+    '--term-green': mergedColors.primary,
+    '--term-blue': mergedColors.secondary,
+    '--term-yellow': mergedColors.accent,
+    '--term-purple': mergedColors.accent,
+    '--term-font': typography.fontFamily,
+
+    '--git-bg': mergedColors.background,
+    '--git-border': borderColor,
+    '--git-text': mergedColors.text,
+    '--git-link': mergedColors.primary,
+    '--git-muted': textSecondary,
+
+    '--cy-bg': mergedColors.background,
+    '--cy-yellow': mergedColors.accent,
+    '--cy-cyan': mergedColors.primary,
+    '--cy-magenta': mergedColors.secondary,
+    '--cy-text': mergedColors.text,
+    '--cy-dim': textSecondary,
+    '--cy-border': mergedColors.primary,
+
+    '--exec-primary': mergedColors.primary,
+    '--exec-secondary': textSecondary,
+    '--exec-accent': borderColor,
+    '--exec-gold': mergedColors.accent,
+    '--exec-bg': mergedColors.background,
+
+    '--d-bg': mergedColors.background,
+    '--d-text': mergedColors.text,
+    '--d-accent': mergedColors.accent,
+    '--d-border': mergedColors.primary,
+    '--d-gray': textSecondary,
+
+    '--n-bg': mergedColors.background,
+    '--n-bg-main': mergedColors.background,
+    '--n-bg-side': backgroundSecondary,
+    '--n-text': mergedColors.text,
+    '--n-text-dark': mergedColors.text,
+    '--n-text-muted': textSecondary,
+    '--n-gray': textSecondary,
+    '--n-border': borderColor,
+    '--n-accent': mergedColors.primary,
+    '--n-blue-bg': primaryLight,
+    '--n-blue-text': mergedColors.primary,
+    '--n-gray-bg': backgroundSecondary,
+
+    '--v-bg': mergedColors.background,
+    '--v-text': mergedColors.text,
+    '--v-accent': mergedColors.accent,
+    '--v-lines': mergedColors.primary,
+    '--v-muted': textSecondary,
+
+    '--sc-text': mergedColors.text,
+    '--sc-text-light': textSecondary,
+
+    '--theme-primary': mergedColors.primary,
+    '--theme-text-primary': mergedColors.text,
+    '--theme-text-secondary': textSecondary,
+    '--theme-border': borderColor,
+    '--theme-background-secondary': backgroundSecondary
   }
 }
 

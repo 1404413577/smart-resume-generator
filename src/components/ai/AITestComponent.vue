@@ -40,11 +40,11 @@
       </el-button>
 
       <div v-if="apiStatus !== null" class="api-status">
-        <el-tag :type="apiStatus ? 'success' : 'warning'">
-          {{ apiStatus ? 'API连接正常' : 'API连接失败，将使用模拟数据' }}
+        <el-tag :type="apiStatus === true ? 'success' : 'warning'">
+          {{ apiStatus === true ? 'API连接正常' : 'API连接失败，将使用模拟数据' }}
         </el-tag>
-        <p v-if="!apiStatus" class="api-note">
-          注意：当前使用模拟数据进行演示。如需使用真实AI功能，请检查网络连接和API配置。
+        <p v-if="apiStatus !== true" class="api-note">
+          {{ apiStatus?.message || '注意：当前使用模拟数据进行演示。如需使用真实AI功能，请检查网络连接和API配置。' }}
         </p>
       </div>
     </el-card>
@@ -121,14 +121,15 @@ const testAPIConnection = async () => {
   apiStatus.value = null
 
   try {
-    const isAvailable = await checkAPIAvailability()
-    apiStatus.value = isAvailable
+    const result = await checkAPIAvailability()
+    apiStatus.value = result
     
-    if (isAvailable) {
+    if (result === true) {
       ElMessage.success('API连接测试成功！')
     } else {
-      ElMessage.error('API连接测试失败！')
-      addError('API连接测试失败')
+      const message = result?.message || 'API连接测试失败！'
+      ElMessage.error(message)
+      addError(message)
     }
   } catch (error) {
     console.error('API测试失败:', error)

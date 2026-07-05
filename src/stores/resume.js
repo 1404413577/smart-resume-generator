@@ -18,6 +18,10 @@ const generateId = () => {
   return `${Date.now().toString(36)}-${(++_idCounter).toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 }
 
+const PHOTO_POSITIONS = ['left', 'center', 'right']
+const TEMPLATE_IDS = ['modern', 'classic', 'compact', 'sidebar', 'executive', 'creative', 'academic', 'technical']
+const normalizeTemplateId = (templateId) => TEMPLATE_IDS.includes(templateId) ? templateId : 'modern'
+
 export const useResumeStore = defineStore('resume', () => {
   // 状态
   const resumeData = ref({
@@ -31,7 +35,7 @@ export const useResumeStore = defineStore('resume', () => {
       github: '',
       targetPosition: '', // 期望职位
       photo: '', // 头像base64数据
-      photoPosition: 'left', // 头像位置: 'left' | 'right' | 'center'
+      photoPosition: 'center', // 头像位置: 'left' | 'right' | 'center'
       customFields: [] // 自定义字段数组
     },
     summary: '',
@@ -48,6 +52,7 @@ export const useResumeStore = defineStore('resume', () => {
   const isPreviewMode = ref(false)
   const lastSaveTime = ref(null)
   const isAutoSaveEnabled = ref(false)
+  const isExporting = ref(false)
   const currentResumeId = ref(null)
   const isDataLoaded = ref(false)
 
@@ -378,7 +383,7 @@ export const useResumeStore = defineStore('resume', () => {
   }
 
   const updatePhotoPosition = (position) => {
-    resumeData.value.personalInfo.photoPosition = position
+    resumeData.value.personalInfo.photoPosition = PHOTO_POSITIONS.includes(position) ? position : 'center'
   }
 
   const removePhoto = () => {
@@ -594,6 +599,23 @@ export const useResumeStore = defineStore('resume', () => {
   const saveToLocalStorage = debouncedSave
   const startAutoSave = () => { isAutoSaveEnabled.value = true }
   const stopAutoSave = () => { isAutoSaveEnabled.value = false }
+  const setExporting = (value) => { isExporting.value = !!value }
+
+  const updateSettings = (updates = {}) => {
+    if (typeof updates.autoSave === 'boolean') {
+      isAutoSaveEnabled.value = updates.autoSave
+    }
+
+    if (typeof updates.previewScale === 'number') {
+      globalSettings.value.previewScale = updates.previewScale
+    }
+
+    if (typeof updates.saveInterval === 'number') {
+      globalSettings.value.saveInterval = updates.saveInterval
+    }
+
+    saveToLocalStorage()
+  }
 
   const loadFromLocalStorage = () => {
     const saved = localStorage.getItem('resumeData')
@@ -618,12 +640,7 @@ export const useResumeStore = defineStore('resume', () => {
 
     const savedTemplate = localStorage.getItem('selectedTemplate')
     if (savedTemplate) {
-      // 如果保存的模板是已移除的简约风格，则重置为现代风格
-      if (savedTemplate === 'minimal') {
-        selectedTemplate.value = 'modern'
-      } else {
-        selectedTemplate.value = savedTemplate
-      }
+      selectedTemplate.value = normalizeTemplateId(savedTemplate)
     }
 
     const savedSettings = localStorage.getItem('templateSettings')
@@ -725,13 +742,13 @@ export const useResumeStore = defineStore('resume', () => {
 
   // 模板切换
   const setTemplate = (templateId) => {
-    selectedTemplate.value = templateId
+    selectedTemplate.value = normalizeTemplateId(templateId)
     saveToLocalStorage()
   }
 
   // 应用模板（用于模板选择功能）
   const applyTemplate = (templateId) => {
-    selectedTemplate.value = templateId
+    selectedTemplate.value = normalizeTemplateId(templateId)
     saveToLocalStorage()
     return true
   }
@@ -759,6 +776,8 @@ export const useResumeStore = defineStore('resume', () => {
         linkedin: '',
         github: '',
         targetPosition: '',
+        photo: '',
+        photoPosition: 'center',
         customFields: []
       },
       summary: '',
@@ -1051,7 +1070,7 @@ export const useResumeStore = defineStore('resume', () => {
           
           // 加载其他设置
           const st = await getSettings('selectedTemplate')
-          if (st) selectedTemplate.value = st
+          if (st) selectedTemplate.value = normalizeTemplateId(st)
           
           const ts = await getSettings('templateSettings')
           if (ts) templateSettings.value = ts
@@ -1107,6 +1126,7 @@ export const useResumeStore = defineStore('resume', () => {
     isPreviewMode,
     lastSaveTime,
     isAutoSaveEnabled,
+    isExporting,
     currentResumeId,
     templateSettings,
     sectionOrder,
@@ -1153,6 +1173,8 @@ export const useResumeStore = defineStore('resume', () => {
     resetResumeData,
     startAutoSave,
     stopAutoSave,
+    setExporting,
+    updateSettings,
     init,
     saveToLocalStorage,
 

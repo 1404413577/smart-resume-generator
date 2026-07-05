@@ -43,12 +43,13 @@
               <div id="resume-preview-design">
                 <component
                   v-if="currentTemplateComponent"
+                  :key="previewRenderKey"
                   :is="currentTemplateComponent"
                   :resume-data="resumeStore.resumeData"
                   :template-id="resumeStore.selectedTemplate"
                   :page-settings="resumeStore.globalSettings?.pageSettings"
                 />
-                <ResumePreview v-else :scale="1" />
+                <ResumePreview v-else :key="previewRenderKey" :scale="1" />
               </div>
             </div>
           </div>
@@ -118,6 +119,15 @@ const resumeName = computed(() => resumeStore.resumeData.personalInfo.name || 'æ
 const currentTemplateComponent = computed(() => {
   const template = getTemplate(resumeStore.selectedTemplate)
   return template?.component || null
+})
+
+const previewRenderKey = computed(() => {
+  const personalInfo = resumeStore.resumeData.personalInfo || {}
+  return [
+    resumeStore.selectedTemplate,
+    personalInfo.photoPosition || 'center',
+    personalInfo.photo ? 'has-photo' : 'no-photo'
+  ].join(':')
 })
 
 const containerStyle = computed(() => {

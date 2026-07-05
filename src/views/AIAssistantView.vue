@@ -13,9 +13,6 @@
           <el-button @click="startNewChat" type="primary" :icon="Plus">
             新对话
           </el-button>
-          <el-button @click="showHistory = !showHistory" :icon="Clock">
-            历史记录
-          </el-button>
         </div>
       </div>
     </div>
@@ -198,9 +195,6 @@
                   <span>Ctrl + Enter 发送</span>
                 </div>
                 <div class="input-buttons">
-                  <el-button @click="uploadJobDescription" size="small" :icon="Upload">
-                    上传JD
-                  </el-button>
                   <el-button
                     @click="sendMessage"
                     type="primary"
@@ -225,10 +219,8 @@ import { ElMessage } from 'element-plus'
 import {
   MagicStick,
   Plus,
-  Clock,
   Close,
   User,
-  Upload,
   TrendCharts,
   ArrowRight,
   Star,
@@ -236,6 +228,7 @@ import {
   ChatRound
 } from '@element-plus/icons-vue'
 import { generateConversationalResponse } from '@utils/ai/aiService'
+import { renderSafeMessageHtml } from '@utils/safeHtml'
 
 // 响应式数据
 const showHistory = ref(false)
@@ -308,11 +301,6 @@ const sendQuickMessage = (message) => {
   sendMessage()
 }
 
-const uploadJobDescription = () => {
-  // TODO: 实现JD上传功能
-  ElMessage.info('JD上传功能开发中...')
-}
-
 const loadChat = (chatId) => {
   // TODO: 从历史记录加载对话
   currentChatId.value = chatId
@@ -333,11 +321,7 @@ const saveChatToHistory = () => {
 }
 
 const formatMessage = (content) => {
-  // 简单的markdown格式化
-  return content
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/\n/g, '<br>')
+  return renderSafeMessageHtml(content)
 }
 
 const formatTime = (time) => {

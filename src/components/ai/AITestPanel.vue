@@ -12,8 +12,9 @@
       <div class="test-section">
         <h4>API连接状态</h4>
         <div class="status-info">
-          <p><strong>API Key:</strong> {{ apiKeyStatus }}</p>
-          <p><strong>API URL:</strong> {{ apiUrl }}</p>
+          <p><strong>当前引擎:</strong> {{ aiSettings.aiEngine }}</p>
+          <p><strong>当前模型:</strong> {{ currentModel }}</p>
+          <p><strong>接口地址:</strong> {{ currentBaseUrl }}</p>
           <el-button size="small" @click="testConnection" :loading="testing">
             测试连接
           </el-button>
@@ -75,7 +76,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { generateConversationalResponse, generateCompleteResume } from '@utils/ai/aiService'
+import {
+  checkAPIAvailability,
+  generateConversationalResponse,
+  generateCompleteResume,
+  getAiSettings
+} from '@utils/ai/aiService'
 
 // 响应式数据
 const testing = ref(false)
@@ -92,49 +98,44 @@ const resumeTestForm = ref({
 })
 
 // API配置信息
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-const apiUrl = import.meta.env.VITE_GEMINI_API_URL
+const aiSettings = ref(getAiSettings())
 
 // 计算属性
-const apiKeyStatus = computed(() => {
-  if (!apiKey) return '未配置'
-  return `已配置 (${apiKey.substring(0, 10)}...)`
+const currentModel = computed(() => {
+  if (aiSettings.value.aiEngine === 'gemini') return aiSettings.value.geminiModel
+  if (aiSettings.value.aiEngine === 'ollama') return aiSettings.value.ollamaModel
+  if (aiSettings.value.aiEngine === 'local') {
+    return aiSettings.value.localAiType === 'gpu'
+      ? aiSettings.value.localModelId
+      : aiSettings.value.localCpuModelId
+  }
+  return aiSettings.value.aiModel
+})
+
+const currentBaseUrl = computed(() => {
+  if (aiSettings.value.aiEngine === 'gemini') return aiSettings.value.geminiBaseUrl
+  if (aiSettings.value.aiEngine === 'ollama') return aiSettings.value.ollamaBaseUrl
+  if (aiSettings.value.aiEngine === 'local') return '浏览器本地运行'
+  return aiSettings.value.aiBaseUrl
 })
 
 const apiStatus = computed(() => {
-  if (!apiKey) {
-    return { type: 'warning', text: '使用备用服务' }
+  if (aiSettings.value.aiEngine === 'local') {
+    return { type: 'info', text: '本地模型' }
   }
-  return { type: 'success', text: 'API已配置' }
+  return { type: 'success', text: '已加载配置' }
 })
 
 // 方法
 const testConnection = async () => {
   testing.value = true
   try {
-    if (!apiKey) {
-      ElMessage.warning('API Key未配置，将使用备用服务')
-      return
-    }
-
-    const response = await fetch(`${apiUrl}?key=${apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: '测试连接'
-          }]
-        }]
-      })
-    })
-
-    if (response.ok) {
+    aiSettings.value = getAiSettings()
+    const ok = await checkAPIAvailability()
+    if (ok === true) {
       ElMessage.success('API连接成功！')
     } else {
-      ElMessage.error(`API连接失败: ${response.status}`)
+      ElMessage.error(ok?.message || 'API连接失败，请检查设置')
     }
   } catch (error) {
     console.error('连接测试失败:', error)
@@ -214,8 +215,7 @@ const clearTest = () => {
 // 生命周期
 onMounted(() => {
   console.log('AI测试面板已加载')
-  console.log('API Key状态:', apiKeyStatus.value)
-  console.log('API URL:', apiUrl)
+  console.log('AI配置:', aiSettings.value)
 })
 </script>
 

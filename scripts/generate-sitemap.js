@@ -1,8 +1,26 @@
 // 网站地图生成器
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
-const baseUrl = 'https://smart-resume-generator.vercel.app'
+function readEnvValue(key) {
+  const envFiles = ['.env.production', '.env']
+
+  for (const file of envFiles) {
+    if (!fs.existsSync(file)) continue
+
+    const line = fs.readFileSync(file, 'utf8')
+      .split(/\r?\n/)
+      .find(item => item.trim().startsWith(`${key}=`))
+
+    if (line) return line.slice(line.indexOf('=') + 1).trim()
+  }
+
+  return ''
+}
+
+const configuredBaseUrl = process.env.VITE_BASE_URL || readEnvValue('VITE_BASE_URL')
+const baseUrl = (configuredBaseUrl || 'https://smart-resume-generator-lac.vercel.app').replace(/\/$/, '')
 const currentDate = new Date().toISOString().split('T')[0]
 
 // 静态页面配置
@@ -20,14 +38,20 @@ const staticPages = [
     lastmod: currentDate
   },
   {
-    url: '/features',
+    url: '/design',
     priority: '0.8',
     changefreq: 'monthly',
     lastmod: currentDate
   },
   {
-    url: '/help',
+    url: '/ai-assistant',
     priority: '0.7',
+    changefreq: 'monthly',
+    lastmod: currentDate
+  },
+  {
+    url: '/settings',
+    priority: '0.5',
     changefreq: 'monthly',
     lastmod: currentDate
   },
@@ -36,38 +60,14 @@ const staticPages = [
     priority: '0.6',
     changefreq: 'monthly',
     lastmod: currentDate
-  },
-  {
-    url: '/privacy',
-    priority: '0.5',
-    changefreq: 'yearly',
-    lastmod: currentDate
-  },
-  {
-    url: '/terms',
-    priority: '0.5',
-    changefreq: 'yearly',
-    lastmod: currentDate
   }
 ]
 
-// 动态页面配置（模板页面）
-const templatePages = [
-  'modern',
-  'classic',
-  'minimal',
-  'creative',
-  'professional'
-].map(template => ({
-  url: `/template/${template}`,
-  priority: '0.8',
-  changefreq: 'weekly',
-  lastmod: currentDate
-}))
+const templatePages = []
 
 // 生成XML网站地图
 function generateSitemap() {
-  const allPages = [...staticPages, ...templatePages]
+  const allPages = staticPages
   
   let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -93,7 +93,7 @@ function generateSitemap() {
 
 // 生成HTML网站地图
 function generateHtmlSitemap() {
-  const allPages = [...staticPages, ...templatePages]
+  const allPages = staticPages
   
   let htmlSitemap = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -225,7 +225,7 @@ function main() {
 }
 
 // 如果直接运行此脚本
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   main()
 }
 

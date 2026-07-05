@@ -143,20 +143,6 @@
           >
             添加技术技能
           </el-button>
-          <el-button
-            size="small"
-            @click="optimizeForATS"
-            :icon="Document"
-          >
-            ATS优化
-          </el-button>
-          <el-button 
-            size="small" 
-            @click="generateTechSummary"
-            :icon="MagicStick"
-          >
-            生成技术总结
-          </el-button>
         </div>
       </div>
     </el-card>
@@ -175,8 +161,6 @@ import {
   Sunny,
   InfoFilled,
   Plus,
-  Document,
-  MagicStick
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { createMultiPageManager } from '@/utils/multipage/pageManager'
@@ -313,7 +297,7 @@ const layoutSuggestion = computed(() => {
 
 // 是否使用工科模板
 const isUsingEngineeringTemplate = computed(() => {
-  return resumeStore.selectedTemplate === 'multipage'
+  return resumeStore.selectedTemplate === 'technical'
 })
 
 // 方法
@@ -344,8 +328,8 @@ const applyLayoutSuggestion = () => {
 }
 
 const recommendEngineeringTemplate = () => {
-  emit('template-change', 'multipage')
-  ElMessage.success('已推荐工科多页模板')
+  emit('template-change', 'technical')
+  ElMessage.success('已推荐技术项目模板')
 }
 
 const addTechnicalProject = () => {
@@ -356,13 +340,6 @@ const addTechnicalSkill = () => {
   emit('content-update', { section: 'skills', action: 'add' })
 }
 
-const optimizeForATS = () => {
-  ElMessage.info('ATS优化功能开发中...')
-}
-
-const generateTechSummary = () => {
-  ElMessage.info('AI技术总结生成功能开发中...')
-}
 </script>
 
 <style scoped>

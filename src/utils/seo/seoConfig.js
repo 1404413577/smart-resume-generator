@@ -97,21 +97,28 @@ export const seoConfig = {
       title: '简历编辑',
       description: '使用我们的在线编辑器轻松制作专业简历，实时预览效果，支持多种格式导出。',
       keywords: '简历编辑,在线编辑器,简历制作,实时预览,PDF导出',
-      path: '/editor'
+      path: '/'
     },
 
-    features: {
-      title: '功能特色',
-      description: '了解简历编辑器的强大功能：多种模板、实时预览、PDF导出、云端保存等。',
-      keywords: '简历编辑器功能,简历制作功能,PDF导出,云端保存,实时预览',
-      path: '/features'
+    design: {
+      title: '设计工作室',
+      description: '个性化定制简历视觉风格，调整模板、颜色、字体和模块布局。',
+      keywords: '简历设计,简历样式,模板定制,简历排版,视觉风格',
+      path: '/design'
     },
 
-    help: {
-      title: '帮助中心',
-      description: '简历编辑器使用指南，包含详细的操作说明、常见问题解答和简历制作技巧。',
-      keywords: '简历编辑器帮助,使用指南,常见问题,简历制作技巧',
-      path: '/help'
+    aiAssistant: {
+      title: 'AI助手',
+      description: '使用 AI 生成、润色和优化简历内容，辅助匹配目标岗位。',
+      keywords: 'AI简历,简历润色,简历生成,JD匹配,求职优化',
+      path: '/ai-assistant'
+    },
+
+    settings: {
+      title: '设置',
+      description: '管理简历编辑器的应用设置、AI服务和导出偏好。',
+      keywords: '简历设置,AI配置,导出设置,应用偏好',
+      path: '/settings'
     },
 
     about: {

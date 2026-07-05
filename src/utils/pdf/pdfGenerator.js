@@ -315,15 +315,14 @@ export async function previewPDF(elementId) {
  * @param {string} filename - 文件名
  */
 export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
-  const element = document.getElementById(elementId)
-  if (!element) {
+  const rootElement = document.getElementById(elementId)
+  if (!rootElement) {
     throw new Error(`找不到ID为 ${elementId} 的元素`)
   }
 
-  const isModernTemplate = element.querySelector('.modern-template')
-  if (isModernTemplate) {
-    isModernTemplate.classList.add('pdf-export')
-  }
+  const element = rootElement.querySelector('.unified-resume-template, .resume-preview') || rootElement
+
+  element.classList.add('pdf-export')
 
   const originalStyle = element.style.cssText
   let clone = null
@@ -373,8 +372,8 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
 
     const contentHeight = element.scrollHeight
     const contentWidth = element.scrollWidth
-    const pixelWidth = Math.ceil(contentWidth)
-    const pixelHeight = Math.ceil(contentHeight)
+    const pixelWidth = Math.max(1, Math.ceil(contentWidth || element.offsetWidth))
+    const pixelHeight = Math.max(1, Math.ceil(contentHeight || element.offsetHeight))
 
     const canvas = await html2canvas(element, {
       scale: 2,
@@ -457,9 +456,7 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
   } finally {
     // 确保样式和DOM始终恢复
     element.style.cssText = originalStyle
-    if (isModernTemplate) {
-      isModernTemplate.classList.remove('pdf-export')
-    }
+    element.classList.remove('pdf-export')
     element.querySelectorAll('.pdf-page-spacer').forEach(s => s.remove())
     if (clone && clone.parentNode) {
       clone.parentNode.removeChild(clone)

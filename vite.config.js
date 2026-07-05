@@ -51,7 +51,7 @@ export default defineConfig({
       }
     })
   ],
-  base: '/smart-resume-generator/',
+  base: process.env.VITE_BASE_PATH || '/',
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),

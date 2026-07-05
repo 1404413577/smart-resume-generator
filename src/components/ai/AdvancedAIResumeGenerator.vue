@@ -338,6 +338,7 @@ import {
   analyzeJobMatch,
   optimizeContent
 } from '@utils/ai/aiService'
+import { renderSafeMessageHtml } from '@utils/safeHtml'
 import { useResumeStore } from '@stores/resume'
 import RandomStyleSelector from './RandomStyleSelector.vue'
 
@@ -392,7 +393,7 @@ const getScoreColor = (score) => {
 
 const formatMessage = (content) => {
   if (!content) return ''
-  return content.replace(/\n/g, '<br>')
+  return renderSafeMessageHtml(content)
 }
 
 // 方法

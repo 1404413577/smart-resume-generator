@@ -105,19 +105,34 @@ export function useTemplateStyles(templateId = null) {
  */
 export function useTemplateComponentStyles(templateId = null) {
   const { cssVariables, mergedStyles } = useTemplateStyles(templateId)
+  const resumeStore = useResumeStore()
 
   // 模板组件可直接使用的样式对象
-  const templateStyles = computed(() => ({
-    // 兼容旧的CSS变量命名
-    '--primary-color': mergedStyles.value.primary,
-    '--secondary-color': mergedStyles.value.secondary,
-    '--accent-color': mergedStyles.value.accent,
-    '--text-color': mergedStyles.value.text,
-    '--background-color': mergedStyles.value.background,
-    
-    // 包含所有CSS变量
-    ...cssVariables.value
-  }))
+  const templateStyles = computed(() => {
+    const typography = resumeStore.globalSettings?.typography || {}
+    const spacing = resumeStore.globalSettings?.spacing || {}
+    const pageMargin = spacing.pageMargin || {}
+
+    return {
+      // 直接内联到模板根节点，覆盖历史模板里写死的基础排版。
+      fontFamily: typography.fontFamily,
+      fontSize: `${typography.baseFontSize || 14}px`,
+      lineHeight: spacing.lineHeight || 1.5,
+      color: mergedStyles.value.text,
+      backgroundColor: mergedStyles.value.background,
+      padding: `${pageMargin.top ?? 20}mm ${pageMargin.right ?? 20}mm ${pageMargin.bottom ?? 20}mm ${pageMargin.left ?? 20}mm`,
+
+      // 兼容旧的CSS变量命名
+      '--primary-color': mergedStyles.value.primary,
+      '--secondary-color': mergedStyles.value.secondary,
+      '--accent-color': mergedStyles.value.accent,
+      '--text-color': mergedStyles.value.text,
+      '--background-color': mergedStyles.value.background,
+
+      // 包含所有CSS变量
+      ...cssVariables.value
+    }
+  })
 
   return {
     templateStyles,

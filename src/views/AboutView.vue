@@ -11,8 +11,8 @@
               <p class="app-version">版本 {{ version }}</p>
             </div>
             <p class="app-description">
-              一款基于AI技术的智能简历生成器，帮助您快速创建专业、美观的简历。
-              通过对话式AI交互，个性化模板选择，让简历制作变得简单高效。
+              一款本地优先的简历编辑工具，提供结构化编辑、模板预览、PDF/Word 导出和可配置 AI 辅助。
+              简历数据默认保存在当前浏览器中，未配置云端同步。
             </p>
           </div>
         </div>
@@ -52,23 +52,23 @@
                 <el-icon><Download /></el-icon>
               </div>
               <h3>多格式导出</h3>
-              <p>支持PDF、Word、图片等多种格式导出，优化打印效果，满足不同使用场景。</p>
+              <p>支持 PDF 与 Word 主路径导出，适合投递、打印和本地备份。</p>
             </div>
             
             <div class="feature-card">
               <div class="feature-icon">
                 <el-icon><Upload /></el-icon>
               </div>
-              <h3>云端同步</h3>
-              <p>自动保存和云端同步，随时随地访问您的简历，永不丢失重要数据。</p>
+              <h3>本地保存</h3>
+              <p>使用浏览器 IndexedDB 和本地存储保存简历与设置，不依赖后端服务。</p>
             </div>
 
             <div class="feature-card">
               <div class="feature-icon">
                 <el-icon><TrendCharts /></el-icon>
               </div>
-              <h3>智能分析</h3>
-              <p>AI分析简历质量，提供改进建议，匹配职位要求，提高求职成功率。</p>
+              <h3>AI 辅助</h3>
+              <p>可选择 OpenAI 兼容接口、Gemini、Ollama 或浏览器本地模型来生成和润色内容。</p>
             </div>
           </div>
         </div>
@@ -98,91 +98,49 @@
               <span class="tech-desc">PDF生成</span>
             </div>
             <div class="tech-item">
-              <span class="tech-name">Gemini API</span>
-              <span class="tech-desc">AI服务</span>
+              <span class="tech-name">OpenAI/Gemini/Ollama</span>
+              <span class="tech-desc">可配置AI服务</span>
             </div>
           </div>
         </div>
 
-        <!-- 更新日志 -->
+        <!-- 隐私与数据 -->
         <div class="changelog-section">
-          <h2 class="section-title">更新日志</h2>
+          <h2 class="section-title">隐私与数据</h2>
           <div class="changelog-list">
             <div class="changelog-item">
               <div class="changelog-header">
-                <span class="changelog-version">v1.2.0</span>
-                <span class="changelog-date">2024-01-15</span>
+                <span class="changelog-version">本地数据</span>
+                <span class="changelog-date">默认策略</span>
               </div>
               <ul class="changelog-content">
-                <li>新增路由系统，支持多页面导航</li>
-                <li>重构组件架构，提升代码可维护性</li>
-                <li>优化AI对话体验，增加历史记录功能</li>
-                <li>新增设置页面，支持个性化配置</li>
+                <li>简历内容保存在当前浏览器的 IndexedDB/localStorage 中。</li>
+                <li>清理浏览器站点数据或更换浏览器后，本地数据可能不可恢复。</li>
+                <li>设置页支持导出和导入设置 JSON，简历备份功能将单独实现。</li>
               </ul>
             </div>
             
             <div class="changelog-item">
               <div class="changelog-header">
-                <span class="changelog-version">v1.1.0</span>
-                <span class="changelog-date">2024-01-01</span>
+                <span class="changelog-version">AI 数据</span>
+                <span class="changelog-date">取决于配置</span>
               </div>
               <ul class="changelog-content">
-                <li>新增模板中心，提供更多专业模板</li>
-                <li>优化PDF导出质量和性能</li>
-                <li>增加简历管理功能</li>
-                <li>修复已知问题，提升稳定性</li>
+                <li>使用在线 AI 接口时，请求内容会发送到您配置的服务地址。</li>
+                <li>使用 Ollama 或浏览器本地模型时，数据处理位置取决于您的本地运行环境。</li>
+                <li>API Key 存储在当前浏览器本地，请在共享设备上谨慎使用。</li>
               </ul>
             </div>
             
             <div class="changelog-item">
               <div class="changelog-header">
-                <span class="changelog-version">v1.0.0</span>
-                <span class="changelog-date">2023-12-15</span>
+                <span class="changelog-version">尚未提供</span>
+                <span class="changelog-date">规划中</span>
               </div>
               <ul class="changelog-content">
-                <li>首次发布，包含基础简历编辑功能</li>
-                <li>集成AI智能助手</li>
-                <li>支持多种模板和导出格式</li>
-                <li>实现自动保存和数据持久化</li>
+                <li>当前没有内置云同步、在线客服或官方账号绑定。</li>
+                <li>多简历管理、版本历史、JD 分析闭环属于后续重构范围。</li>
               </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- 联系信息 -->
-        <div class="contact-section">
-          <h2 class="section-title">联系我们</h2>
-          <div class="contact-grid">
-            <div class="contact-item">
-              <el-icon><Message /></el-icon>
-              <div>
-                <h4>邮箱支持</h4>
-                <p>support@resumebuilder.com</p>
-              </div>
-            </div>
-            
-            <div class="contact-item">
-              <el-icon><ChatDotRound /></el-icon>
-              <div>
-                <h4>在线客服</h4>
-                <p>工作日 9:00-18:00</p>
-              </div>
-            </div>
-            
-            <div class="contact-item">
-              <el-icon><Link /></el-icon>
-              <div>
-                <h4>官方网站</h4>
-                <p>www.resumebuilder.com</p>
-              </div>
-            </div>
-            
-            <div class="contact-item">
-              <el-icon><Platform /></el-icon>
-              <div>
-                <h4>GitHub</h4>
-                <p>github.com/resumebuilder</p>
-              </div>
             </div>
           </div>
         </div>
@@ -207,11 +165,7 @@ import {
   Edit,
   Download,
   Upload,
-  TrendCharts,
-  Message,
-  ChatDotRound,
-  Link,
-  Platform
+  TrendCharts
 } from '@element-plus/icons-vue'
 
 // 应用版本

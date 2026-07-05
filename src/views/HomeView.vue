@@ -6,20 +6,6 @@
       <aside class="left-sidebar" v-if="!isMobile || mobileActiveTab === 'ai'">
         <!-- AI助手区域 -->
         <div class="sidebar-section ai-assistant-section">
-          <!-- ... (keep existing content but maybe wrap it) ... -->
-          <!-- <div class="section-header" @click="toggleSection('ai')">
-            <div class="header-left">
-              <el-icon><MagicStick /></el-icon>
-              <span>AI智能助手</span>
-              <div class="ai-status" :class="{ online: aiStatus.online }">
-                <div class="status-dot"></div>
-                <span class="status-text">{{ aiStatus.online ? '在线' : '离线' }}</span>
-              </div>
-            </div>
-            <el-icon class="expand-icon" :class="{ expanded: expandedSections.ai }">
-              <ArrowRight />
-            </el-icon>
-          </div> -->
           <div v-show="expandedSections.ai" class="section-content">
             <!-- 智能推荐 -->
             <div class="ai-recommendations" v-if="aiRecommendations.length > 0">
@@ -177,12 +163,13 @@
               <div id="resume-preview">
                 <component
                   v-if="currentTemplateComponent"
+                  :key="previewRenderKey"
                   :is="currentTemplateComponent"
                   :resume-data="resumeStore.resumeData"
                   :template-id="resumeStore.selectedTemplate"
                   :page-settings="resumeStore.globalSettings?.pageSettings"
                 />
-                <ResumePreview v-else :scale="1" />
+                <ResumePreview v-else :key="previewRenderKey" :scale="1" />
               </div>
             </div>
           </div>
@@ -233,18 +220,14 @@
         />
       </el-dialog>
 
-      <!-- 可拖拽随机打赏二维码组件 -->
-      <DraggableDonation />
-
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
-  MagicStick,
   Grid,
   Document,
   ArrowRight,
@@ -256,22 +239,14 @@ import {
   ZoomIn,
   ZoomOut,
   Sort,
-  Tools,
   Printer,
-  Promotion,
-  Search,
   TrendCharts,
-  ChatRound,
-  Upload,
-  Close,
   Brush
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
-import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
-import { generateMultiPageResumePDF } from '@utils/pdf/multiPagePdfGenerator'
 import { createMultiPageManager } from '@/utils/multipage/pageManager'
 import { useGlobalStyles } from '@/composables/useGlobalStyles'
-import { exportResumeToDocx } from '@utils/word/exportDocx'
+import { useResumeExport } from '@/composables/useResumeExport'
 import { Edit, View, MagicStick as AIMagic } from '@element-plus/icons-vue'
 import { useWindowSize } from '@vueuse/core'
 
@@ -281,7 +256,6 @@ import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
 import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
 import OCRImport from '@components/resume/OCRImport.vue'
-import DraggableDonation from '@components/common/DraggableDonation.vue'
 import { useRouter } from 'vue-router'
 import { getTemplate } from '@templates'
 
@@ -305,6 +279,15 @@ const currentTemplateComponent = computed(() => {
   return template?.component || null
 })
 
+const previewRenderKey = computed(() => {
+  const personalInfo = resumeStore.resumeData.personalInfo || {}
+  return [
+    resumeStore.selectedTemplate,
+    personalInfo.photoPosition || 'center',
+    personalInfo.photo ? 'has-photo' : 'no-photo'
+  ].join(':')
+})
+
 // 当前页面管理器
 const currentPageManager = computed(() => {
   const template = getTemplate(resumeStore.selectedTemplate)
@@ -322,17 +305,11 @@ const showSectionSort = ref(false)
 const currentPreviewPage = ref(1)
 const showAllPages = ref(false)
 const ocrImportRef = ref(null)
-const showDonation = ref(true)
 
 // 响应式设计相关
 const { width: windowWidth } = useWindowSize()
 const isMobile = computed(() => windowWidth.value <= 768)
 const mobileActiveTab = ref('edit') // 'edit', 'preview', 'ai'
-
-// 开发模式检测
-const isDevelopment = computed(() => {
-  return import.meta.env.MODE === 'development' || import.meta.env.DEV
-})
 
 // 侧边栏展开状态
 const expandedSections = ref({
@@ -342,33 +319,27 @@ const expandedSections = ref({
   style: false
 })
 
-// AI助手状态
-const aiStatus = ref({
-  online: true,
-  lastCheck: new Date()
-})
-
 // AI智能推荐
 const aiRecommendations = ref([
   {
     id: 1,
     title: '完善个人信息',
     description: '添加联系方式和基本信息',
-    icon: 'User',
+    icon: User,
     action: 'personalInfo'
   },
   {
     id: 2,
     title: '优化工作经历',
     description: '使用AI优化工作经历描述',
-    icon: 'Briefcase',
+    icon: Briefcase,
     action: 'optimize-work'
   },
   {
     id: 3,
     title: '技能匹配分析',
     description: '分析技能与目标职位的匹配度',
-    icon: 'TrendCharts',
+    icon: TrendCharts,
     action: 'skill-match'
   }
 ])
@@ -501,78 +472,13 @@ const getPreviewContainerStyle = computed(() => {
   }
 })
 
-const isExporting = ref(false)
-const isExportingWord = ref(false)
 const showTemplateUploader = ref(false)
-
-
-const handleExportPDF = async () => {
-  try {
-    isExporting.value = true
-    await nextTick()
-
-    // 临时移除预览容器的缩放，确保导出的是真实尺寸
-    const previewContainer = document.querySelector('.preview-container')
-    const originalTransform = previewContainer?.style.transform
-    if (previewContainer) {
-      previewContainer.style.transform = 'none'
-    }
-
-    const filename = `${resumeStore.resumeData.personalInfo.name || '简历'}.pdf`
-    const template = getTemplate(resumeStore.selectedTemplate)
-
-    try {
-      // 检查是否为多页模板
-      if (template?.isMultiPage && currentPageManager.value) {
-        // 使用多页PDF生成器
-        await generateMultiPageResumePDF(
-          'resume-preview',
-          filename,
-          resumeStore.globalSettings?.pageSettings
-        )
-        ElMessage.success('多页PDF导出成功！')
-      } else {
-        // 使用标准PDF生成器
-        await generateOptimizedPDF('resume-preview', filename)
-        ElMessage.success('PDF导出成功！')
-      }
-    } finally {
-      // 恢复预览容器的缩放
-      if (previewContainer && originalTransform) {
-        previewContainer.style.transform = originalTransform
-      }
-    }
-  } catch (error) {
-    console.error('PDF导出失败:', error)
-    ElMessage.error('PDF导出失败，请重试')
-  } finally {
-    isExporting.value = false
-  }
-}
-
-const handleExportWord = async () => {
-  try {
-    isExportingWord.value = true
-    await nextTick()
-    const name = resumeStore.resumeData.personalInfo?.name?.trim()
-    const filename = `${name || '简历'}.docx`
-    const blob = await exportResumeToDocx(resumeStore.resumeData)
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-    ElMessage.success('Word导出成功！')
-  } catch (error) {
-    console.error('Word导出失败:', error)
-    ElMessage.error('Word导出失败，请重试')
-  } finally {
-    isExportingWord.value = false
-  }
-}
+const {
+  isExporting,
+  isExportingWord,
+  exportPDF: handleExportPDF,
+  exportWord: handleExportWord
+} = useResumeExport(resumeStore, currentPageManager)
 
 const handleTemplateExportSuccess = (result) => {
   showTemplateUploader.value = false
@@ -623,6 +529,14 @@ const handleRecommendation = (recommendation) => {
       activeModule.value = 'personalInfo'
       ElMessage.info('请完善个人信息')
       break
+    case 'workExperience':
+      activeModule.value = 'workExperience'
+      ElMessage.info('请补充工作经历')
+      break
+    case 'skills':
+      activeModule.value = 'skills'
+      ElMessage.info('请补充技能特长')
+      break
     case 'optimize-work':
       if (!resumeStore.resumeData.workExperience?.length) {
         activeModule.value = 'workExperience'
@@ -639,18 +553,6 @@ const handleRecommendation = (recommendation) => {
   }
 }
 
-// 检查AI服务状态
-const checkAIStatus = async () => {
-  try {
-    // 这里可以添加实际的API检查逻辑
-    aiStatus.value.online = true
-    aiStatus.value.lastCheck = new Date()
-  } catch (error) {
-    aiStatus.value.online = false
-    console.warn('AI服务检查失败:', error)
-  }
-}
-
 // 更新AI推荐
 const updateAIRecommendations = () => {
   const recommendations = []
@@ -662,7 +564,7 @@ const updateAIRecommendations = () => {
       id: 1,
       title: '完善个人信息',
       description: '添加姓名、邮箱等基本信息',
-      icon: 'User',
+      icon: User,
       action: 'personalInfo'
     })
   }
@@ -673,7 +575,7 @@ const updateAIRecommendations = () => {
       id: 2,
       title: '添加工作经历',
       description: '添加您的工作经验',
-      icon: 'Briefcase',
+      icon: Briefcase,
       action: 'workExperience'
     })
   } else if (data.workExperience.some(work => !work.description || work.description.length < 50)) {
@@ -681,7 +583,7 @@ const updateAIRecommendations = () => {
       id: 3,
       title: '优化工作经历',
       description: '使用AI优化工作经历描述',
-      icon: 'Promotion',
+      icon: Briefcase,
       action: 'optimize-work'
     })
   }
@@ -692,7 +594,7 @@ const updateAIRecommendations = () => {
       id: 4,
       title: '添加技能特长',
       description: '展示您的专业技能',
-      icon: 'Star',
+      icon: Star,
       action: 'skills'
     })
   }
@@ -702,14 +604,8 @@ const updateAIRecommendations = () => {
 
 // 生命周期钩子
 onMounted(() => {
-  // 初始化AI状态检查
-  checkAIStatus()
-
   // 更新AI推荐
   updateAIRecommendations()
-
-  // 定期检查AI状态
-  setInterval(checkAIStatus, 30000) // 每30秒检查一次
 })
 
 // 监听简历数据变化，更新推荐

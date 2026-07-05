@@ -1,100 +1,482 @@
 /**
- * AI服务模块 - 使用Gemini API生成简历内容
+ * Unified AI service for resume generation.
+ *
+ * The UI calls the high-level functions exported from this module. The actual
+ * engine can be OpenAI-compatible chat completions, Ollama, Gemini, or an
+ * optional browser-local model service.
  */
 
-import { GoogleGenAI } from '@google/genai'
+import { localAiService } from './localAi'
 
-// Gemini API配置
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
+const DEFAULT_TIMEOUT_MS = 120000
+const SETTINGS_STORAGE_KEY = 'resumeBuilderSettings'
 
-if (!GEMINI_API_KEY) {
-  console.error('[AI Service] 未配置 VITE_GEMINI_API_KEY 环境变量，AI 功能将不可用')
+export const DEFAULT_AI_SETTINGS = {
+  aiSuggestions: true,
+  autoOptimize: false,
+  aiSpeed: 'balanced',
+  aiEngine: import.meta.env.VITE_AI_ENGINE || (import.meta.env.VITE_GEMINI_API_KEY ? 'gemini' : 'online'),
+  aiApiKey: import.meta.env.VITE_OPENAI_API_KEY || import.meta.env.VITE_GLM_API_KEY || import.meta.env.VITE_GML_API_KEY || '',
+  aiBaseUrl: import.meta.env.VITE_OPENAI_BASE_URL || import.meta.env.VITE_GLM_API_URL || import.meta.env.VITE_GML_API_URL || 'https://api.openai.com/v1',
+  aiModel: import.meta.env.VITE_OPENAI_MODEL || import.meta.env.VITE_GLM_API_MODEL || import.meta.env.VITE_GML_API_MODEL || 'gpt-4o-mini',
+  geminiApiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
+  geminiBaseUrl: import.meta.env.VITE_GEMINI_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta',
+  geminiModel: import.meta.env.VITE_GEMINI_MODEL || 'gemini-1.5-flash',
+  ollamaBaseUrl: import.meta.env.VITE_OLLAMA_BASE_URL || 'http://localhost:11434',
+  ollamaModel: import.meta.env.VITE_OLLAMA_MODEL || 'llama3.1',
+  localAiType: 'gpu',
+  localModelId: 'SmolLM2-135M-Instruct-q0f32-MLC',
+  localCpuModelId: 'Xenova/Qwen1.5-0.5B-Chat'
 }
-const GEMINI_MODEL = 'gemini-1.5-flash'
 
 // 请求频率限制
 let lastRequestTime = 0
 const REQUEST_INTERVAL = 1000
 
-// 初始化 Gemini AI 客户端
-let genAI = null
+// ---- Settings helpers ----
 
-// ---- 工具函数 ----
-
-/** 安全解析 AI 返回的 JSON，自动清理 markdown 代码块等常见格式问题 */
-function safeJsonParse(text, fallback) {
+export function getAiSettings() {
   try {
-    return JSON.parse(text)
-  } catch {
-    let cleaned = text.trim()
-    cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '')
-    const start = cleaned.indexOf('{')
-    const end = cleaned.lastIndexOf('}')
-    if (start !== -1 && end > start) {
-      try { return JSON.parse(cleaned.slice(start, end + 1)) } catch {}
+    const saved = localStorage.getItem(SETTINGS_STORAGE_KEY)
+    if (!saved) return { ...DEFAULT_AI_SETTINGS }
+
+    return {
+      ...DEFAULT_AI_SETTINGS,
+      ...JSON.parse(saved)
     }
-    const arrStart = cleaned.indexOf('[')
-    const arrEnd = cleaned.lastIndexOf(']')
-    if (arrStart !== -1 && arrEnd > arrStart) {
-      try { return JSON.parse(cleaned.slice(arrStart, arrEnd + 1)) } catch {}
-    }
-    console.warn('[safeJsonParse] 解析失败，使用 fallback')
-    return fallback
+  } catch (error) {
+    console.warn('[AI Service] 读取 AI 设置失败，使用默认配置:', error)
+    return { ...DEFAULT_AI_SETTINGS }
   }
 }
 
-function getGenAIClient() {
-  if (!GEMINI_API_KEY) {
-    throw new Error('AI服务未配置，请联系管理员配置API密钥')
-  }
-  if (!genAI) {
-    genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY })
-  }
-  return genAI
+function normalizeBaseUrl(baseUrl, fallback) {
+  return String(baseUrl || fallback).replace(/\/$/, '')
 }
 
-/**
- * 调用Gemini API生成内容
- * @param {string} prompt - 提示词
- * @returns {Promise<string>} 生成的内容
- */
-export async function callGeminiAPI(prompt, maxTokens = 1024) {
-  // 频率限制检查
+function normalizeGeminiModel(model) {
+  return String(model || DEFAULT_AI_SETTINGS.geminiModel).replace(/^models\//, '')
+}
+
+function normalizeOpenAICompatibleModel(model) {
+  const value = String(model || DEFAULT_AI_SETTINGS.aiModel).trim()
+  return value.startsWith('gml-') ? value.replace(/^gml-/, 'glm-') : value
+}
+
+function createTimeoutSignal(timeoutMs = DEFAULT_TIMEOUT_MS) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => {
+    controller.abort(new Error('AI 请求超时，请检查网络或服务状态'))
+  }, timeoutMs)
+
+  return {
+    signal: controller.signal,
+    clear: () => clearTimeout(timer)
+  }
+}
+
+async function throttleRequest() {
   const now = Date.now()
   const timeSinceLastRequest = now - lastRequestTime
   if (timeSinceLastRequest < REQUEST_INTERVAL) {
     await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL - timeSinceLastRequest))
   }
   lastRequestTime = Date.now()
+}
 
+/** 安全解析 AI 返回的 JSON，自动清理 markdown 代码块等常见格式问题 */
+function safeJsonParse(text, fallback) {
   try {
-    const ai = getGenAIClient()
+    return JSON.parse(text)
+  } catch {
+    let cleaned = String(text || '').trim()
+    cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '')
 
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: prompt,
-      generationConfig: {
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: maxTokens,
-      }
-    })
-
-    if (!response || !response.text) {
-      throw new Error('AI服务返回数据格式异常，请稍后重试')
+    const start = cleaned.indexOf('{')
+    const end = cleaned.lastIndexOf('}')
+    if (start !== -1 && end > start) {
+      try { return JSON.parse(cleaned.slice(start, end + 1)) } catch {}
     }
 
-    return response.text.trim()
-  } catch (error) {
-    if (error.message.includes('AI服务')) {
-      throw error
+    const arrStart = cleaned.indexOf('[')
+    const arrEnd = cleaned.lastIndexOf(']')
+    if (arrStart !== -1 && arrEnd > arrStart) {
+      try { return JSON.parse(cleaned.slice(arrStart, arrEnd + 1)) } catch {}
     }
-    throw new Error(`AI服务连接失败: ${error.message}`)
+
+    console.warn('[safeJsonParse] 解析失败，使用 fallback')
+    return fallback
   }
 }
 
+function messagesToGeminiPayload(messages) {
+  const systemText = messages
+    .filter(message => message.role === 'system')
+    .map(message => message.content)
+    .join('\n\n')
 
+  const contents = messages
+    .filter(message => message.role !== 'system')
+    .map(message => ({
+      role: message.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: String(message.content || '') }]
+    }))
+
+  return {
+    contents: contents.length ? contents : [{ role: 'user', parts: [{ text: '' }] }],
+    ...(systemText ? { systemInstruction: { parts: [{ text: systemText }] } } : {})
+  }
+}
+
+function extractGeminiText(data) {
+  const parts = data?.candidates?.[0]?.content?.parts || []
+  return parts.map(part => part.text || '').join('')
+}
+
+function toGenerationConfig(options = {}) {
+  const generationConfig = {}
+  if (options.temperature !== undefined) generationConfig.temperature = options.temperature
+  if (options.maxTokens !== undefined) generationConfig.maxOutputTokens = options.maxTokens
+  return generationConfig
+}
+
+// ---- Unified service ----
+
+export class AIService {
+  static getConfigs() {
+    const settings = getAiSettings()
+    const aiEngine = settings.aiEngine || DEFAULT_AI_SETTINGS.aiEngine
+
+    if (aiEngine === 'ollama') {
+      return {
+        aiEngine,
+        baseUrl: normalizeBaseUrl(settings.ollamaBaseUrl, DEFAULT_AI_SETTINGS.ollamaBaseUrl),
+        model: settings.ollamaModel || DEFAULT_AI_SETTINGS.ollamaModel
+      }
+    }
+
+    if (aiEngine === 'local') {
+      const localAiType = settings.localAiType || DEFAULT_AI_SETTINGS.localAiType
+      return {
+        aiEngine,
+        localAiType,
+        localModelId: localAiType === 'gpu'
+          ? settings.localModelId || DEFAULT_AI_SETTINGS.localModelId
+          : settings.localCpuModelId || DEFAULT_AI_SETTINGS.localCpuModelId
+      }
+    }
+
+    if (aiEngine === 'gemini') {
+      return {
+        aiEngine,
+        apiKey: settings.geminiApiKey || '',
+        baseUrl: normalizeBaseUrl(settings.geminiBaseUrl, DEFAULT_AI_SETTINGS.geminiBaseUrl),
+        model: normalizeGeminiModel(settings.geminiModel)
+      }
+    }
+
+    return {
+      aiEngine: 'online',
+      apiKey: settings.aiApiKey || '',
+      baseUrl: normalizeBaseUrl(settings.aiBaseUrl, DEFAULT_AI_SETTINGS.aiBaseUrl),
+      model: normalizeOpenAICompatibleModel(settings.aiModel)
+    }
+  }
+
+  static async chatCompletion(messages, onChunk = null, onProgress = null, options = {}) {
+    const configs = this.getConfigs()
+
+    if (configs.aiEngine === 'ollama') {
+      return this.ollamaChatCompletion(configs, messages, onChunk, options)
+    }
+
+    if (configs.aiEngine === 'local') {
+      return localAiService.chatCompletion(
+        configs.localModelId,
+        configs.localAiType,
+        messages,
+        onChunk,
+        onProgress,
+        options
+      )
+    }
+
+    if (configs.aiEngine === 'gemini') {
+      return this.geminiChatCompletion(configs, messages, onChunk, options)
+    }
+
+    return this.openAICompatibleChatCompletion(configs, messages, onChunk, options)
+  }
+
+  static async openAICompatibleChatCompletion(configs, messages, onChunk, options = {}) {
+    if (!configs.apiKey) {
+      throw new Error('请先在设置页配置 OpenAI 兼容 API Key')
+    }
+
+    await throttleRequest()
+    const apiUrl = `${configs.baseUrl}/chat/completions`
+    const { signal, clear } = options.signal
+      ? { signal: options.signal, clear: () => {} }
+      : createTimeoutSignal(options.timeoutMs)
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${configs.apiKey}`
+        },
+        body: JSON.stringify({
+          model: options.model || configs.model,
+          messages,
+          stream: !!onChunk,
+          ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+          ...(options.maxTokens !== undefined ? { max_tokens: options.maxTokens } : {})
+        }),
+        signal
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error?.message || `请求失败，状态码: ${response.status}`)
+      }
+
+      if (!onChunk) {
+        const data = await response.json()
+        return data.choices?.[0]?.message?.content || ''
+      }
+
+      return this.readOpenAISSE(response, onChunk)
+    } finally {
+      clear()
+    }
+  }
+
+  static async readOpenAISSE(response, onChunk) {
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder('utf-8')
+    let fullText = ''
+    let buffer = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed.startsWith('data: ')) continue
+        const payload = trimmed.slice(6).trim()
+        if (!payload || payload === '[DONE]') continue
+
+        try {
+          const data = JSON.parse(payload)
+          const delta = data.choices?.[0]?.delta?.content || ''
+          fullText += delta
+          if (delta) onChunk(delta, fullText)
+        } catch (error) {
+          console.warn('OpenAI SSE 解析异常', error)
+        }
+      }
+    }
+
+    return fullText
+  }
+
+  static async geminiChatCompletion(configs, messages, onChunk, options = {}) {
+    if (!configs.apiKey) {
+      throw new Error('请先在设置页配置 Gemini API Key')
+    }
+
+    await throttleRequest()
+    const action = onChunk ? 'streamGenerateContent?alt=sse' : 'generateContent'
+    const apiUrl = `${configs.baseUrl}/models/${encodeURIComponent(configs.model)}:${action}&key=${encodeURIComponent(configs.apiKey)}`
+      .replace(':generateContent&key=', ':generateContent?key=')
+
+    const { signal, clear } = options.signal
+      ? { signal: options.signal, clear: () => {} }
+      : createTimeoutSignal(options.timeoutMs)
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...messagesToGeminiPayload(messages),
+          generationConfig: toGenerationConfig(options)
+        }),
+        signal
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error?.message || `Gemini 请求失败，状态码: ${response.status}`)
+      }
+
+      if (!onChunk) {
+        const data = await response.json()
+        return extractGeminiText(data)
+      }
+
+      return this.readGeminiSSE(response, onChunk)
+    } finally {
+      clear()
+    }
+  }
+
+  static async readGeminiSSE(response, onChunk) {
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder('utf-8')
+    let fullText = ''
+    let buffer = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed.startsWith('data: ')) continue
+
+        try {
+          const data = JSON.parse(trimmed.slice(6))
+          const delta = extractGeminiText(data)
+          fullText += delta
+          if (delta) onChunk(delta, fullText)
+        } catch (error) {
+          console.warn('Gemini SSE 解析异常', error)
+        }
+      }
+    }
+
+    return fullText
+  }
+
+  static async ollamaChatCompletion(configs, messages, onChunk, options = {}) {
+    const model = options.model || configs.model
+    if (!model) throw new Error('请先选择 Ollama 模型')
+
+    await throttleRequest()
+    const { signal, clear } = options.signal
+      ? { signal: options.signal, clear: () => {} }
+      : createTimeoutSignal(options.timeoutMs)
+
+    try {
+      const response = await fetch(`${configs.baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model,
+          messages,
+          stream: !!onChunk,
+          options: {
+            ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+            ...(options.maxTokens !== undefined ? { num_predict: options.maxTokens } : {})
+          }
+        }),
+        signal
+      })
+
+      if (!response.ok) {
+        throw new Error(`Ollama 请求失败: ${response.status}`)
+      }
+
+      if (!onChunk) {
+        const data = await response.json()
+        return data.message?.content || ''
+      }
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder('utf-8')
+      let fullText = ''
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (!line.trim()) continue
+          try {
+            const parsed = JSON.parse(line)
+            const delta = parsed.message?.content || ''
+            fullText += delta
+            if (delta) onChunk(delta, fullText)
+          } catch (error) {
+            console.warn('Ollama NDJSON 解析异常', error)
+          }
+        }
+      }
+
+      return fullText
+    } finally {
+      clear()
+    }
+  }
+
+  static async generateSummary(content, onChunk = null) {
+    return this.chatCompletion([
+      {
+        role: 'system',
+        content: '你是一个擅长知识提炼的 AI 助手。请用简洁中文总结以下文档内容。'
+      },
+      {
+        role: 'user',
+        content: String(content || '').slice(0, 10000)
+      }
+    ], onChunk)
+  }
+
+  static async polishText(text, instruction, onChunk = null) {
+    return this.chatCompletion([
+      {
+        role: 'system',
+        content: `你是一个专业文字编辑。请根据指令处理文本，直接返回处理后的结果。指令：${instruction}`
+      },
+      {
+        role: 'user',
+        content: text
+      }
+    ], onChunk)
+  }
+}
+
+// ---- Legacy-compatible high-level resume APIs ----
+
+/**
+ * 兼容旧调用名：底层已切换为统一 AIService。
+ * @param {string} prompt
+ * @param {number} maxTokens
+ * @returns {Promise<string>}
+ */
+export async function callGeminiAPI(prompt, maxTokens = 1024) {
+  return AIService.chatCompletion(
+    [{ role: 'user', content: prompt }],
+    null,
+    null,
+    { maxTokens }
+  )
+}
+
+async function callAIStream(prompt, onStream, maxTokens = 2048) {
+  return AIService.chatCompletion(
+    [{ role: 'user', content: prompt }],
+    (delta) => onStream?.(delta),
+    null,
+    { maxTokens }
+  )
+}
 
 /**
  * 生成个人简介
@@ -111,7 +493,7 @@ export async function generatePersonalSummary(personalInfo, targetPosition = '')
 - 邮箱：${personalInfo.email || ''}
 - 电话：${personalInfo.phone || ''}
 - 地址：${personalInfo.address || ''}
-- 目标职位：${targetPosition || '相关职位'}
+- 目标职位：${targetPosition || personalInfo.targetPosition || '相关职位'}
 
 要求：
 1. 字数控制在100-150字
@@ -123,7 +505,7 @@ export async function generatePersonalSummary(personalInfo, targetPosition = '')
 请直接返回生成的个人简介内容，不要包含其他说明文字。
 `
 
-  return await callGeminiAPI(prompt)
+  return callGeminiAPI(prompt)
 }
 
 /**
@@ -136,11 +518,11 @@ export async function optimizeWorkExperience(workExperience) {
 请为以下工作经历生成专业的职责描述，要求突出成果和贡献：
 
 工作信息：
-- 职位：${workExperience.jobTitle || ''}
+- 职位：${workExperience.jobTitle || workExperience.position || ''}
 - 公司：${workExperience.company || ''}
 - 工作时间：${workExperience.startDate || ''} - ${workExperience.endDate || '至今'}
 - 地点：${workExperience.location || ''}
-- 当前职责：${workExperience.responsibilities?.join('；') || ''}
+- 当前职责：${workExperience.responsibilities?.join('；') || workExperience.description || ''}
 
 要求：
 1. 生成3-5条职责描述
@@ -156,9 +538,7 @@ export async function optimizeWorkExperience(workExperience) {
   const result = await callGeminiAPI(prompt)
   const parsed = safeJsonParse(result, null)
   if (Array.isArray(parsed)) return parsed
-  // 文本行 fallback
-  const lines = result.split('\n').filter(line => line.trim())
-  return lines.map(line => line.replace(/^[-•\d.]\s*/, '').trim()).filter(line => line)
+  return result.split('\n').filter(line => line.trim()).map(line => line.replace(/^[-•\d.]\s*/, '').trim())
 }
 
 /**
@@ -169,7 +549,7 @@ export async function optimizeWorkExperience(workExperience) {
  * @returns {Promise<Object>} 推荐的技能分类
  */
 export async function recommendSkills(industry = '', position = '', currentSkills = []) {
-  const currentSkillsText = currentSkills.map(skill => skill.name).join('、')
+  const currentSkillsText = currentSkills.map(skill => skill.name || skill).join('、')
 
   const prompt = `
 请为以下职位推荐相关的技能特长，分为技术技能、软技能和语言技能：
@@ -314,23 +694,31 @@ const CAREER_TEMPLATES = {
   }
 }
 
+function getTemplateForCareer(career, fallbackName = '通用职位') {
+  if (CAREER_TEMPLATES[career]) return CAREER_TEMPLATES[career]
+
+  return {
+    name: fallbackName || career || '通用职位',
+    skills: ['沟通能力', '项目管理', '数据分析', '问题解决', '团队协作'],
+    summary: '具有{experience}年相关经验，具备扎实的专业能力和良好的团队协作意识，能够快速理解业务目标并推动结果落地。',
+    workTemplate: {
+      responsibilities: [
+        '负责核心工作任务规划与执行，确保业务目标按期达成',
+        '协调跨部门资源，推动项目流程优化和效率提升',
+        '沉淀工作方法和最佳实践，提升团队协作质量'
+      ]
+    }
+  }
+}
+
 /**
  * 生成完整的AI简历
  * @param {Object} options - 生成选项
- * @param {string} options.career - 职业类型
- * @param {string} options.name - 姓名
- * @param {string} options.experience - 工作年限
- * @param {string} options.education - 教育背景
- * @param {Array} options.companies - 公司列表
  * @returns {Promise<Object>} 生成的完整简历数据
  */
 export async function generateCompleteResume(options) {
-  const { career, name, experience, education, companies = [] } = options
-  const template = CAREER_TEMPLATES[career]
-
-  if (!template) {
-    throw new Error(`不支持的职业类型: ${career}`)
-  }
+  const { career, name, experience, education, companies = [], requirements = '' } = options
+  const template = getTemplateForCareer(career, career)
 
   const prompt = `
 请为以下信息生成一份完整的专业简历，要求内容真实可信、结构清晰、突出亮点：
@@ -341,6 +729,7 @@ export async function generateCompleteResume(options) {
 - 工作年限：${experience}年
 - 教育背景：${education}
 - 目标公司类型：${companies.join('、') || '互联网公司'}
+- 特殊要求：${requirements || '无'}
 
 请生成以下内容并以JSON格式返回：
 {
@@ -348,18 +737,22 @@ export async function generateCompleteResume(options) {
     "name": "${name}",
     "email": "示例邮箱",
     "phone": "示例电话",
-    "address": "示例地址"
+    "address": "示例地址",
+    "targetPosition": "${template.name}"
   },
   "summary": "个人简介（100-150字）",
   "workExperience": [
     {
       "jobTitle": "职位名称",
+      "position": "职位名称",
       "company": "公司名称",
       "location": "工作地点",
       "startDate": "开始时间",
       "endDate": "结束时间",
       "current": false,
-      "responsibilities": ["职责1", "职责2", "职责3"]
+      "responsibilities": ["职责1", "职责2", "职责3"],
+      "description": "工作描述",
+      "achievements": ["成就1", "成就2"]
     }
   ],
   "education": [
@@ -368,13 +761,15 @@ export async function generateCompleteResume(options) {
       "major": "专业",
       "school": "学校名称",
       "graduationDate": "毕业时间",
+      "startDate": "开始时间",
+      "endDate": "结束时间",
       "gpa": "成绩"
     }
   ],
   "skills": [
     {
       "name": "技能名称",
-      "level": "熟练程度",
+      "level": "熟练",
       "category": "技能分类"
     }
   ],
@@ -399,9 +794,9 @@ export async function generateCompleteResume(options) {
 请确保返回的是有效的JSON格式。
 `
 
-  const result = await callGeminiAPI(prompt)
+  const result = await callGeminiAPI(prompt, 4096)
   const resumeData = safeJsonParse(result, null)
-  if (resumeData) return validateAndEnhanceResumeData(resumeData, template)
+  if (resumeData) return validateAndEnhanceResumeData(resumeData, template, options)
   console.warn('AI返回内容不是有效JSON，使用模板生成')
   return generateResumeFromTemplate(options, template)
 }
@@ -409,26 +804,32 @@ export async function generateCompleteResume(options) {
 /**
  * 验证和增强简历数据
  */
-function validateAndEnhanceResumeData(data, template) {
-  // 确保必要字段存在
+function validateAndEnhanceResumeData(data, template, options = {}) {
   const enhanced = {
     personalInfo: {
-      name: data.personalInfo?.name || '姓名',
+      name: data.personalInfo?.name || options.name || '姓名',
       email: data.personalInfo?.email || 'example@email.com',
       phone: data.personalInfo?.phone || '138-0000-0000',
       address: data.personalInfo?.address || '北京市',
+      targetPosition: data.personalInfo?.targetPosition || template.name,
       ...data.personalInfo
     },
-    summary: data.summary || template.summary.replace('{experience}', '3'),
-    workExperience: data.workExperience || [],
-    education: data.education || [],
-    skills: data.skills || template.skills.map(skill => ({
-      name: skill,
-      level: '熟练',
-      category: '技术技能'
-    })),
-    projects: data.projects || []
+    summary: data.summary || template.summary.replace('{experience}', options.experience || '3'),
+    workExperience: Array.isArray(data.workExperience) ? data.workExperience : [],
+    education: Array.isArray(data.education) ? data.education : [],
+    skills: Array.isArray(data.skills) && data.skills.length
+      ? data.skills
+      : template.skills.map(skill => ({ name: skill, level: '熟练', category: '专业技能' })),
+    projects: Array.isArray(data.projects) ? data.projects : []
   }
+
+  enhanced.workExperience = enhanced.workExperience.map(work => ({
+    ...work,
+    position: work.position || work.jobTitle || '',
+    jobTitle: work.jobTitle || work.position || '',
+    description: work.description || work.responsibilities?.join('\n') || '',
+    achievements: work.achievements || work.responsibilities || []
+  }))
 
   return enhanced
 }
@@ -441,29 +842,35 @@ function generateResumeFromTemplate(options, template) {
 
   return {
     personalInfo: {
-      name: name,
-      email: `${name.toLowerCase().replace(/\s+/g, '')}@email.com`,
+      name,
+      email: `${String(name || 'user').toLowerCase().replace(/\s+/g, '')}@email.com`,
       phone: '138-0000-0000',
-      address: '北京市朝阳区'
+      address: '北京市朝阳区',
+      targetPosition: template.name
     },
-    summary: template.summary.replace('{experience}', experience),
+    summary: template.summary.replace('{experience}', experience || '3'),
     workExperience: [
       {
         jobTitle: template.name,
+        position: template.name,
         company: '科技有限公司',
         location: '北京',
         startDate: '2022-01',
         endDate: '2024-01',
         current: false,
-        responsibilities: template.workTemplate.responsibilities
+        responsibilities: template.workTemplate.responsibilities,
+        description: template.workTemplate.responsibilities.join('\n'),
+        achievements: template.workTemplate.responsibilities
       }
     ],
     education: [
       {
         degree: '本科',
         major: '计算机科学与技术',
-        school: education || '北京大学',
+        school: education || '示例大学',
         graduationDate: '2022-06',
+        startDate: '2018-09',
+        endDate: '2022-06',
         gpa: '3.5'
       }
     ],
@@ -475,9 +882,9 @@ function generateResumeFromTemplate(options, template) {
     projects: [
       {
         name: '示例项目',
-        description: '这是一个展示技术能力的示例项目',
+        description: '这是一个展示专业能力的示例项目',
         technologies: template.skills.slice(0, 3),
-        highlights: ['项目亮点1', '项目亮点2']
+        highlights: ['完成核心功能交付', '提升业务处理效率']
       }
     ]
   }
@@ -488,69 +895,20 @@ function generateResumeFromTemplate(options, template) {
  * @returns {Promise<boolean>} API是否可用
  */
 export async function checkAPIAvailability() {
-  if (!GEMINI_API_KEY) {
-    return false
-  }
-
   try {
-    const ai = getGenAIClient()
-
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: '测试连接',
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 10,
-      }
-    })
-
-    return response && response.text
+    await AIService.chatCompletion(
+      [{ role: 'user', content: '请直接回复 OK，不要解释。' }],
+      null,
+      null,
+      { maxTokens: 128, timeoutMs: 30000 }
+    )
+    return true
   } catch (error) {
     console.error('API连接测试失败:', error)
-    return false
-  }
-}
-
-/**
- * 调用Gemini API生成内容（流式）
- * @param {string} prompt - 提示词
- * @param {Function} onStream - 流式回调，接收文本块
- * @returns {Promise<string>} 最终生成的完整内容
- */
-async function callGeminiAPIStream(prompt, onStream, maxTokens = 2048) {
-  // 频率限制检查
-  const now = Date.now()
-  const timeSinceLastRequest = now - lastRequestTime
-  if (timeSinceLastRequest < REQUEST_INTERVAL) {
-    await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL - timeSinceLastRequest))
-  }
-  lastRequestTime = Date.now()
-
-  try {
-    const ai = getGenAIClient()
-    const model = ai.getGenerativeModel({ model: GEMINI_MODEL })
-
-    const result = await model.generateContentStream({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: maxTokens,
-      }
-    })
-
-    let fullText = ''
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text()
-      fullText += chunkText
-      if (onStream) onStream(chunkText)
+    return {
+      ok: false,
+      message: error?.message || '未知错误'
     }
-
-    return fullText
-  } catch (error) {
-    console.error('Gemini Streaming API Error:', error)
-    throw new Error(`AI服务流式连接失败: ${error.message}`)
   }
 }
 
@@ -598,23 +956,31 @@ ${messages.map(msg => `${msg.role}: ${msg.content}`).join('\n')}
   const streamCtx = { sentLen: 0 }
 
   const wrappedOnStream = (chunk) => {
-    if (onResponseStream) {
-      fullResponse += chunk
-      const responseMatch = fullResponse.match(/"response"\s*:\s*"(.*?)(?:"\s*,|"\s*$)/s)
-      if (responseMatch?.[1]) {
-        const currentText = responseMatch[1]
-        const newText = currentText.substring(streamCtx.sentLen)
-        if (newText) {
-          onResponseStream(newText)
-          streamCtx.sentLen = currentText.length
-        }
+    if (!onResponseStream) return
+    fullResponse += chunk
+    const responseMatch = fullResponse.match(/"response"\s*:\s*"((?:\\.|[^"\\])*)/s)
+    if (responseMatch?.[1]) {
+      const currentText = responseMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n')
+      const newText = currentText.substring(streamCtx.sentLen)
+      if (newText) {
+        onResponseStream(newText)
+        streamCtx.sentLen = currentText.length
       }
     }
   }
 
-  const result = await callGeminiAPIStream(prompt, wrappedOnStream)
+  const result = onResponseStream
+    ? await callAIStream(prompt, wrappedOnStream, 4096)
+    : await callGeminiAPI(prompt, 4096)
 
-  const fallback = { response: result, suggestions: [], questions: [], resumeContent: null, qualityScore: 0, improvements: [] }
+  const fallback = {
+    response: result,
+    suggestions: [],
+    questions: [],
+    resumeContent: null,
+    qualityScore: 0,
+    improvements: []
+  }
   return safeJsonParse(result, fallback)
 }
 
@@ -655,11 +1021,15 @@ ${JSON.stringify(resumeData, null, 2)}
 }
 `
 
-  const result = await callGeminiAPI(prompt)
+  const result = await callGeminiAPI(prompt, 4096)
   return safeJsonParse(result, {
     overallScore: 0,
     scores: { completeness: 0, relevance: 0, clarity: 0, impact: 0, formatting: 0 },
-    strengths: [], weaknesses: [], improvements: [], keywords: [], missingElements: []
+    strengths: [],
+    weaknesses: [],
+    improvements: [],
+    keywords: [],
+    missingElements: []
   })
 }
 
@@ -707,10 +1077,13 @@ ${jobDescription}
 }
 `
 
-  const result = await callGeminiAPI(prompt)
+  const result = await callGeminiAPI(prompt, 4096)
   return safeJsonParse(result, {
     matchScore: 0,
-    matchedSkills: [], missingSkills: [], recommendations: [], keywordOptimization: [],
+    matchedSkills: [],
+    missingSkills: [],
+    recommendations: [],
+    keywordOptimization: [],
     sectionPriority: {}
   })
 }
@@ -741,10 +1114,14 @@ export async function optimizeContent(params) {
 }
 `
 
-  const result = await callGeminiAPI(prompt)
+  const result = await callGeminiAPI(prompt, 2048)
   return safeJsonParse(result, {
-    optimizedContent: content, improvements: [], alternatives: [], keywords: [],
-    tone: 'professional', impactScore: 0
+    optimizedContent: content,
+    improvements: [],
+    alternatives: [],
+    keywords: [],
+    tone: 'professional',
+    impactScore: 0
   })
 }
 
@@ -764,6 +1141,8 @@ export function getSupportedCareers() {
  * 导出 AI 服务对象供命名空间式调用
  */
 export const aiService = {
+  AIService,
+  getAiSettings,
   callGeminiAPI,
   generatePersonalSummary,
   optimizeWorkExperience,

@@ -41,17 +41,6 @@
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3>语言</h3>
-                <p>界面显示语言</p>
-              </div>
-              <el-select v-model="settings.language" @change="updateSetting('language')">
-                <el-option label="简体中文" value="zh-CN" />
-                <el-option label="English" value="en-US" />
-              </el-select>
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-info">
                 <h3>主题</h3>
                 <p>选择界面主题</p>
               </div>
@@ -133,26 +122,144 @@
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3>自动优化</h3>
-                <p>AI自动优化简历内容</p>
+                <h3>AI引擎</h3>
+                <p>选择在线兼容接口、Gemini、Ollama 或浏览器本地模型</p>
               </div>
-              <el-switch
-                v-model="settings.autoOptimize"
-                @change="updateSetting('autoOptimize')"
-                :disabled="!settings.aiSuggestions"
-              />
+              <el-select v-model="settings.aiEngine" @change="updateSetting('aiEngine')">
+                <el-option label="OpenAI兼容接口" value="online" />
+                <el-option label="Gemini" value="gemini" />
+                <el-option label="Ollama本地服务" value="ollama" />
+                <el-option label="浏览器本地模型" value="local" />
+              </el-select>
             </div>
+
+            <template v-if="settings.aiEngine === 'online'">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>接口地址</h3>
+                  <p>OpenAI兼容接口 Base URL，例如 https://api.openai.com/v1 或 https://open.bigmodel.cn/api/paas/v4</p>
+                </div>
+                <el-input v-model="settings.aiBaseUrl" @change="updateSetting('aiBaseUrl')" />
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>API Key</h3>
+                  <p>用于调用 OpenAI 兼容接口的密钥</p>
+                </div>
+                <el-input
+                  v-model="settings.aiApiKey"
+                  type="password"
+                  show-password
+                  @change="updateSetting('aiApiKey')"
+                />
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>模型</h3>
+                  <p>例如 gpt-4o-mini、deepseek-chat、glm-4.5-air 或其它兼容模型</p>
+                </div>
+                <el-input v-model="settings.aiModel" @change="updateSetting('aiModel')" />
+              </div>
+            </template>
+
+            <template v-if="settings.aiEngine === 'gemini'">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>Gemini API Key</h3>
+                  <p>Google AI Studio 获取的 Gemini API Key</p>
+                </div>
+                <el-input
+                  v-model="settings.geminiApiKey"
+                  type="password"
+                  show-password
+                  @change="updateSetting('geminiApiKey')"
+                />
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>Gemini模型</h3>
+                  <p>例如 gemini-1.5-flash、gemini-1.5-pro</p>
+                </div>
+                <el-input v-model="settings.geminiModel" @change="updateSetting('geminiModel')" />
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>Gemini接口地址</h3>
+                  <p>默认使用 Google Generative Language v1beta</p>
+                </div>
+                <el-input v-model="settings.geminiBaseUrl" @change="updateSetting('geminiBaseUrl')" />
+              </div>
+            </template>
+
+            <template v-if="settings.aiEngine === 'ollama'">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>Ollama地址</h3>
+                  <p>本机默认 http://localhost:11434，前端直连时需配置 OLLAMA_ORIGINS</p>
+                </div>
+                <el-input v-model="settings.ollamaBaseUrl" @change="updateSetting('ollamaBaseUrl')" />
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>Ollama模型</h3>
+                  <p>请先在本机通过 ollama pull 下载模型</p>
+                </div>
+                <el-input v-model="settings.ollamaModel" @change="updateSetting('ollamaModel')" />
+              </div>
+            </template>
+
+            <template v-if="settings.aiEngine === 'local'">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>本地运行模式</h3>
+                  <p>GPU 使用 WebGPU，CPU 使用 Transformers.js/WASM</p>
+                </div>
+                <el-radio-group v-model="settings.localAiType" @change="updateSetting('localAiType')">
+                  <el-radio label="gpu">GPU/WebGPU</el-radio>
+                  <el-radio label="cpu">CPU/WASM</el-radio>
+                </el-radio-group>
+              </div>
+
+              <div class="setting-item" v-if="settings.localAiType === 'gpu'">
+                <div class="setting-info">
+                  <h3>GPU模型</h3>
+                  <p>WebLLM 模型 ID，例如 SmolLM2-135M-Instruct-q0f32-MLC</p>
+                </div>
+                <el-input v-model="settings.localModelId" @change="updateSetting('localModelId')" />
+              </div>
+
+              <div class="setting-item" v-else>
+                <div class="setting-info">
+                  <h3>CPU模型</h3>
+                  <p>Transformers.js 模型 ID，例如 Xenova/Qwen1.5-0.5B-Chat</p>
+                </div>
+                <el-input v-model="settings.localCpuModelId" @change="updateSetting('localCpuModelId')" />
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>WebGPU检测</h3>
+                  <p>{{ webGPUStatus || '检测当前浏览器是否支持 GPU 本地模型' }}</p>
+                </div>
+                <el-button @click="checkWebGPU" size="small" :loading="checkingWebGPU">
+                  检测
+                </el-button>
+              </div>
+            </template>
 
             <div class="setting-item">
               <div class="setting-info">
-                <h3>响应速度</h3>
-                <p>AI响应的速度偏好</p>
+                <h3>连接测试</h3>
+                <p>用当前 AI 配置发送一条短请求，验证服务是否可用</p>
               </div>
-              <el-radio-group v-model="settings.aiSpeed" @change="updateSetting('aiSpeed')">
-                <el-radio label="fast">快速</el-radio>
-                <el-radio label="balanced">平衡</el-radio>
-                <el-radio label="quality">质量优先</el-radio>
-              </el-radio-group>
+              <el-button @click="testAIConnection" type="primary" size="small" :loading="testingAI">
+                测试AI连接
+              </el-button>
             </div>
           </div>
         </div>
@@ -169,28 +276,7 @@
               <el-select v-model="settings.exportFormat" @change="updateSetting('exportFormat')">
                 <el-option label="PDF" value="pdf" />
                 <el-option label="Word" value="docx" />
-                <el-option label="图片" value="png" />
               </el-select>
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>PDF质量</h3>
-                <p>PDF导出的质量设置</p>
-              </div>
-              <el-radio-group v-model="settings.pdfQuality" @change="updateSetting('pdfQuality')">
-                <el-radio label="standard">标准</el-radio>
-                <el-radio label="high">高质量</el-radio>
-                <el-radio label="print">打印质量</el-radio>
-              </el-radio-group>
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>水印</h3>
-                <p>在导出的简历中添加水印</p>
-              </div>
-              <el-switch v-model="settings.watermark" @change="updateSetting('watermark')" />
             </div>
           </div>
         </div>
@@ -199,25 +285,6 @@
         <div class="settings-section">
           <h2 class="section-title">数据管理</h2>
           <div class="settings-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>数据备份</h3>
-                <p>定期备份您的简历数据</p>
-              </div>
-              <el-switch v-model="settings.autoBackup" @change="updateSetting('autoBackup')" />
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>存储位置</h3>
-                <p>数据存储的位置</p>
-              </div>
-              <el-radio-group v-model="settings.storageLocation" @change="updateSetting('storageLocation')">
-                <el-radio label="local">本地存储</el-radio>
-                <el-radio label="cloud">云端存储</el-radio>
-              </el-radio-group>
-            </div>
-
             <div class="setting-item">
               <div class="setting-info">
                 <h3>清理缓存</h3>
@@ -237,6 +304,31 @@
                 重置设置
               </el-button>
             </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>导出设置</h3>
+                <p>将当前应用和 AI 配置导出为 JSON 备份</p>
+              </div>
+              <el-button @click="exportSettingsFile" size="small">
+                导出JSON
+              </el-button>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>导入设置</h3>
+                <p>从 JSON 文件恢复设置，不会覆盖简历内容</p>
+              </div>
+              <el-upload
+                :auto-upload="false"
+                :show-file-list="false"
+                accept="application/json,.json"
+                :on-change="importSettingsFile"
+              >
+                <el-button size="small">导入JSON</el-button>
+              </el-upload>
+            </div>
           </div>
         </div>
       </div>
@@ -245,55 +337,27 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Setting } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
+import { useSettingsStore } from '@stores/settings'
+import { checkAPIAvailability } from '@utils/ai/aiService'
+import { checkWebGPUSupport } from '@utils/ai/localAi'
 
 const resumeStore = useResumeStore()
-
-// 默认设置
-const defaultSettings = {
-  // 通用设置
-  autoSave: true,
-  saveInterval: 30,
-  language: 'zh-CN',
-  theme: 'light',
-  
-  // 编辑器设置
-  defaultFont: 'Microsoft YaHei',
-  defaultFontSize: 14,
-  previewScale: 100,
-  showGrid: false,
-  
-  // AI设置
-  aiSuggestions: true,
-  autoOptimize: false,
-  aiSpeed: 'balanced',
-  
-  // 导出设置
-  exportFormat: 'pdf',
-  pdfQuality: 'high',
-  watermark: false,
-  
-  // 数据管理
-  autoBackup: true,
-  storageLocation: 'local'
-}
-
-// 响应式设置
-const settings = reactive({ ...defaultSettings })
+const settingsStore = useSettingsStore()
+const { settings } = storeToRefs(settingsStore)
+const testingAI = ref(false)
+const checkingWebGPU = ref(false)
+const webGPUStatus = ref('')
 
 // 方法
 const updateSetting = (key) => {
   try {
-    // 保存到本地存储
-    const allSettings = { ...settings }
-    localStorage.setItem('resumeBuilderSettings', JSON.stringify(allSettings))
-    
-    // 应用设置
+    settingsStore.updateSetting(key)
     applySettings()
-    
     ElMessage.success('设置已保存')
   } catch (error) {
     console.error('保存设置失败:', error)
@@ -301,23 +365,43 @@ const updateSetting = (key) => {
   }
 }
 
-const applySettings = () => {
-  // 应用主题
-  if (settings.theme === 'dark') {
-    document.documentElement.classList.add('dark')
-  } else {
-    document.documentElement.classList.remove('dark')
+const testAIConnection = async () => {
+  testingAI.value = true
+  try {
+    const ok = await checkAPIAvailability()
+    if (ok === true) {
+      ElMessage.success('AI连接测试成功')
+    } else {
+      ElMessage.error(ok?.message || 'AI连接测试失败，请检查配置或服务状态')
+    }
+  } finally {
+    testingAI.value = false
   }
-  
-  // 应用字体设置
-  document.documentElement.style.setProperty('--default-font', settings.defaultFont)
-  document.documentElement.style.setProperty('--default-font-size', `${settings.defaultFontSize}px`)
+}
+
+const checkWebGPU = async () => {
+  checkingWebGPU.value = true
+  try {
+    const result = await checkWebGPUSupport()
+    webGPUStatus.value = result.message
+    if (result.supported) {
+      ElMessage.success(result.message)
+    } else {
+      ElMessage.warning(result.message)
+    }
+  } finally {
+    checkingWebGPU.value = false
+  }
+}
+
+const applySettings = () => {
+  settingsStore.applyDocumentSettings()
   
   // 更新简历store设置
   resumeStore.updateSettings({
-    autoSave: settings.autoSave,
-    saveInterval: settings.saveInterval * 1000, // 转换为毫秒
-    previewScale: settings.previewScale / 100
+    autoSave: settings.value.autoSave,
+    saveInterval: settings.value.saveInterval * 1000,
+    previewScale: settings.value.previewScale / 100
   })
 }
 
@@ -359,9 +443,7 @@ const resetSettings = async () => {
       }
     )
     
-    // 重置设置
-    Object.assign(settings, defaultSettings)
-    localStorage.removeItem('resumeBuilderSettings')
+    settingsStore.resetSettings()
     applySettings()
     
     ElMessage.success('设置已重置')
@@ -370,16 +452,41 @@ const resetSettings = async () => {
   }
 }
 
+const exportSettingsFile = () => {
+  try {
+    const blob = new Blob([settingsStore.exportSettings()], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'resume-builder-settings.json'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    ElMessage.success('设置已导出')
+  } catch (error) {
+    console.error('导出设置失败:', error)
+    ElMessage.error('导出设置失败')
+  }
+}
+
+const importSettingsFile = async (uploadFile) => {
+  try {
+    const text = await uploadFile.raw.text()
+    settingsStore.importSettings(text)
+    applySettings()
+    ElMessage.success('设置已导入')
+  } catch (error) {
+    console.error('导入设置失败:', error)
+    ElMessage.error('导入设置失败，请检查 JSON 文件格式')
+  }
+}
+
 const loadSettings = () => {
   try {
-    const savedSettings = localStorage.getItem('resumeBuilderSettings')
-    if (savedSettings) {
-      const parsed = JSON.parse(savedSettings)
-      Object.assign(settings, { ...defaultSettings, ...parsed })
-    }
+    settingsStore.loadSettings()
     applySettings()
-  } catch (error) {
-    console.error('加载设置失败:', error)
+  } catch {
     ElMessage.error('加载设置失败，使用默认设置')
   }
 }
@@ -493,6 +600,7 @@ onMounted(() => {
 }
 
 .setting-item .el-select,
+.setting-item .el-input,
 .setting-item .el-input-number {
   width: 200px;
 }
@@ -532,6 +640,7 @@ onMounted(() => {
   }
   
   .setting-item .el-select,
+  .setting-item .el-input,
   .setting-item .el-input-number,
   .setting-item .el-slider {
     width: 100%;

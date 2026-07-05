@@ -2,6 +2,13 @@
   <div class="resume-preview" :style="previewStyle" :class="layoutClasses">
     <!-- 个人信息部分 -->
     <div class="resume-header">
+      <div
+        v-if="resumeData.personalInfo.photo"
+        class="preview-avatar-section"
+        :class="photoPositionClass"
+      >
+        <img :src="resumeData.personalInfo.photo" alt="头像" class="preview-avatar" />
+      </div>
       <div class="personal-info">
         <h1 class="name">{{ resumeData.personalInfo.name || '姓名' }}</h1>
         <h2 v-if="resumeData.personalInfo.targetPosition" class="target-position">{{ resumeData.personalInfo.targetPosition }}</h2>
@@ -119,7 +126,12 @@
     <div class="resume-section">
       <h2 class="section-title">技能特长</h2>
       <div class="section-content">
-        <div v-if="resumeData.skills.length > 0" class="skills-grid">
+        <ul v-if="resumeData.skills.length > 0 && hasDetailedSkills" class="skill-detail-list">
+          <li v-for="(skill, index) in resumeData.skills" :key="index">
+            {{ getSkillText(skill) }}
+          </li>
+        </ul>
+        <div v-else-if="resumeData.skills.length > 0" class="skills-grid">
           <div v-for="(skill, index) in resumeData.skills" :key="index" class="skill-item">
             <span class="skill-name">{{ skill.name }}</span>
             <div v-if="skill.level" class="skill-level">
@@ -197,6 +209,10 @@ const props = defineProps({
 const resumeStore = useResumeStore()
 const resumeData = computed(() => resumeStore.resumeData)
 const globalSettings = computed(() => resumeStore.globalSettings)
+const photoPositionClass = computed(() => {
+  const position = resumeData.value.personalInfo.photoPosition
+  return ['left', 'center', 'right'].includes(position) ? position : 'center'
+})
 
 const previewStyle = computed(() => {
   const layout = globalSettings.value?.layout || {}
@@ -231,6 +247,17 @@ const contentLayoutClass = computed(() => {
     return `horizontal-layout columns-${layout.columns || 2}`
   }
   return 'vertical-layout'
+})
+
+const getSkillText = (skill) => {
+  return (skill.description || skill.name || '').trim()
+}
+
+const hasDetailedSkills = computed(() => {
+  return (resumeData.value.skills || []).some(skill => {
+    const text = getSkillText(skill)
+    return Boolean(skill.description) || text.length > 28
+  })
 })
 
 // 格式化日期
@@ -355,6 +382,32 @@ const getSkillWidth = (level) => {
   flex-direction: column;
   justify-content: center;
   flex-shrink: 0; /* 防止头部被压缩 */
+}
+
+.preview-avatar-section {
+  display: flex;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.preview-avatar-section.left {
+  justify-content: flex-start;
+}
+
+.preview-avatar-section.center {
+  justify-content: center;
+}
+
+.preview-avatar-section.right {
+  justify-content: flex-end;
+}
+
+.preview-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color, #409eff);
 }
 
 .personal-info .name {
@@ -594,6 +647,20 @@ const getSkillWidth = (level) => {
 .skill-name {
   font-size: 15px;
   font-weight: 500;
+  color: #333;
+}
+
+.skill-detail-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-detail-list li {
+  font-size: 14px;
+  line-height: 1.6;
   color: #333;
 }
 

@@ -49,6 +49,16 @@
             />
           </div>
 
+          <div class="skill-description">
+            <el-input
+              v-model="skill.description"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4 }"
+              placeholder="可选：填写长句描述，例如：熟练使用 Vue2、Vue3 全家桶进行项目开发"
+              @input="updateSkill(skill.id, skill)"
+            />
+          </div>
+
           <div class="skill-level">
             <span class="level-label">熟练程度：</span>
             <el-select
@@ -155,6 +165,7 @@ const categoryStats = computed(() => {
 const addNewSkill = () => {
   const newSkill = {
     name: '',
+    description: '',
     level: '中级',
     category: '编程语言'
   }
@@ -326,6 +337,10 @@ const generateWithAI = async () => {
 
 .skill-name-input {
   flex: 1;
+}
+
+.skill-description {
+  margin-bottom: 12px;
 }
 
 .skill-level {

@@ -17,8 +17,78 @@
     <!-- 主内容面板 -->
     <div class="content-panel">
       <Transition name="fade-slide" mode="out-in">
+        <!-- 版式风格 Tab -->
+        <div v-if='activeTab === `layout`' class='tab-content' key='layout'>
+          <div class='section-header'>
+            <h3>版式风格</h3>
+            <p>控制简历整体结构、模块标题和信息密度</p>
+          </div>
+
+          <div class='option-section'>
+            <div class='section-title-row compact-row'>
+              <h4>整体版式</h4>
+            </div>
+            <div class='layout-visual-grid'>
+              <div
+                v-for='option in designStyleOptions'
+                :key='option.value'
+                class='layout-visual-card'
+                :class='{ active: currentLayout.designStyle === option.value }'
+                @click='applyDesignStyle(option.value)'
+              >
+                <div class='visual-box' :class='option.value'>
+                  <span class='v-line name-line'></span>
+                  <span class='v-line title-line'></span>
+                  <span class='v-line full'></span>
+                  <span class='v-line full short'></span>
+                  <span class='v-line full'></span>
+                </div>
+                <div class='option-copy'>
+                  <span>{{ option.label }}</span>
+                  <small>{{ option.desc }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class='option-section'>
+            <div class='section-title-row compact-row'>
+              <h4>模块标题</h4>
+            </div>
+            <div class='segmented-grid'>
+              <button
+                v-for='option in titleStyleOptions'
+                :key='option.value'
+                class='segmented-option'
+                :class='{ active: currentLayout.sectionTitleStyle === option.value }'
+                @click='applyTitleStyle(option.value)'
+              >
+                {{ option.label }}
+              </button>
+            </div>
+          </div>
+
+          <div class='option-section'>
+            <div class='section-title-row compact-row'>
+              <h4>信息密度</h4>
+            </div>
+            <div class='density-grid'>
+              <button
+                v-for='option in densityOptions'
+                :key='option.value'
+                class='density-card'
+                :class='{ active: currentLayout.densityPreset === option.value }'
+                @click='applyDensity(option.value)'
+              >
+                <span>{{ option.label }}</span>
+                <small>{{ option.desc }}</small>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- 配色方案 Tab -->
-        <div v-if="activeTab === 'theme'" class="tab-content" key="theme">
+        <div v-else-if="activeTab === 'theme'" class="tab-content" key="theme">
           <div class="section-header">
             <h3>主题方案</h3>
             <p>选择精心设计的专业色调，一键提升简历质感</p>
@@ -104,71 +174,6 @@
           </div>
         </div>
 
-        <!-- 布局框架 Tab -->
-        <div v-else-if="activeTab === 'layout'" class="tab-content" key="layout">
-          <div class="section-header">
-            <h3>空间布局</h3>
-            <p>科学规划内容结构，适配不同职业展示需求</p>
-          </div>
-
-          <div class="layout-visual-grid">
-            <div 
-              class="layout-visual-card" 
-              :class="{ active: currentLayout.preset === 'traditional' }"
-              @click="applyLayoutPreset('traditional')"
-            >
-              <div class="visual-box traditional">
-                <div class="v-line full"></div>
-                <div class="v-line full"></div>
-                <div class="v-line full"></div>
-              </div>
-              <span>传统单列</span>
-            </div>
-            <div 
-              class="layout-visual-card" 
-              :class="{ active: currentLayout.preset === 'modern' }"
-              @click="applyLayoutPreset('modern')"
-            >
-              <div class="visual-box modern">
-                <div class="v-line side"></div>
-                <div class="v-line main"></div>
-              </div>
-              <span>专业双列</span>
-            </div>
-            <div 
-              class="layout-visual-card" 
-              :class="{ active: currentLayout.preset === 'creative' }"
-              @click="applyLayoutPreset('creative')"
-            >
-              <div class="visual-box creative">
-                <div class="v-line side"></div>
-                <div class="v-line main"></div>
-                <div class="v-line extra"></div>
-              </div>
-              <span>创意三列</span>
-            </div>
-          </div>
-
-          <div class="detail-controls">
-            <div class="premium-card">
-              <div class="field-label">内容对齐方式</div>
-              <el-radio-group v-model="currentLayout.alignment" @change="handleLayoutChange" class="premium-radio-group">
-                <el-radio-button label="left">左对齐</el-radio-button>
-                <el-radio-button label="center">居中对齐</el-radio-button>
-                <el-radio-button label="right">右对齐</el-radio-button>
-              </el-radio-group>
-            </div>
-            
-            <div class="slider-card" v-if="currentLayout.columns > 1">
-              <div class="slider-header">
-                <label>列间距</label>
-                <span class="value-badge">{{ currentLayout.columnGap }}px</span>
-              </div>
-              <el-slider v-model="currentLayout.columnGap" :min="10" :max="50" @change="handleLayoutChange" />
-            </div>
-          </div>
-        </div>
-
         <!-- 页面设置 Tab -->
         <div v-else-if="activeTab === 'page'" class="tab-content" key="page">
           <div class="section-header">
@@ -223,20 +228,40 @@ import { ElMessage } from 'element-plus'
 import {
   Brush,
   Edit,
-  Grid,
   Monitor,
   Document,
   RefreshLeft
 } from '@element-plus/icons-vue'
 
 const resumeStore = useResumeStore()
-const activeTab = ref('theme')
+const activeTab = ref('layout')
 
 const tabs = [
+  { id: 'layout', name: '版式风格', icon: Monitor },
   { id: 'theme', name: '配色方案', icon: Brush },
   { id: 'font', name: '文字排版', icon: Edit },
-  { id: 'layout', name: '空间布局', icon: Grid },
   { id: 'page', name: '页面设置', icon: Monitor }
+]
+
+const designStyleOptions = [
+  { value: 'classic', label: '经典单栏', desc: '稳重清晰，适合 ATS' },
+  { value: 'modern', label: '现代单栏', desc: '克制强调，通用耐看' },
+  { value: 'business', label: '商务页眉', desc: '姓名区更正式突出' },
+  { value: 'minimal', label: '极简文本', desc: '去装饰，强调内容' },
+  { value: 'emphasis', label: '重点突出', desc: '模块层级更鲜明' }
+]
+
+const titleStyleOptions = [
+  { value: 'plain', label: '无装饰' },
+  { value: 'underline', label: '下划线' },
+  { value: 'accent', label: '左竖线' },
+  { value: 'block', label: '背景条' }
+]
+
+const densityOptions = [
+  { value: 'relaxed', label: '舒展', desc: '留白更多，阅读轻松' },
+  { value: 'standard', label: '标准', desc: '默认间距，适合多数简历' },
+  { value: 'compact', label: '紧凑', desc: '内容较多时压缩到一页' }
 ]
 
 const colorFields = [
@@ -326,19 +351,17 @@ const currentSpacing = reactive({
   ...globalSettings.value.spacing
 })
 
+const currentLayout = reactive({
+  designStyle: 'modern',
+  sectionTitleStyle: 'accent',
+  densityPreset: 'standard',
+  ...globalSettings.value.layout
+})
+
 const currentPageSettings = reactive({
   pageCount: 1,
   pagingMode: 'auto',
   ...globalSettings.value.pageSettings
-})
-
-const currentLayout = reactive({
-  orientation: 'vertical',
-  columns: 1,
-  columnGap: 24,
-  preset: 'traditional',
-  alignment: 'left',
-  ...globalSettings.value.layout
 })
 
 // UI 方法
@@ -360,8 +383,40 @@ const handleColorChange = () => {
 
 const handleTypographyChange = () => updateAllSettings()
 const handleSpacingChange = () => updateAllSettings()
-const handleLayoutChange = () => updateAllSettings()
 const handlePageSettingsChange = () => updateAllSettings()
+
+const applyDesignStyle = (value) => {
+  currentLayout.designStyle = value
+  updateAllSettings()
+}
+
+const applyTitleStyle = (value) => {
+  currentLayout.sectionTitleStyle = value
+  updateAllSettings()
+}
+
+const applyDensity = (value) => {
+  const presets = {
+    relaxed: { baseFontSize: 15, titleFontSize: 20, lineHeight: 1.75, moduleSpacing: 18, pageMargin: 26 },
+    standard: { baseFontSize: 14, titleFontSize: 18, lineHeight: 1.5, moduleSpacing: 12, pageMargin: 20 },
+    compact: { baseFontSize: 13, titleFontSize: 16, lineHeight: 1.35, moduleSpacing: 8, pageMargin: 16 }
+  }
+  const preset = presets[value]
+  if (!preset) return
+
+  currentLayout.densityPreset = value
+  currentTypography.baseFontSize = preset.baseFontSize
+  currentTypography.titleFontSize = preset.titleFontSize
+  currentSpacing.lineHeight = preset.lineHeight
+  currentSpacing.moduleSpacing = preset.moduleSpacing
+  currentSpacing.pageMargin = {
+    top: preset.pageMargin,
+    right: preset.pageMargin,
+    bottom: preset.pageMargin,
+    left: preset.pageMargin
+  }
+  updateAllSettings()
+}
 
 const handlePageMarginChange = () => {
   const m = currentSpacing.pageMargin.top
@@ -369,34 +424,13 @@ const handlePageMarginChange = () => {
   updateAllSettings()
 }
 
-const applyLayoutPreset = (preset) => {
-  const templatesMap = {
-    traditional: 'modern',
-    modern: 'json-modern-dual',
-    creative: 'json-creative-multi'
-  }
-  
-  const layoutConfigs = {
-    traditional: { columns: 1, orientation: 'vertical' },
-    modern: { columns: 2, orientation: 'horizontal' },
-    creative: { columns: 2, orientation: 'horizontal' }
-  }
-
-  currentLayout.preset = preset
-  Object.assign(currentLayout, layoutConfigs[preset])
-  
-  resumeStore.setTemplate(templatesMap[preset])
-  updateAllSettings()
-  ElMessage.success({ message: '布局结构已更新', type: 'success' })
-}
-
 const updateAllSettings = () => {
   resumeStore.updateGlobalSettings({
     theme: { ...currentTheme },
     typography: { ...currentTypography },
     spacing: { ...currentSpacing },
-    pageSettings: { ...currentPageSettings },
-    layout: { ...currentLayout }
+    layout: { ...currentLayout },
+    pageSettings: { ...currentPageSettings }
   })
 }
 
@@ -723,6 +757,92 @@ onMounted(() => {
 .visual-box.creative .side { width: 20%; height: 100%; background: #94a3b8; }
 .visual-box.creative .main { width: 50%; height: 100%; }
 .visual-box.creative .extra { width: 20%; height: 100%; background: #cbd5e1; }
+
+.option-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.compact-row {
+  margin-bottom: 0;
+}
+
+.option-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.option-copy span,
+.density-card span {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.option-copy small,
+.density-card small {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+.visual-box.classic,
+.visual-box.modern,
+.visual-box.business,
+.visual-box.minimal,
+.visual-box.emphasis {
+  flex-direction: column;
+  gap: 7px;
+}
+
+.visual-box .name-line { width: 62%; height: 12px; background: #475569; }
+.visual-box .title-line { width: 38%; height: 8px; background: #94a3b8; }
+.visual-box .full { width: 100%; height: 7px; }
+.visual-box .short { width: 72%; }
+.visual-box.business .name-line { width: 100%; height: 18px; background: #1e293b; }
+.visual-box.minimal .title-line { background: #e2e8f0; }
+.visual-box.emphasis .title-line { background: #3b82f6; }
+
+.segmented-grid,
+.density-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.density-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.segmented-option,
+.density-card {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.density-card {
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.segmented-option.active,
+.density-card.active {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
 
 /* 页面模式 */
 .page-mode-grid {

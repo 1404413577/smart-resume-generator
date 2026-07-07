@@ -4,21 +4,20 @@
     <div class="resume-builder-container" :class="{ 'is-mobile': isMobile }">
       <!-- 左侧导航栏 -->
       <aside class="left-sidebar" v-if="!isMobile || mobileActiveTab === 'ai'">
-        <!-- AI助手区域 -->
+        <!-- 填写建议 -->
         <div class="sidebar-section ai-assistant-section">
-          <div v-show="expandedSections.ai" class="section-content">
-            <!-- 智能推荐 -->
-            <div class="ai-recommendations" v-if="aiRecommendations.length > 0">
+          <div class="section-content">
+            <div class="ai-recommendations" v-if="resumeSuggestions.length > 0">
               <div class="recommendations-title">
                 <el-icon><Star /></el-icon>
-                智能推荐
+                填写建议
               </div>
               <div class="recommendations-list">
                 <div
-                  v-for="rec in aiRecommendations"
+                  v-for="rec in resumeSuggestions"
                   :key="rec.id"
                   class="recommendation-item"
-                  @click="handleRecommendation(rec)"
+                  @click="handleSuggestion(rec)"
                 >
                   <div class="rec-icon">
                     <el-icon><component :is="rec.icon" /></el-icon>
@@ -29,29 +28,6 @@
                   </div>
                 </div>
               </div>
-            </div>
-
-
-          </div>
-        </div>
-
-        <!-- 模板设置 -->
-        <div class="sidebar-section">
-          <div class="section-header" @click="toggleSection('template')">
-            <el-icon><Grid /></el-icon>
-            <span>模板设置</span>
-            <el-icon class="expand-icon" :class="{ expanded: expandedSections.template }">
-              <ArrowRight />
-            </el-icon>
-          </div>
-          <div v-show="expandedSections.template" class="section-content">
-            <div class="action-item template-action" @click="handleTemplateManage">
-              <el-icon class="action-icon"><Document /></el-icon>
-              <div class="action-info">
-                <div class="action-name">选择模板</div>
-                <div class="action-desc">浏览和应用简历模板</div>
-              </div>
-              <el-icon class="action-arrow"><ArrowRight /></el-icon>
             </div>
           </div>
         </div>
@@ -83,15 +59,21 @@
           </div>
         </div>
 
-        <!-- 样式设置入口 -->
-        <div class="sidebar-section">
-          <div class="action-item design-action" @click="router.push('/design')">
-            <el-icon class="action-icon"><Brush /></el-icon>
-            <div class="action-info">
-              <div class="action-name">设计与样式</div>
-              <div class="action-desc">定制简历视觉风格与布局</div>
+        <div class="sidebar-section workspace-section">
+          <div class="section-content">
+            <div
+              v-for="link in workspaceLinks"
+              :key="link.path"
+              class="module-item workspace-link"
+              @click="handleWorkspaceLink(link.path)"
+            >
+              <el-icon><component :is="link.icon" /></el-icon>
+              <div class="module-info">
+                <div class="module-name">{{ link.name }}</div>
+                <div class="module-status">{{ link.description }}</div>
+              </div>
+              <el-icon class="module-arrow"><ArrowRight /></el-icon>
             </div>
-            <el-icon class="action-arrow"><ArrowRight /></el-icon>
           </div>
         </div>
 
@@ -180,7 +162,7 @@
       <div v-if="isMobile" class="mobile-tab-bar">
         <div class="tab-item" :class="{ active: mobileActiveTab === 'ai' }" @click="mobileActiveTab = 'ai'">
           <el-icon><AIMagic /></el-icon>
-          <span>AI助手</span>
+          <span>建议</span>
         </div>
         <div class="tab-item" :class="{ active: mobileActiveTab === 'edit' }" @click="mobileActiveTab = 'edit'">
           <el-icon><Edit /></el-icon>
@@ -191,15 +173,6 @@
           <span>预览</span>
         </div>
       </div>
-
-      <!-- 弹窗组件 -->
-      <OCRImport ref="ocrImportRef" />
-
-      <TemplateManager
-        v-model="showTemplateManager"
-        @close="showTemplateManager = false"
-        @template-applied="handleTemplateApplied"
-      />
 
       <!-- 章节排序对话框 -->
       <SectionSortDialog
@@ -226,9 +199,9 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
-  Grid,
   Document,
   ArrowRight,
   User,
@@ -240,8 +213,8 @@ import {
   ZoomOut,
   Sort,
   Printer,
-  TrendCharts,
-  Brush
+  Brush,
+  MagicStick
 } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { createMultiPageManager } from '@/utils/multipage/pageManager'
@@ -253,10 +226,7 @@ import { useWindowSize } from '@vueuse/core'
 // 组件导入
 import TemplateUploader from '@components/word/TemplateUploader.vue'
 import SectionSortDialog from '@components/resume/SectionSortDialog.vue'
-import TemplateManager from '@components/templates/TemplateManager.vue'
 import ResumePreview from '@components/resume/ResumePreview.vue'
-import OCRImport from '@components/resume/OCRImport.vue'
-import { useRouter } from 'vue-router'
 import { getTemplate } from '@templates'
 
 // 编辑器组件导入
@@ -300,11 +270,9 @@ const currentPageManager = computed(() => {
 // 响应式数据
 const activeModule = ref('personalInfo')
 const previewScale = ref(0.8)
-const showTemplateManager = ref(false)
 const showSectionSort = ref(false)
 const currentPreviewPage = ref(1)
 const showAllPages = ref(false)
-const ocrImportRef = ref(null)
 
 // 响应式设计相关
 const { width: windowWidth } = useWindowSize()
@@ -313,14 +281,11 @@ const mobileActiveTab = ref('edit') // 'edit', 'preview', 'ai'
 
 // 侧边栏展开状态
 const expandedSections = ref({
-  ai: false,
-  template: false,
-  content: true, // 默认展开简历内容
-  style: false
+  content: true
 })
 
-// AI智能推荐
-const aiRecommendations = ref([
+// 填写建议
+const resumeSuggestions = ref([
   {
     id: 1,
     title: '完善个人信息',
@@ -330,17 +295,17 @@ const aiRecommendations = ref([
   },
   {
     id: 2,
-    title: '优化工作经历',
-    description: '使用AI优化工作经历描述',
+    title: '补充工作经历',
+    description: '添加职位、公司和主要成就',
     icon: Briefcase,
-    action: 'optimize-work'
+    action: 'workExperience'
   },
   {
     id: 3,
-    title: '技能匹配分析',
-    description: '分析技能与目标职位的匹配度',
-    icon: TrendCharts,
-    action: 'skill-match'
+    title: '添加技能特长',
+    description: '补充与目标职位相关的技能',
+    icon: Star,
+    action: 'skills'
   }
 ])
 
@@ -352,6 +317,11 @@ const modules = [
   { id: 'education', name: '教育背景', icon: School },
   { id: 'skills', name: '技能特长', icon: Star },
   { id: 'projects', name: '项目经历', icon: FolderOpened }
+]
+
+const workspaceLinks = [
+  { path: '/design', name: '设计与样式', description: '模板配色', icon: Brush },
+  { path: '/ai-assistant', name: 'AI助手', description: '内容优化', icon: MagicStick }
 ]
 
 // 编辑器组件映射
@@ -382,15 +352,9 @@ const handleModuleChange = (moduleId) => {
   }
 }
 
-const handleTemplateManage = () => {
-  showTemplateManager.value = true
+const handleWorkspaceLink = (path) => {
+  router.push(path)
 }
-
-const handleOCRImport = () => {
-  ocrImportRef.value?.show()
-}
-
-
 
 const handleSectionSort = () => {
   showSectionSort.value = true
@@ -402,8 +366,7 @@ const handleSectionOrderChanged = (newOrder) => {
 }
 
 const handleDataUpdated = (data) => {
-  // 数据更新处理
-  console.log('Data updated:', data)
+  updateResumeSuggestions()
 }
 
 const getModuleStatus = (moduleId) => {
@@ -495,11 +458,6 @@ const handleResumeGenerated = (resumeData) => {
   activeModule.value = 'personalInfo'
 }
 
-const handleTemplateApplied = (templateData) => {
-  ElMessage.success('模板已应用成功！')
-  showTemplateManager.value = false
-}
-
 // 多页预览控制事件处理
 const handlePageChanged = (pageNumber) => {
   currentPreviewPage.value = pageNumber
@@ -521,10 +479,8 @@ const handleApplySuggestedPaging = (analysis) => {
   }
 }
 
-// AI助手相关方法
-
-const handleRecommendation = (recommendation) => {
-  switch (recommendation.action) {
+const handleSuggestion = (suggestion) => {
+  switch (suggestion.action) {
     case 'personalInfo':
       activeModule.value = 'personalInfo'
       ElMessage.info('请完善个人信息')
@@ -537,24 +493,13 @@ const handleRecommendation = (recommendation) => {
       activeModule.value = 'skills'
       ElMessage.info('请补充技能特长')
       break
-    case 'optimize-work':
-      if (!resumeStore.resumeData.workExperience?.length) {
-        activeModule.value = 'workExperience'
-        ElMessage.info('请先添加工作经历')
-      } else {
-        ElMessage.info('工作经历优化')
-      }
-      break
-    case 'skill-match':
-      ElMessage.info('技能匹配分析')
-      break
     default:
-      ElMessage.info('处理建议')
+      ElMessage.info('请继续完善简历内容')
   }
 }
 
-// 更新AI推荐
-const updateAIRecommendations = () => {
+// 更新填写建议
+const updateResumeSuggestions = () => {
   const recommendations = []
   const data = resumeStore.resumeData
 
@@ -578,14 +523,6 @@ const updateAIRecommendations = () => {
       icon: Briefcase,
       action: 'workExperience'
     })
-  } else if (data.workExperience.some(work => !work.description || work.description.length < 50)) {
-    recommendations.push({
-      id: 3,
-      title: '优化工作经历',
-      description: '使用AI优化工作经历描述',
-      icon: Briefcase,
-      action: 'optimize-work'
-    })
   }
 
   // 检查技能
@@ -599,18 +536,17 @@ const updateAIRecommendations = () => {
     })
   }
 
-  aiRecommendations.value = recommendations.slice(0, 3) // 最多显示3个推荐
+  resumeSuggestions.value = recommendations.slice(0, 3) // 最多显示3个建议
 }
 
 // 生命周期钩子
 onMounted(() => {
-  // 更新AI推荐
-  updateAIRecommendations()
+  updateResumeSuggestions()
 })
 
-// 监听简历数据变化，更新推荐
+// 监听简历数据变化，更新建议
 watch(() => resumeStore.resumeData, () => {
-  updateAIRecommendations()
+  updateResumeSuggestions()
 }, { deep: true })
 </script>
 
@@ -644,181 +580,8 @@ watch(() => resumeStore.resumeData, () => {
   border-bottom: 1px solid #f0f2f5;
 }
 
-/* AI助手区域特殊样式 */
 .ai-assistant-section {
-  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
-  border-bottom: 1px solid #e1e6ff;
-}
-
-.ai-assistant-section .section-header {
-  color: white;
-  margin: 0;
-  border-radius: 0;
-}
-
-.ai-assistant-section .section-header .header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-}
-
-.ai-assistant-section .section-header .header-left span {
-  font-weight: 600;
-  color: #3f51b5;
-}
-
-/* 赞助区样式 */
-.donation-section {
-  padding: 15px;
-  background-color: #fafafa;
-  border-top: 1px dashed #e4e7ed;
-  position: relative;
-}
-
-.donation-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.donation-text {
-  font-size: 13px;
-  color: #606266;
-  font-weight: 500;
-  margin: 0;
-}
-
-.close-donation {
-  cursor: pointer;
-  color: #909399;
-  font-size: 14px;
-}
-
-.close-donation:hover {
-  color: #f56c6c;
-}
-
-.donation-content {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.donation-qr {
-  width: calc(50% - 5px);
-  max-width: 145px; /* (300px target / 2) - 5px gap */
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  border: 1px solid #ebeef5;
-}
-
-.ai-status {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 8px;
-  font-size: 11px;
-  opacity: 0.9;
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ff4757;
-  animation: pulse 2s infinite;
-}
-
-.ai-status.online .status-dot {
-  background: #2ed573;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-.status-text {
-  font-size: 10px;
-  font-weight: 500;
-}
-
-/* AI主要操作 */
-.ai-main-actions {
-  padding: 12px;
-}
-
-.ai-action.primary {
-  color: white;
-  border: none;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.ai-action.primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-}
-
-.ai-action.primary .action-icon {
-  color: white;
-}
-
-.ai-action.primary .action-badge {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* 快速操作 */
-.ai-quick-actions {
-  padding: 0 12px 12px;
-}
-
-.quick-actions-title {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-
-.quick-actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.quick-action-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px 4px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid #e9ecef;
-}
-
-.quick-action-item:hover {
-  background: #e3f2fd;
-  border-color: #2196f3;
-  transform: translateY(-1px);
-}
-
-.quick-action-item .el-icon {
-  font-size: 16px;
-  color: #2196f3;
-  margin-bottom: 4px;
-}
-
-.quick-action-item span {
-  font-size: 10px;
-  color: #666;
-  text-align: center;
-  line-height: 1.2;
+  background: #fffaf0;
 }
 
 /* 智能推荐 */
@@ -898,147 +661,6 @@ watch(() => resumeStore.resumeData, () => {
   line-height: 1.3;
 }
 
-/* 开发模式区域 */
-.ai-dev-section {
-  padding: 8px 12px;
-  border-top: 1px solid #f0f2f5;
-  background: #f8f9fa;
-}
-
-.ai-test-action {
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-}
-
-.ai-test-action:hover {
-  background: #ffeaa7;
-}
-
-.ai-test-action .action-badge.dev {
-  background: #fd79a8;
-  color: white;
-  font-size: 10px;
-}
-
-/* 操作项样式 - 统一的按钮样式 */
-.action-item {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  margin-bottom: 4px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  gap: 12px;
-  background: #ffffff;
-  border: 1px solid #f0f2f5;
-}
-
-.action-item:hover {
-  background: #f5f7fa;
-  border-color: #e4e7ed;
-}
-
-.action-icon {
-  color: #606266;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-
-.action-info {
-  flex: 1;
-}
-
-.action-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: #303133;
-  margin-bottom: 2px;
-}
-
-.action-desc {
-  font-size: 11px;
-  color: #909399;
-  line-height: 1.3;
-}
-
-.action-arrow {
-  color: #c0c4cc;
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-.action-badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
-}
-
-/* AI助手特殊样式 */
-.ai-action:hover {
-  background: #f0f9ff;
-  border-color: #bae6fd;
-}
-
-.ai-action:hover .action-icon {
-  color: #0ea5e9;
-}
-
-.ai-action:hover .action-name {
-  color: #0ea5e9;
-}
-
-/* 模板操作特殊样式 */
-.template-action:hover {
-  background: #fefce8;
-  border-color: #fde047;
-}
-
-.template-action:hover .action-icon {
-  color: #eab308;
-}
-
-.template-action:hover .action-name {
-  color: #eab308;
-}
-
-.template-action:hover .action-arrow {
-  color: #eab308;
-}
-
-/* 设计操作特殊样式 */
-.design-action:hover {
-  background: #fdf2f8;
-  border-color: #fbcfe8;
-}
-
-.design-action:hover .action-icon {
-  color: #db2777;
-}
-
-.design-action:hover .action-name {
-  color: #db2777;
-}
-
-.design-action:hover .action-arrow {
-  color: #db2777;
-}
-
-.section-desc {
-  padding: 8px 16px 16px;
-  font-size: 12px;
-  color: #909399;
-  text-align: center;
-  margin: 0;
-  line-height: 1.3;
-}
-
 .section-header {
   display: flex;
   align-items: center;
@@ -1072,56 +694,6 @@ watch(() => resumeStore.resumeData, () => {
   padding: 0 16px 16px;
 }
 
-/* 样式设置特殊样式 */
-.sidebar-section .section-content .style-settings {
-  padding: 0;
-}
-
-.sidebar-section .section-content .style-settings .setting-group {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-}
-
-.sidebar-section .section-content .style-settings .group-title {
-  font-size: 13px;
-  margin-bottom: 8px;
-}
-
-.sidebar-section .section-content .style-settings .setting-item {
-  margin-bottom: 12px;
-}
-
-.sidebar-section .section-content .style-settings .theme-presets {
-  gap: 6px;
-}
-
-.sidebar-section .section-content .style-settings .theme-preset {
-  padding: 6px;
-}
-
-.sidebar-section .section-content .style-settings .color-dot {
-  width: 10px;
-  height: 10px;
-}
-
-.section-button {
-  width: 100%;
-  padding: 8px 12px;
-  background: #f5f7fa;
-  border: 1px solid #e4e7ed;
-  border-radius: 6px;
-  color: #606266;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.section-button:hover {
-  background: #ecf5ff;
-  border-color: #409eff;
-  color: #409eff;
-}
-
 .module-item {
   display: flex;
   align-items: center;
@@ -1140,6 +712,20 @@ watch(() => resumeStore.resumeData, () => {
 .module-item.active {
   background: #ecf5ff;
   border-left: 3px solid #409eff;
+}
+
+.workspace-section {
+  padding-top: 12px;
+}
+
+.workspace-link {
+  border: 1px solid #e4e7ed;
+  background: #ffffff;
+}
+
+.workspace-link:hover {
+  border-color: #409eff;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
 }
 
 .module-item .el-icon {

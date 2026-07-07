@@ -11,9 +11,6 @@
         <el-button @click="addNewEducation" type="primary" :icon="Plus">
           添加教育背景
         </el-button>
-        <el-button @click="generateWithAI" :loading="isGenerating" :icon="MagicStick">
-          AI智能生成
-        </el-button>
       </div>
     </div>
 
@@ -42,10 +39,6 @@
             </div>
           </div>
           <div class="education-actions">
-            <el-button @click="optimizeWithAI(education)" size="small" :loading="optimizingId === education.id">
-              <el-icon><EditPen /></el-icon>
-              AI优化
-            </el-button>
             <el-button @click="removeEducation(education.id)" size="small" type="danger" :icon="Delete">
               删除
             </el-button>
@@ -185,15 +178,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Delete, MagicStick, EditPen } from '@element-plus/icons-vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 
 const emit = defineEmits(['data-updated'])
 const resumeStore = useResumeStore()
-
-// 响应式数据
-const isGenerating = ref(false)
-const optimizingId = ref(null)
 
 // 计算属性
 const educations = computed(() => resumeStore.resumeData.education)
@@ -245,66 +234,6 @@ const handleCurrentChange = (education) => {
   updateEducation(education.id, education)
 }
 
-// AI智能生成教育背景
-const generateWithAI = async () => {
-  isGenerating.value = true
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 2000)) // 模拟API调用
-
-    const generatedEducation = {
-      school: '北京大学',
-      major: '计算机科学与技术',
-      degree: '本科',
-      startDate: '2018-09',
-      endDate: '2022-06',
-      current: false,
-      gpa: '3.8/4.0',
-      honors: '优秀毕业生、一等奖学金',
-      description: '主修课程包括数据结构、算法设计、软件工程、数据库系统等。参与多个课程项目，具备扎实的计算机理论基础和实践能力。'
-    }
-
-    resumeStore.addEducation(generatedEducation)
-    emit('data-updated', educations.value)
-    ElMessage.success('AI教育背景生成成功！')
-  } catch (error) {
-    ElMessage.error('AI生成失败，请重试')
-  } finally {
-    isGenerating.value = false
-  }
-}
-
-// AI优化教育背景
-const optimizeWithAI = async (education) => {
-  if (!education.school && !education.major && !education.description) {
-    ElMessage.warning('请先填写基本信息，再使用AI优化功能')
-    return
-  }
-
-  optimizingId.value = education.id
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 1500)) // 模拟API调用
-
-    // 简单的优化逻辑（实际应该调用AI服务）
-    if (education.description) {
-      education.description = education.description + '，为后续的职业发展奠定了坚实的理论基础。'
-    } else if (education.major) {
-      education.description = `${education.major}专业课程涵盖了该领域的核心知识体系，通过理论学习和实践训练，培养了扎实的专业技能。`
-    }
-
-    if (!education.honors && education.gpa) {
-      education.honors = '学习成绩优异'
-    }
-
-    updateEducation(education.id, education)
-    ElMessage.success('AI优化完成！')
-  } catch (error) {
-    ElMessage.error('AI优化失败，请重试')
-  } finally {
-    optimizingId.value = null
-  }
-}
 </script>
 
 <style scoped>

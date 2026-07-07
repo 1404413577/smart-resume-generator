@@ -146,28 +146,19 @@
 <script setup>
 import { computed } from 'vue'
 import { useResumeStore } from '@stores/resume'
-
-const TEMPLATE_VARIANTS = {
-  classic: { layout: 'classic', density: 'normal', accent: 'line' },
-  modern: { layout: 'modern', density: 'normal', accent: 'panel' },
-  compact: { layout: 'compact', density: 'compact', accent: 'line' },
-  sidebar: { layout: 'sidebar', density: 'normal', accent: 'block' },
-  executive: { layout: 'executive', density: 'normal', accent: 'band' },
-  creative: { layout: 'creative', density: 'loose', accent: 'block' },
-  academic: { layout: 'academic', density: 'compact', accent: 'line' },
-  technical: { layout: 'technical', density: 'normal', accent: 'panel' }
-}
+import { templateVariants } from '../templateVariants'
 
 const props = defineProps({
   resumeData: { type: Object, required: true },
-  templateId: { type: String, default: 'modern' }
+  templateId: { type: String, default: 'modern' },
+  renderMode: { type: String, default: 'preview' }
 })
 
 const resumeStore = useResumeStore()
 
 const personalInfo = computed(() => props.resumeData.personalInfo || {})
 const globalSettings = computed(() => resumeStore.globalSettings || {})
-const variant = computed(() => TEMPLATE_VARIANTS[props.templateId] || TEMPLATE_VARIANTS.modern)
+const variant = computed(() => templateVariants[props.templateId] || templateVariants.modern)
 const layoutConfig = computed(() => globalSettings.value.layout || {})
 const designStyle = computed(() => {
   const value = layoutConfig.value.designStyle || 'modern'
@@ -503,6 +494,10 @@ const formatRange = (start, end, current = false) => {
 .layout-creative .section-title {
   color: var(--tpl-accent);
   text-transform: uppercase;
+}
+
+.layout-executive .template-page {
+  gap: calc(var(--tpl-section-gap) * 1.05);
 }
 
 .layout-academic .section-title,

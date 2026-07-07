@@ -1,5 +1,6 @@
 import { markRaw } from 'vue'
 import UnifiedResumeTemplate from './components/UnifiedResumeTemplate.vue'
+export { templateCategories } from './templateCategories'
 
 const UnifiedTemplate = markRaw(UnifiedResumeTemplate)
 
@@ -93,14 +94,4 @@ export const getTemplateById = (templateId) => templateRegistry[templateId] || t
 
 export function getTemplate(templateId) {
   return templateRegistry[templateId] || templateRegistry.modern
-}
-
-export const templateCategories = {
-  professional: '专业商务',
-  traditional: '传统经典',
-  minimalist: '极简主义',
-  business: '高管商务',
-  creative: '创意设计',
-  academic: '学术研究',
-  tech: '技术开发'
 }

@@ -73,8 +73,6 @@ const isDrawerVisible = ref(false)
 const navLinks = [
   { path: '/', label: '编辑器' },
   { path: '/templates', label: '模板中心' },
-  { path: '/design', label: '设计' },
-  { path: '/ai-assistant', label: 'AI助手' },
   { path: '/settings', label: '设置' },
   { path: '/about', label: '关于' }
 ]

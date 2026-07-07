@@ -24,8 +24,10 @@ export function useFontOptimizer() {
     // 工作经历
     data.workExperience?.forEach(work => {
       text += work.company || ''
-      text += work.jobTitle || ''
-      text += work.responsibilities?.join('') || ''
+      text += work.position || ''
+      text += work.location || ''
+      text += work.description || ''
+      text += work.achievements?.join('') || ''
     })
 
     // 教育经历
@@ -37,6 +39,17 @@ export function useFontOptimizer() {
     // 技能
     data.skills?.forEach(skill => {
       text += skill.name || ''
+      text += skill.level || ''
+      text += skill.description || ''
+    })
+
+    // 项目经历
+    data.projects?.forEach(project => {
+      text += project.name || ''
+      text += project.role || ''
+      text += project.description || ''
+      text += project.technologies?.join('') || ''
+      text += project.highlights?.join('') || ''
     })
 
     // 去重并按字符排序
@@ -74,7 +87,6 @@ export function useFontOptimizer() {
     // 只有在 Href 发生显著变化时才更新，避免频繁抖动
     if (link.href !== newHref) {
       link.href = newHref
-      console.log('字体子集已动态更新，包含字符数:', decodeURIComponent(chars).length)
     }
   }
 

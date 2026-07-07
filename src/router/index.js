@@ -10,7 +10,6 @@ const SettingsView = () => import('../views/SettingsView.vue')
 const AboutView = () => import('../views/AboutView.vue')
 const NotFoundView = () => import('../views/NotFoundView.vue')
 const DesignView = () => import('../views/DesignView.vue')
-const PrintView = () => import('../views/PrintView.vue')
 
 const routes = [
   {
@@ -74,26 +73,6 @@ const routes = [
     meta: {
       title: '关于',
       description: '关于简历编辑器',
-      requiresResume: false
-    }
-  },
-  {
-    path: '/resume/:id?',
-    name: 'ResumeEditor',
-    component: HomeView,
-    meta: {
-      title: '编辑简历',
-      description: '编辑您的简历',
-      requiresResume: false
-    }
-  },
-  {
-    path: '/print',
-    name: 'Print',
-    component: PrintView,
-    meta: {
-      title: '打印预览',
-      description: '用于服务端导出高保真PDF的打印页面',
       requiresResume: false
     }
   },
@@ -165,13 +144,6 @@ router.beforeEach((to, from, next) => {
   }
 
   next()
-})
-
-// 全局后置钩子
-router.afterEach((to, from) => {
-  if (import.meta.env.DEV) {
-    console.log(`Navigated from ${from.name} to ${to.name}`)
-  }
 })
 
 export default router

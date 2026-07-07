@@ -58,8 +58,7 @@ export default defineConfig({
       '@templates': resolve(__dirname, 'src/templates'),
       '@components': resolve(__dirname, 'src/components'),
       '@utils': resolve(__dirname, 'src/utils'),
-      '@stores': resolve(__dirname, 'src/stores'),
-      '@api': resolve(__dirname, 'src/api')
+      '@stores': resolve(__dirname, 'src/stores')
     }
   },
   css: {
@@ -87,20 +86,13 @@ export default defineConfig({
         manualChunks: {
           'vue-vendor': ['vue', 'pinia'],
           'element-plus': ['element-plus', '@element-plus/icons-vue'],
-          'pdf-utils': ['jspdf', 'html2canvas', 'file-saver']
+          'pdf-utils': ['jspdf', 'html2canvas']
         }
       }
     }
   },
   server: {
     port: 5173,
-    host: true,
-    proxy: {
-      '/api': {
-        // target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false
-      }
-    }
+    host: true
   }
 })

@@ -168,11 +168,10 @@ function getPageTitle(url) {
   const titles = {
     '/': '首页',
     '/templates': '简历模板',
-    '/features': '功能特色',
-    '/help': '帮助中心',
-    '/about': '关于我们',
-    '/privacy': '隐私政策',
-    '/terms': '使用条款'
+    '/design': '设计工作室',
+    '/ai-assistant': 'AI 智能助手',
+    '/settings': '设置',
+    '/about': '关于我们'
   }
   return titles[url] || url
 }

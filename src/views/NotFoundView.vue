@@ -36,9 +36,9 @@
               <el-icon><Edit /></el-icon>
               <span>简历编辑器</span>
             </router-link>
-            <router-link to="/resumes" class="help-link">
-              <el-icon><Folder /></el-icon>
-              <span>简历管理</span>
+            <router-link to="/design" class="help-link">
+              <el-icon><Brush /></el-icon>
+              <span>设计工作室</span>
             </router-link>
             <router-link to="/templates" class="help-link">
               <el-icon><Grid /></el-icon>
@@ -62,7 +62,7 @@ import {
   House,
   Back,
   Edit,
-  Folder,
+  Brush,
   Grid,
   MagicStick
 } from '@element-plus/icons-vue'

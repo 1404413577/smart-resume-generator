@@ -11,9 +11,6 @@
         <el-button @click="addNewProject" type="primary" :icon="Plus">
           添加项目
         </el-button>
-        <el-button @click="generateWithAI" :loading="isGenerating" :icon="MagicStick">
-          AI智能生成
-        </el-button>
       </div>
     </div>
 
@@ -42,10 +39,6 @@
             </div>
           </div>
           <div class="project-actions">
-            <el-button @click="optimizeWithAI(project)" size="small" :loading="optimizingId === project.id">
-              <el-icon><EditPen /></el-icon>
-              AI优化
-            </el-button>
             <el-button @click="removeProject(project.id)" size="small" type="danger" :icon="Delete">
               删除
             </el-button>
@@ -207,15 +200,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Delete, MagicStick, EditPen } from '@element-plus/icons-vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 
 const emit = defineEmits(['data-updated'])
 const resumeStore = useResumeStore()
-
-// 响应式数据
-const isGenerating = ref(false)
-const optimizingId = ref(null)
 
 // 计算属性
 const projects = computed(() => resumeStore.resumeData.projects)
@@ -276,64 +265,6 @@ const removeTechnology = (project, index) => {
   }
 }
 
-// AI智能生成项目
-const generateWithAI = async () => {
-  isGenerating.value = true
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 2000)) // 模拟API调用
-
-    const generatedProject = {
-      name: '电商管理系统',
-      role: '前端负责人',
-      status: 'completed',
-      startDate: '2023-03',
-      endDate: '2023-08',
-      description: '基于Vue.js和Element Plus开发的电商后台管理系统，包含商品管理、订单处理、用户管理、数据统计等核心功能。采用前后端分离架构，支持权限控制和多角色管理。',
-      technologies: ['Vue.js', 'Element Plus', 'Axios', 'Echarts', 'Node.js', 'MySQL'],
-      url: 'https://demo.example.com',
-      github: 'https://github.com/username/ecommerce-admin'
-    }
-
-    resumeStore.addProject(generatedProject)
-    emit('data-updated', projects.value)
-    ElMessage.success('AI项目生成成功！')
-  } catch (error) {
-    ElMessage.error('AI生成失败，请重试')
-  } finally {
-    isGenerating.value = false
-  }
-}
-
-// AI优化项目
-const optimizeWithAI = async (project) => {
-  if (!project.description && !project.name) {
-    ElMessage.warning('请先填写项目基本信息，再使用AI优化功能')
-    return
-  }
-
-  optimizingId.value = project.id
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 1500)) // 模拟API调用
-
-    // 简单的优化逻辑（实际应该调用AI服务）
-    if (project.description) {
-      project.description = project.description + '该项目获得了用户的广泛好评，为公司业务发展做出了重要贡献。'
-    }
-
-    if (!project.technologies || project.technologies.length === 0) {
-      project.technologies = ['JavaScript', 'HTML5', 'CSS3']
-    }
-
-    updateProject(project.id, project)
-    ElMessage.success('AI优化完成！')
-  } catch (error) {
-    ElMessage.error('AI优化失败，请重试')
-  } finally {
-    optimizingId.value = null
-  }
-}
 </script>
 
 <style scoped>

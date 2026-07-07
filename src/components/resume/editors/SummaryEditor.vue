@@ -28,24 +28,12 @@
         </ul>
       </div>
 
-      <div class="ai-assist-section">
-        <el-button @click="generateWithAI" type="primary" :loading="isGenerating">
-          <el-icon><MagicStick /></el-icon>
-          AI智能生成
-        </el-button>
-        <el-button @click="optimizeWithAI" :loading="isOptimizing" :disabled="!summary.trim()">
-          <el-icon><EditPen /></el-icon>
-          AI优化润色
-        </el-button>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
-import { ElMessage } from 'element-plus'
-import { MagicStick, EditPen } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 
 const emit = defineEmits(['data-updated'])
@@ -53,59 +41,11 @@ const resumeStore = useResumeStore()
 
 // 个人简介数据
 const summary = ref(resumeStore.resumeData.summary || '')
-const isGenerating = ref(false)
-const isOptimizing = ref(false)
 
 // 处理输入
 const handleInput = () => {
   resumeStore.updateSummary(summary.value)
   emit('data-updated', summary.value)
-}
-
-// AI生成简介
-const generateWithAI = async () => {
-  isGenerating.value = true
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 2000)) // 模拟API调用
-
-    const generatedSummary = `具有${Math.floor(Math.random() * 5) + 2}年软件开发经验的专业工程师，擅长前端开发和用户体验设计。熟练掌握Vue.js、React等现代前端框架，具备良好的团队协作能力和项目管理经验。致力于通过技术创新提升产品质量和用户满意度。`
-
-    summary.value = generatedSummary
-    handleInput()
-    ElMessage.success('AI简介生成成功！')
-  } catch (error) {
-    ElMessage.error('AI生成失败，请重试')
-  } finally {
-    isGenerating.value = false
-  }
-}
-
-// AI优化简介
-const optimizeWithAI = async () => {
-  if (!summary.value.trim()) {
-    ElMessage.warning('请先输入简介内容')
-    return
-  }
-
-  isOptimizing.value = true
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 1500)) // 模拟API调用
-
-    // 简单的优化逻辑（实际应该调用AI服务）
-    const optimized = summary.value
-      .replace(/。/g, '，在此基础上不断提升专业技能。')
-      .substring(0, 200) + '...'
-
-    summary.value = optimized
-    handleInput()
-    ElMessage.success('AI优化完成！')
-  } catch (error) {
-    ElMessage.error('AI优化失败，请重试')
-  } finally {
-    isOptimizing.value = false
-  }
 }
 
 // 监听数据变化
@@ -167,12 +107,6 @@ watch(summary, (newValue) => {
   line-height: 1.4;
 }
 
-.ai-assist-section {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
-
 :deep(.el-form-item) {
   margin-bottom: 16px;
 }
@@ -183,13 +117,4 @@ watch(summary, (newValue) => {
   line-height: 1.6;
 }
 
-@media (max-width: 768px) {
-  .ai-assist-section {
-    flex-direction: column;
-  }
-
-  .ai-assist-section .el-button {
-    width: 100%;
-  }
-}
 </style>

@@ -302,9 +302,14 @@ const sendQuickMessage = (message) => {
 }
 
 const loadChat = (chatId) => {
-  // TODO: 从历史记录加载对话
-  currentChatId.value = chatId
-  ElMessage.info('加载历史对话功能开发中...')
+  const chat = chatHistory.value.find(item => item.id === chatId)
+  if (!chat) {
+    ElMessage.warning('未找到该对话')
+    return
+  }
+  currentChatId.value = chat.id
+  messages.value = chat.messages.map(message => ({ ...message }))
+  nextTick(scrollToBottom)
 }
 
 const saveChatToHistory = () => {
@@ -351,8 +356,7 @@ const scrollToBottom = () => {
 
 // 生命周期
 onMounted(() => {
-  // 加载历史对话
-  // TODO: 从本地存储或服务器加载
+  chatHistory.value = []
 })
 </script>
 

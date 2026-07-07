@@ -11,9 +11,6 @@
         <el-button @click="addNewSkill" type="primary" :icon="Plus">
           添加技能
         </el-button>
-        <el-button @click="generateWithAI" :loading="isGenerating" :icon="MagicStick">
-          AI智能生成
-        </el-button>
       </div>
     </div>
 
@@ -139,14 +136,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Delete, MagicStick } from '@element-plus/icons-vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
 import { useResumeStore } from '../../../stores/resume'
 
 const emit = defineEmits(['data-updated'])
 const resumeStore = useResumeStore()
-
-// 响应式数据
-const isGenerating = ref(false)
 
 // 计算属性
 const skills = computed(() => resumeStore.resumeData.skills)
@@ -211,34 +205,6 @@ const getSkillWidth = (level) => {
   return levelMap[level] || '50%'
 }
 
-// AI智能生成技能
-const generateWithAI = async () => {
-  isGenerating.value = true
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 2000)) // 模拟API调用
-
-    const generatedSkills = [
-      { name: 'JavaScript', level: '高级', category: '编程语言' },
-      { name: 'Vue.js', level: '高级', category: '前端框架' },
-      { name: 'React', level: '中级', category: '前端框架' },
-      { name: 'Node.js', level: '中级', category: '后端框架' },
-      { name: 'MySQL', level: '中级', category: '数据库' },
-      { name: 'Git', level: '高级', category: '开发工具' }
-    ]
-
-    generatedSkills.forEach(skill => {
-      resumeStore.addSkill(skill)
-    })
-
-    emit('data-updated', skills.value)
-    ElMessage.success('AI技能生成成功！')
-  } catch (error) {
-    ElMessage.error('AI生成失败，请重试')
-  } finally {
-    isGenerating.value = false
-  }
-}
 </script>
 
 <style scoped>

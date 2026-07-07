@@ -39,72 +39,6 @@
               />
             </div>
 
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>主题</h3>
-                <p>选择界面主题</p>
-              </div>
-              <el-radio-group v-model="settings.theme" @change="updateSetting('theme')">
-                <el-radio label="light">浅色</el-radio>
-                <el-radio label="dark">深色</el-radio>
-                <el-radio label="auto">跟随系统</el-radio>
-              </el-radio-group>
-            </div>
-          </div>
-        </div>
-
-        <!-- 编辑器设置 -->
-        <div class="settings-section">
-          <h2 class="section-title">编辑器设置</h2>
-          <div class="settings-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>默认字体</h3>
-                <p>简历预览的默认字体</p>
-              </div>
-              <el-select v-model="settings.defaultFont" @change="updateSetting('defaultFont')">
-                <el-option label="微软雅黑" value="Microsoft YaHei" />
-                <el-option label="宋体" value="SimSun" />
-                <el-option label="黑体" value="SimHei" />
-                <el-option label="楷体" value="KaiTi" />
-              </el-select>
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>默认字号</h3>
-                <p>简历内容的默认字号</p>
-              </div>
-              <el-input-number
-                v-model="settings.defaultFontSize"
-                :min="10"
-                :max="20"
-                @change="updateSetting('defaultFontSize')"
-              />
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>预览缩放</h3>
-                <p>简历预览的默认缩放比例</p>
-              </div>
-              <el-slider
-                v-model="settings.previewScale"
-                :min="50"
-                :max="150"
-                :step="10"
-                show-stops
-                @change="updateSetting('previewScale')"
-              />
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>显示网格线</h3>
-                <p>在预览中显示辅助网格线</p>
-              </div>
-              <el-switch v-model="settings.showGrid" @change="updateSetting('showGrid')" />
-            </div>
           </div>
         </div>
 
@@ -112,14 +46,6 @@
         <div class="settings-section">
           <h2 class="section-title">AI设置</h2>
           <div class="settings-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>AI建议</h3>
-                <p>启用AI智能建议功能</p>
-              </div>
-              <el-switch v-model="settings.aiSuggestions" @change="updateSetting('aiSuggestions')" />
-            </div>
-
             <div class="setting-item">
               <div class="setting-info">
                 <h3>AI引擎</h3>
@@ -264,23 +190,6 @@
           </div>
         </div>
 
-        <!-- 导出设置 -->
-        <div class="settings-section">
-          <h2 class="section-title">导出设置</h2>
-          <div class="settings-group">
-            <div class="setting-item">
-              <div class="setting-info">
-                <h3>默认格式</h3>
-                <p>导出简历的默认格式</p>
-              </div>
-              <el-select v-model="settings.exportFormat" @change="updateSetting('exportFormat')">
-                <el-option label="PDF" value="pdf" />
-                <el-option label="Word" value="docx" />
-              </el-select>
-            </div>
-          </div>
-        </div>
-
         <!-- 数据管理 -->
         <div class="settings-section">
           <h2 class="section-title">数据管理</h2>
@@ -395,13 +304,10 @@ const checkWebGPU = async () => {
 }
 
 const applySettings = () => {
-  settingsStore.applyDocumentSettings()
-  
   // 更新简历store设置
   resumeStore.updateSettings({
     autoSave: settings.value.autoSave,
-    saveInterval: settings.value.saveInterval * 1000,
-    previewScale: settings.value.previewScale / 100
+    saveInterval: settings.value.saveInterval * 1000
   })
 }
 

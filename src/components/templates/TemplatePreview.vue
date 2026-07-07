@@ -4,7 +4,7 @@
       <component
         v-if="template?.component"
         :is="template.component"
-        :resume-data="sampleResumeData"
+        :resume-data="previewResumeData"
         :template-id="template.id"
         v-bind="template.config ? { config: template.config } : {}"
         class="template-inner"
@@ -29,6 +29,18 @@ const props = defineProps({
   width: {
     type: Number,
     default: 220 // 卡片宽度 px
+  },
+  height: {
+    type: Number,
+    default: null
+  },
+  scale: {
+    type: Number,
+    default: null
+  },
+  resumeData: {
+    type: Object,
+    default: null
   }
 })
 
@@ -37,10 +49,10 @@ const A4_W_PX = 794   // 210mm in px
 const A4_H_PX = 1123  // 297mm in px
 
 // 根据卡片宽度动态计算缩放比例
-const scale = computed(() => props.width / A4_W_PX)
+const scale = computed(() => props.scale || props.width / A4_W_PX)
 
 // 缩放后的实际高度
-const scaledHeight = computed(() => Math.round(A4_H_PX * scale.value))
+const scaledHeight = computed(() => props.height || Math.round(A4_H_PX * scale.value))
 
 // 外层容器：固定宽高，overflow hidden 裁掉底部
 const wrapStyle = computed(() => ({
@@ -65,6 +77,22 @@ const scaleContainerStyle = computed(() => ({
   pointerEvents: 'none'
 }))
 
+const hasUsableResumeData = (data) => {
+  if (!data) return false
+  return Boolean(
+    data.personalInfo?.name ||
+    data.summary ||
+    data.workExperience?.length ||
+    data.education?.length ||
+    data.skills?.length ||
+    data.projects?.length
+  )
+}
+
+const previewResumeData = computed(() => (
+  hasUsableResumeData(props.resumeData) ? props.resumeData : sampleResumeData
+))
+
 // 示例数据 —— 为预览提供真实内容
 const sampleResumeData = {
   personalInfo: {
@@ -72,8 +100,15 @@ const sampleResumeData = {
     email: 'zhangsan@example.com',
     phone: '138-0000-0000',
     address: '北京市朝阳区',
+    website: 'https://zhangsan.dev',
+    linkedin: 'linkedin.com/in/zhangsan',
+    github: 'github.com/zhangsan',
     targetPosition: '前端工程师',
-    avatar: ''
+    photo: '',
+    photoPosition: 'left',
+    customFields: [
+      { id: 'field-1', name: '城市', value: '北京' }
+    ]
   },
   summary: '具有3年前端开发经验的工程师，熟练掌握Vue.js、React等现代前端框架，具备良好的团队协作能力和学习能力。',
   workExperience: [
@@ -113,6 +148,7 @@ const sampleResumeData = {
     {
       id: '1',
       name: '企业管理系统',
+      role: '前端负责人',
       description: '基于Vue.js开发的企业内部管理系统，包含用户管理、权限控制等功能。',
       technologies: ['Vue.js', 'Element Plus', 'Node.js'],
       url: 'https://example.com',

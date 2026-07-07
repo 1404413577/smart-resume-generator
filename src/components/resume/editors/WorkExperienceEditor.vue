@@ -11,9 +11,6 @@
         <el-button @click="addNewExperience" type="primary" :icon="Plus">
           添加工作经历
         </el-button>
-        <el-button @click="generateWithAI" :loading="isGenerating" :icon="MagicStick">
-          AI智能生成
-        </el-button>
       </div>
     </div>
 
@@ -42,10 +39,6 @@
             </div>
           </div>
           <div class="experience-actions">
-            <el-button @click="optimizeWithAI(experience)" size="small" :loading="optimizingId === experience.id">
-              <el-icon><EditPen /></el-icon>
-              AI优化
-            </el-button>
             <el-button @click="removeExperience(experience.id)" size="small" type="danger" :icon="Delete">
               删除
             </el-button>
@@ -189,15 +182,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Delete, MagicStick, EditPen } from '@element-plus/icons-vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 
 const emit = defineEmits(['data-updated'])
 const resumeStore = useResumeStore()
-
-// 响应式数据
-const isGenerating = ref(false)
-const optimizingId = ref(null)
 
 // 计算属性
 const workExperiences = computed(() => resumeStore.resumeData.workExperience)
@@ -265,70 +254,6 @@ const removeAchievement = (experience, index) => {
   }
 }
 
-// AI智能生成工作经历
-const generateWithAI = async () => {
-  isGenerating.value = true
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 2000)) // 模拟API调用
-
-    const generatedExperience = {
-      position: '前端开发工程师',
-      company: '科技有限公司',
-      location: '北京',
-      startDate: '2022-01',
-      endDate: '2024-01',
-      current: false,
-      description: '负责公司核心产品的前端开发工作，使用Vue.js、React等现代前端框架构建用户界面，与后端团队协作完成API对接，优化页面性能和用户体验。',
-      achievements: [
-        '独立完成公司官网重构，页面加载速度提升40%',
-        '参与开发核心业务系统，服务用户超过10万人',
-        '建立前端代码规范和组件库，提升团队开发效率30%'
-      ]
-    }
-
-    resumeStore.addWorkExperience(generatedExperience)
-    emit('data-updated', workExperiences.value)
-    ElMessage.success('AI工作经历生成成功！')
-  } catch (error) {
-    ElMessage.error('AI生成失败，请重试')
-  } finally {
-    isGenerating.value = false
-  }
-}
-
-// AI优化工作经历
-const optimizeWithAI = async (experience) => {
-  if (!experience.description && (!experience.achievements || experience.achievements.length === 0)) {
-    ElMessage.warning('请先填写工作描述或成就，再使用AI优化功能')
-    return
-  }
-
-  optimizingId.value = experience.id
-  try {
-    // TODO: 集成AI服务
-    await new Promise(resolve => setTimeout(resolve, 1500)) // 模拟API调用
-
-    // 简单的优化逻辑（实际应该调用AI服务）
-    if (experience.description) {
-      experience.description = experience.description + '，在此过程中不断提升专业技能和团队协作能力。'
-    }
-
-    if (!experience.achievements || experience.achievements.length === 0) {
-      experience.achievements = [
-        '在团队中发挥重要作用，获得同事和上级的一致认可',
-        '积极参与项目优化，为公司创造了显著价值'
-      ]
-    }
-
-    updateExperience(experience.id, experience)
-    ElMessage.success('AI优化完成！')
-  } catch (error) {
-    ElMessage.error('AI优化失败，请重试')
-  } finally {
-    optimizingId.value = null
-  }
-}
 </script>
 
 <style scoped>

@@ -9,11 +9,6 @@
           </h1>
           <p class="page-description">选择专业简历模板，快速创建精美简历</p>
         </div>
-        <div class="header-actions">
-          <el-button @click="showPreview = !showPreview" :icon="View">
-            {{ showPreview ? '隐藏预览' : '显示预览' }}
-          </el-button>
-        </div>
       </div>
     </div>
 
@@ -63,7 +58,12 @@
             >
               <div class="card-badge">推荐</div>
               <div class="template-preview">
-                <TemplatePreview :template="template" :width="200" :height="150" />
+                <TemplatePreview
+                  :template="template"
+                  :width="200"
+                  :height="150"
+                  :resume-data="resumeStore.resumeData"
+                />
               </div>
               <div class="template-info">
                 <h3 class="template-name">{{ template.name }}</h3>
@@ -100,7 +100,11 @@
               @click="selectTemplate(template)"
             >
               <div class="template-preview">
-                <TemplatePreview :template="template" :width="220" />
+                <TemplatePreview
+                  :template="template"
+                  :width="220"
+                  :resume-data="resumeStore.resumeData"
+                />
                 <div class="preview-overlay">
                   <el-button type="primary" size="small">选择模板</el-button>
                 </div>
@@ -134,7 +138,12 @@
               @click="selectTemplate(template)"
             >
               <div class="list-preview">
-                <TemplatePreview :template="template" :width="120" :height="90" />
+                <TemplatePreview
+                  :template="template"
+                  :width="120"
+                  :height="90"
+                  :resume-data="resumeStore.resumeData"
+                />
               </div>
               <div class="list-content">
                 <div class="list-header">
@@ -179,6 +188,7 @@
             <TemplatePreview
               :template="selectedTemplate"
               :scale="0.4"
+              :resume-data="resumeStore.resumeData"
             />
           </div>
         </div>
@@ -220,6 +230,7 @@
         <TemplatePreview
           :template="selectedTemplate"
           :scale="0.8"
+          :resume-data="resumeStore.resumeData"
         />
       </div>
       <template #footer>
@@ -238,11 +249,10 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
   Grid,
-  View,
   Search,
   Star
 } from '@element-plus/icons-vue'
-import { getAllTemplates, getTemplatesByCategory } from '@templates'
+import { getAllTemplates, templateCategories } from '@templates'
 import { useResumeStore } from '@stores/resume'
 import TemplatePreview from '@components/templates/TemplatePreview.vue'
 
@@ -253,22 +263,16 @@ const resumeStore = useResumeStore()
 const searchQuery = ref('')
 const selectedCategory = ref('')
 const viewMode = ref('grid')
-const showPreview = ref(false)
 const showTemplateDialog = ref(false)
 const showFullPreview = ref(false)
 const selectedTemplate = ref(null)
 const templates = ref([])
 
-// 类别选项
-const categories = [
-  { label: '现代风格', value: 'modern' },
-  { label: '经典风格', value: 'classic' },
-  { label: '创意风格', value: 'creative' },
-  { label: '极简风格', value: 'minimalist' },
-  { label: '专业风格', value: 'professional' },
-  { label: '学术风格', value: 'academic' },
-  { label: '技术风格', value: 'tech' }
-]
+// 类别选项必须与 templateCategories 保持一致
+const categories = Object.entries(templateCategories).map(([value, label]) => ({
+  value,
+  label
+}))
 
 // 计算属性
 const filteredTemplates = computed(() => {
@@ -296,7 +300,7 @@ const filteredTemplates = computed(() => {
 const recommendedTemplates = computed(() => {
   // 推荐逻辑：选择几个热门模板
   return templates.value.filter(template => 
-    ['modern', 'professional', 'creative'].includes(template.category)
+    ['professional', 'business', 'creative'].includes(template.category)
   ).slice(0, 3)
 })
 

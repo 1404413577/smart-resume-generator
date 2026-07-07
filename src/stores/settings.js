@@ -7,16 +7,7 @@ const SETTINGS_STORAGE_KEY = 'resumeBuilderSettings'
 const createDefaultSettings = () => ({
   autoSave: true,
   saveInterval: 30,
-  theme: 'light',
-
-  defaultFont: 'Microsoft YaHei',
-  defaultFontSize: 14,
-  previewScale: 100,
-  showGrid: false,
-
-  ...DEFAULT_AI_SETTINGS,
-
-  exportFormat: 'pdf'
+  ...DEFAULT_AI_SETTINGS
 })
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -73,17 +64,6 @@ export const useSettingsStore = defineStore('settings', () => {
     return settings.value
   }
 
-  const applyDocumentSettings = () => {
-    if (settings.value.theme === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-
-    document.documentElement.style.setProperty('--default-font', settings.value.defaultFont)
-    document.documentElement.style.setProperty('--default-font-size', `${settings.value.defaultFontSize}px`)
-  }
-
   const exportSettings = () => JSON.stringify(settings.value, null, 2)
 
   const importSettings = (rawSettings) => {
@@ -100,7 +80,6 @@ export const useSettingsStore = defineStore('settings', () => {
     saveSettings,
     updateSetting,
     resetSettings,
-    applyDocumentSettings,
     exportSettings,
     importSettings
   }

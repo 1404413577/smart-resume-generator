@@ -12,9 +12,6 @@ const DEFAULT_TIMEOUT_MS = 120000
 const SETTINGS_STORAGE_KEY = 'resumeBuilderSettings'
 
 export const DEFAULT_AI_SETTINGS = {
-  aiSuggestions: true,
-  autoOptimize: false,
-  aiSpeed: 'balanced',
   aiEngine: import.meta.env.VITE_AI_ENGINE || (import.meta.env.VITE_GEMINI_API_KEY ? 'gemini' : 'online'),
   aiApiKey: import.meta.env.VITE_OPENAI_API_KEY || import.meta.env.VITE_GLM_API_KEY || import.meta.env.VITE_GML_API_KEY || '',
   aiBaseUrl: import.meta.env.VITE_OPENAI_BASE_URL || import.meta.env.VITE_GLM_API_URL || import.meta.env.VITE_GML_API_URL || 'https://api.openai.com/v1',

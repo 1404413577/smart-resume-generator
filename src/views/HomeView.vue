@@ -4,36 +4,17 @@
     <div class="resume-builder-container" :class="{ 'is-mobile': isMobile }">
       <!-- 左侧导航栏 -->
       <aside class="left-sidebar" v-if="!isMobile || mobileActiveTab === 'ai'">
-        <!-- 填写建议 -->
-        <div class="sidebar-section ai-assistant-section">
-          <div class="section-content">
-            <div class="ai-recommendations" v-if="resumeSuggestions.length > 0">
-              <div class="recommendations-title">
-                <el-icon><Star /></el-icon>
-                填写建议
-              </div>
-              <div class="recommendations-list">
-                <div
-                  v-for="rec in resumeSuggestions"
-                  :key="rec.id"
-                  class="recommendation-item"
-                  @click="handleSuggestion(rec)"
-                >
-                  <div class="rec-icon">
-                    <el-icon><component :is="rec.icon" /></el-icon>
-                  </div>
-                  <div class="rec-content">
-                    <div class="rec-title">{{ rec.title }}</div>
-                    <div class="rec-desc">{{ rec.description }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div class="workspace-header">
+          <div class="workspace-label">本地工作区</div>
+          <div class="workspace-title">简历编辑器</div>
+          <div class="workspace-meta">
+            <span>{{ completedModuleCount }}/{{ modules.length }} 项已填写</span>
+            <span>浏览器本地保存</span>
           </div>
         </div>
 
         <!-- 简历内容 -->
-        <div class="sidebar-section">
+        <div class="sidebar-section content-section">
           <div class="section-header" @click="toggleSection('content')">
             <el-icon><Document /></el-icon>
             <span>简历内容</span>
@@ -60,6 +41,7 @@
         </div>
 
         <div class="sidebar-section workspace-section">
+          <div class="section-label">工作流</div>
           <div class="section-content">
             <div
               v-for="link in workspaceLinks"
@@ -77,15 +59,46 @@
           </div>
         </div>
 
+        <!-- 填写建议 -->
+        <div class="sidebar-section suggestions-section" v-if="resumeSuggestions.length > 0">
+          <div class="section-label">填写建议</div>
+          <div class="section-content">
+            <div
+              v-for="rec in resumeSuggestions"
+              :key="rec.id"
+              class="recommendation-item"
+              @click="handleSuggestion(rec)"
+            >
+              <el-icon class="rec-icon"><component :is="rec.icon" /></el-icon>
+              <div class="rec-content">
+                <div class="rec-title">{{ rec.title }}</div>
+                <div class="rec-desc">{{ rec.description }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-footnote">
+          <span>当前未启用云同步</span>
+          <span>请定期导出备份</span>
+        </div>
+
       </aside>
 
       <!-- 中间编辑区域 -->
       <main class="main-editor" v-if="!isMobile || mobileActiveTab === 'edit'">
         <div class="editor-header">
-          <h2 class="editor-title">
-            <el-icon><component :is="getCurrentModuleIcon()" /></el-icon>
-            {{ getCurrentModuleName() }}
-          </h2>
+          <div class="editor-heading">
+            <div class="editor-title-row">
+              <el-icon><component :is="getCurrentModuleIcon()" /></el-icon>
+              <h2 class="editor-title">{{ getCurrentModuleName() }}</h2>
+            </div>
+            <p class="editor-description">{{ getCurrentModuleDescription() }}</p>
+          </div>
+          <div class="editor-state">
+            <span class="state-dot"></span>
+            <span>{{ getModuleStatus(activeModule) }}</span>
+          </div>
         </div>
         <div class="editor-content">
           <component
@@ -100,7 +113,10 @@
       <aside class="right-preview" v-if="!isMobile || mobileActiveTab === 'preview'">
         <div class="preview-header">
           <div class="preview-title">
-            <h3>简历预览</h3>
+            <div>
+              <h3>简历预览</h3>
+              <p>{{ resumeStore.selectedTemplate }} · A4 实时渲染</p>
+            </div>
             <div class="zoom-controls" v-if="!isMobile">
               <el-button @click="zoomOut" size="small" :icon="ZoomOut" :disabled="previewScale <= 0.5" />
               <span class="zoom-display">{{ Math.round(previewScale * 100) }}%</span>
@@ -311,12 +327,12 @@ const resumeSuggestions = ref([
 
 // 模块配置
 const modules = [
-  { id: 'personalInfo', name: '个人信息', icon: User },
-  { id: 'summary', name: '个人简介', icon: Document },
-  { id: 'workExperience', name: '工作经历', icon: Briefcase },
-  { id: 'education', name: '教育背景', icon: School },
-  { id: 'skills', name: '技能特长', icon: Star },
-  { id: 'projects', name: '项目经历', icon: FolderOpened }
+  { id: 'personalInfo', name: '个人信息', icon: User, description: '联系方式、头像和目标职位' },
+  { id: 'summary', name: '个人简介', icon: Document, description: '用简短段落说明经验和优势' },
+  { id: 'workExperience', name: '工作经历', icon: Briefcase, description: '公司、职位、职责和可量化成果' },
+  { id: 'education', name: '教育背景', icon: School, description: '学校、专业、学历和补充信息' },
+  { id: 'skills', name: '技能特长', icon: Star, description: '按类别整理专业技能和熟练程度' },
+  { id: 'projects', name: '项目经历', icon: FolderOpened, description: '项目背景、技术栈和个人贡献' }
 ]
 
 const workspaceLinks = [
@@ -337,6 +353,10 @@ const editorComponents = {
 // 计算属性
 const currentEditor = computed(() => {
   return editorComponents[activeModule.value] || PersonalInfoEditor
+})
+
+const completedModuleCount = computed(() => {
+  return modules.filter(module => getModuleStatus(module.id) !== '未填写').length
 })
 
 // 方法
@@ -398,6 +418,11 @@ const getCurrentModuleName = () => {
 const getCurrentModuleIcon = () => {
   const module = modules.find(m => m.id === activeModule.value)
   return module ? module.icon : Document
+}
+
+const getCurrentModuleDescription = () => {
+  const module = modules.find(m => m.id === activeModule.value)
+  return module?.description || '编辑当前简历章节'
 }
 
 const zoomIn = () => {
@@ -554,93 +579,92 @@ watch(() => resumeStore.resumeData, () => {
 .home-view {
   height: calc(100vh - 60px); /* 减去头部导航高度 */
   width: 100%;
-  background: #f5f7fa;
+  background: #f4f6f8;
 }
 
 .resume-builder-container {
   display: grid;
-  grid-template-columns: 280px 4fr 6fr;
+  grid-template-columns: 276px minmax(360px, 4fr) minmax(520px, 6fr);
   height: calc(100vh - 60px);
   width: 100%;
-  background: #f5f7fa;
+  background: #f4f6f8;
   overflow: hidden;
 }
 
 /* 左侧导航栏 */
 .left-sidebar {
-  width: 280px;
-  min-width: 280px;
-  max-width: 280px;
-  background: #ffffff;
+  width: 100%;
+  min-width: 0;
+  max-width: 276px;
+  background: #fbfcfd;
   border-right: 1px solid #e4e7ed;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-section {
   border-bottom: 1px solid #f0f2f5;
 }
 
-.ai-assistant-section {
-  background: #fffaf0;
+.workspace-header {
+  padding: 18px 18px 16px;
+  border-bottom: 1px solid #e4e7ed;
+  background: #ffffff;
 }
 
-/* 智能推荐 */
-.ai-recommendations {
-  padding: 0 12px 12px;
+.workspace-label,
+.section-label {
+  font-size: 11px;
+  line-height: 1;
+  color: #909399;
+  font-weight: 600;
 }
 
-.recommendations-title {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 8px;
-  font-weight: 500;
+.workspace-title {
+  margin-top: 8px;
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 650;
+  color: #1f2937;
 }
 
-.recommendations-title .el-icon {
-  color: #ffa726;
-}
-
-.recommendations-list {
+.workspace-meta {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #606266;
+}
+
+.content-section {
+  background: #ffffff;
+}
+
+.section-label {
+  padding: 16px 18px 8px;
 }
 
 .recommendation-item {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background: #fff3e0;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid #ffe0b2;
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
 .recommendation-item:hover {
-  background: #ffecb3;
-  border-color: #ffa726;
-  transform: translateX(2px);
+  color: #409eff;
 }
 
 .rec-icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffa726;
-  border-radius: 4px;
+  margin-top: 2px;
+  color: #909399;
   flex-shrink: 0;
-}
-
-.rec-icon .el-icon {
-  color: white;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .rec-content {
@@ -649,24 +673,24 @@ watch(() => resumeStore.resumeData, () => {
 }
 
 .rec-title {
-  font-size: 11px;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #303133;
 }
 
 .rec-desc {
-  font-size: 10px;
+  margin-top: 3px;
+  font-size: 11px;
   color: #666;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
 .section-header {
   display: flex;
   align-items: center;
-  padding: 16px;
+  padding: 16px 18px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.2s ease;
   gap: 12px;
 }
 
@@ -691,17 +715,17 @@ watch(() => resumeStore.resumeData, () => {
 }
 
 .section-content {
-  padding: 0 16px 16px;
+  padding: 0 14px 14px;
 }
 
 .module-item {
   display: flex;
   align-items: center;
-  padding: 12px;
-  margin-bottom: 4px;
+  padding: 10px 10px;
+  margin-bottom: 3px;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
   gap: 12px;
 }
 
@@ -711,11 +735,11 @@ watch(() => resumeStore.resumeData, () => {
 
 .module-item.active {
   background: #ecf5ff;
-  border-left: 3px solid #409eff;
+  box-shadow: inset 3px 0 0 #409eff;
 }
 
 .workspace-section {
-  padding-top: 12px;
+  background: #fbfcfd;
 }
 
 .workspace-link {
@@ -725,7 +749,7 @@ watch(() => resumeStore.resumeData, () => {
 
 .workspace-link:hover {
   border-color: #409eff;
-  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
+  box-shadow: none;
 }
 
 .module-item .el-icon {
@@ -743,7 +767,7 @@ watch(() => resumeStore.resumeData, () => {
 
 .module-name {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: #303133;
   margin-bottom: 2px;
 }
@@ -762,6 +786,21 @@ watch(() => resumeStore.resumeData, () => {
   font-size: 12px;
 }
 
+.suggestions-section {
+  background: #ffffff;
+}
+
+.sidebar-footnote {
+  margin-top: auto;
+  padding: 14px 18px 18px;
+  border-top: 1px solid #e4e7ed;
+  color: #909399;
+  font-size: 11px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+}
+
 /* 中间编辑区域 */
 .main-editor {
   min-width: 0; /* 允许内容缩小 */
@@ -774,30 +813,66 @@ watch(() => resumeStore.resumeData, () => {
 }
 
 .editor-header {
-  padding: 20px 24px;
+  padding: 18px 24px;
   border-bottom: 1px solid #e4e7ed;
-  background: #fafbfc;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.editor-title {
+.editor-heading {
+  min-width: 0;
+}
+
+.editor-title-row {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.editor-title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 650;
   color: #303133;
   margin: 0;
 }
 
+.editor-description {
+  margin: 6px 0 0;
+  color: #606266;
+  font-size: 13px;
+}
+
+.editor-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid #e4e7ed;
+  border-radius: 999px;
+  color: #606266;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.state-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #67c23a;
+}
+
 .editor-content {
   flex: 1;
-  padding: 24px;
+  padding: 24px 28px;
   overflow-y: auto;
 }
 
 /* 右侧预览区域 */
 .right-preview {
-  background: #f8f9fa;
+  background: #eef1f5;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -805,7 +880,7 @@ watch(() => resumeStore.resumeData, () => {
 }
 
 .preview-header {
-  padding: 16px 20px;
+  padding: 14px 18px;
   background: #ffffff;
   border-bottom: 1px solid #e4e7ed;
   display: flex;
@@ -830,9 +905,15 @@ watch(() => resumeStore.resumeData, () => {
 
 .preview-title h3 {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 650;
   color: #303133;
   margin: 0;
+}
+
+.preview-title p {
+  margin: 4px 0 0;
+  color: #909399;
+  font-size: 12px;
 }
 
 .zoom-controls {
@@ -855,7 +936,7 @@ watch(() => resumeStore.resumeData, () => {
 .preview-content {
   flex: 1;
   overflow: auto;
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -870,10 +951,9 @@ watch(() => resumeStore.resumeData, () => {
 }
 
 .preview-container {
-  /* 移除 transform scale，使用真实尺寸 */
   background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
+  box-shadow: 0 18px 40px rgba(31, 41, 55, 0.16);
+  border-radius: 4px;
   overflow: visible; /* 修正长页面截断 Bug, 允许由于内容撑开 */
   width: 210mm; /* A4纸张宽度 */
   max-width: 210mm; /* 限制最大宽度 */
@@ -882,13 +962,13 @@ watch(() => resumeStore.resumeData, () => {
 /* 响应式设计 */
 @media (max-width: 1400px) {
   .resume-builder-container {
-    grid-template-columns: 240px 4fr 6fr;
+    grid-template-columns: 248px minmax(340px, 4fr) minmax(500px, 6fr);
   }
 }
 
 @media (max-width: 1200px) {
   .resume-builder-container {
-    grid-template-columns: 200px 4fr 6fr;
+    grid-template-columns: 220px minmax(320px, 4fr) minmax(480px, 6fr);
   }
 
   .editor-content {
@@ -910,6 +990,16 @@ watch(() => resumeStore.resumeData, () => {
     height: 100% !important;
     border-right: none;
     overflow-y: auto;
+  }
+
+  .editor-header,
+  .preview-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .preview-title {
+    margin-right: 0;
   }
 
   .preview-content {

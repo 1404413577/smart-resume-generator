@@ -1,7 +1,7 @@
 // SEO配置管理器
 export const seoConfig = {
   // 基础配置
-  baseUrl: import.meta.env.VITE_BASE_URL || 'https://resume-editor.com',
+  baseUrl: import.meta.env.VITE_BASE_URL || 'https://smart-resume-generator-lac.vercel.app',
   siteName: import.meta.env.VITE_SITE_NAME || '简历编辑器',
   siteDescription: import.meta.env.VITE_SITE_DESCRIPTION || '专业的在线简历编辑器，提供多种精美简历模板',
   
@@ -10,7 +10,7 @@ export const seoConfig = {
     title: '简历编辑器 - 专业在线简历制作工具',
     description: '专业的在线简历编辑器，提供多种精美简历模板，支持实时预览、PDF导出。免费制作个人简历，助您求职成功。',
     keywords: '简历编辑器,在线简历制作,简历模板,个人简历,求职简历,简历生成器,免费简历,PDF简历',
-    author: '简历编辑器团队',
+    author: '项目维护者',
     robots: 'index, follow',
     language: 'zh-CN'
   },
@@ -20,17 +20,17 @@ export const seoConfig = {
     type: 'website',
     siteName: '简历编辑器',
     locale: 'zh_CN',
-    image: '/og-image.jpg',
-    imageWidth: 1200,
-    imageHeight: 630
+    image: '/favicon.svg',
+    imageWidth: 512,
+    imageHeight: 512
   },
 
   // Twitter Card配置
   twitterCard: {
     card: 'summary_large_image',
-    site: '@resume_editor',
-    creator: '@resume_editor',
-    image: '/twitter-image.jpg'
+    site: '',
+    creator: '',
+    image: '/favicon.svg'
   },
 
   // 结构化数据模板
@@ -39,12 +39,12 @@ export const seoConfig = {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "简历编辑器",
-      "url": "https://resume-editor.com",
-      "logo": "https://resume-editor.com/logo.png",
-      "description": "专业的在线简历编辑器服务提供商",
+      "url": "https://smart-resume-generator-lac.vercel.app",
+      "logo": "https://smart-resume-generator-lac.vercel.app/favicon.svg",
+      "description": "本地优先的简历编辑工具",
       "contactPoint": {
         "@type": "ContactPoint",
-        "contactType": "customer service",
+        "contactType": "project information",
         "availableLanguage": "Chinese"
       }
     },
@@ -95,7 +95,7 @@ export const seoConfig = {
 
     editor: {
       title: '简历编辑',
-      description: '使用我们的在线编辑器轻松制作专业简历，实时预览效果，支持多种格式导出。',
+      description: '使用在线编辑器制作简历，实时预览效果，支持多种格式导出。',
       keywords: '简历编辑,在线编辑器,简历制作,实时预览,PDF导出',
       path: '/'
     },
@@ -122,9 +122,9 @@ export const seoConfig = {
     },
 
     about: {
-      title: '关于我们',
-      description: '了解简历编辑器团队，我们致力于为用户提供最专业的在线简历制作服务。',
-      keywords: '关于简历编辑器,团队介绍,公司信息',
+      title: '关于项目',
+      description: '了解简历编辑器项目、能力边界、数据保存方式和第三方服务说明。',
+      keywords: '关于简历编辑器,项目说明,本地优先,第三方服务说明',
       path: '/about'
     }
   },

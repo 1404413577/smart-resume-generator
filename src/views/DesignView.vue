@@ -85,8 +85,7 @@ import { useRouter } from 'vue-router'
 import { useResumeStore } from '@stores/resume'
 import { useGlobalStyles } from '@/composables/useGlobalStyles'
 import { getTemplate } from '@templates'
-import { generateOptimizedPDF } from '@utils/pdf/pdfGenerator'
-import { generateMultiPageResumePDF } from '@utils/pdf/multiPagePdfGenerator'
+import { exportResumePdf } from '@/services/exportService'
 import { useWindowSize } from '@vueuse/core'
 import {
   ArrowLeft,
@@ -154,26 +153,21 @@ const zoomIn = () => { if (scale.value < 1.5) scale.value += 0.1 }
 const zoomOut = () => { if (scale.value > 0.4) scale.value -= 0.1 }
 
 const handleExportPDF = async () => {
-  const originalScale = scale.value
   try {
     const filename = `${resumeName.value}_设计版.pdf`
-    const template = getTemplate(resumeStore.selectedTemplate)
-
-    scale.value = 1
     await nextTick()
 
-    if (template?.isMultiPage) {
-      await generateMultiPageResumePDF('resume-preview-design', filename, resumeStore.globalSettings?.pageSettings)
-    } else {
-      await generateOptimizedPDF('resume-preview-design', filename)
-    }
+    await exportResumePdf({
+      elementId: 'resume-preview-design',
+      filename,
+      templateId: resumeStore.selectedTemplate,
+      pageSettings: resumeStore.globalSettings?.pageSettings
+    })
 
     ElMessage.success('PDF 导出成功')
   } catch (error) {
     console.error('Export error:', error)
     ElMessage.error('导出失败')
-  } finally {
-    scale.value = originalScale
   }
 }
 

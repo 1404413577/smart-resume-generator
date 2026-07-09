@@ -7,6 +7,8 @@
  */
 
 import { localAiService } from './localAi'
+import { safeJsonParse } from './json'
+import { normalizeResumeData } from '@/domain/resumeNormalizer'
 
 const DEFAULT_TIMEOUT_MS = 120000
 const SETTINGS_STORAGE_KEY = 'resumeBuilderSettings'
@@ -79,31 +81,6 @@ async function throttleRequest() {
     await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL - timeSinceLastRequest))
   }
   lastRequestTime = Date.now()
-}
-
-/** 安全解析 AI 返回的 JSON，自动清理 markdown 代码块等常见格式问题 */
-function safeJsonParse(text, fallback) {
-  try {
-    return JSON.parse(text)
-  } catch {
-    let cleaned = String(text || '').trim()
-    cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '')
-
-    const start = cleaned.indexOf('{')
-    const end = cleaned.lastIndexOf('}')
-    if (start !== -1 && end > start) {
-      try { return JSON.parse(cleaned.slice(start, end + 1)) } catch {}
-    }
-
-    const arrStart = cleaned.indexOf('[')
-    const arrEnd = cleaned.lastIndexOf(']')
-    if (arrStart !== -1 && arrEnd > arrStart) {
-      try { return JSON.parse(cleaned.slice(arrStart, arrEnd + 1)) } catch {}
-    }
-
-    console.warn('[safeJsonParse] 解析失败，使用 fallback')
-    return fallback
-  }
 }
 
 function messagesToGeminiPayload(messages) {
@@ -635,7 +612,7 @@ const CAREER_TEMPLATES = {
   },
   'product-manager': {
     name: '产品经理',
-    skills: ['产品规划', '需求分析', 'Axure', 'Figma', '数据分析', '项目管理'],
+    skills: ['产品规划', '需求分析', '原型设计', '协作评审', '数据分析', '项目管理'],
     summary: '拥有{experience}年产品管理经验，擅长用户需求分析和产品规划，具备敏锐的市场洞察力和优秀的跨部门协调能力。',
     workTemplate: {
       responsibilities: [
@@ -649,7 +626,7 @@ const CAREER_TEMPLATES = {
   },
   'ui-designer': {
     name: 'UI设计师',
-    skills: ['Figma', 'Sketch', 'Adobe Creative Suite', '原型设计', '用户体验', '视觉设计'],
+    skills: ['界面设计工具', '原型设计', '用户体验', '视觉设计', '设计系统', '可用性测试'],
     summary: '具有{experience}年UI/UX设计经验的设计师，擅长用户界面设计和交互体验优化，对设计趋势敏感，追求完美的视觉效果。',
     workTemplate: {
       responsibilities: [
@@ -756,6 +733,7 @@ export async function generateCompleteResume(options) {
     {
       "degree": "学位",
       "major": "专业",
+      "studyType": "学习形式，如全日制或非全日制",
       "school": "学校名称",
       "graduationDate": "毕业时间",
       "startDate": "开始时间",
@@ -828,7 +806,7 @@ function validateAndEnhanceResumeData(data, template, options = {}) {
     achievements: work.achievements || work.responsibilities || []
   }))
 
-  return enhanced
+  return normalizeResumeData(enhanced)
 }
 
 /**
@@ -837,7 +815,7 @@ function validateAndEnhanceResumeData(data, template, options = {}) {
 function generateResumeFromTemplate(options, template) {
   const { name, experience, education } = options
 
-  return {
+  return normalizeResumeData({
     personalInfo: {
       name,
       email: `${String(name || 'user').toLowerCase().replace(/\s+/g, '')}@email.com`,
@@ -864,6 +842,7 @@ function generateResumeFromTemplate(options, template) {
       {
         degree: '本科',
         major: '计算机科学与技术',
+        studyType: '全日制',
         school: education || '示例大学',
         graduationDate: '2022-06',
         startDate: '2018-09',
@@ -884,7 +863,7 @@ function generateResumeFromTemplate(options, template) {
         highlights: ['完成核心功能交付', '提升业务处理效率']
       }
     ]
-  }
+  })
 }
 
 /**
@@ -893,6 +872,17 @@ function generateResumeFromTemplate(options, template) {
  */
 export async function checkAPIAvailability() {
   try {
+    const configs = AIService.getConfigs()
+    if (
+      configs.aiEngine === 'local' &&
+      !localAiService.isModelReady(configs.localModelId, configs.localAiType)
+    ) {
+      return {
+        ok: false,
+        message: '请先点击“下载并加载模型”，完成后再测试浏览器本地模型。'
+      }
+    }
+
     await AIService.chatCompletion(
       [{ role: 'user', content: '请直接回复 OK，不要解释。' }],
       null,

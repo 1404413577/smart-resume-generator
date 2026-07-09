@@ -103,7 +103,7 @@ function generateHtmlSitemap() {
     <title>网站地图 - 简历编辑器</title>
     <meta name="description" content="简历编辑器网站地图，包含所有主要页面和功能链接。">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        body { font-family: 'Noto Sans SC', 'Source Han Sans SC', system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
         h1 { color: #409eff; }
         .section { margin: 30px 0; }
         .section h2 { color: #333; border-bottom: 2px solid #409eff; padding-bottom: 10px; }
@@ -116,7 +116,7 @@ function generateHtmlSitemap() {
 </head>
 <body>
     <h1>网站地图</h1>
-    <p>欢迎访问简历编辑器网站地图，这里包含了我们网站的所有主要页面。</p>
+    <p>简历编辑器网站地图，包含当前应用的主要页面。</p>
     
     <div class="section">
         <h2>主要页面</h2>
@@ -171,7 +171,7 @@ function getPageTitle(url) {
     '/design': '设计工作室',
     '/ai-assistant': 'AI 智能助手',
     '/settings': '设置',
-    '/about': '关于我们'
+    '/about': '关于项目'
   }
   return titles[url] || url
 }

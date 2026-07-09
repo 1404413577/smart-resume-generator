@@ -64,6 +64,13 @@
                 <pre v-text="projectsTemplate"></pre>
               </div>
             </div>
+
+            <div class="doc-section">
+              <h4>证书获得（循环）</h4>
+              <div class="variables">
+                <pre v-text="certificationsTemplate"></pre>
+              </div>
+            </div>
           </div>
         </div>
       </el-collapse-transition>
@@ -117,6 +124,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Document, UploadFilled } from '@element-plus/icons-vue'
 import { validateTemplateFile, fillWordTemplate } from '@utils/word/templateExport'
+import { createDownload } from '@/services/exportService'
 import { useResumeStore } from '@stores/resume'
 
 // 模板示例文本
@@ -140,6 +148,11 @@ const projectsTemplate = `{{#projects}}
 {{description}}
 技术栈：{{technologiesText}}
 {{/projects}}`
+
+const certificationsTemplate = `{{#certifications}}
+{{name}} | {{date}}
+分数：{{score}}
+{{/certifications}}`
 
 const emit = defineEmits(['export-success', 'export-error'])
 
@@ -190,15 +203,7 @@ const handleExport = async () => {
     const name = resumeStore.resumeData.personalInfo?.name?.trim()
     const filename = `${name || '简历'}-模板版.docx`
     
-    // 下载文件
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    createDownload(blob, filename)
     
     ElMessage.success('模板导出成功！')
     emit('export-success', { filename, blob })

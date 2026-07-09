@@ -61,12 +61,16 @@
                 <TemplatePreview
                   :template="template"
                   :width="200"
-                  :height="150"
-                  :resume-data="resumeStore.resumeData"
+                  :height="280"
                 />
               </div>
               <div class="template-info">
                 <h3 class="template-name">{{ template.name }}</h3>
+                <div class="template-mode-row">
+                  <el-tag size="small" :type="template.fixedLayout ? 'warning' : 'success'">
+                    {{ template.fixedLayout ? '固定排版' : '自由设计' }}
+                  </el-tag>
+                </div>
                 <p class="template-description">{{ template.description }}</p>
                 <div class="template-features" v-if="template.features?.length">
                   <el-tag
@@ -103,7 +107,7 @@
                 <TemplatePreview
                   :template="template"
                   :width="220"
-                  :resume-data="resumeStore.resumeData"
+                  :height="310"
                 />
                 <div class="preview-overlay">
                   <el-button type="primary" size="small">选择模板</el-button>
@@ -111,6 +115,11 @@
               </div>
               <div class="template-info">
                 <h3 class="template-name">{{ template.name }}</h3>
+                <div class="template-mode-row">
+                  <el-tag size="small" :type="template.fixedLayout ? 'warning' : 'success'">
+                    {{ template.fixedLayout ? '固定排版' : '自由设计' }}
+                  </el-tag>
+                </div>
                 <p class="template-description">{{ template.description }}</p>
                 <div class="template-features" v-if="template.features?.length">
                   <el-tag
@@ -140,15 +149,20 @@
               <div class="list-preview">
                 <TemplatePreview
                   :template="template"
-                  :width="120"
-                  :height="90"
-                  :resume-data="resumeStore.resumeData"
+                  :width="96"
+                  :height="136"
                 />
               </div>
               <div class="list-content">
                 <div class="list-header">
                   <h3 class="template-name">{{ template.name }}</h3>
                   <el-button type="primary" size="small">选择模板</el-button>
+                </div>
+                <div class="template-mode-row list-mode-row">
+                  <el-tag size="small" :type="template.fixedLayout ? 'warning' : 'success'">
+                    {{ template.fixedLayout ? '固定排版' : '自由设计' }}
+                  </el-tag>
+                  <span>{{ template.fixedLayout ? '结构锁定，适合直接投递' : '可在设计工作室调整版式' }}</span>
                 </div>
                 <p class="template-description">{{ template.description }}</p>
                 <div class="template-meta">
@@ -187,14 +201,24 @@
           <div class="preview-container">
             <TemplatePreview
               :template="selectedTemplate"
-              :scale="0.4"
+              :width="360"
+              :height="510"
               :resume-data="resumeStore.resumeData"
+              :use-sample-data="false"
             />
           </div>
         </div>
         <div class="dialog-info">
           <h3>{{ selectedTemplate.name }}</h3>
           <p>{{ selectedTemplate.description }}</p>
+          <div class="template-mode-note" :class="{ fixed: selectedTemplate.fixedLayout }">
+            <strong>{{ selectedTemplate.fixedLayout ? '固定排版模板' : '自由设计模板' }}</strong>
+            <span>
+              {{ selectedTemplate.fixedLayout
+                ? '此模板锁定主要结构，可继续调整配色、字体、字号、行高和页边距。'
+                : '此模板支持在设计工作室中调整整体版式、标题样式、密度和视觉风格。' }}
+            </span>
+          </div>
           <div class="dialog-features" v-if="selectedTemplate.features?.length">
             <h4>特色功能：</h4>
             <ul>
@@ -229,8 +253,9 @@
       <div class="fullscreen-preview-container" v-if="selectedTemplate">
         <TemplatePreview
           :template="selectedTemplate"
-          :scale="0.8"
+          :scale="0.72"
           :resume-data="resumeStore.resumeData"
+          :use-sample-data="false"
         />
       </div>
       <template #footer>
@@ -491,7 +516,8 @@ onMounted(async () => {
 }
 
 .template-preview {
-  height: 200px;
+  min-height: 340px;
+  padding: 16px;
   background: #f5f7fa;
   display: flex;
   align-items: center;
@@ -541,6 +567,18 @@ onMounted(async () => {
   line-height: 1.4;
 }
 
+.template-mode-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.list-mode-row {
+  color: #606266;
+  font-size: 12px;
+}
+
 .template-features {
   display: flex;
   flex-wrap: wrap;
@@ -583,8 +621,8 @@ onMounted(async () => {
 }
 
 .list-preview {
-  width: 120px;
-  height: 90px;
+  width: 128px;
+  min-height: 152px;
   flex-shrink: 0;
   background: #f5f7fa;
   display: flex;
@@ -629,8 +667,8 @@ onMounted(async () => {
 
 .preview-container {
   width: 100%;
-  height: 400px;
-  overflow: hidden;
+  min-height: 540px;
+  overflow: auto;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   background: #f8f9fa;
@@ -664,6 +702,29 @@ onMounted(async () => {
   color: #606266;
   margin: 0 0 20px 0;
   line-height: 1.6;
+}
+
+.template-mode-note {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  border: 1px solid #d9ecff;
+  border-radius: 8px;
+  background: #f4f9ff;
+  color: #1f4e79;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.template-mode-note.fixed {
+  border-color: #faecd8;
+  background: #fdf6ec;
+  color: #7a4b12;
+}
+
+.template-mode-note strong {
+  font-weight: 700;
 }
 
 .dialog-features,
@@ -735,7 +796,7 @@ onMounted(async () => {
   
   .list-preview {
     width: 100%;
-    height: 120px;
+    min-height: 180px;
   }
   
   .template-dialog-content {

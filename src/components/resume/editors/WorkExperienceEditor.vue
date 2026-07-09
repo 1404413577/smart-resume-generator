@@ -61,7 +61,7 @@
                 <el-form-item label="公司名称" required>
                   <el-input
                     v-model="experience.company"
-                    placeholder="如：阿里巴巴集团"
+                    placeholder="如：某互联网公司"
                     @input="updateExperience(experience.id, experience)"
                   />
                 </el-form-item>

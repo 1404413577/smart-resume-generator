@@ -1,0 +1,10 @@
+services:
+  resume-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: smart-resume-generator:local
+    container_name: smart-resume-generator
+    ports:
+      - "8081:80"
+    restart: unless-stopped

@@ -6,7 +6,7 @@ import path from 'path'
 const createSVGIcon = (size = 32, color = '#409eff') => {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <rect width="${size}" height="${size}" fill="${color}" rx="4"/>
-  <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="${size * 0.6}" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="central">简</text>
+  <text x="50%" y="50%" font-family="Noto Sans SC, Source Han Sans SC, system-ui, sans-serif" font-size="${size * 0.6}" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="central">简</text>
 </svg>`
 }
 

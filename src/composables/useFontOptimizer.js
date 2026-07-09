@@ -72,9 +72,9 @@ export function useFontOptimizer() {
     const fontId = 'dynamic-subset-font'
     let link = document.getElementById(fontId)
 
-    // 我们以“思源宋体” (Noto Serif SC) 为例，如果简历中有设置
+    // 默认使用思源黑体 / Noto Sans SC，保持与版权安全字体栈一致。
     // 注意：这里可以根据 templateSettings 里的字体动态调整
-    const fontFamily = 'Noto+Serif+SC:wght@400;700'
+    const fontFamily = 'Noto+Sans+SC:wght@400;700'
     const newHref = `https://fonts.googleapis.com/css2?family=${fontFamily}&text=${chars}&display=swap`
 
     if (!link) {

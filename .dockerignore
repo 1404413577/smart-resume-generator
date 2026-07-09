@@ -1,0 +1,12 @@
+node_modules
+dist-ssr
+.git
+.agents
+.claude
+.impeccable
+.vscode
+*.log
+*.local
+.env
+.env.development
+.env.production

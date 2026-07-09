@@ -13,62 +13,76 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     throw new Error(`找不到ID为 ${elementId} 的元素`)
   }
 
-  const element = rootElement.querySelector('.unified-resume-template, .resume-preview') || rootElement
-
-  element.classList.add('pdf-export')
-
-  const originalStyle = element.style.cssText
-  let clone = null
+  const sourceElement = rootElement.querySelector('.base-resume-template, .unified-resume-template, .resume-preview') || rootElement
+  const originalRootStyle = rootElement.style.cssText
+  const originalRootClass = rootElement.className
+  let exportRoot = null
+  let exportElement = null
+  let exportHost = null
 
   try {
-    // 设置PDF样式
-    element.style.width = '210mm'
-    element.style.height = 'auto'
-    element.style.minHeight = 'auto'
-    element.style.maxWidth = '210mm'
-    element.style.padding = '0'
-    element.style.margin = '0'
-    element.style.boxSizing = 'border-box'
-    element.style.backgroundColor = '#ffffff'
-    element.style.transform = 'none'
-    element.style.position = 'relative'
-    element.style.overflow = 'visible'
-    element.style.display = 'block'
-    element.style.webkitFontSmoothing = 'antialiased'
-    element.style.mozOsxFontSmoothing = 'grayscale'
-    element.style.textRendering = 'optimizeLegibility'
+    exportRoot = rootElement.cloneNode(true)
+    exportRoot.style.width = '210mm'
+    exportRoot.style.maxWidth = '210mm'
+    exportRoot.style.margin = '0'
+    exportRoot.style.padding = '0'
+    exportRoot.style.transform = 'none'
+    exportRoot.style.transformOrigin = 'top left'
+    exportRoot.style.overflow = 'visible'
 
-    const currentFontFamily = getComputedStyle(element).fontFamily || 'system-ui'
-    if (!currentFontFamily.includes('Microsoft YaHei') && !currentFontFamily.includes('SimSun')) {
+    exportElement = exportRoot.querySelector('.base-resume-template, .unified-resume-template, .resume-preview') || exportRoot
+    exportElement.classList.add('pdf-export')
+    exportElement.style.width = '210mm'
+    exportElement.style.maxWidth = '210mm'
+    exportElement.style.margin = '0'
+    exportElement.style.transform = 'none'
+    exportElement.style.transformOrigin = 'top left'
+    exportElement.style.position = 'relative'
+    exportElement.style.overflow = 'visible'
+    exportElement.style.backgroundColor = '#ffffff'
+    exportElement.style.webkitFontSmoothing = 'antialiased'
+    exportElement.style.mozOsxFontSmoothing = 'grayscale'
+    exportElement.style.textRendering = 'optimizeLegibility'
+
+    exportHost = document.createElement('div')
+    exportHost.className = 'pdf-export-host'
+    exportHost.style.cssText = `
+      position: fixed;
+      left: -10000px;
+      top: 0;
+      width: 210mm;
+      min-height: 297mm;
+      background: #ffffff;
+      overflow: visible;
+      z-index: 0;
+      transform: none;
+      pointer-events: none;
+    `
+    exportHost.appendChild(exportRoot)
+    document.body.appendChild(exportHost)
+
+    const currentFontFamily = getComputedStyle(sourceElement).fontFamily || 'system-ui'
+    if (!currentFontFamily.includes('Noto Sans SC') && !currentFontFamily.includes('Source Han Sans')) {
       const safeFontFamily = currentFontFamily.trim()
       if (safeFontFamily) {
-        element.style.fontFamily = `${safeFontFamily}, "Microsoft YaHei", "SimSun", sans-serif`
+        exportElement.style.fontFamily = `${safeFontFamily}, "Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif`
       } else {
-        element.style.fontFamily = '"Microsoft YaHei", "SimSun", system-ui, sans-serif'
+        exportElement.style.fontFamily = '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif'
       }
     }
 
-    // 智能分页处理
-    clone = element.cloneNode(true)
-    clone.style.position = 'absolute'
-    clone.style.left = '-9999px'
-    clone.style.top = '0'
-    clone.style.width = '210mm'
-    clone.style.visibility = 'hidden'
-    document.body.appendChild(clone)
-
     const pageHeightPx = 1123
-    const breaks = calculateIntelligentPageBreaks(clone, { pageHeightPx })
-    applyIntelligentGaps(element, breaks)
+    const breaks = calculateIntelligentPageBreaks(exportElement, { pageHeightPx })
+    applyIntelligentGaps(exportElement, breaks)
 
     await new Promise(resolve => setTimeout(resolve, 500))
 
-    const contentHeight = element.scrollHeight
-    const contentWidth = element.scrollWidth
-    const pixelWidth = Math.max(1, Math.ceil(contentWidth || element.offsetWidth))
-    const pixelHeight = Math.max(1, Math.ceil(contentHeight || element.offsetHeight))
+    const contentHeight = exportElement.scrollHeight
+    const contentWidth = exportElement.scrollWidth
+    const pixelWidth = Math.max(1, Math.ceil(contentWidth || exportElement.offsetWidth))
+    const pixelHeight = Math.max(1, Math.ceil(contentHeight || exportElement.offsetHeight))
 
-    const canvas = await html2canvas(element, {
+    const canvas = await html2canvas(exportElement, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
@@ -127,9 +141,6 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
       }
     }
 
-    // 清理分页间隔（还原 DOM）
-    element.querySelectorAll('.pdf-page-spacer').forEach(s => s.remove())
-
     // 保存PDF
     const pdfBlob = pdf.output('blob')
     const url = URL.createObjectURL(pdfBlob)
@@ -147,12 +158,10 @@ export async function generateOptimizedPDF(elementId, filename = 'resume.pdf') {
     console.error('优化PDF生成失败:', error)
     throw error
   } finally {
-    // 确保样式和DOM始终恢复
-    element.style.cssText = originalStyle
-    element.classList.remove('pdf-export')
-    element.querySelectorAll('.pdf-page-spacer').forEach(s => s.remove())
-    if (clone && clone.parentNode) {
-      clone.parentNode.removeChild(clone)
+    rootElement.style.cssText = originalRootStyle
+    rootElement.className = originalRootClass
+    if (exportHost && exportHost.parentNode) {
+      exportHost.parentNode.removeChild(exportHost)
     }
   }
 }

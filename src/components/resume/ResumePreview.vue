@@ -102,7 +102,9 @@
               <div class="education-title">
                 <h3 class="degree">{{ edu.degree }}</h3>
                 <h4 class="school">{{ edu.school }}</h4>
-                <div v-if="edu.major" class="major">{{ edu.major }}</div>
+                <div v-if="edu.major || edu.studyType" class="major">
+                  {{ [edu.major, edu.studyType].filter(Boolean).join(' / ') }}
+                </div>
               </div>
               <div class="education-date">
                 {{ formatDate(edu.startDate) }} - {{ edu.endDate ? formatDate(edu.endDate) : '至今' }}
@@ -144,6 +146,32 @@
         </div>
         <div v-else class="placeholder-content">
           <p class="placeholder-text">请在左侧编辑器中添加技能特长...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 证书获得 -->
+    <div class="resume-section">
+      <h2 class="section-title">证书获得</h2>
+      <div class="section-content">
+        <div v-if="resumeData.certifications.length > 0">
+          <div v-for="(cert, index) in resumeData.certifications" :key="index" class="certification-item">
+            <div class="certification-header">
+              <div class="certification-title">
+                <h3 class="certification-name">{{ cert.name }}</h3>
+                <div v-if="cert.issuer" class="certification-issuer">{{ cert.issuer }}</div>
+              </div>
+              <div v-if="cert.date" class="certification-date">
+                {{ formatDate(cert.date) }}
+              </div>
+            </div>
+            <div v-if="cert.score" class="certification-score">
+              分数: {{ cert.score }}
+            </div>
+          </div>
+        </div>
+        <div v-else class="placeholder-content">
+          <p class="placeholder-text">请在左侧编辑器中添加证书...</p>
         </div>
       </div>
     </div>
@@ -289,7 +317,7 @@ const getSkillWidth = (level) => {
   border-radius: 8px;
 
   /* 优化字体设置，确保跨平台一致性，特别是中文字符 */
-  font-family: 'Segoe UI', 'Microsoft YaHei', '微软雅黑', 'SimSun', '宋体', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Noto Sans SC', 'Source Han Sans SC', 'Source Han Sans CN', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6; /* 增加行间距，提高可读性 */
   letter-spacing: 0.05em; /* 增加字符间距，改善中文显示 */
@@ -789,6 +817,51 @@ const getSkillWidth = (level) => {
   text-decoration: underline;
 }
 
+/* 证书获得 */
+.certification-item {
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  page-break-inside: avoid;
+}
+
+.certification-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.certification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 5px;
+}
+
+.certification-title .certification-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 3px 0;
+}
+
+.certification-title .certification-issuer {
+  font-size: 14px;
+  color: #666;
+}
+
+.certification-date {
+  font-size: 14px;
+  color: #888;
+  white-space: nowrap;
+  margin-left: 20px;
+}
+
+.certification-score {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
 /* 占位内容样式 */
 .placeholder-content {
   min-height: 40px;
@@ -838,6 +911,7 @@ const getSkillWidth = (level) => {
 
   .experience-header,
   .education-header,
+  .certification-header,
   .project-header {
     flex-direction: column;
     align-items: flex-start;
@@ -845,6 +919,7 @@ const getSkillWidth = (level) => {
 
   .experience-date,
   .education-date,
+  .certification-date,
   .project-date {
     margin-left: 0;
     margin-top: 4px;

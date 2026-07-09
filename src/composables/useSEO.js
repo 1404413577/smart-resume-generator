@@ -109,10 +109,10 @@ export function useSEO() {
     },
     editor: {
       title: '简历编辑',
-      description: '使用我们的在线编辑器轻松制作专业简历，实时预览效果，支持多种格式导出。',
+      description: '使用在线编辑器制作简历，实时预览效果，支持多种格式导出。',
       keywords: '简历编辑,在线编辑器,简历制作,实时预览,PDF导出',
       'og:title': '简历编辑器 - 在线制作专业简历',
-      'og:description': '使用我们的在线编辑器轻松制作专业简历，实时预览效果，支持多种格式导出。'
+      'og:description': '使用在线编辑器制作简历，实时预览效果，支持多种格式导出。'
     }
   }
   
@@ -181,14 +181,14 @@ export function useSEO() {
       "description": article.description,
       "author": {
         "@type": "Organization",
-        "name": "简历编辑器团队"
+        "name": "项目维护者"
       },
       "publisher": {
         "@type": "Organization",
         "name": "简历编辑器",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://resume-editor.example.com/logo.png"
+          "url": "https://smart-resume-generator-lac.vercel.app/favicon.svg"
         }
       },
       "datePublished": article.publishDate,
@@ -208,7 +208,7 @@ export function useSEO() {
         }
         
         // 设置canonical URL
-        const baseUrl = 'https://resume-editor.example.com'
+        const baseUrl = 'https://smart-resume-generator-lac.vercel.app'
         setCanonical(`${baseUrl}${to.path}`)
       }, { immediate: true })
     }

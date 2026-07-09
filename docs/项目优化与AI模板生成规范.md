@@ -11,35 +11,35 @@
 
 ### 1.1 优先优化模板系统
 
-当前模板注册在 `src/templates/index.js`，多个模板 ID 共用 `src/templates/components/UnifiedResumeTemplate.vue`，通过 `templateId`、CSS class、CSS 变量和全局设置区分风格。
+当前模板注册在 `src/templates/index.js`，每个模板 ID 对应一个独立 Vue 组件；这些组件统一复用 `src/templates/components/BaseResumeTemplate.vue` 的简历字段渲染、章节顺序、头像位置和 CSS 变量。
 
 这个方向是对的，因为简历模板最怕每新增一个模板就复制一份完整组件，后期会导致：
 
 - 字段渲染逻辑重复。
 - PDF 导出行为不一致。
 - 头像、章节排序、全局样式不统一。
-- AI 新建模板时容易漏字段、漏响应式、漏打印样式。
+- 单个模板文件过长，后期维护困难。
 
-后续建议继续强化“统一模板内扩展 variant”的方式：
+后续建议继续强化“独立模板组件 + 共享基础渲染”的方式：
 
-- 普通模板：只新增模板元数据和 `templateVariants` 配置。
-- 中等差异模板：在 `UnifiedResumeTemplate.vue` 内新增少量 layout class。
-- 强差异模板：才允许新增独立 Vue 组件。
+- 普通模板：新增独立 wrapper 组件，复用 `BaseResumeTemplate.vue`，只写该模板自己的 scoped CSS。
+- 中等差异模板：仍复用 `BaseResumeTemplate.vue`，在独立组件中通过 `:deep(.template-*)` 覆盖布局和视觉。
+- 强差异模板：允许完全自定义组件，但必须遵守统一 props、字段、A4 和导出规则。
 
 判断标准：
 
 | 类型 | 处理方式 | 示例 |
 | --- | --- | --- |
-| 只是颜色、标题线条、密度不同 | 扩展 registry + variant | 经典、现代、紧凑 |
-| 头部、章节标题、技能标签样式不同 | 扩展 UnifiedResumeTemplate class | 技术、创意、高管 |
-| 真实双栏、多页特殊布局、作品集型简历 | 新增独立组件 | 左右栏、设计师作品型、学术论文型 |
+| 只是颜色、标题线条、密度不同 | 独立 wrapper + BaseResumeTemplate | 经典、现代、紧凑 |
+| 头部、章节标题、技能标签样式不同 | 独立 wrapper 内写 scoped CSS | 技术、创意、高管 |
+| 真实双栏、多页特殊布局、作品集型简历 | 独立完整组件 | 左右栏、设计师作品型、学术论文型 |
 
 ### 1.2 拆分过重模块
 
 项目后续应优先降低几个重模块的职责：
 
 - `src/stores/resume.js`：同时管理简历数据、模板、样式、保存、迁移、自定义模块，后期建议拆为 `resumeDataStore`、`templateStore`、`styleStore`、`documentStore`。
-- `src/templates/components/UnifiedResumeTemplate.vue`：当前承担渲染、variant、样式变量和全部 CSS。可以先保留，但后续应把模板配置、章节渲染 helper、样式 token 拆出去。
+- `src/templates/components/BaseResumeTemplate.vue`：当前承担共享字段渲染、章节顺序、头像位置和基础 CSS。后续应继续保持轻量，只放通用逻辑，不堆具体模板视觉。
 - PDF 导出工具：目前存在多套导出逻辑，应统一成一个 `exportService`，页面只选择导出类型，不直接调用底层实现。
 - AI 服务：provider、prompt、JSON 解析和简历业务逻辑应拆开，避免后续新增模型时影响模板和编辑器。
 
@@ -65,6 +65,15 @@ src/domain/resumeValidator.js
 ```
 
 所有 AI 生成、JSON 恢复、默认数据和模板渲染前都先经过 normalizer。这样模板只关心稳定字段，不需要兼容一堆历史命名。
+
+当前状态：
+
+- [x] 已新增 `src/domain/resumeSchema.js`，集中维护空简历结构、章节 key 和头像位置枚举。
+- [x] 已新增 `src/domain/resumeNormalizer.js`，统一补齐缺失字段、数组字段和历史命名兼容。
+- [x] 已新增 `src/domain/resumeValidator.js`，提供轻量 `{ valid, errors, warnings }` 校验结果。
+- [x] `resumeStore` 初始化、IndexedDB 加载、localStorage 迁移、重置和默认数据填充已接入 normalizer。
+- [x] AI 完整简历生成和模板兜底生成已接入 normalizer，兼容 `jobTitle/responsibilities/graduationDate/proficiency` 等旧字段。
+- [x] 模板预览和 Word 导出入口已接入 normalizer，减少旧数据导致的渲染和导出异常。
 
 ### 1.4 功能裁剪建议
 
@@ -114,19 +123,32 @@ src/domain/resumeValidator.js
 
 以后让 AI 新建模板时，必须先判断模板属于哪一类：
 
-### 2.1 优先扩展统一模板
+### 2.1 默认生成独立模板组件
 
-如果新模板只是风格不同，AI 只能改这些位置：
+如果新模板只是风格不同，AI 也必须生成一个独立 Vue 组件，但组件内部优先复用 `BaseResumeTemplate.vue`。AI 只能改这些位置：
 
 - `src/templates/index.js`
 - `src/templates/templateVariants.js` 中的 `templateVariants`
-- `UnifiedResumeTemplate.vue` 的 scoped CSS 中新增对应 `.layout-*`、`.accent-*`、`.design-*` 样式
+- `src/templates/components/NewTemplateName.vue`
 
-不能复制整个 `UnifiedResumeTemplate.vue` 新建一份。
+不能把所有模板样式继续堆进 `BaseResumeTemplate.vue` 或 `UnifiedResumeTemplate.vue`。
 
-### 2.2 独立模板必须有明确理由
+### 2.2 独立模板分两类
 
-只有满足以下任一条件，才允许新增独立模板组件：
+默认独立模板应是轻量 wrapper：
+
+```vue
+<template>
+  <BaseResumeTemplate
+    :resume-data="resumeData"
+    :template-id="templateId"
+    :render-mode="renderMode"
+    template-class="template-new-id"
+  />
+</template>
+```
+
+只有满足以下任一条件，才允许不复用 `BaseResumeTemplate.vue`，改为完整自定义组件：
 
 - 需要真实双栏布局，且章节可按左右栏分配。
 - 需要和当前单栏流式结构完全不同。
@@ -134,7 +156,7 @@ src/domain/resumeValidator.js
 - 需要独立的缩略图渲染逻辑。
 - 需要面向特定岗位的强结构模板，例如学术 CV、作品集型简历。
 
-独立模板也必须接收统一 props：
+所有模板组件都必须接收统一 props：
 
 ```js
 const props = defineProps({
@@ -157,7 +179,7 @@ const props = defineProps({
 ```js
 templateId: {
   name: '模板中文名',
-  component: UnifiedTemplate,
+  component: templates['templateId'],
   description: '一句话说明模板适合什么场景',
   category: 'professional',
   preview: '/images/templates/template-id-preview.png',
@@ -196,11 +218,11 @@ tech         // 技术开发
 - `TemplatesView.vue` 的筛选项
 - 文档中的分类说明
 
-## 4. UnifiedResumeTemplate 扩展规范
+## 4. BaseResumeTemplate 扩展规范
 
 ### 4.1 templateVariants
 
-新增统一模板 variant 时，必须在 `src/templates/templateVariants.js` 的 `templateVariants` 中增加配置：
+新增模板时，仍必须在 `src/templates/templateVariants.js` 的 `templateVariants` 中增加配置，供校验、脚手架和旧兼容入口读取：
 
 ```js
 newTemplateId: {
@@ -218,11 +240,11 @@ newTemplateId: {
 | `density` | `compact`、`normal`、`loose` | 控制信息密度 |
 | `accent` | `line`、`panel`、`block`、`band` | 控制标题和章节强调方式 |
 
-新增 layout 或 accent 后，CSS 必须有对应 class。
+新增模板的具体视觉 CSS 写在独立组件内。`BaseResumeTemplate.vue` 不再要求存在对应 `.layout-*` 或 `.accent-*` 样式。
 
 ### 4.2 CSS class 命名
 
-只能使用这些前缀：
+模板组件内优先使用这些 class 前缀：
 
 ```text
 layout-*
@@ -358,7 +380,7 @@ AI 必须先读取：
 
 ```text
 src/templates/index.js
-src/templates/components/UnifiedResumeTemplate.vue
+src/templates/components/BaseResumeTemplate.vue
 src/components/templates/TemplatePreview.vue
 src/stores/resume.js
 src/data.js
@@ -377,28 +399,32 @@ src/styles/print.css
 AI 必须先回答：
 
 ```text
-本模板是扩展 UnifiedResumeTemplate，还是新增独立组件？
+本模板是复用 BaseResumeTemplate 的轻量组件，还是完整自定义组件？
 理由是什么？
 需要修改哪些文件？
 ```
 
-默认选择扩展 `UnifiedResumeTemplate`。
+默认选择复用 `BaseResumeTemplate`。
 
 ### 6.3 第三步：生成代码
 
-扩展统一模板时，AI 只能做这些改动：
+复用 `BaseResumeTemplate` 时，AI 只能做这些改动：
 
-1. 在 `templateRegistry` 新增模板元数据。
-2. 在 `templateVariants` 新增 variant。
-3. 在 CSS 中新增必要的 `.layout-*`、`.accent-*` 样式。
-4. 如有必要，补充模板预览图片路径，但不能让不存在的路径破坏页面。
+1. 新建独立模板组件，内部引用 `BaseResumeTemplate`。
+2. 在 `templateRegistry` 新增模板元数据。
+3. 在 `templates` 映射中注册组件。
+4. 在 `templateVariants` 新增 variant。
+5. 如有必要，补充模板预览图片路径，但不能让不存在的路径破坏页面。
 
-新增独立组件时，AI 需要：
+新增模板时，AI 需要：
 
 1. 新建 Vue 组件。
-2. 在 `templateRegistry` 注册。
-3. 确保 `TemplatePreview.vue` 可以正常渲染。
-4. 确保 props 和数据字段兼容。
+2. 在 `src/templates/index.js` 顶部 import 组件。
+3. 在 `templates` 映射中 `markRaw` 注册。
+4. 在 `templateRegistry` 注册元数据。
+5. 在 `templateVariants` 增加配置。
+6. 确保 `TemplatePreview.vue` 可以正常渲染。
+7. 确保 props 和数据字段兼容。
 
 ### 6.4 第四步：本地验证
 
@@ -434,12 +460,12 @@ npm run build
 - 适合岗位：{suitableFor}
 - 视觉风格：{styleDescription}
 - 信息密度：{compact | normal | loose}
-- 是否允许独立组件：默认不允许，除非你说明理由
+- 组件类型：默认复用 BaseResumeTemplate
 
 执行规则：
 1. 先阅读 docs/项目优化与AI模板生成规范.md。
-2. 先阅读 src/templates/index.js、src/templates/components/UnifiedResumeTemplate.vue、src/components/templates/TemplatePreview.vue、src/stores/resume.js、src/data.js。
-3. 默认通过扩展 UnifiedResumeTemplate 实现，不要复制整个模板组件。
+2. 先阅读 src/templates/index.js、src/templates/components/BaseResumeTemplate.vue、src/components/templates/TemplatePreview.vue、src/stores/resume.js、src/data.js。
+3. 默认新建独立模板组件并复用 BaseResumeTemplate，不要把样式堆进 BaseResumeTemplate。
 4. 必须使用现有 resumeData 字段，不要发明新字段。
 5. 必须支持个人信息、简介、工作经历、教育、技能、项目、证书、语言。
 6. 必须保持 A4 打印友好，根元素 210mm 宽，章节避免被分页截断。
@@ -447,7 +473,7 @@ npm run build
 8. 改完运行 npm run build，并说明验证结果。
 
 输出要求：
-- 说明选择扩展统一模板还是新增独立组件。
+- 说明选择复用 BaseResumeTemplate 还是完整自定义组件。
 - 列出修改文件。
 - 给出模板适配说明。
 - 不要改无关功能。
@@ -567,7 +593,9 @@ src/templates/
 ├── templateCategories.js
 ├── templateVariants.js
 ├── components/
-│   └── UnifiedResumeTemplate.vue
+│   ├── BaseResumeTemplate.vue
+│   ├── UnifiedResumeTemplate.vue
+│   └── *Template.vue
 └── validators/
     └── validateTemplateRegistry.js
 ```
@@ -576,7 +604,9 @@ src/templates/
 
 - [x] `templateCategories` 已拆到 `src/templates/templateCategories.js`。
 - [x] `templateVariants` 已拆到 `src/templates/templateVariants.js`。
-- [x] `UnifiedResumeTemplate.vue` 不再保存所有 variant 配置，只负责渲染。
+- [x] 模板注册校验规则已拆到 `src/templates/validators/validateTemplateRegistry.js`，`scripts/check-templates.js` 只负责读取文件和输出检查结果。
+- [x] `BaseResumeTemplate.vue` 负责共享渲染，具体模板样式已拆到独立 `*Template.vue` 组件。
+- [x] `UnifiedResumeTemplate.vue` 仅保留为旧入口兼容组件，不再作为新增模板的默认实现方式。
 - [x] 模板中心筛选项已直接读取 `templateCategories`，避免手写分类漂移。
 
 ### 第三阶段：清理冗余代码并稳定现有功能
@@ -609,6 +639,11 @@ src/templates/
 - [x] 已新增 `PRODUCT.md`，明确项目为工具型产品，About 页和后续 UI 优化按开源项目说明页气质处理。
 - [x] 已重设计 `AboutView.vue`，移除大渐变、营销式 hero 和大卡片堆叠，改为 README 风格的项目说明、数据边界、技术栈和当前能力边界。
 - [x] 已按 `impeccable` 产品 UI 原则重设计首页编辑器布局：左侧改为本地工作区导航和填写建议，中间补充当前章节说明与状态，右侧预览工具栏强化模板和 A4 预览上下文。
+- [x] 已建立简历数据模型层：`resumeSchema`、`resumeNormalizer`、`resumeValidator`，并接入加载、示例数据、AI 生成、模板预览和 Word 导出入口。
+- [x] 已新增 `src/services/exportService.js`，首页导出、设计页导出和浏览器打印统一从服务入口调用，页面不再直接依赖底层 PDF/Word 工具。
+- [x] 自定义 Word 模板导出已接入 `resumeNormalizer` 和统一下载 helper，避免旧字段影响模板变量。
+- [x] 已将 AI 返回 JSON 解析工具拆到 `src/utils/ai/json.js`，为后续继续拆分 AI provider/prompt/业务逻辑打基础。
+- [x] 已按统一模板扩展方式新增两个模板：`ats-clean`（清单极简）和 `project-ledger`（项目条目）。
 - [x] `npm run check:templates` 通过。
 - [x] `npm run build` 通过。
 
@@ -634,6 +669,13 @@ scripts/create-template.js
 - 自动生成预览占位路径。
 - 自动运行模板注册检查。
 
+状态：
+
+- [x] 已新增 `scripts/create-template.js`。
+- [x] 已新增 `npm run create:template`。
+- [x] 脚本支持 `--id`、`--name`、`--category`、`--suitable-for`、`--features`、`--layout`、`--density`、`--accent`、`--preview`、`--dry-run`。
+- [x] 脚本写入前会复用 `validateTemplateRegistrySources` 做模板注册检查。
+
 ### 第五阶段：模板质量自动化
 
 已新增：
@@ -649,8 +691,8 @@ scripts/check-templates.js
 - [x] component 字段存在。
 - [x] name、description、features、suitableFor 满足基础规范。
 - [x] preview 路径不存在时只提示，页面依赖实时组件缩略图兜底。
-- [x] `templateVariants` 覆盖所有统一模板 ID。
-- [x] variant 中的 layout/accent 必须有对应 CSS class。
+- [x] `templateVariants` 覆盖所有模板 ID，供脚手架、校验和旧入口兼容读取。
+- [x] 使用旧 `UnifiedTemplate` 的模板才检查 layout/accent CSS；独立组件的样式在各自 `.vue` 文件中维护。
 
 ## 12. 一句话结论
 

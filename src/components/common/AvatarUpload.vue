@@ -5,7 +5,7 @@
         <div v-if="!hasAvatar" class="avatar-placeholder" @click="triggerUpload">
           <el-icon class="upload-icon"><Plus /></el-icon>
           <span class="upload-text">上传头像</span>
-          <span class="upload-hint">支持 JPG、PNG、GIF 格式<br>建议尺寸 200x200px，最大 2MB</span>
+          <span class="upload-hint">支持 JPG、PNG、GIF 格式<br>请上传本人或已获授权图片</span>
         </div>
         <div v-else class="avatar-display">
           <img :src="avatarUrl" alt="头像" class="avatar-image" />

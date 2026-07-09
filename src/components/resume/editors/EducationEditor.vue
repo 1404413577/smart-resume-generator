@@ -70,6 +70,18 @@
 
             <el-row :gutter="20">
               <el-col :span="8">
+                <el-form-item label="学习形式" required>
+                  <el-select
+                    v-model="education.studyType"
+                    placeholder="选择学习形式"
+                    @change="updateEducation(education.id, education)"
+                  >
+                    <el-option label="全日制统招" value="全日制统招" />
+                    <el-option label="非全日制" value="非全日制" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
                 <el-form-item label="学位" required>
                   <el-select
                     v-model="education.degree"
@@ -192,6 +204,7 @@ const addNewEducation = () => {
   const newEducation = {
     school: '',
     major: '',
+    studyType: '',
     degree: '',
     startDate: '',
     endDate: '',

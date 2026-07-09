@@ -8,6 +8,8 @@ import {
   getSettings 
 } from '@utils/db'
 import { defaultResumeData } from '@/data'
+import { PHOTO_POSITIONS, createEmptyResumeData } from '@/domain/resumeSchema'
+import { normalizeResumeData } from '@/domain/resumeNormalizer'
 
 // 生成唯一 ID，避免 Date.now() 在高频调用时的冲突
 let _idCounter = 0
@@ -18,35 +20,12 @@ const generateId = () => {
   return `${Date.now().toString(36)}-${(++_idCounter).toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-const PHOTO_POSITIONS = ['left', 'center', 'right']
-const TEMPLATE_IDS = ['modern', 'classic', 'compact', 'sidebar', 'executive', 'creative', 'academic', 'technical']
+const TEMPLATE_IDS = ['modern', 'classic', 'compact', 'sidebar', 'executive', 'creative', 'academic', 'technical', 'ats-clean', 'project-ledger', 'timeline', 'metro', 'editorial', 'flow', 'portfolio', 'portrait-column']
 const normalizeTemplateId = (templateId) => TEMPLATE_IDS.includes(templateId) ? templateId : 'modern'
 
 export const useResumeStore = defineStore('resume', () => {
   // 状态
-  const resumeData = ref({
-    personalInfo: {
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      website: '',
-      linkedin: '',
-      github: '',
-      targetPosition: '', // 期望职位
-      photo: '', // 头像base64数据
-      photoPosition: 'center', // 头像位置: 'left' | 'right' | 'center'
-      customFields: [] // 自定义字段数组
-    },
-    summary: '',
-    workExperience: [],
-    education: [],
-    skills: [],
-    projects: [],
-    certifications: [],
-    languages: [],
-    customModulesData: {} // 存储自定义模块的用户数据，key为模块ID
-  })
+  const resumeData = ref(createEmptyResumeData())
 
   const selectedTemplate = ref('modern')
   const isPreviewMode = ref(false)
@@ -94,7 +73,7 @@ export const useResumeStore = defineStore('resume', () => {
       baseFontSize: 14,        // 基础字号 12-16px
       titleFontSize: 18,       // 模块标题字号 16-24px
       subtitleFontSize: 16,    // 一级标题字号 14-20px
-      fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif', // 字体族
+      fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif', // 字体族
       fontWeight: {
         light: 300,
         normal: 400,
@@ -154,7 +133,7 @@ export const useResumeStore = defineStore('resume', () => {
       },
       icons: {
         enabled: true,
-        style: 'emoji',     // 'emoji' | 'fontawesome' | 'custom'
+        style: 'emoji',     // 'emoji' | 'custom'
         size: 16,
         color: 'auto'
       }
@@ -216,6 +195,7 @@ export const useResumeStore = defineStore('resume', () => {
         school: { visible: true, required: true, label: '学校' },
         degree: { visible: true, required: true, label: '学位' },
         major: { visible: true, required: true, label: '专业' },
+        studyType: { visible: true, required: true, label: '学习形式' },
         startDate: { visible: true, required: true, label: '开始时间' },
         endDate: { visible: true, required: false, label: '结束时间' },
         gpa: { visible: false, required: false, label: 'GPA' },
@@ -525,6 +505,16 @@ export const useResumeStore = defineStore('resume', () => {
     resumeData.value.certifications = resumeData.value.certifications.filter(cert => cert.id !== id)
   }
 
+  const updateCertification = (id, updates) => {
+    const index = resumeData.value.certifications.findIndex(cert => cert.id === id)
+    if (index !== -1) {
+      resumeData.value.certifications[index] = {
+        ...resumeData.value.certifications[index],
+        ...updates
+      }
+    }
+  }
+
   // 语言操作
   const addLanguage = (language) => {
     const newLanguage = {
@@ -622,11 +612,7 @@ export const useResumeStore = defineStore('resume', () => {
     if (saved) {
       try {
         const parsedData = JSON.parse(saved)
-        // 确保包含customModulesData字段
-        if (!parsedData.customModulesData) {
-          parsedData.customModulesData = {}
-        }
-        resumeData.value = parsedData
+        resumeData.value = normalizeResumeData(parsedData)
       } catch (error) {
         console.error('加载本地数据失败:', error)
       }
@@ -692,7 +678,7 @@ export const useResumeStore = defineStore('resume', () => {
             baseFontSize: 14,
             titleFontSize: 18,
             subtitleFontSize: 16,
-            fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif',
+            fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif',
             fontWeight: {
               light: 300,
               normal: 400,
@@ -766,29 +752,7 @@ export const useResumeStore = defineStore('resume', () => {
 
   // 重置数据
   const resetResumeData = () => {
-    resumeData.value = {
-      personalInfo: {
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-        website: '',
-        linkedin: '',
-        github: '',
-        targetPosition: '',
-        photo: '',
-        photoPosition: 'center',
-        customFields: []
-      },
-      summary: '',
-      workExperience: [],
-      education: [],
-      skills: [],
-      projects: [],
-      certifications: [],
-      languages: [],
-      customModulesData: {}
-    }
+    resumeData.value = createEmptyResumeData()
   }
 
   // 章节排序方法
@@ -912,7 +876,7 @@ export const useResumeStore = defineStore('resume', () => {
         baseFontSize: 14,
         titleFontSize: 18,
         subtitleFontSize: 16,
-        fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif',
+        fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif',
         fontWeight: {
           light: 300,
           normal: 400,
@@ -1047,7 +1011,7 @@ export const useResumeStore = defineStore('resume', () => {
   const fillWithDefaultData = () => {
     // 深拷贝默认数据以避免引用问题
     const defaultData = JSON.parse(JSON.stringify(defaultResumeData))
-    resumeData.value = defaultData
+    resumeData.value = normalizeResumeData(defaultData)
     persistData()
     return true
   }
@@ -1065,7 +1029,7 @@ export const useResumeStore = defineStore('resume', () => {
         const targetId = savedId || savedResumes[0].id
         const resume = await getResumeById(targetId)
         if (resume) {
-          resumeData.value = resume.data
+          resumeData.value = normalizeResumeData(resume.data)
           currentResumeId.value = resume.id
           
           // 加载其他设置
@@ -1163,6 +1127,7 @@ export const useResumeStore = defineStore('resume', () => {
     updateProject,
     removeProject,
     addCertification,
+    updateCertification,
     removeCertification,
     addLanguage,
     removeLanguage,

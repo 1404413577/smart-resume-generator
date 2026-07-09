@@ -1,5 +1,7 @@
 // 默认简历数据填充
-export const defaultResumeData = {
+import { normalizeResumeData } from '@/domain/resumeNormalizer'
+
+export const defaultResumeData = normalizeResumeData({
   personalInfo: {
     name: '张三',
     email: 'zhangsan@example.com',
@@ -50,6 +52,7 @@ export const defaultResumeData = {
       school: '清华大学',
       degree: '硕士',
       major: '计算机科学与技术',
+      studyType: '全日制',
       startDate: '2018-09-01',
       endDate: '2020-06-30',
       gpa: '3.8',
@@ -80,8 +83,8 @@ export const defaultResumeData = {
     }
   ],
   certifications: [
-    { id: 'cert-1', name: 'AWS Certified Developer', issuer: 'Amazon Web Services', date: '2023-05-15', url: '' },
-    { id: 'cert-2', name: 'Vue.js认证开发者', issuer: 'Vue.js官方', date: '2022-08-20', url: '' }
+    { id: 'cert-1', name: '云平台开发工程师认证', issuer: '行业认证机构', date: '2023-05-15', score: '通过', url: '' },
+    { id: 'cert-2', name: '前端工程能力认证', issuer: '技术认证机构', date: '2022-08-20', score: '优秀', url: '' }
   ],
   languages: [
     { id: 'lang-1', name: '中文', proficiency: '母语', level: '精通' },
@@ -89,13 +92,13 @@ export const defaultResumeData = {
     { id: 'lang-3', name: '日语', proficiency: '基础', level: '初级' }
   ],
   customModulesData: {} // 自定义模块数据，可根据需要添加
-}
+})
 
 // 导出默认数据填充函数
 export const fillWithDefaultData = (resumeStore) => {
   if (resumeStore && resumeStore.resumeData) {
     // 深拷贝默认数据以避免引用问题
     const defaultData = JSON.parse(JSON.stringify(defaultResumeData))
-    Object.assign(resumeStore.resumeData, defaultData)
+    Object.assign(resumeStore.resumeData, normalizeResumeData(defaultData))
   }
 }

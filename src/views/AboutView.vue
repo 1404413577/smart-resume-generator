@@ -55,6 +55,7 @@
               <li>AI API Key 和接口配置保存在当前浏览器本地。</li>
               <li>使用在线 AI 接口时，请求内容会发送到用户配置的服务地址。</li>
               <li>使用 Ollama 或浏览器本地模型时，数据处理位置取决于本地运行环境。</li>
+              <li>第三方字体、依赖、接口、模型和商标说明见项目根目录 THIRD_PARTY_NOTICES.md。</li>
             </ul>
           </section>
 
@@ -91,7 +92,7 @@
                 <ul>
                   <li>云同步和账号体系</li>
                   <li>OCR 图片识别导入</li>
-                  <li>在线客服或官方后端服务</li>
+                  <li>在线客服或托管后端服务</li>
                   <li>多简历版本历史管理</li>
                 </ul>
               </div>
@@ -100,7 +101,7 @@
 
           <footer class="project-footer">
             <span>© 2024 智能简历生成器</span>
-            <span>面向稳定编辑、清晰导出和可维护模板系统持续优化。</span>
+            <span>面向稳定编辑、清晰导出、可维护模板系统和合规素材边界持续优化。</span>
           </footer>
         </div>
       </div>
@@ -144,7 +145,7 @@ const features = [
   },
   {
     title: 'AI 辅助',
-    description: '支持 OpenAI 兼容接口、Gemini、Ollama 和浏览器本地模型等可配置方式。',
+    description: '支持用户自选 AI 接口、本地服务和浏览器本地模型；相关品牌与模型归其权利人所有。',
     icon: MagicStick
   }
 ]
@@ -155,7 +156,7 @@ const stack = [
   { group: 'UI', name: 'Element Plus', description: '表单、按钮、弹窗和基础交互组件' },
   { group: '存储', name: 'Dexie / IndexedDB', description: '浏览器本地简历数据持久化' },
   { group: '导出', name: 'jsPDF / docx', description: '生成 PDF 和 Word 文件' },
-  { group: 'AI', name: 'OpenAI / Gemini / Ollama', description: '按用户配置调用内容生成服务' }
+  { group: 'AI', name: '可配置 AI 服务', description: '按用户配置调用内容生成服务，不默认附带第三方授权' }
 ]
 </script>
 

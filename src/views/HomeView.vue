@@ -252,6 +252,7 @@ import WorkExperienceEditor from '@components/resume/editors/WorkExperienceEdito
 import EducationEditor from '@components/resume/editors/EducationEditor.vue'
 import SkillsEditor from '@components/resume/editors/SkillsEditor.vue'
 import ProjectsEditor from '@components/resume/editors/ProjectsEditor.vue'
+import CertificationsEditor from '@components/resume/editors/CertificationsEditor.vue'
 
 const resumeStore = useResumeStore()
 const router = useRouter()
@@ -332,7 +333,8 @@ const modules = [
   { id: 'workExperience', name: '工作经历', icon: Briefcase, description: '公司、职位、职责和可量化成果' },
   { id: 'education', name: '教育背景', icon: School, description: '学校、专业、学历和补充信息' },
   { id: 'skills', name: '技能特长', icon: Star, description: '按类别整理专业技能和熟练程度' },
-  { id: 'projects', name: '项目经历', icon: FolderOpened, description: '项目背景、技术栈和个人贡献' }
+  { id: 'projects', name: '项目经历', icon: FolderOpened, description: '项目背景、技术栈和个人贡献' },
+  { id: 'certifications', name: '证书获得', icon: Document, description: '证书名称、分数和获取日期' }
 ]
 
 const workspaceLinks = [
@@ -347,7 +349,8 @@ const editorComponents = {
   workExperience: WorkExperienceEditor,
   education: EducationEditor,
   skills: SkillsEditor,
-  projects: ProjectsEditor
+  projects: ProjectsEditor,
+  certifications: CertificationsEditor
 }
 
 // 计算属性
@@ -405,6 +408,8 @@ const getModuleStatus = (moduleId) => {
       return data.skills?.length ? `${data.skills.length}项` : '未填写'
     case 'projects':
       return data.projects?.length ? `${data.projects.length}项` : '未填写'
+    case 'certifications':
+      return data.certifications?.length ? `${data.certifications.length}项` : '未填写'
     default:
       return '未填写'
   }

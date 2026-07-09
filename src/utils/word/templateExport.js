@@ -1,5 +1,6 @@
 import Docxtemplater from 'docxtemplater'
 import PizZip from 'pizzip'
+import { normalizeResumeData } from '@/domain/resumeNormalizer'
 
 /**
  * 将简历数据转换为模板变量格式
@@ -7,22 +8,23 @@ import PizZip from 'pizzip'
  * @returns {Object} 模板变量对象
  */
 function transformResumeDataForTemplate(resumeData) {
+  const normalized = normalizeResumeData(resumeData)
   const data = {
     // 个人信息
-    name: resumeData.personalInfo?.name || '',
-    email: resumeData.personalInfo?.email || '',
-    phone: resumeData.personalInfo?.phone || '',
-    address: resumeData.personalInfo?.address || '',
-    website: resumeData.personalInfo?.website || '',
-    linkedin: resumeData.personalInfo?.linkedin || '',
-    github: resumeData.personalInfo?.github || '',
-    targetPosition: resumeData.personalInfo?.targetPosition || '',
+    name: normalized.personalInfo?.name || '',
+    email: normalized.personalInfo?.email || '',
+    phone: normalized.personalInfo?.phone || '',
+    address: normalized.personalInfo?.address || '',
+    website: normalized.personalInfo?.website || '',
+    linkedin: normalized.personalInfo?.linkedin || '',
+    github: normalized.personalInfo?.github || '',
+    targetPosition: normalized.personalInfo?.targetPosition || '',
     
     // 个人简介
-    summary: resumeData.summary || '',
+    summary: normalized.summary || '',
     
     // 工作经历
-    workExperience: (resumeData.workExperience || []).map((work, index) => ({
+    workExperience: (normalized.workExperience || []).map((work, index) => ({
       index: index + 1,
       position: work.position || '',
       company: work.company || '',
@@ -37,11 +39,12 @@ function transformResumeDataForTemplate(resumeData) {
     })),
     
     // 教育背景
-    education: (resumeData.education || []).map((edu, index) => ({
+    education: (normalized.education || []).map((edu, index) => ({
       index: index + 1,
       school: edu.school || '',
       major: edu.major || '',
       degree: edu.degree || '',
+      studyType: edu.studyType || '',
       startDate: edu.startDate || '',
       endDate: edu.endDate || '至今',
       duration: formatDateRange(edu.startDate, edu.endDate),
@@ -52,7 +55,7 @@ function transformResumeDataForTemplate(resumeData) {
     })),
     
     // 技能特长
-    skills: (resumeData.skills || []).map((skill, index) => ({
+    skills: (normalized.skills || []).map((skill, index) => ({
       index: index + 1,
       name: skill.name || '',
       level: skill.level || '',
@@ -61,7 +64,7 @@ function transformResumeDataForTemplate(resumeData) {
     })),
     
     // 项目经历
-    projects: (resumeData.projects || []).map((project, index) => ({
+    projects: (normalized.projects || []).map((project, index) => ({
       index: index + 1,
       name: project.name || '',
       role: project.role || '',
@@ -76,16 +79,18 @@ function transformResumeDataForTemplate(resumeData) {
     })),
     
     // 证书资质
-    certifications: (resumeData.certifications || []).map((cert, index) => ({
+    certifications: (normalized.certifications || []).map((cert, index) => ({
       index: index + 1,
       name: cert.name || '',
       issuer: cert.issuer || '',
       date: cert.date || '',
+      score: cert.score || '',
+      url: cert.url || '',
       description: cert.description || ''
     })),
     
     // 语言能力
-    languages: (resumeData.languages || []).map((lang, index) => ({
+    languages: (normalized.languages || []).map((lang, index) => ({
       index: index + 1,
       name: lang.name || '',
       level: lang.level || '',
@@ -93,12 +98,12 @@ function transformResumeDataForTemplate(resumeData) {
     })),
     
     // 统计信息
-    workExperienceCount: (resumeData.workExperience || []).length,
-    educationCount: (resumeData.education || []).length,
-    skillsCount: (resumeData.skills || []).length,
-    projectsCount: (resumeData.projects || []).length,
-    certificationsCount: (resumeData.certifications || []).length,
-    languagesCount: (resumeData.languages || []).length,
+    workExperienceCount: (normalized.workExperience || []).length,
+    educationCount: (normalized.education || []).length,
+    skillsCount: (normalized.skills || []).length,
+    projectsCount: (normalized.projects || []).length,
+    certificationsCount: (normalized.certifications || []).length,
+    languagesCount: (normalized.languages || []).length,
     
     // 当前日期
     currentDate: new Date().toLocaleDateString('zh-CN'),
@@ -250,6 +255,16 @@ export function getTemplateVariablesDoc() {
         technologiesText: '{{technologiesText}} - 技术栈',
         url: '{{url}} - 项目链接',
         github: '{{github}} - GitHub链接'
+      }
+    },
+    certifications: {
+      loop: '{{#certifications}} ... {{/certifications}} - 证书循环',
+      fields: {
+        name: '{{name}} - 证书名称',
+        issuer: '{{issuer}} - 颁发机构',
+        date: '{{date}} - 获取日期',
+        score: '{{score}} - 分数',
+        url: '{{url}} - 证书链接'
       }
     },
     statistics: {

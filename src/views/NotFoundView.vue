@@ -23,7 +23,7 @@
             <el-icon><House /></el-icon>
             返回首页
           </el-button>
-          <el-button @click="goBack" size="large">
+          <el-button @click="goBack" size="large" plain>
             <el-icon><Back /></el-icon>
             返回上页
           </el-button>
@@ -83,9 +83,10 @@ const goBack = () => {
 </script>
 
 <style scoped>
+/* ===== 简约风格样式 ===== */
 .not-found-view {
-  height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  background: #f5f7fa;          /* 柔和浅灰背景，取代渐变 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -95,139 +96,154 @@ const goBack = () => {
 .not-found-container {
   max-width: 600px;
   width: 100%;
-  text-align: center;
 }
 
 .error-content {
-  background: white;
-  border-radius: 20px;
-  padding: 60px 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 48px 40px 40px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04); /* 极轻阴影，若隐若现 */
 }
 
+/* --- 数字 + 图标区域 --- */
 .error-illustration {
   position: relative;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px; /* 固定高度，便于定位 */
 }
 
 .error-number {
-  font-size: 120px;
-  font-weight: 900;
-  color: #f0f2f5;
+  font-size: 80px;
+  font-weight: 700;
+  color: #e8ecf1;      /* 更淡的灰色数字，弱化视觉权重 */
   line-height: 1;
-  margin-bottom: -20px;
+  letter-spacing: 2px;
 }
 
 .error-icon {
-  font-size: 80px;
-  color: #f56c6c;
   position: absolute;
+  font-size: 48px;
+  color: #c0c4cc;      /* 柔和灰色图标 */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
+/* --- 文本 --- */
 .error-text {
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 .error-title {
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 500;    /* 更轻的字重 */
   color: #303133;
-  margin: 0 0 16px 0;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.5px;
 }
 
 .error-description {
-  font-size: 16px;
-  color: #606266;
-  line-height: 1.6;
+  font-size: 15px;
+  color: #909399;      /* 次级灰色 */
+  line-height: 1.7;
   margin: 0;
 }
 
+/* --- 按钮区 --- */
 .error-actions {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-bottom: 50px;
+  gap: 12px;
+  margin-bottom: 40px;
 }
 
+/* 让按钮更简约：主按钮使用纯色，次要按钮用 plain 样式（已在模板中设置） */
+.error-actions .el-button {
+  min-width: 140px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* --- 快捷链接 --- */
 .helpful-links h3 {
-  font-size: 18px;
-  color: #303133;
-  margin: 0 0 20px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #606266;
+  margin: 0 0 16px 0;
 }
 
 .links-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .help-link {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 20px 16px;
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
+  gap: 6px;
+  padding: 16px 12px;
+  background: #fafbfc;          /* 极浅背景，取代边框 */
+  border-radius: 10px;
   text-decoration: none;
   color: #606266;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  border: 1px solid transparent; /* 预留边框过渡 */
 }
 
 .help-link:hover {
-  border-color: #667eea;
-  background: #f0f2ff;
-  color: #667eea;
-  transform: translateY(-2px);
+  background: #f0f2f5;
+  color: #409eff;              /* 品牌色（与 Element Plus 主色一致） */
+  transform: translateY(-1px);
+  border-color: #d9dce3;
 }
 
 .help-link .el-icon {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .help-link span {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 400;
 }
 
-/* 响应式设计 */
+/* ===== 响应式 ===== */
 @media (max-width: 768px) {
   .not-found-view {
-    padding: 15px;
+    padding: 16px;
   }
-  
+
   .error-content {
-    padding: 40px 30px;
+    padding: 32px 24px 28px;
   }
-  
+
   .error-number {
-    font-size: 80px;
-  }
-  
-  .error-icon {
     font-size: 60px;
   }
-  
-  .error-title {
-    font-size: 24px;
+  .error-icon {
+    font-size: 36px;
   }
-  
+
+  .error-title {
+    font-size: 22px;
+  }
   .error-description {
     font-size: 14px;
   }
-  
+
   .error-actions {
     flex-direction: column;
     align-items: center;
   }
-  
   .error-actions .el-button {
-    width: 200px;
+    width: 100%;
+    max-width: 240px;
   }
-  
+
   .links-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -235,17 +251,14 @@ const goBack = () => {
 
 @media (max-width: 480px) {
   .error-content {
-    padding: 30px 20px;
+    padding: 24px 16px 20px;
   }
-  
   .error-number {
-    font-size: 60px;
+    font-size: 48px;
   }
-  
   .error-icon {
-    font-size: 40px;
+    font-size: 28px;
   }
-  
   .links-grid {
     grid-template-columns: 1fr;
   }

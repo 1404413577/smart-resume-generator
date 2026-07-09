@@ -287,13 +287,12 @@ export function generateInlineStyles(globalSettings, templateConfig = null) {
  * 字体族映射
  */
 export const fontFamilyMap = {
-  'system-ui': 'system-ui, -apple-system, sans-serif',
-  "'Source Han Sans SC', sans-serif": "'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif",
-  "'Microsoft YaHei', sans-serif": "'Microsoft YaHei', 'SimHei', sans-serif",
-  "'PingFang SC', sans-serif": "'PingFang SC', 'Hiragino Sans GB', sans-serif",
-  'SimSun, serif': 'SimSun, "NSimSun", serif',
-  "'Times New Roman', serif": "'Times New Roman', 'Times', serif",
-  'Arial, sans-serif': 'Arial, "Helvetica Neue", sans-serif'
+  'system-ui': 'system-ui, sans-serif',
+  'serif': 'serif',
+  '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif': '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif',
+  '"Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", serif': '"Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", serif',
+  "'Source Han Sans SC', sans-serif": "'Source Han Sans SC', 'Noto Sans SC', sans-serif",
+  "'Source Han Serif SC', serif": "'Source Han Serif SC', 'Noto Serif SC', serif"
 }
 
 /**

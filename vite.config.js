@@ -12,6 +12,10 @@ export default defineConfig({
       injectRegister: 'auto',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,vue}'],
+        globIgnores: [
+          '**/assets/local-ai-*.js',
+          '**/assets/transformers-*.js'
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -86,7 +90,9 @@ export default defineConfig({
         manualChunks: {
           'vue-vendor': ['vue', 'pinia'],
           'element-plus': ['element-plus', '@element-plus/icons-vue'],
-          'pdf-utils': ['jspdf', 'html2canvas']
+          'pdf-utils': ['jspdf', 'html2canvas'],
+          'local-ai': ['@mlc-ai/web-llm'],
+          transformers: ['@xenova/transformers']
         }
       }
     }

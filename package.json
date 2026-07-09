@@ -2,6 +2,7 @@
   "name": "vite-project",
   "private": true,
   "version": "2.0.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,6 +14,7 @@
     "generate:sitemap": "node scripts/generate-sitemap.js",
     "generate:icons": "node scripts/generate-icons.js",
     "check:templates": "node scripts/check-templates.js",
+    "create:template": "node scripts/create-template.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist -r https://github.com/1404413577/smart-resume-generator.git",
     "prebuild": "node scripts/prebuild-assets.js"

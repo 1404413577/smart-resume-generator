@@ -24,7 +24,12 @@
             <p>控制简历整体结构、模块标题和信息密度</p>
           </div>
 
-          <div class='option-section'>
+          <div v-if="isFixedLayoutTemplate" class="fixed-template-alert">
+            <strong>当前为固定排版模板</strong>
+            <span>主要结构已由模板锁定，可继续调整配色、字体、字号、行高和页边距。</span>
+          </div>
+
+          <div class='option-section' :class="{ 'locked-section': isFixedLayoutTemplate }">
             <div class='section-title-row compact-row'>
               <h4>整体版式</h4>
             </div>
@@ -51,7 +56,7 @@
             </div>
           </div>
 
-          <div class='option-section'>
+          <div class='option-section' :class="{ 'locked-section': isFixedLayoutTemplate }">
             <div class='section-title-row compact-row'>
               <h4>模块标题</h4>
             </div>
@@ -68,7 +73,7 @@
             </div>
           </div>
 
-          <div class='option-section'>
+          <div class='option-section' :class="{ 'locked-section': isFixedLayoutTemplate }">
             <div class='section-title-row compact-row'>
               <h4>信息密度</h4>
             </div>
@@ -224,6 +229,7 @@
 <script setup>
 import { ref, computed, reactive, onMounted } from 'vue'
 import { useResumeStore } from '@stores/resume'
+import { getTemplate } from '@templates'
 import { ElMessage } from 'element-plus'
 import {
   Brush,
@@ -273,11 +279,10 @@ const colorFields = [
 ]
 
 const fontOptions = [
-  { label: '系统黑体 (默认)', value: 'var(--font-family-base)' },
-  { label: '思源黑体 (更均衡)', value: '"Noto Sans SC", sans-serif' },
-  { label: '思源宋体 (典雅)', value: '"Noto Serif SC", serif' },
-  { label: '官方楷体 (传统)', value: 'KaiTi, "STKaiti", serif' },
-  { label: 'Helvetica / Arial', value: 'Helvetica, Arial, sans-serif' }
+  { label: '思源黑体 / Noto Sans SC (默认)', value: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif' },
+  { label: '思源宋体 / Noto Serif SC', value: '"Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", serif' },
+  { label: '系统无衬线兜底', value: 'system-ui, sans-serif' },
+  { label: '系统衬线兜底', value: 'serif' }
 ]
 
 const premiumPresets = {
@@ -325,6 +330,8 @@ const premiumPresets = {
 
 // 获取 Store 数据
 const globalSettings = computed(() => resumeStore.globalSettings || {})
+const currentTemplate = computed(() => getTemplate(resumeStore.selectedTemplate))
+const isFixedLayoutTemplate = computed(() => Boolean(currentTemplate.value?.fixedLayout))
 
 // 实例化响应式副本
 const currentTheme = reactive({
@@ -340,7 +347,7 @@ const currentTheme = reactive({
 const currentTypography = reactive({
   baseFontSize: 14,
   titleFontSize: 18,
-  fontFamily: 'var(--font-family-base)',
+  fontFamily: '"Noto Sans SC", "Source Han Sans SC", "Source Han Sans CN", system-ui, sans-serif',
   ...globalSettings.value.typography
 })
 
@@ -386,16 +393,28 @@ const handleSpacingChange = () => updateAllSettings()
 const handlePageSettingsChange = () => updateAllSettings()
 
 const applyDesignStyle = (value) => {
+  if (isFixedLayoutTemplate.value) {
+    ElMessage.info('固定排版模板已锁定整体结构，可调整配色、字体和页面设置')
+    return
+  }
   currentLayout.designStyle = value
   updateAllSettings()
 }
 
 const applyTitleStyle = (value) => {
+  if (isFixedLayoutTemplate.value) {
+    ElMessage.info('固定排版模板已锁定标题结构，可调整配色、字体和页面设置')
+    return
+  }
   currentLayout.sectionTitleStyle = value
   updateAllSettings()
 }
 
 const applyDensity = (value) => {
+  if (isFixedLayoutTemplate.value) {
+    ElMessage.info('固定排版模板已锁定密度结构，可调整字号、行高和页边距')
+    return
+  }
   const presets = {
     relaxed: { baseFontSize: 15, titleFontSize: 20, lineHeight: 1.75, moduleSpacing: 18, pageMargin: 26 },
     standard: { baseFontSize: 14, titleFontSize: 18, lineHeight: 1.5, moduleSpacing: 12, pageMargin: 20 },
@@ -645,7 +664,7 @@ onMounted(() => {
   font-size: 14px;
   font-weight: 700;
   color: #1e293b;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: ui-monospace, monospace;
 }
 
 /* 字体排版系统 */
@@ -762,6 +781,32 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.fixed-template-alert {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid #faecd8;
+  border-radius: 12px;
+  background: #fdf6ec;
+  color: #7a4b12;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.fixed-template-alert strong {
+  font-weight: 800;
+}
+
+.locked-section {
+  opacity: 0.48;
+}
+
+.locked-section .layout-visual-card,
+.locked-section .segmented-option,
+.locked-section .density-card {
+  cursor: not-allowed;
 }
 
 .compact-row {

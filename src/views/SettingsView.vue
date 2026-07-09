@@ -45,6 +45,7 @@
         <!-- AI设置 -->
         <div class="settings-section">
           <h2 class="section-title">AI设置</h2>
+          <p class="section-note">请确认所选 AI 服务、接口和本地模型许可证允许当前用途；本项目不附带第三方模型授权。</p>
           <div class="settings-group">
             <div class="setting-item">
               <div class="setting-info">
@@ -144,19 +145,38 @@
                 <div class="setting-info">
                   <h3>本地运行模式</h3>
                   <p>GPU 使用 WebGPU，CPU 使用 Transformers.js/WASM</p>
+                  <p class="mode-feedback">{{ localModeFeedback }}</p>
                 </div>
-                <el-radio-group v-model="settings.localAiType" @change="updateSetting('localAiType')">
-                  <el-radio label="gpu">GPU/WebGPU</el-radio>
-                  <el-radio label="cpu">CPU/WASM</el-radio>
+                <el-radio-group
+                  v-model="settings.localAiType"
+                  class="local-mode-options"
+                  @change="markLocalModelChanged('localAiType')"
+                >
+                  <el-radio label="gpu" class="local-mode-option">GPU/WebGPU</el-radio>
+                  <el-radio label="cpu" class="local-mode-option">CPU/WASM</el-radio>
                 </el-radio-group>
               </div>
 
               <div class="setting-item" v-if="settings.localAiType === 'gpu'">
                 <div class="setting-info">
                   <h3>GPU模型</h3>
-                  <p>WebLLM 模型 ID，例如 SmolLM2-135M-Instruct-q0f32-MLC</p>
+                  <p>选择 WebLLM 预置模型，也可以直接输入自定义模型 ID</p>
                 </div>
-                <el-input v-model="settings.localModelId" @change="updateSetting('localModelId')" />
+                <el-select
+                  v-model="settings.localModelId"
+                  filterable
+                  allow-create
+                  default-first-option
+                  placeholder="选择或输入 GPU 模型"
+                  @change="markLocalModelChanged('localModelId')"
+                >
+                  <el-option
+                    v-for="model in gpuModelOptions"
+                    :key="model.value"
+                    :label="model.label"
+                    :value="model.value"
+                  />
+                </el-select>
               </div>
 
               <div class="setting-item" v-else>
@@ -164,7 +184,7 @@
                   <h3>CPU模型</h3>
                   <p>Transformers.js 模型 ID，例如 Xenova/Qwen1.5-0.5B-Chat</p>
                 </div>
-                <el-input v-model="settings.localCpuModelId" @change="updateSetting('localCpuModelId')" />
+                <el-input v-model="settings.localCpuModelId" @change="markLocalModelChanged('localCpuModelId')" />
               </div>
 
               <div class="setting-item">
@@ -176,6 +196,27 @@
                   检测
                 </el-button>
               </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>本地模型下载</h3>
+                  <p>{{ localModelStatusText }}</p>
+                  <el-progress
+                    :percentage="localModelProgress"
+                    :stroke-width="6"
+                    :status="localModelProgressStatus"
+                    class="local-model-progress"
+                  />
+                </div>
+                <el-button
+                  @click="downloadLocalModel"
+                  type="primary"
+                  size="small"
+                  :loading="loadingLocalModel"
+                >
+                  下载并加载模型
+                </el-button>
+              </div>
             </template>
 
             <div class="setting-item">
@@ -183,7 +224,13 @@
                 <h3>连接测试</h3>
                 <p>用当前 AI 配置发送一条短请求，验证服务是否可用</p>
               </div>
-              <el-button @click="testAIConnection" type="primary" size="small" :loading="testingAI">
+              <el-button
+                @click="testAIConnection"
+                type="primary"
+                size="small"
+                :loading="testingAI"
+                :disabled="settings.aiEngine === 'local' && (!localModelReady || loadingLocalModel)"
+              >
                 测试AI连接
               </el-button>
             </div>
@@ -253,7 +300,7 @@ import { Setting } from '@element-plus/icons-vue'
 import { useResumeStore } from '@stores/resume'
 import { useSettingsStore } from '@stores/settings'
 import { checkAPIAvailability } from '@utils/ai/aiService'
-import { checkWebGPUSupport } from '@utils/ai/localAi'
+import { checkWebGPUSupport, localAiService } from '@utils/ai/localAi'
 
 const resumeStore = useResumeStore()
 const settingsStore = useSettingsStore()
@@ -261,6 +308,24 @@ const { settings } = storeToRefs(settingsStore)
 const testingAI = ref(false)
 const checkingWebGPU = ref(false)
 const webGPUStatus = ref('')
+const loadingLocalModel = ref(false)
+const localModelReady = ref(false)
+const localModelProgress = ref(0)
+const localModelStatusText = ref('选择运行模式和模型后，点击按钮下载并加载到浏览器缓存。')
+const localModelProgressStatus = ref('')
+const localModeFeedback = ref('当前未加载本地模型。')
+
+const gpuModelOptions = [
+  { label: 'SmolLM2 135M q0f32 - 最轻量', value: 'SmolLM2-135M-Instruct-q0f32-MLC' },
+  { label: 'SmolLM2 135M q0f16 - 更省显存', value: 'SmolLM2-135M-Instruct-q0f16-MLC' },
+  { label: 'SmolLM2 360M q4f16 - 平衡', value: 'SmolLM2-360M-Instruct-q4f16_1-MLC' },
+  { label: 'SmolLM2 360M q4f32 - 较高精度', value: 'SmolLM2-360M-Instruct-q4f32_1-MLC' },
+  { label: 'SmolLM2 1.7B q4f16 - 更强', value: 'SmolLM2-1.7B-Instruct-q4f16_1-MLC' },
+  { label: 'Llama 3.2 1B q4f16', value: 'Llama-3.2-1B-Instruct-q4f16_1-MLC' },
+  { label: 'Llama 3.2 3B q4f16', value: 'Llama-3.2-3B-Instruct-q4f16_1-MLC' },
+  { label: 'Phi 3.5 mini q4f16', value: 'Phi-3.5-mini-instruct-q4f16_1-MLC' },
+  { label: 'Gemma 2 2B q4f16', value: 'gemma-2-2b-it-q4f16_1-MLC' }
+]
 
 // 方法
 const updateSetting = (key) => {
@@ -275,6 +340,11 @@ const updateSetting = (key) => {
 }
 
 const testAIConnection = async () => {
+  if (settings.value.aiEngine === 'local' && !localModelReady.value) {
+    ElMessage.warning('请先下载并加载浏览器本地模型')
+    return
+  }
+
   testingAI.value = true
   try {
     const ok = await checkAPIAvailability()
@@ -285,6 +355,72 @@ const testAIConnection = async () => {
     }
   } finally {
     testingAI.value = false
+  }
+}
+
+const getLocalModelConfig = () => {
+  const type = settings.value.localAiType || 'gpu'
+  const modelId = type === 'gpu'
+    ? settings.value.localModelId
+    : settings.value.localCpuModelId
+
+  return { type, modelId }
+}
+
+const refreshLocalModelReady = () => {
+  const { type, modelId } = getLocalModelConfig()
+  localModelReady.value = localAiService.isModelReady(modelId, type)
+  if (localModelReady.value) {
+    localModeFeedback.value = `当前已加载 ${type === 'gpu' ? 'GPU/WebGPU' : 'CPU/WASM'} 模式。`
+    localModelStatusText.value = '模型已加载，可以测试和使用。'
+    localModelProgress.value = 100
+    localModelProgressStatus.value = 'success'
+  }
+}
+
+const markLocalModelChanged = (key) => {
+  localModelReady.value = false
+  localModelProgress.value = 0
+  localModelProgressStatus.value = ''
+  const { type, modelId } = getLocalModelConfig()
+  const modeName = type === 'gpu' ? 'GPU/WebGPU' : 'CPU/WASM'
+
+  localModeFeedback.value = `已选择 ${modeName} 模式。`
+  localModelStatusText.value = `已选择 ${modeName} 模式，模型 ${modelId || '未填写'}，请点击“下载并加载模型”。`
+  updateSetting(key)
+  ElMessage.info(`已切换到 ${modeName} 模式`)
+}
+
+const downloadLocalModel = async () => {
+  const { type, modelId } = getLocalModelConfig()
+  if (!modelId) {
+    ElMessage.warning('请先填写模型 ID')
+    return
+  }
+
+  loadingLocalModel.value = true
+  localModelReady.value = false
+  localModelProgress.value = 0
+  localModelProgressStatus.value = ''
+  localModelStatusText.value = '准备下载并加载模型...'
+
+  try {
+    await localAiService.getEngine(modelId, type, (report) => {
+      localModelProgress.value = Math.min(100, Math.max(0, report.progress || 0))
+      localModelStatusText.value = report.statusText || '正在下载并加载模型...'
+    })
+    localModelReady.value = true
+    localModelProgress.value = 100
+    localModelProgressStatus.value = 'success'
+    localModelStatusText.value = '模型已加载，可以测试和使用。'
+    ElMessage.success('本地模型已加载')
+  } catch (error) {
+    localModelReady.value = false
+    localModelProgressStatus.value = 'exception'
+    localModelStatusText.value = error?.message || '本地模型加载失败'
+    ElMessage.error(localModelStatusText.value)
+  } finally {
+    loadingLocalModel.value = false
   }
 }
 
@@ -392,6 +528,7 @@ const loadSettings = () => {
   try {
     settingsStore.loadSettings()
     applySettings()
+    refreshLocalModelReady()
   } catch {
     ElMessage.error('加载设置失败，使用默认设置')
   }
@@ -508,7 +645,14 @@ onMounted(() => {
 .setting-item .el-select,
 .setting-item .el-input,
 .setting-item .el-input-number {
-  width: 200px;
+  width: 320px;
+}
+
+.section-note {
+  margin: -8px 0 18px;
+  color: #606266;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .setting-item .el-slider {
@@ -519,6 +663,48 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.local-mode-options {
+  width: 320px;
+}
+
+.local-mode-option {
+  width: 100%;
+  height: auto;
+  margin-right: 0;
+  padding: 10px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  background: #ffffff;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.local-mode-option:hover {
+  border-color: #409eff;
+  background: #f5faff;
+}
+
+.local-mode-option.is-checked {
+  border-color: #409eff;
+  background: #ecf5ff;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.12);
+}
+
+.local-mode-option.is-checked :deep(.el-radio__label) {
+  color: #1677d2;
+  font-weight: 600;
+}
+
+.local-model-progress {
+  margin-top: 10px;
+  max-width: 320px;
+}
+
+.mode-feedback {
+  margin-top: 6px !important;
+  color: #409eff !important;
+  font-weight: 500;
 }
 
 /* 响应式设计 */

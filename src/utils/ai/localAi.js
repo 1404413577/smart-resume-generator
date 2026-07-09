@@ -7,27 +7,34 @@
  */
 
 let webllm = null
+let transformers = null
 let transformersPipeline = null
 let transformersEnv = null
 
-async function importOptionalDependency(packageName, installName = packageName) {
-  try {
-    return await import(/* @vite-ignore */ packageName)
-  } catch (error) {
-    throw new Error(`本地模型依赖未安装或无法加载：${installName}。请安装后再使用浏览器本地模型。`)
-  }
-}
-
 async function getWebLLM() {
   if (webllm) return webllm
-  webllm = await importOptionalDependency('@mlc-ai/web-llm')
+  try {
+    webllm = await import('@mlc-ai/web-llm')
+  } catch (error) {
+    throw new Error('本地模型依赖未安装或无法加载：@mlc-ai/web-llm。请重新安装依赖并重启开发服务。')
+  }
   return webllm
+}
+
+async function getTransformers() {
+  if (transformers) return transformers
+  try {
+    transformers = await import('@xenova/transformers')
+  } catch (error) {
+    throw new Error('本地模型依赖未安装或无法加载：@xenova/transformers。请重新安装依赖并重启开发服务。')
+  }
+  return transformers
 }
 
 async function initTransformersEnv() {
   if (transformersEnv) return transformersEnv
 
-  const mod = await importOptionalDependency('@xenova/transformers')
+  const mod = await getTransformers()
   transformersEnv = mod.env
   transformersEnv.allowLocalModels = true
   transformersEnv.allowRemoteModels = true
@@ -41,7 +48,7 @@ async function initTransformersEnv() {
 async function getPipeline() {
   if (transformersPipeline) return transformersPipeline
 
-  const mod = await importOptionalDependency('@xenova/transformers')
+  const mod = await getTransformers()
   transformersPipeline = mod.pipeline
   await initTransformersEnv()
 
@@ -80,6 +87,12 @@ export class LocalAIService {
     this.statusText = ''
     this.currentType = null
     this.currentModelId = null
+  }
+
+  isModelReady(modelId, type = 'gpu') {
+    if (this.currentType !== type || this.currentModelId !== modelId) return false
+    if (type === 'gpu') return !!this.engine
+    return !!this.pipeline
   }
 
   async getEngine(modelId, type = 'gpu', onProgress) {
